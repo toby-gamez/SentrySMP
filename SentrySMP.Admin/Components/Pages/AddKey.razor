@@ -95,10 +95,9 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Image URL</label>
-                                    <InputText @bind-Value="keyModel.Image" class="form-control" placeholder="https://example.com/image.jpg" />
-                                </div>
+                                <ImageUploader Label="Key Image" 
+                                             ImageUrl="@keyModel.Image" 
+                                             ImageUrlChanged="@((string? url) => keyModel.Image = url)" />
                             </div>
                         </div>
                         

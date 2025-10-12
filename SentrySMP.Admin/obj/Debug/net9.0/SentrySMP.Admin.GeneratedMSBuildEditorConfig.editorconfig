@@ -33,6 +33,14 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9BcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/Components/CredentialStoreInitializer.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9DcmVkZW50aWFsU3RvcmVJbml0aWFsaXplci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/Components/ImageUploader.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9JbWFnZVVwbG9hZGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/Components/Layout/EmptyLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9MYXlvdXQvRW1wdHlMYXlvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
@@ -71,6 +79,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/Components/Pages/Servers.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9TZXJ2ZXJzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/Components/RedirectToLogin.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9SZWRpcmVjdFRvTG9naW4ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/Components/Routes.razor]

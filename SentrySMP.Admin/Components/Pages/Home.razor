@@ -1,7 +1,40 @@
 ﻿@page "/"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager Navigation
+@inject SentrySMP.Admin.Authentication.CredentialStore CredentialStore
+@inject ILogger<Home> Logger
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Admin Dashboard</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        // Debug logging
+        var credentials = CredentialStore.Get();
+        Logger.LogInformation("Home: CredentialStore has credentials: {HasCredentials}", credentials.HasValue);
+        if (credentials.HasValue)
+        {
+            Logger.LogInformation("Home: Username: {Username}", credentials.Value.Username);
+        }
+        
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        Logger.LogInformation("Home: User authenticated: {IsAuthenticated}", authState.User.Identity?.IsAuthenticated);
+        Logger.LogInformation("Home: User name: {Name}", authState.User.Identity?.Name);
+        
+        if (authState.User.Identity?.IsAuthenticated != true)
+        {
+            Logger.LogWarning("Home: User not authenticated, redirecting to login");
+            Navigation.NavigateTo("/login");
+        }
+        else
+        {
+            Logger.LogInformation("Home: User is authenticated, staying on page");
+        }
+    }
+}

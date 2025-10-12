@@ -9,10 +9,13 @@
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1>Key Management</h1>
+                <h1>
+                    <i class="bi bi-key-fill text-primary me-2"></i>
+                    Key Management
+                </h1>
                                 <a href="/add-key" class="btn btn-success">
-                    <i class="bi bi-plus-circle"></i>
-                    Create Key
+                    <i class="bi bi-plus-circle-fill me-2"></i>
+                    Create New Key
                 </a>
             </div>
             
@@ -37,13 +40,13 @@
                     <table class="table table-striped table-hover">
                         <thead class="table-dark">
                             <tr>
-                                <th>Image</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Price</th>
-                                <th>Server</th>
-                                <th>Sale</th>
-                                <th>Actions</th>
+                                <th><i class="bi bi-image me-1"></i>Image</th>
+                                <th><i class="bi bi-key me-1"></i>Name</th>
+                                <th><i class="bi bi-file-text me-1"></i>Description</th>
+                                <th><i class="bi bi-currency-dollar me-1"></i>Price</th>
+                                <th><i class="bi bi-server me-1"></i>Server</th>
+                                <th><i class="bi bi-percent me-1"></i>Sale</th>
+                                <th><i class="bi bi-gear me-1"></i>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -70,28 +73,46 @@
                                         }
                                     </td>
                                     <td>
-                                        <strong class="text-primary">$@key.Price.ToString("F2")</strong>
+                                        <strong class="text-success">
+                                            <i class="bi bi-currency-dollar me-1"></i>
+                                            @key.Price.ToString("F2")
+                                        </strong>
                                     </td>
                                     <td>
-                                        <span class="badge bg-info">Server @key.ServerId</span>
+                                        @{
+                                            var server = servers?.FirstOrDefault(s => s.Id == key.ServerId);
+                                            var serverName = server?.Name ?? $"Server {key.ServerId}";
+                                        }
+                                        <span class="badge bg-info">
+                                            <i class="bi bi-server me-1"></i>
+                                            @serverName
+                                        </span>
                                     </td>
                                     <td>
                                         @if (key.Sale > 0)
                                         {
-                                            <span class="badge bg-danger">@key.Sale% OFF</span>
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-percent me-1"></i>
+                                                @key.Sale% OFF
+                                            </span>
                                         }
                                         else
                                         {
-                                            <span class="badge bg-secondary">Regular</span>
+                                            <span class="badge bg-secondary">
+                                                <i class="bi bi-dash-circle me-1"></i>
+                                                Regular
+                                            </span>
                                         }
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            <a href="/edit-key/@key.Id" class="btn btn-sm btn-outline-primary">
-                                                <i class="bi bi-pencil-square"></i>
+                                            <a href="/edit-key/@key.Id" class="btn btn-sm btn-outline-primary" title="Edit Key" data-bs-toggle="tooltip">
+                                                <i class="bi bi-pencil-square me-1"></i>
+                                                Edit
                                             </a>
-                                            <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteKey(key.Id, key.Name)">
-                                                <i class="bi bi-trash3"></i>
+                                            <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteKey(key.Id, key.Name)" title="Delete Key" data-bs-toggle="tooltip">
+                                                <i class="bi bi-trash3-fill me-1"></i>
+                                                Delete
                                             </button>
                                         </div>
                                     </td>

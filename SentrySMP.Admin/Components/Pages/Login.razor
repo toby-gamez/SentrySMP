@@ -114,6 +114,15 @@
             // Store credentials using the correct method
             await CredentialStore.SetAsync(loginModel.Username, loginModel.Password, JSRuntime);
             
+            // Explicitly notify the authentication state provider and wait for it
+            if (AuthenticationStateProvider is SentrySMP.Admin.Authentication.BasicAuthenticationStateProvider basicAuthProvider)
+            {
+                basicAuthProvider.NotifyAuthenticationStateChanged();
+            }
+            
+            // Wait a moment for the authentication state to update
+            await Task.Delay(100);
+            
             Console.WriteLine("Login successful, redirecting to home");
             Logger.LogInformation("Login successful for user: {Username}", loginModel.Username);
             

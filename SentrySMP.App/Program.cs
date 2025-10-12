@@ -39,8 +39,8 @@ services.AddDbContext<SentryDbContext>(options =>
 });
 
 // Add Authentication and Authorization
-services.AddAuthentication(BasicAuthConstants.Scheme).AddScheme<AuthenticationSchemeOptions, BasicAuthHandler>(
-        BasicAuthConstants.Scheme, null);
+services.AddAuthentication(SentrySMP.App.Authentication.BasicAuthConstants.Scheme).AddScheme<AuthenticationSchemeOptions, BasicAuthHandler>(
+        SentrySMP.App.Authentication.BasicAuthConstants.Scheme, null);
 
 services.AddAuthorization();
 

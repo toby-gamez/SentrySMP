@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 
 namespace SentrySMP.Admin.Authentication;
 
-public class BasicAuthenticationStateProvider : AuthenticationStateProvider
+public class BasicAuthenticationStateProvider : AuthenticationStateProvider, IDisposable
 {
     private readonly CredentialStore _credentialStore;
     private readonly ILogger<BasicAuthenticationStateProvider> _logger;
@@ -14,6 +14,9 @@ public class BasicAuthenticationStateProvider : AuthenticationStateProvider
     {
         _credentialStore = credentialStore;
         _logger = logger;
+        
+        // Subscribe to credential changes
+        _credentialStore.CredentialsChanged += OnCredentialsChanged;
     }
 
     public override Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -39,8 +42,18 @@ public class BasicAuthenticationStateProvider : AuthenticationStateProvider
         return Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity())));
     }
 
+    private void OnCredentialsChanged()
+    {
+        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+    }
+
     public void NotifyAuthenticationStateChanged()
     {
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+    }
+
+    public void Dispose()
+    {
+        _credentialStore.CredentialsChanged -= OnCredentialsChanged;
     }
 }

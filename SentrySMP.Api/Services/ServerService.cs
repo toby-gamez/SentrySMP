@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SentrySMP.Api.Infrastructure.Data;
 using SentrySMP.Domain.Entities;
 using SentrySMP.Shared.DTOs;
@@ -9,10 +10,12 @@ namespace SentrySMP.Api.Services;
 public class ServerService : IServerService
 {
     private readonly SentryDbContext _context;
+    private readonly ILogger<ServerService> _logger;
 
-    public ServerService(SentryDbContext context)
+    public ServerService(SentryDbContext context, ILogger<ServerService> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task<IEnumerable<ServerResponse>> GetAllServersAsync()
@@ -66,13 +69,39 @@ public class ServerService : IServerService
 
     public async Task<bool> DeleteServerAsync(int id)
     {
-        var server = await _context.Servers.FindAsync(id);
-        if (server == null)
-            return false;
+        try
+        {
+            var server = await _context.Servers
+                .Include(s => s.Keys)
+                .FirstOrDefaultAsync(s => s.Id == id);
+                
+            if (server == null)
+                return false;
 
-        _context.Servers.Remove(server);
-        await _context.SaveChangesAsync();
-        return true;
+            // Log the deletion attempt
+            _logger.LogInformation("Attempting to delete server {ServerId} with {KeyCount} keys", 
+                id, server.Keys?.Count ?? 0);
+
+            // Explicitly delete related keys first (even though cascade should handle this)
+            if (server.Keys != null && server.Keys.Any())
+            {
+                _context.Keys.RemoveRange(server.Keys);
+                _logger.LogInformation("Removing {KeyCount} keys for server {ServerId}", 
+                    server.Keys.Count, id);
+            }
+
+            // Then delete the server
+            _context.Servers.Remove(server);
+            await _context.SaveChangesAsync();
+            
+            _logger.LogInformation("Successfully deleted server {ServerId}", id);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting server {ServerId}: {Message}", id, ex.Message);
+            throw;
+        }
     }
 
     private static ServerResponse MapToResponse(Server server)

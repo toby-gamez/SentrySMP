@@ -56,9 +56,22 @@
                                             <div>
                                                 @if (key.Sale > 0)
                                                 {
-                                                    <span class="badge bg-danger">@key.Sale% OFF</span>
+                                                    <div class="mb-1">
+                                                        <span class="badge bg-danger me-2">@key.Sale% OFF</span>
+                                                    </div>
+                                                    <div>
+                                                        <span class="text-muted text-decoration-line-through me-2" title="Original price">
+                                                            $@key.Price.ToString("F2")
+                                                        </span>
+                                                        <strong class="text-success fs-5" title="Sale price">
+                                                            $@(CalculateSalePrice(key.Price, key.Sale).ToString("F2"))
+                                                        </strong>
+                                                    </div>
                                                 }
-                                                <strong class="text-primary">$@key.Price.ToString("F2")</strong>
+                                                else
+                                                {
+                                                    <strong class="text-primary fs-5">$@key.Price.ToString("F2")</strong>
+                                                }
                                             </div>
                                             <small class="text-muted">Server: @key.Server?.Name</small>
                                         </div>
@@ -113,10 +126,23 @@
                                 
                                 <dt class="col-sm-4">Price:</dt>
                                 <dd class="col-sm-8">
-                                    <strong class="text-primary">$@selectedKey.Price.ToString("F2")</strong>
                                     @if (selectedKey.Sale > 0)
                                     {
-                                        <span class="badge bg-danger ms-2">@selectedKey.Sale% OFF</span>
+                                        <div class="mb-1">
+                                            <span class="badge bg-danger">@selectedKey.Sale% OFF</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-muted text-decoration-line-through me-2" title="Original price">
+                                                $@selectedKey.Price.ToString("F2")
+                                            </span>
+                                            <strong class="text-success fs-5" title="Sale price">
+                                                $@(CalculateSalePrice(selectedKey.Price, selectedKey.Sale).ToString("F2"))
+                                            </strong>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <strong class="text-primary fs-5">$@selectedKey.Price.ToString("F2")</strong>
                                     }
                                 </dd>
                                 
@@ -181,5 +207,10 @@
     private void CloseKeyDetails()
     {
         selectedKey = null;
+    }
+
+    private double CalculateSalePrice(double originalPrice, int salePercentage)
+    {
+        return originalPrice * (1 - salePercentage / 100.0);
     }
 }

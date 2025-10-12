@@ -51,7 +51,7 @@ services.AddAuthorization();
 
 // Add Blazor authentication
 services.AddCascadingAuthenticationState();
-services.AddScoped<AuthenticationStateProvider, BasicAuthenticationStateProvider>();
+services.AddSingleton<AuthenticationStateProvider, BasicAuthenticationStateProvider>();
 
 services.AddRazorComponents().AddInteractiveServerComponents();
 
@@ -59,6 +59,7 @@ services.AddRazorComponents().AddInteractiveServerComponents();
 services.AddControllers();
 
 services.AddSingleton<CredentialStore>();
+services.AddSingleton<SentrySMP.Admin.Services.AuthInitializationService>();
 services.AddTransient<AuthenticationHeaderHandler>();
 services.AddTransient<HttpLoggingHandler>();
 

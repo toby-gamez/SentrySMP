@@ -189,6 +189,14 @@
       "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.min.js.map"
     },
     {
+      "Id": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/086b3baa-a104-4e16-bf6d-9bfc4f3c9f8d.png",
+      "PackagePath": "staticwebassets/uploads/keys/086b3baa-a104-4e16-bf6d-9bfc4f3c9f8d.png"
+    },
+    {
+      "Id": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/24fb2cd0-b040-40bd-8d59-33255697bbdf.png",
+      "PackagePath": "staticwebassets/uploads/keys/24fb2cd0-b040-40bd-8d59-33255697bbdf.png"
+    },
+    {
       "Id": "obj/Debug/net9.0/staticwebassets/msbuild.SentrySMP.App.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
       "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
     },

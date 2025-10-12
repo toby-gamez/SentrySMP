@@ -110,11 +110,9 @@
                                     Additional Details
                                 </h4>
                                 
-                                <div class="mb-3">
-                                    <label class="form-label">Image URL</label>
-                                    <InputText @bind-Value="keyModel.Image" class="form-control" placeholder="https://example.com/image.jpg" />
-                                    <div class="form-text">Optional image for the key</div>
-                                </div>
+                                <ImageUploader Label="Key Image" 
+                                             ImageUrl="@keyModel.Image" 
+                                             ImageUrlChanged="@((string? url) => keyModel.Image = url)" />
                                 
                                 <div class="mb-3">
                                     <label class="form-label">Sale Percentage (0-100%)</label>

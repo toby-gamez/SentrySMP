@@ -4,6 +4,7 @@
 @inject ISentryApi Api
 @inject ILogger<Servers> Logger
 @inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
 
 <div class="container-fluid">
     <div class="row">
@@ -141,8 +142,13 @@
             }
             catch (Exception ex)
             {
-                await JSRuntime.InvokeVoidAsync("alert", $"Error deleting server: {ex.Message}");
-                Logger.LogError(ex, "Error deleting server {ServerId}", serverId);
+                var errorMsg = ex.Message;
+                if (ex.InnerException != null)
+                {
+                    errorMsg += $" Inner: {ex.InnerException.Message}";
+                }
+                await JSRuntime.InvokeVoidAsync("alert", $"Error deleting server: {errorMsg}");
+                Logger.LogError(ex, "Error deleting server {ServerId}: {ErrorMessage}", serverId, errorMsg);
             }
         }
     }

@@ -7,33 +7,43 @@ public class CredentialStore
 {
     private (string Username, string Password)? _credentials;
     private readonly ILogger<CredentialStore> _logger;
-    private readonly IServiceProvider _serviceProvider;
+    
+    // Event to notify when credentials change
+    public event Action? CredentialsChanged;
 
-    public CredentialStore(ILogger<CredentialStore> logger, IServiceProvider serviceProvider)
+    public CredentialStore(ILogger<CredentialStore> logger)
     {
         _logger = logger;
-        _serviceProvider = serviceProvider;
     }
 
     public async Task InitializeAsync(IJSRuntime jsRuntime)
     {
         try
         {
+            _logger.LogInformation("CredentialStore: Starting localStorage initialization");
             var username = await jsRuntime.InvokeAsync<string?>("localStorage.getItem", "blinked_username");
             var password = await jsRuntime.InvokeAsync<string?>("localStorage.getItem", "blinked_password");
+            
+            _logger.LogInformation("CredentialStore: Retrieved from localStorage - username: {HasUsername}, password: {HasPassword}", 
+                !string.IsNullOrEmpty(username), !string.IsNullOrEmpty(password));
             
             if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
             {
                 _credentials = (username, password);
-                _logger.LogDebug("Restored credentials from localStorage for user {Username}", username);
+                _logger.LogInformation("CredentialStore: Restored credentials for user {Username}", username);
                 
-                // Notify authentication state provider
-                NotifyAuthenticationStateChanged();
+                // Notify listeners
+                _logger.LogInformation("CredentialStore: Notifying {ListenerCount} listeners", CredentialsChanged?.GetInvocationList().Length ?? 0);
+                CredentialsChanged?.Invoke();
+            }
+            else
+            {
+                _logger.LogInformation("CredentialStore: No valid credentials found in localStorage");
             }
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Failed to restore credentials from localStorage");
+            _logger.LogError(ex, "CredentialStore: Failed to restore credentials from localStorage");
         }
     }
 
@@ -52,13 +62,13 @@ public class CredentialStore
             _logger.LogWarning(ex, "Failed to store credentials in localStorage");
         }
         
-        NotifyAuthenticationStateChanged();
+        CredentialsChanged?.Invoke();
     }
 
     public void Set(string username, string password)
     {
         _credentials = (username, password);
-        NotifyAuthenticationStateChanged();
+        CredentialsChanged?.Invoke();
     }
 
     public (string Username, string Password)? Get()
@@ -81,25 +91,12 @@ public class CredentialStore
             _logger.LogWarning(ex, "Failed to clear credentials from localStorage");
         }
         
-        NotifyAuthenticationStateChanged();
+        CredentialsChanged?.Invoke();
     }
 
     public void Clear()
     {
         _credentials = null;
-        NotifyAuthenticationStateChanged();
-    }
-
-    private void NotifyAuthenticationStateChanged()
-    {
-        try
-        {
-            var authStateProvider = _serviceProvider.GetService<AuthenticationStateProvider>() as BasicAuthenticationStateProvider;
-            authStateProvider?.NotifyAuthenticationStateChanged();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to notify authentication state changed");
-        }
+        CredentialsChanged?.Invoke();
     }
 }

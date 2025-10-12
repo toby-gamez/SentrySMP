@@ -1,0 +1,253 @@
+@using Microsoft.AspNetCore.Components.Forms
+@using System.Text
+@using Refit
+@inject ISentryApi Api
+@inject IJSRuntime JSRuntime
+@inject ILogger<ImageUploader> Logger
+
+<div class="image-uploader">
+    <div class="mb-3">
+        <label class="form-label">@Label</label>
+        
+        @if (!string.IsNullOrEmpty(ImageUrl))
+        {
+            <div class="current-image mb-3">
+                <img src="@ImageUrl" alt="Current image" class="img-thumbnail" style="max-height: 200px; max-width: 300px;" />
+                <div class="mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-danger" @onclick="RemoveImage" disabled="@isUploading">
+                        <i class="bi bi-trash"></i> Remove Image
+                    </button>
+                </div>
+            </div>
+        }
+        
+        <div class="upload-area @(isDragOver ? "drag-over" : "")" 
+             @ondragover="HandleDragOver" 
+             @ondragover:preventDefault="true"
+             @ondragleave="HandleDragLeave"
+             @ondrop="HandleDrop" 
+             @ondrop:preventDefault="true">
+            
+            <div class="upload-content">
+                @if (isUploading)
+                {
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Uploading...</span>
+                        </div>
+                        <p class="mt-2 mb-0">Uploading image...</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center">
+                        <i class="bi bi-cloud-upload display-4 text-muted"></i>
+                        <p class="mt-2 mb-2">Drag & drop an image here, or 
+                            <button type="button" class="btn btn-link p-0" @onclick="TriggerFileInput">
+                                click to select
+                            </button>
+                        </p>
+                        <small class="text-muted">Supported: JPG, PNG, WEBP (max 5MB)</small>
+                    </div>
+                }
+            </div>
+        </div>
+        
+        <InputFile @ref="fileInput" 
+                   OnChange="HandleFileSelected" 
+                   accept="image/*" 
+                   style="display: none;" />
+        
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger mt-2" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                @errorMessage
+            </div>
+        }
+        
+        @if (!string.IsNullOrEmpty(successMessage))
+        {
+            <div class="alert alert-success mt-2" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                @successMessage
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .upload-area {
+        border: 2px dashed #dee2e6;
+        border-radius: 8px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        background-color: #f8f9fa;
+    }
+    
+    .upload-area:hover {
+        border-color: #0d6efd;
+        background-color: #e7f3ff;
+    }
+    
+    .upload-area.drag-over {
+        border-color: #0d6efd;
+        background-color: #e7f3ff;
+        transform: scale(1.02);
+    }
+    
+    .current-image {
+        text-align: center;
+    }
+</style>
+
+@code {
+    [Parameter] public string Label { get; set; } = "Image";
+    [Parameter] public string? ImageUrl { get; set; }
+    [Parameter] public EventCallback<string?> ImageUrlChanged { get; set; }
+    
+    private InputFile? fileInput;
+    private bool isUploading = false;
+    private bool isDragOver = false;
+    private string? errorMessage;
+    private string? successMessage;
+    
+    private static readonly string[] AllowedTypes = { "image/jpeg", "image/jpg", "image/png", "image/webp" };
+    private const long MaxFileSize = 5 * 1024 * 1024; // 5MB
+
+    private async Task TriggerFileInput()
+    {
+        if (fileInput?.Element != null)
+        {
+            await JSRuntime.InvokeVoidAsync("eval", "document.querySelector('input[type=file]').click()");
+        }
+    }
+    
+    private void HandleDragOver()
+    {
+        isDragOver = true;
+    }
+    
+    private void HandleDragLeave()
+    {
+        isDragOver = false;
+    }
+    
+    private async Task HandleDrop()
+    {
+        isDragOver = false;
+        // Note: Drag and drop file handling requires additional JavaScript interop
+        // For now, we'll focus on the file input functionality
+    }
+    
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file == null) return;
+        
+        await ProcessFile(file);
+    }
+    
+    private async Task ProcessFile(IBrowserFile file)
+    {
+        try
+        {
+            ClearMessages();
+            
+            // Validate file
+            if (!AllowedTypes.Contains(file.ContentType.ToLowerInvariant()))
+            {
+                errorMessage = $"File type '{file.ContentType}' is not supported. Please use JPG, PNG, or WEBP.";
+                return;
+            }
+            
+            if (file.Size > MaxFileSize)
+            {
+                errorMessage = $"File size ({file.Size / (1024 * 1024):F1}MB) exceeds the maximum allowed size of 5MB.";
+                return;
+            }
+            
+            isUploading = true;
+            StateHasChanged();
+            
+            // Create stream for upload
+            using var stream = file.OpenReadStream(MaxFileSize);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            ms.Position = 0;
+            
+            // Upload via API
+            var streamPart = new StreamPart(ms, file.Name, file.ContentType);
+            var response = await Api.UploadImageAsync(streamPart);
+            
+            // Update image URL
+            ImageUrl = response.Url;
+            await ImageUrlChanged.InvokeAsync(ImageUrl);
+            
+            successMessage = "Image uploaded successfully!";
+            Logger.LogInformation("Successfully uploaded image: {FileName}", file.Name);
+            
+            // Force re-render to show uploaded image
+            StateHasChanged();
+            
+            // Clear success message after 3 seconds
+            _ = Task.Delay(3000).ContinueWith(t => 
+            {
+                successMessage = null;
+                InvokeAsync(StateHasChanged);
+            });
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error uploading image: {ex.Message}";
+            Logger.LogError(ex, "Error uploading image");
+        }
+        finally
+        {
+            isUploading = false;
+            StateHasChanged();
+        }
+    }
+    
+    private async Task RemoveImage()
+    {
+        if (string.IsNullOrEmpty(ImageUrl)) return;
+        
+        try
+        {
+            // Extract filename from URL for deletion
+            var fileName = ImageUrl?.Contains("/") == true ? 
+                Path.GetFileName(new Uri(ImageUrl).LocalPath) : ImageUrl;
+                
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                await Api.DeleteImageAsync(fileName);
+            }
+            
+            ImageUrl = null;
+            await ImageUrlChanged.InvokeAsync(ImageUrl);
+            
+            successMessage = "Image removed successfully!";
+            
+            // Clear success message after 3 seconds
+            _ = Task.Delay(3000).ContinueWith(t => 
+            {
+                successMessage = null;
+                InvokeAsync(StateHasChanged);
+            });
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error removing image: {ex.Message}";
+            Logger.LogError(ex, "Error removing image");
+        }
+    }
+    
+    private void ClearMessages()
+    {
+        errorMessage = null;
+        successMessage = null;
+    }
+}

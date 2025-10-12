@@ -39,4 +39,12 @@ public interface ISentryApi
     
     [Delete("/api/keys/{id}")]
     Task DeleteKeyAsync(int id);
+    
+    // File upload endpoints
+    [Multipart]
+    [Post("/api/files/upload")]
+    Task<FileUploadResponse> UploadImageAsync([AliasAs("file")] StreamPart stream);
+    
+    [Delete("/api/files/{fileName}")]
+    Task DeleteImageAsync(string fileName);
 }
