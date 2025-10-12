@@ -1,0 +1,3 @@
+2025-10-12 12:04:28.642 +02:00 [DBG] An 'IServiceProvider' was created for internal use by Entity Framework.
+2025-10-12 12:04:29.441 +02:00 [DBG] Entity Framework Core 9.0.5 initialized 'SentryDbContext' using provider 'Microsoft.EntityFrameworkCore.SqlServer:9.0.5' with options: EngineType=SqlServer 
+2025-10-12 12:04:30.189 +02:00 [DBG] 'SentryDbContext' disposed.

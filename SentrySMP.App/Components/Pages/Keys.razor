@@ -1,0 +1,185 @@
+@page "/keys"
+@using SentrySMP.Shared.DTOs
+@using SentrySMP.Shared.Interfaces
+@inject ISentryApi Api
+@inject ILogger<Keys> Logger
+
+<PageTitle>Keys</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Available Keys</h1>
+            
+            @if (loading)
+            {
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            }
+            else if (errorMessage != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    @errorMessage
+                </div>
+            }
+            else if (keys?.Any() == true)
+            {
+                <div class="row">
+                    @foreach (var key in keys)
+                    {
+                        <div class="col-md-4 col-lg-3 mb-4">
+                            <div class="card h-100">
+                                @if (!string.IsNullOrEmpty(key.Image))
+                                {
+                                    <img src="@key.Image" class="card-img-top" alt="@key.Name" style="height: 200px; object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                                        <i class="bi bi-key-fill text-white" style="font-size: 3rem;"></i>
+                                    </div>
+                                }
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">@key.Name</h5>
+                                    
+                                    @if (!string.IsNullOrEmpty(key.Description))
+                                    {
+                                        <p class="card-text flex-grow-1">@key.Description</p>
+                                    }
+                                    
+                                    <div class="mt-auto">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <div>
+                                                @if (key.Sale > 0)
+                                                {
+                                                    <span class="badge bg-danger">@key.Sale% OFF</span>
+                                                }
+                                                <strong class="text-primary">$@key.Price.ToString("F2")</strong>
+                                            </div>
+                                            <small class="text-muted">Server: @key.Server?.Name</small>
+                                        </div>
+                                        
+                                        <button class="btn btn-primary btn-sm w-100" 
+                                                @onclick="() => ShowKeyDetails(key)">
+                                            <i class="bi bi-info-circle"></i> View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle-fill"></i>
+                    No keys available at the moment.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Key Details Modal -->
+@if (selectedKey != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-key-fill"></i>
+                        @selectedKey.Name
+                    </h5>
+                    <button type="button" class="btn-close" @onclick="CloseKeyDetails"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        @if (!string.IsNullOrEmpty(selectedKey.Image))
+                        {
+                            <div class="col-md-6">
+                                <img src="@selectedKey.Image" class="img-fluid rounded" alt="@selectedKey.Name">
+                            </div>
+                        }
+                        <div class="col-md-@(string.IsNullOrEmpty(selectedKey.Image) ? "12" : "6")">
+                            <dl class="row">
+                                <dt class="col-sm-4">Name:</dt>
+                                <dd class="col-sm-8">@selectedKey.Name</dd>
+                                
+                                <dt class="col-sm-4">Price:</dt>
+                                <dd class="col-sm-8">
+                                    <strong class="text-primary">$@selectedKey.Price.ToString("F2")</strong>
+                                    @if (selectedKey.Sale > 0)
+                                    {
+                                        <span class="badge bg-danger ms-2">@selectedKey.Sale% OFF</span>
+                                    }
+                                </dd>
+                                
+                                <dt class="col-sm-4">Server:</dt>
+                                <dd class="col-sm-8">@selectedKey.Server?.Name</dd>
+                                
+                                @if (!string.IsNullOrEmpty(selectedKey.Description))
+                                {
+                                    <dt class="col-sm-4">Description:</dt>
+                                    <dd class="col-sm-8">@selectedKey.Description</dd>
+                                }
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseKeyDetails">Close</button>
+                    <button type="button" class="btn btn-success">
+                        <i class="bi bi-cart-plus"></i> Purchase
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<KeyResponse>? keys;
+    private bool loading = true;
+    private string? errorMessage;
+    private KeyResponse? selectedKey;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadKeys();
+    }
+
+    private async Task LoadKeys()
+    {
+        try
+        {
+            loading = true;
+            errorMessage = null;
+            keys = (await Api.GetKeysAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading keys: {ex.Message}";
+            Logger.LogError(ex, "Error loading keys");
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private void ShowKeyDetails(KeyResponse key)
+    {
+        selectedKey = key;
+    }
+
+    private void CloseKeyDetails()
+    {
+        selectedKey = null;
+    }
+}
