@@ -68,6 +68,10 @@
               "target": "Package",
               "version": "[9.0.5, )"
             },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
             "Refit.HttpClientFactory": {
               "target": "Package",
               "version": "[8.0.0, )"
@@ -240,6 +244,10 @@
             "Microsoft.Extensions.Logging.Abstractions": {
               "target": "Package",
               "version": "[9.0.5, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[9.0.0, )"
             },
             "Refit": {
               "target": "Package",

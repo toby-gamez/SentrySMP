@@ -13,3 +13,4 @@
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Shared/obj/Debug/net9.0/refint/SentrySMP.Shared.dll
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Shared/obj/Debug/net9.0/SentrySMP.Shared.pdb
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Shared/obj/Debug/net9.0/ref/SentrySMP.Shared.dll
+/home/tobias/RiderProjects/SentrySMP/SentrySMP.Shared/obj/Debug/net9.0/SentrySMP.Shared.sourcelink.json

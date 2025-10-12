@@ -1,4 +1,3 @@
-/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/appsettings.Development.json
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/appsettings.json
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/SentrySMP.App.staticwebassets.runtime.json
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/SentrySMP.App.staticwebassets.endpoints.json
@@ -271,3 +270,7 @@
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/SentrySMP.App.pdb
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/SentrySMP.App.genruntimeconfig.cache
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/ref/SentrySMP.App.dll
+/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/SentrySMP.App.sourcelink.json
+/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/MySqlConnector.dll
+/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/Pomelo.EntityFrameworkCore.MySql.dll
+/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/appsettings.template.json

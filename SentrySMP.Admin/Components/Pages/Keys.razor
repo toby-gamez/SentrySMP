@@ -214,10 +214,15 @@
     private bool isEditMode = false;
     private bool saving = false;
     private KeyModel keyModel = new();
+    private bool isInitialized = false;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadData();
+        if (!isInitialized)
+        {
+            isInitialized = true;
+            await LoadData();
+        }
     }
 
     private async Task LoadData()
@@ -252,6 +257,7 @@
         }
         catch (Exception ex)
         {
+            servers = new List<ServerResponse>(); // Prevent null reference
             if (string.IsNullOrEmpty(errorMessage))
                 errorMessage = $"Error loading servers: {ex.Message}";
             Logger.LogError(ex, "Error loading servers");
@@ -298,7 +304,7 @@
                 var updateDto = new UpdateKeyDto
                 {
                     Name = keyModel.Name,
-                    Description = keyModel.Description,
+                    Description = keyModel.Description ?? "",
                     Price = keyModel.Price,
                     ServerId = keyModel.ServerId,
                     Sale = keyModel.Sale,
@@ -313,7 +319,7 @@
                 var createDto = new CreateKeyDto
                 {
                     Name = keyModel.Name,
-                    Description = keyModel.Description,
+                    Description = keyModel.Description ?? "",
                     Price = keyModel.Price,
                     ServerId = keyModel.ServerId,
                     Sale = keyModel.Sale,

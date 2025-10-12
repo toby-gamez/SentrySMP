@@ -7,7 +7,6 @@ namespace SentrySMP.App.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
 public class ServersController : ControllerBase
 {
     private readonly IServerService _serverService;
@@ -23,6 +22,7 @@ public class ServersController : ControllerBase
     /// Get all servers
     /// </summary>
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<ServerResponse>>> GetServers()
     {
         try
@@ -41,6 +41,7 @@ public class ServersController : ControllerBase
     /// Get server by ID
     /// </summary>
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<ActionResult<ServerResponse>> GetServer(int id)
     {
         try
@@ -62,6 +63,7 @@ public class ServersController : ControllerBase
     /// Create new server
     /// </summary>
     [HttpPost]
+    [Authorize]
     public async Task<ActionResult<ServerResponse>> CreateServer([FromBody] CreateServerDto createServerDto)
     {
         try
@@ -83,6 +85,7 @@ public class ServersController : ControllerBase
     /// Update server
     /// </summary>
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<ActionResult<ServerResponse>> UpdateServer(int id, [FromBody] UpdateServerDto updateServerDto)
     {
         try
@@ -107,6 +110,7 @@ public class ServersController : ControllerBase
     /// Delete server
     /// </summary>
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<ActionResult> DeleteServer(int id)
     {
         try

@@ -266,3 +266,986 @@ Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instanc
    at SentrySMP.Api.Services.KeyService.GetAllKeysAsync() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Api/Services/KeyService.cs:line 20
    at SentrySMP.App.Controllers.KeysController.GetKeys() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Controllers/KeysController.cs:line 30
 ClientConnectionId:00000000-0000-0000-0000-000000000000
+2025-10-12 14:10:19.672 +02:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-12 14:10:19.673 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:10:19.675 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:10:29.034 +02:00 [INF] [BasicAuth] Handling request for /
+2025-10-12 14:10:29.037 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:10:29.038 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:10:29.293 +02:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-12 14:10:29.297 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:10:29.298 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:10:31.134 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-12 14:10:31.134 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:10:31.134 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:10:31.237 +02:00 [ERR] Error loading keys
+System.Net.Http.HttpRequestException: Connection refused (localhost:7270)
+ ---> System.Net.Sockets.SocketException (111): Connection refused
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.InjectNewHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at SentrySMP.App.Handlers.HttpLoggingHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Handlers/HttpLoggingHandler.cs:line 49
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at Refit.RequestBuilderImplementation.<>c__DisplayClass15_0`2.<<BuildCancellableTaskFuncForMethod>b__0>d.MoveNext() in c:\temp\releaser\refit\Refit\RequestBuilderImplementation.cs:line 331
+--- End of stack trace from previous location ---
+   at Refit.Implementation.Generated.SentrySMPSharedInterfacesISentryApi.global::SentrySMP.Shared.Interfaces.ISentryApi.GetKeysAsync() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Shared/obj/Debug/net9.0/InterfaceStubGeneratorV2/Refit.Generator.InterfaceStubGeneratorV2/ISentryApi.g.cs:line 207
+   at SentrySMP.App.Components.Pages.Keys.LoadKeys() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Components/Pages/Keys.razor:line 163
+2025-10-12 14:25:45.912 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-12 14:25:46.003 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-12 14:25:46.005 +02:00 [INF] Hosting environment: Development
+2025-10-12 14:25:46.008 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-12 14:27:27.884 +02:00 [INF] Application is shutting down...
+2025-10-12 14:31:25.270 +02:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2025-10-12 14:31:25.450 +02:00 [INF] Now listening on: https://localhost:7271
+2025-10-12 14:31:25.461 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-12 14:31:25.475 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-12 14:31:25.481 +02:00 [INF] Hosting environment: Development
+2025-10-12 14:31:25.482 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-12 14:33:22.132 +02:00 [INF] [BasicAuth] Handling request for /
+2025-10-12 14:33:22.137 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:33:22.142 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:33:22.648 +02:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-12 14:33:22.658 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:33:22.662 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:33:25.566 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-12 14:33:25.595 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:33:25.598 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:33:25.717 +02:00 [ERR] Error loading keys
+System.Net.Http.HttpRequestException: Connection refused (localhost:7270)
+ ---> System.Net.Sockets.SocketException (111): Connection refused
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.InjectNewHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at SentrySMP.App.Handlers.HttpLoggingHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Handlers/HttpLoggingHandler.cs:line 49
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at Refit.RequestBuilderImplementation.<>c__DisplayClass15_0`2.<<BuildCancellableTaskFuncForMethod>b__0>d.MoveNext() in c:\temp\releaser\refit\Refit\RequestBuilderImplementation.cs:line 331
+--- End of stack trace from previous location ---
+   at Refit.Implementation.Generated.SentrySMPSharedInterfacesISentryApi.global::SentrySMP.Shared.Interfaces.ISentryApi.GetKeysAsync() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Shared/obj/Debug/net9.0/InterfaceStubGeneratorV2/Refit.Generator.InterfaceStubGeneratorV2/ISentryApi.g.cs:line 207
+   at SentrySMP.App.Components.Pages.Keys.LoadKeys() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Components/Pages/Keys.razor:line 163
+2025-10-12 14:33:29.488 +02:00 [INF] [BasicAuth] Handling request for /weather
+2025-10-12 14:33:29.488 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:33:29.488 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:33:30.013 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-12 14:33:30.013 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:33:30.016 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:33:30.028 +02:00 [ERR] Error loading keys
+System.Net.Http.HttpRequestException: Connection refused (localhost:7270)
+ ---> System.Net.Sockets.SocketException (111): Connection refused
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.InjectNewHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at SentrySMP.App.Handlers.HttpLoggingHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Handlers/HttpLoggingHandler.cs:line 49
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at Refit.RequestBuilderImplementation.<>c__DisplayClass15_0`2.<<BuildCancellableTaskFuncForMethod>b__0>d.MoveNext() in c:\temp\releaser\refit\Refit\RequestBuilderImplementation.cs:line 331
+--- End of stack trace from previous location ---
+   at Refit.Implementation.Generated.SentrySMPSharedInterfacesISentryApi.global::SentrySMP.Shared.Interfaces.ISentryApi.GetKeysAsync() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Shared/obj/Debug/net9.0/InterfaceStubGeneratorV2/Refit.Generator.InterfaceStubGeneratorV2/ISentryApi.g.cs:line 207
+   at SentrySMP.App.Components.Pages.Keys.LoadKeys() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Components/Pages/Keys.razor:line 163
+2025-10-12 14:35:33.647 +02:00 [INF] Application is shutting down...
+2025-10-12 14:35:53.404 +02:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2025-10-12 14:35:53.503 +02:00 [INF] Now listening on: https://localhost:7271
+2025-10-12 14:35:53.505 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-12 14:35:53.510 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-12 14:35:53.511 +02:00 [INF] Hosting environment: Development
+2025-10-12 14:35:53.511 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-12 14:36:41.322 +02:00 [INF] [BasicAuth] Handling request for /
+2025-10-12 14:36:41.324 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:36:41.327 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:36:41.651 +02:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-12 14:36:41.655 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:36:41.658 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:36:42.764 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-12 14:36:42.766 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:36:42.766 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:36:42.882 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-12 14:36:42.882 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:36:42.883 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:36:42.887 +02:00 [INF] AuthenticationScheme: BasicAuth was challenged.
+2025-10-12 14:36:42.913 +02:00 [ERR] Error loading keys
+Refit.ApiException: Response status code does not indicate success: 401 (Unauthorized).
+   at Refit.RequestBuilderImplementation.<>c__DisplayClass15_0`2.<<BuildCancellableTaskFuncForMethod>b__0>d.MoveNext() in c:\temp\releaser\refit\Refit\RequestBuilderImplementation.cs:line 384
+--- End of stack trace from previous location ---
+   at Refit.Implementation.Generated.SentrySMPSharedInterfacesISentryApi.global::SentrySMP.Shared.Interfaces.ISentryApi.GetKeysAsync() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Shared/obj/Debug/net9.0/InterfaceStubGeneratorV2/Refit.Generator.InterfaceStubGeneratorV2/ISentryApi.g.cs:line 207
+   at SentrySMP.App.Components.Pages.Keys.LoadKeys() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Components/Pages/Keys.razor:line 163
+2025-10-12 14:37:03.752 +02:00 [INF] Application is shutting down...
+2025-10-12 14:43:20.617 +02:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2025-10-12 14:43:20.703 +02:00 [INF] Now listening on: https://localhost:7271
+2025-10-12 14:43:20.708 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-12 14:43:20.715 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-12 14:43:20.716 +02:00 [INF] Hosting environment: Development
+2025-10-12 14:43:20.716 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-12 14:43:45.899 +02:00 [INF] [BasicAuth] Handling request for /
+2025-10-12 14:43:45.901 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:43:45.903 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:43:46.120 +02:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-12 14:43:46.122 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:43:46.124 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:43:47.508 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-12 14:43:47.509 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:43:47.509 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:43:47.640 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-12 14:43:47.641 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:43:47.641 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:43:48.851 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-12 14:43:48.853 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:43:48.854 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:43:48.885 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-12 14:43:48.885 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:43:48.887 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:43:50.081 +02:00 [INF] [BasicAuth] Handling request for /weather
+2025-10-12 14:43:50.087 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:43:50.087 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:44:00.636 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-12 14:44:00.637 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:44:00.638 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:44:00.652 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-12 14:44:00.652 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:44:00.653 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:44:03.685 +02:00 [ERR] An error occurred using the connection to database 'f187941' on server 'a058um.forpsi.com'.
+2025-10-12 14:44:03.685 +02:00 [ERR] An error occurred using the connection to database 'f187941' on server 'a058um.forpsi.com'.
+2025-10-12 14:44:03.685 +02:00 [ERR] An error occurred using the connection to database 'f187941' on server 'a058um.forpsi.com'.
+2025-10-12 14:44:03.697 +02:00 [ERR] An exception occurred while iterating over the results of a query for context type 'SentrySMP.Api.Infrastructure.Data.SentryDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 40 - Could not open a connection to SQL Server)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.WaitForPendingOpen()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 40 - Could not open a connection to SQL Server)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.WaitForPendingOpen()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+2025-10-12 14:44:03.698 +02:00 [ERR] An exception occurred while iterating over the results of a query for context type 'SentrySMP.Api.Infrastructure.Data.SentryDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 40 - Could not open a connection to SQL Server)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.WaitForPendingOpen()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 40 - Could not open a connection to SQL Server)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.WaitForPendingOpen()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+2025-10-12 14:44:03.699 +02:00 [ERR] An exception occurred while iterating over the results of a query for context type 'SentrySMP.Api.Infrastructure.Data.SentryDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 40 - Could not open a connection to SQL Server)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.Connect(ServerInfo serverInfo, SqlInternalConnectionTds connHandler, Boolean ignoreSniOpenTimeout, Int64 timerExpire, SqlConnectionString connectionOptions, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean ignoreSniOpenTimeout, TimeoutTimer timeout, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnection owningObject, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.WaitForPendingOpen()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 40 - Could not open a connection to SQL Server)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.Connect(ServerInfo serverInfo, SqlInternalConnectionTds connHandler, Boolean ignoreSniOpenTimeout, Int64 timerExpire, SqlConnectionString connectionOptions, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean ignoreSniOpenTimeout, TimeoutTimer timeout, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnection owningObject, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.WaitForPendingOpen()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+2025-10-12 14:44:03.706 +02:00 [ERR] Error occurred while getting keys
+Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 40 - Could not open a connection to SQL Server)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.WaitForPendingOpen()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at SentrySMP.Api.Services.KeyService.GetAllKeysAsync() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Api/Services/KeyService.cs:line 20
+   at SentrySMP.App.Controllers.KeysController.GetKeys() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Controllers/KeysController.cs:line 29
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+2025-10-12 14:44:03.707 +02:00 [ERR] Error occurred while getting keys
+Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 40 - Could not open a connection to SQL Server)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.WaitForPendingOpen()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at SentrySMP.Api.Services.KeyService.GetAllKeysAsync() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Api/Services/KeyService.cs:line 20
+   at SentrySMP.App.Controllers.KeysController.GetKeys() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Controllers/KeysController.cs:line 29
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+2025-10-12 14:44:03.709 +02:00 [ERR] Error occurred while getting keys
+Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 40 - Could not open a connection to SQL Server)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.Connect(ServerInfo serverInfo, SqlInternalConnectionTds connHandler, Boolean ignoreSniOpenTimeout, Int64 timerExpire, SqlConnectionString connectionOptions, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean ignoreSniOpenTimeout, TimeoutTimer timeout, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnection owningObject, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.WaitForPendingOpen()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at SentrySMP.Api.Services.KeyService.GetAllKeysAsync() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Api/Services/KeyService.cs:line 20
+   at SentrySMP.App.Controllers.KeysController.GetKeys() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Controllers/KeysController.cs:line 29
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+2025-10-12 14:44:03.759 +02:00 [ERR] Error loading keys
+Refit.ApiException: Response status code does not indicate success: 500 (Internal Server Error).
+   at Refit.RequestBuilderImplementation.<>c__DisplayClass15_0`2.<<BuildCancellableTaskFuncForMethod>b__0>d.MoveNext() in c:\temp\releaser\refit\Refit\RequestBuilderImplementation.cs:line 384
+--- End of stack trace from previous location ---
+   at Refit.Implementation.Generated.SentrySMPSharedInterfacesISentryApi.global::SentrySMP.Shared.Interfaces.ISentryApi.GetKeysAsync() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Shared/obj/Debug/net9.0/InterfaceStubGeneratorV2/Refit.Generator.InterfaceStubGeneratorV2/ISentryApi.g.cs:line 207
+   at SentrySMP.App.Components.Pages.Keys.LoadKeys() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Components/Pages/Keys.razor:line 163
+2025-10-12 14:44:03.760 +02:00 [ERR] Error loading keys
+Refit.ApiException: Response status code does not indicate success: 500 (Internal Server Error).
+   at Refit.RequestBuilderImplementation.<>c__DisplayClass15_0`2.<<BuildCancellableTaskFuncForMethod>b__0>d.MoveNext() in c:\temp\releaser\refit\Refit\RequestBuilderImplementation.cs:line 384
+--- End of stack trace from previous location ---
+   at Refit.Implementation.Generated.SentrySMPSharedInterfacesISentryApi.global::SentrySMP.Shared.Interfaces.ISentryApi.GetKeysAsync() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Shared/obj/Debug/net9.0/InterfaceStubGeneratorV2/Refit.Generator.InterfaceStubGeneratorV2/ISentryApi.g.cs:line 207
+   at SentrySMP.App.Components.Pages.Keys.LoadKeys() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Components/Pages/Keys.razor:line 163
+2025-10-12 14:44:03.760 +02:00 [ERR] Error loading keys
+Refit.ApiException: Response status code does not indicate success: 500 (Internal Server Error).
+   at Refit.RequestBuilderImplementation.<>c__DisplayClass15_0`2.<<BuildCancellableTaskFuncForMethod>b__0>d.MoveNext() in c:\temp\releaser\refit\Refit\RequestBuilderImplementation.cs:line 384
+--- End of stack trace from previous location ---
+   at Refit.Implementation.Generated.SentrySMPSharedInterfacesISentryApi.global::SentrySMP.Shared.Interfaces.ISentryApi.GetKeysAsync() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Shared/obj/Debug/net9.0/InterfaceStubGeneratorV2/Refit.Generator.InterfaceStubGeneratorV2/ISentryApi.g.cs:line 207
+   at SentrySMP.App.Components.Pages.Keys.LoadKeys() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Components/Pages/Keys.razor:line 163
+2025-10-12 14:44:18.490 +02:00 [INF] Application is shutting down...
+2025-10-12 14:50:11.126 +02:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2025-10-12 14:50:11.251 +02:00 [INF] Now listening on: https://localhost:7271
+2025-10-12 14:50:11.261 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-12 14:50:11.265 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-12 14:50:11.268 +02:00 [INF] Hosting environment: Development
+2025-10-12 14:50:11.269 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-12 14:50:21.626 +02:00 [INF] [BasicAuth] Handling request for /
+2025-10-12 14:50:21.628 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:50:21.630 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:50:21.846 +02:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-12 14:50:21.852 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:50:21.855 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:50:22.961 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-12 14:50:22.963 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:50:22.963 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:50:23.105 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-12 14:50:23.108 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 14:50:23.111 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 14:50:23.226 +02:00 [ERR] An unhandled exception has occurred while executing the request.
+MySqlConnector.MySqlException (0x80004005): Unable to connect to any of the specified MySQL hosts.
+   at MySqlConnector.Core.ServerSession.OpenTcpSocketAsync(ConnectionSettings cs, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1283
+   at MySqlConnector.Core.ServerSession.ConnectAsync(ConnectionSettings cs, MySqlConnection connection, Int64 startingTimestamp, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 427
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 697
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 702
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1099
+   at MySqlConnector.MySqlConnection.OpenAsync(Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 567
+   at MySqlConnector.MySqlConnection.Open() in /_/src/MySqlConnector/MySqlConnection.cs:line 522
+   at Microsoft.EntityFrameworkCore.ServerVersion.AutoDetect(String connectionString)
+   at Program.<>c__DisplayClass0_0.<<Main>$>b__1(DbContextOptionsBuilder options) in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Program.cs:line 36
+   at Microsoft.Extensions.DependencyInjection.EntityFrameworkServiceCollectionExtensions.<>c__DisplayClass1_0`2.<AddDbContext>b__0(IServiceProvider _, DbContextOptionsBuilder b)
+   at Microsoft.EntityFrameworkCore.Infrastructure.Internal.DbContextOptionsConfiguration`1.Configure(IServiceProvider serviceProvider, DbContextOptionsBuilder optionsBuilder)
+   at Microsoft.Extensions.DependencyInjection.EntityFrameworkServiceCollectionExtensions.CreateDbContextOptions[TContext](IServiceProvider applicationServiceProvider)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitFactory(FactoryCallSite factoryCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitConstructor(ConstructorCallSite constructorCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitConstructor(ConstructorCallSite constructorCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.Resolve(ServiceCallSite callSite, ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.DynamicServiceProviderEngine.<>c__DisplayClass2_0.<RealizeService>b__0(ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at lambda_method97(Closure, IServiceProvider, Object[])
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerFactoryProvider.<>c__DisplayClass6_0.<CreateControllerFactory>g__CreateController|0(ControllerContext controllerContext)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-10-12 14:50:23.291 +02:00 [ERR] Error loading keys
+Refit.ApiException: Response status code does not indicate success: 500 (Internal Server Error).
+   at Refit.RequestBuilderImplementation.<>c__DisplayClass15_0`2.<<BuildCancellableTaskFuncForMethod>b__0>d.MoveNext() in c:\temp\releaser\refit\Refit\RequestBuilderImplementation.cs:line 384
+--- End of stack trace from previous location ---
+   at Refit.Implementation.Generated.SentrySMPSharedInterfacesISentryApi.global::SentrySMP.Shared.Interfaces.ISentryApi.GetKeysAsync() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Shared/obj/Debug/net9.0/InterfaceStubGeneratorV2/Refit.Generator.InterfaceStubGeneratorV2/ISentryApi.g.cs:line 207
+   at SentrySMP.App.Components.Pages.Keys.LoadKeys() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Components/Pages/Keys.razor:line 163
+2025-10-12 14:50:31.785 +02:00 [INF] Application is shutting down...
+2025-10-12 15:27:25.178 +02:00 [ERR] An error occurred using the connection to database '' on server 'db29534.databaseasp.net'.
+2025-10-12 15:27:25.277 +02:00 [INF] A transient exception occurred during execution. The operation will be retried after 0ms.
+MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+ ---> MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+   at MySqlConnector.Core.ServerSession.OpenTcpSocketAsync(ConnectionSettings cs, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1266
+   at MySqlConnector.Core.ServerSession.ConnectAsync(ConnectionSettings cs, MySqlConnection connection, Int64 startingTimestamp, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 427
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 697
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 702
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1099
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1114
+   at MySqlConnector.MySqlConnection.OpenAsync(Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 567
+   at MySqlConnector.MySqlConnection.Open() in /_/src/MySqlConnector/MySqlConnection.cs:line 522
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenDbConnection(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternal(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlRelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlDatabaseCreator.<>c__DisplayClass18_0.<Exists>b__0(DateTime giveUp)
+   at Microsoft.EntityFrameworkCore.ExecutionStrategyExtensions.<>c__DisplayClass12_0`2.<Execute>b__0(DbContext _, TState s)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass28_0`2.<Execute>b__0(DbContext context, TState state)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementation[TState,TResult](Func`3 operation, Func`3 verifySucceeded, TState state)
+MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+ ---> MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+   at MySqlConnector.Core.ServerSession.OpenTcpSocketAsync(ConnectionSettings cs, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1266
+   at MySqlConnector.Core.ServerSession.ConnectAsync(ConnectionSettings cs, MySqlConnection connection, Int64 startingTimestamp, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 427
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 697
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 702
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1099
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1114
+   at MySqlConnector.MySqlConnection.OpenAsync(Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 567
+   at MySqlConnector.MySqlConnection.Open() in /_/src/MySqlConnector/MySqlConnection.cs:line 522
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenDbConnection(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternal(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlRelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlDatabaseCreator.<>c__DisplayClass18_0.<Exists>b__0(DateTime giveUp)
+   at Microsoft.EntityFrameworkCore.ExecutionStrategyExtensions.<>c__DisplayClass12_0`2.<Execute>b__0(DbContext _, TState s)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass28_0`2.<Execute>b__0(DbContext context, TState state)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementation[TState,TResult](Func`3 operation, Func`3 verifySucceeded, TState state)
+2025-10-12 15:27:40.289 +02:00 [ERR] An error occurred using the connection to database '' on server 'db29534.databaseasp.net'.
+2025-10-12 15:27:40.293 +02:00 [INF] A transient exception occurred during execution. The operation will be retried after 1037ms.
+MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+ ---> MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+   at MySqlConnector.Core.ServerSession.OpenTcpSocketAsync(ConnectionSettings cs, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1266
+   at MySqlConnector.Core.ServerSession.ConnectAsync(ConnectionSettings cs, MySqlConnection connection, Int64 startingTimestamp, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 427
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 697
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 702
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1099
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1114
+   at MySqlConnector.MySqlConnection.OpenAsync(Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 567
+   at MySqlConnector.MySqlConnection.Open() in /_/src/MySqlConnector/MySqlConnection.cs:line 522
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenDbConnection(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternal(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlRelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlDatabaseCreator.<>c__DisplayClass18_0.<Exists>b__0(DateTime giveUp)
+   at Microsoft.EntityFrameworkCore.ExecutionStrategyExtensions.<>c__DisplayClass12_0`2.<Execute>b__0(DbContext _, TState s)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass28_0`2.<Execute>b__0(DbContext context, TState state)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementation[TState,TResult](Func`3 operation, Func`3 verifySucceeded, TState state)
+MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+ ---> MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+   at MySqlConnector.Core.ServerSession.OpenTcpSocketAsync(ConnectionSettings cs, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1266
+   at MySqlConnector.Core.ServerSession.ConnectAsync(ConnectionSettings cs, MySqlConnection connection, Int64 startingTimestamp, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 427
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 697
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 702
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1099
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1114
+   at MySqlConnector.MySqlConnection.OpenAsync(Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 567
+   at MySqlConnector.MySqlConnection.Open() in /_/src/MySqlConnector/MySqlConnection.cs:line 522
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenDbConnection(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternal(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlRelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlDatabaseCreator.<>c__DisplayClass18_0.<Exists>b__0(DateTime giveUp)
+   at Microsoft.EntityFrameworkCore.ExecutionStrategyExtensions.<>c__DisplayClass12_0`2.<Execute>b__0(DbContext _, TState s)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass28_0`2.<Execute>b__0(DbContext context, TState state)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementation[TState,TResult](Func`3 operation, Func`3 verifySucceeded, TState state)
+2025-10-12 15:27:56.352 +02:00 [ERR] An error occurred using the connection to database '' on server 'db29534.databaseasp.net'.
+2025-10-12 15:27:56.354 +02:00 [INF] A transient exception occurred during execution. The operation will be retried after 3298ms.
+MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+ ---> MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+   at MySqlConnector.Core.ServerSession.OpenTcpSocketAsync(ConnectionSettings cs, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1266
+   at MySqlConnector.Core.ServerSession.ConnectAsync(ConnectionSettings cs, MySqlConnection connection, Int64 startingTimestamp, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 427
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 697
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 702
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1099
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1114
+   at MySqlConnector.MySqlConnection.OpenAsync(Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 567
+   at MySqlConnector.MySqlConnection.Open() in /_/src/MySqlConnector/MySqlConnection.cs:line 522
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenDbConnection(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternal(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlRelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlDatabaseCreator.<>c__DisplayClass18_0.<Exists>b__0(DateTime giveUp)
+   at Microsoft.EntityFrameworkCore.ExecutionStrategyExtensions.<>c__DisplayClass12_0`2.<Execute>b__0(DbContext _, TState s)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass28_0`2.<Execute>b__0(DbContext context, TState state)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementation[TState,TResult](Func`3 operation, Func`3 verifySucceeded, TState state)
+MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+ ---> MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+   at MySqlConnector.Core.ServerSession.OpenTcpSocketAsync(ConnectionSettings cs, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1266
+   at MySqlConnector.Core.ServerSession.ConnectAsync(ConnectionSettings cs, MySqlConnection connection, Int64 startingTimestamp, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 427
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 697
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 702
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1099
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1114
+   at MySqlConnector.MySqlConnection.OpenAsync(Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 567
+   at MySqlConnector.MySqlConnection.Open() in /_/src/MySqlConnector/MySqlConnection.cs:line 522
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenDbConnection(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternal(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlRelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlDatabaseCreator.<>c__DisplayClass18_0.<Exists>b__0(DateTime giveUp)
+   at Microsoft.EntityFrameworkCore.ExecutionStrategyExtensions.<>c__DisplayClass12_0`2.<Execute>b__0(DbContext _, TState s)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass28_0`2.<Execute>b__0(DbContext context, TState state)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementation[TState,TResult](Func`3 operation, Func`3 verifySucceeded, TState state)
+2025-10-12 15:28:14.657 +02:00 [ERR] An error occurred using the connection to database '' on server 'db29534.databaseasp.net'.
+2025-10-12 15:28:14.659 +02:00 [INF] A transient exception occurred during execution. The operation will be retried after 7552ms.
+MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+ ---> MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+   at MySqlConnector.Core.ServerSession.OpenTcpSocketAsync(ConnectionSettings cs, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1266
+   at MySqlConnector.Core.ServerSession.ConnectAsync(ConnectionSettings cs, MySqlConnection connection, Int64 startingTimestamp, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 427
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 697
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 702
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1099
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1114
+   at MySqlConnector.MySqlConnection.OpenAsync(Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 567
+   at MySqlConnector.MySqlConnection.Open() in /_/src/MySqlConnector/MySqlConnection.cs:line 522
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenDbConnection(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternal(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlRelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlDatabaseCreator.<>c__DisplayClass18_0.<Exists>b__0(DateTime giveUp)
+   at Microsoft.EntityFrameworkCore.ExecutionStrategyExtensions.<>c__DisplayClass12_0`2.<Execute>b__0(DbContext _, TState s)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass28_0`2.<Execute>b__0(DbContext context, TState state)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementation[TState,TResult](Func`3 operation, Func`3 verifySucceeded, TState state)
+MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+ ---> MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+   at MySqlConnector.Core.ServerSession.OpenTcpSocketAsync(ConnectionSettings cs, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1266
+   at MySqlConnector.Core.ServerSession.ConnectAsync(ConnectionSettings cs, MySqlConnection connection, Int64 startingTimestamp, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 427
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 697
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 702
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1099
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1114
+   at MySqlConnector.MySqlConnection.OpenAsync(Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 567
+   at MySqlConnector.MySqlConnection.Open() in /_/src/MySqlConnector/MySqlConnection.cs:line 522
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenDbConnection(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternal(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlRelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlDatabaseCreator.<>c__DisplayClass18_0.<Exists>b__0(DateTime giveUp)
+   at Microsoft.EntityFrameworkCore.ExecutionStrategyExtensions.<>c__DisplayClass12_0`2.<Execute>b__0(DbContext _, TState s)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass28_0`2.<Execute>b__0(DbContext context, TState state)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementation[TState,TResult](Func`3 operation, Func`3 verifySucceeded, TState state)
+2025-10-12 15:28:37.215 +02:00 [ERR] An error occurred using the connection to database '' on server 'db29534.databaseasp.net'.
+2025-10-12 15:28:37.216 +02:00 [INF] A transient exception occurred during execution. The operation will be retried after 16326ms.
+MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+ ---> MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+   at MySqlConnector.Core.ServerSession.OpenTcpSocketAsync(ConnectionSettings cs, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1266
+   at MySqlConnector.Core.ServerSession.ConnectAsync(ConnectionSettings cs, MySqlConnection connection, Int64 startingTimestamp, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 427
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 697
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 702
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1099
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1114
+   at MySqlConnector.MySqlConnection.OpenAsync(Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 567
+   at MySqlConnector.MySqlConnection.Open() in /_/src/MySqlConnector/MySqlConnection.cs:line 522
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenDbConnection(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternal(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlRelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlDatabaseCreator.<>c__DisplayClass18_0.<Exists>b__0(DateTime giveUp)
+   at Microsoft.EntityFrameworkCore.ExecutionStrategyExtensions.<>c__DisplayClass12_0`2.<Execute>b__0(DbContext _, TState s)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass28_0`2.<Execute>b__0(DbContext context, TState state)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementation[TState,TResult](Func`3 operation, Func`3 verifySucceeded, TState state)
+MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+ ---> MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+   at MySqlConnector.Core.ServerSession.OpenTcpSocketAsync(ConnectionSettings cs, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1266
+   at MySqlConnector.Core.ServerSession.ConnectAsync(ConnectionSettings cs, MySqlConnection connection, Int64 startingTimestamp, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 427
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 697
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 702
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1099
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1114
+   at MySqlConnector.MySqlConnection.OpenAsync(Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 567
+   at MySqlConnector.MySqlConnection.Open() in /_/src/MySqlConnector/MySqlConnection.cs:line 522
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenDbConnection(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternal(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlRelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlDatabaseCreator.<>c__DisplayClass18_0.<Exists>b__0(DateTime giveUp)
+   at Microsoft.EntityFrameworkCore.ExecutionStrategyExtensions.<>c__DisplayClass12_0`2.<Execute>b__0(DbContext _, TState s)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass28_0`2.<Execute>b__0(DbContext context, TState state)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementation[TState,TResult](Func`3 operation, Func`3 verifySucceeded, TState state)
+2025-10-12 15:29:08.556 +02:00 [ERR] An error occurred using the connection to database '' on server 'db29534.databaseasp.net'.
+2025-10-12 15:29:08.558 +02:00 [INF] A transient exception occurred during execution. The operation will be retried after 30000ms.
+MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+ ---> MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+   at MySqlConnector.Core.ServerSession.OpenTcpSocketAsync(ConnectionSettings cs, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1266
+   at MySqlConnector.Core.ServerSession.ConnectAsync(ConnectionSettings cs, MySqlConnection connection, Int64 startingTimestamp, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 427
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 697
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 702
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1099
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1114
+   at MySqlConnector.MySqlConnection.OpenAsync(Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 567
+   at MySqlConnector.MySqlConnection.Open() in /_/src/MySqlConnector/MySqlConnection.cs:line 522
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenDbConnection(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternal(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlRelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlDatabaseCreator.<>c__DisplayClass18_0.<Exists>b__0(DateTime giveUp)
+   at Microsoft.EntityFrameworkCore.ExecutionStrategyExtensions.<>c__DisplayClass12_0`2.<Execute>b__0(DbContext _, TState s)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass28_0`2.<Execute>b__0(DbContext context, TState state)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementation[TState,TResult](Func`3 operation, Func`3 verifySucceeded, TState state)
+MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+ ---> MySqlConnector.MySqlException (0x80004005): Connect Timeout expired.
+   at MySqlConnector.Core.ServerSession.OpenTcpSocketAsync(ConnectionSettings cs, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1266
+   at MySqlConnector.Core.ServerSession.ConnectAsync(ConnectionSettings cs, MySqlConnection connection, Int64 startingTimestamp, ILoadBalancer loadBalancer, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 427
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 697
+   at MySqlConnector.Core.ServerSession.ConnectAndRedirectAsync(ILogger connectionLogger, ILogger poolLogger, IConnectionPoolMetadata pool, ConnectionSettings cs, ILoadBalancer loadBalancer, MySqlConnection connection, Action`4 logMessage, Int64 startingTimestamp, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 702
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1099
+   at MySqlConnector.MySqlConnection.CreateSessionAsync(ConnectionPool pool, Int64 startingTimestamp, Activity activity, Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 1114
+   at MySqlConnector.MySqlConnection.OpenAsync(Nullable`1 ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlConnection.cs:line 567
+   at MySqlConnector.MySqlConnection.Open() in /_/src/MySqlConnector/MySqlConnection.cs:line 522
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenDbConnection(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternal(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlRelationalConnection.Open(Boolean errorsExpected)
+   at Pomelo.EntityFrameworkCore.MySql.Storage.Internal.MySqlDatabaseCreator.<>c__DisplayClass18_0.<Exists>b__0(DateTime giveUp)
+   at Microsoft.EntityFrameworkCore.ExecutionStrategyExtensions.<>c__DisplayClass12_0`2.<Execute>b__0(DbContext _, TState s)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass28_0`2.<Execute>b__0(DbContext context, TState state)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementation[TState,TResult](Func`3 operation, Func`3 verifySucceeded, TState state)
+2025-10-12 15:33:08.252 +02:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2025-10-12 15:33:08.355 +02:00 [INF] Executed DbCommand (18ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT GET_LOCK('__db29534_EFMigrationsLock', 259200)
+2025-10-12 15:33:08.474 +02:00 [INF] Executed DbCommand (21ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE IF NOT EXISTS `__EFMigrationsHistory` (
+    `MigrationId` varchar(150) CHARACTER SET utf8mb4 NOT NULL,
+    `ProductVersion` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
+    CONSTRAINT `PK___EFMigrationsHistory` PRIMARY KEY (`MigrationId`)
+) CHARACTER SET=utf8mb4;
+2025-10-12 15:33:08.581 +02:00 [INF] Executed DbCommand (16ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='db29534' AND TABLE_NAME='__EFMigrationsHistory';
+2025-10-12 15:33:08.596 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `MigrationId`, `ProductVersion`
+FROM `__EFMigrationsHistory`
+ORDER BY `MigrationId`;
+2025-10-12 15:33:08.610 +02:00 [INF] Applying migration '20251012133252_InitialMySqlMigration'.
+2025-10-12 15:33:08.655 +02:00 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER DATABASE CHARACTER SET utf8mb4;
+2025-10-12 15:33:08.677 +02:00 [INF] Executed DbCommand (22ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE `Servers` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `Name` varchar(100) CHARACTER SET utf8mb4 NOT NULL,
+    `RCONIP` varchar(50) CHARACTER SET utf8mb4 NOT NULL,
+    `RCONPort` int NOT NULL,
+    `RCONPassword` varchar(100) CHARACTER SET utf8mb4 NOT NULL,
+    CONSTRAINT `PK_Servers` PRIMARY KEY (`Id`)
+) CHARACTER SET=utf8mb4;
+2025-10-12 15:33:08.698 +02:00 [INF] Executed DbCommand (18ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE `Keys` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `Name` varchar(100) CHARACTER SET utf8mb4 NOT NULL,
+    `Description` varchar(500) CHARACTER SET utf8mb4 NOT NULL,
+    `Price` float NOT NULL,
+    `ServerId` int NOT NULL,
+    `Sale` float NOT NULL DEFAULT 0,
+    `Image` varchar(255) CHARACTER SET utf8mb4 NULL,
+    CONSTRAINT `PK_Keys` PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_Keys_Servers_ServerId` FOREIGN KEY (`ServerId`) REFERENCES `Servers` (`Id`) ON DELETE CASCADE
+) CHARACTER SET=utf8mb4;
+2025-10-12 15:33:08.720 +02:00 [INF] Executed DbCommand (20ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX `IX_Keys_ServerId` ON `Keys` (`ServerId`);
+2025-10-12 15:33:08.732 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
+VALUES ('20251012133252_InitialMySqlMigration', '9.0.5');
+2025-10-12 15:33:08.757 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT RELEASE_LOCK('__db29534_EFMigrationsLock')
+2025-10-12 15:33:30.472 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-12 15:33:30.554 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-12 15:33:30.556 +02:00 [INF] Hosting environment: Development
+2025-10-12 15:33:30.558 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-12 15:33:38.617 +02:00 [WRN] Failed to determine the https port for redirect.
+2025-10-12 15:33:38.643 +02:00 [INF] [BasicAuth] Handling request for /
+2025-10-12 15:33:38.644 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:33:38.646 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:33:38.908 +02:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-12 15:33:38.910 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:33:38.910 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:33:40.302 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-12 15:33:40.304 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:33:40.305 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:33:40.535 +02:00 [ERR] Error loading keys
+Refit.ApiException: Response status code does not indicate success: 401 (Unauthorized).
+   at Refit.RequestBuilderImplementation.<>c__DisplayClass15_0`2.<<BuildCancellableTaskFuncForMethod>b__0>d.MoveNext() in c:\temp\releaser\refit\Refit\RequestBuilderImplementation.cs:line 384
+--- End of stack trace from previous location ---
+   at Refit.Implementation.Generated.SentrySMPSharedInterfacesISentryApi.global::SentrySMP.Shared.Interfaces.ISentryApi.GetKeysAsync() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Shared/obj/Debug/net9.0/InterfaceStubGeneratorV2/Refit.Generator.InterfaceStubGeneratorV2/ISentryApi.g.cs:line 207
+   at SentrySMP.App.Components.Pages.Keys.LoadKeys() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Components/Pages/Keys.razor:line 163
+2025-10-12 15:39:28.728 +02:00 [INF] [BasicAuth] Handling request for /weather
+2025-10-12 15:39:28.730 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:39:28.730 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:39:29.814 +02:00 [INF] [BasicAuth] Handling request for /counter
+2025-10-12 15:39:29.815 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:39:29.816 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:39:30.015 +02:00 [INF] [BasicAuth] Handling request for /_blazor/initializers
+2025-10-12 15:39:30.017 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:39:30.018 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:39:30.063 +02:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-12 15:39:30.066 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:39:30.067 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:39:30.115 +02:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-12 15:39:30.116 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:39:30.117 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:39:30.532 +02:00 [INF] [BasicAuth] Handling request for /
+2025-10-12 15:39:30.535 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:39:30.536 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:39:31.937 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-12 15:39:31.938 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:39:31.939 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:39:32.071 +02:00 [ERR] Error loading keys
+Refit.ApiException: Response status code does not indicate success: 401 (Unauthorized).
+   at Refit.RequestBuilderImplementation.<>c__DisplayClass15_0`2.<<BuildCancellableTaskFuncForMethod>b__0>d.MoveNext() in c:\temp\releaser\refit\Refit\RequestBuilderImplementation.cs:line 384
+--- End of stack trace from previous location ---
+   at Refit.Implementation.Generated.SentrySMPSharedInterfacesISentryApi.global::SentrySMP.Shared.Interfaces.ISentryApi.GetKeysAsync() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Shared/obj/Debug/net9.0/InterfaceStubGeneratorV2/Refit.Generator.InterfaceStubGeneratorV2/ISentryApi.g.cs:line 207
+   at SentrySMP.App.Components.Pages.Keys.LoadKeys() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Components/Pages/Keys.razor:line 163
+2025-10-12 15:39:32.643 +02:00 [INF] [BasicAuth] Handling request for /_blazor/disconnect
+2025-10-12 15:39:32.644 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:39:32.645 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:41:30.272 +02:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2025-10-12 15:41:30.430 +02:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address http://127.0.0.1:5230: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (98): Address already in use
+   at System.Net.Sockets.Socket.UpdateStatusAfterSocketErrorAndThrowException(SocketError error, Boolean disconnectOnFailure, String callerName)
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-10-12 15:44:33.936 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-12 15:44:34.183 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-12 15:44:34.183 +02:00 [INF] Hosting environment: Development
+2025-10-12 15:44:34.183 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-12 15:44:41.983 +02:00 [INF] Application is shutting down...
+2025-10-12 15:45:11.223 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-12 15:45:11.445 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-12 15:45:11.450 +02:00 [INF] Hosting environment: Development
+2025-10-12 15:45:11.452 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-12 15:45:15.550 +02:00 [WRN] Failed to determine the https port for redirect.
+2025-10-12 15:45:15.589 +02:00 [INF] [BasicAuth] Handling request for /
+2025-10-12 15:45:15.591 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:45:15.596 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:45:16.034 +02:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-12 15:45:16.038 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:45:16.040 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:45:17.630 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-12 15:45:17.633 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:45:17.637 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:45:17.841 +02:00 [ERR] Error loading keys
+System.Net.Http.HttpRequestException: Connection refused (localhost:7271)
+ ---> System.Net.Sockets.SocketException (111): Connection refused
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.InjectNewHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at SentrySMP.App.Handlers.HttpLoggingHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Handlers/HttpLoggingHandler.cs:line 49
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at Refit.RequestBuilderImplementation.<>c__DisplayClass15_0`2.<<BuildCancellableTaskFuncForMethod>b__0>d.MoveNext() in c:\temp\releaser\refit\Refit\RequestBuilderImplementation.cs:line 331
+--- End of stack trace from previous location ---
+   at Refit.Implementation.Generated.SentrySMPSharedInterfacesISentryApi.global::SentrySMP.Shared.Interfaces.ISentryApi.GetKeysAsync() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Shared/obj/Debug/net9.0/InterfaceStubGeneratorV2/Refit.Generator.InterfaceStubGeneratorV2/ISentryApi.g.cs:line 207
+   at SentrySMP.App.Components.Pages.Keys.LoadKeys() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Components/Pages/Keys.razor:line 163
+2025-10-12 15:45:52.423 +02:00 [INF] Application is shutting down...
+2025-10-12 15:46:34.016 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-12 15:46:34.191 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-12 15:46:34.194 +02:00 [INF] Hosting environment: Development
+2025-10-12 15:46:34.194 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-12 15:46:40.925 +02:00 [WRN] Failed to determine the https port for redirect.
+2025-10-12 15:46:40.980 +02:00 [INF] [BasicAuth] Handling request for /
+2025-10-12 15:46:40.981 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:46:40.985 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:46:41.764 +02:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-12 15:46:41.766 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:46:41.766 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:46:43.366 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-12 15:46:43.369 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:46:43.370 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:46:43.518 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-12 15:46:43.520 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:46:43.521 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:46:44.927 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-12 15:46:44.930 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:46:44.933 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:46:44.992 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-12 15:46:44.996 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:46:44.997 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:46:45.576 +02:00 [INF] Executed DbCommand (31ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Keys` AS `k`
+INNER JOIN `Servers` AS `s` ON `k`.`ServerId` = `s`.`Id`
+2025-10-12 15:46:45.576 +02:00 [INF] Executed DbCommand (33ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Keys` AS `k`
+INNER JOIN `Servers` AS `s` ON `k`.`ServerId` = `s`.`Id`
+2025-10-12 15:46:52.338 +02:00 [INF] Application is shutting down...
+2025-10-12 15:52:27.830 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-12 15:52:27.916 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-12 15:52:27.916 +02:00 [INF] Hosting environment: Development
+2025-10-12 15:52:27.919 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-12 15:52:36.934 +02:00 [WRN] Failed to determine the https port for redirect.
+2025-10-12 15:52:36.967 +02:00 [INF] [BasicAuth] Handling request for /
+2025-10-12 15:52:36.970 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:52:36.974 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:52:37.212 +02:00 [INF] Application is shutting down...
+2025-10-12 15:53:19.384 +02:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2025-10-12 15:53:19.503 +02:00 [INF] Now listening on: https://localhost:7271
+2025-10-12 15:53:19.516 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-12 15:53:19.523 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-12 15:53:19.525 +02:00 [INF] Hosting environment: Development
+2025-10-12 15:53:19.527 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-12 15:53:20.779 +02:00 [INF] [BasicAuth] Handling request for /
+2025-10-12 15:53:20.781 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:53:20.785 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:53:21.543 +02:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-12 15:53:21.543 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:53:21.543 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:53:23.063 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-12 15:53:23.067 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:53:23.070 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:53:23.399 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-12 15:53:23.401 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 15:53:23.401 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 15:53:26.532 +02:00 [INF] Executed DbCommand (57ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Keys` AS `k`
+INNER JOIN `Servers` AS `s` ON `k`.`ServerId` = `s`.`Id`
+2025-10-12 15:53:38.635 +02:00 [INF] Application is shutting down...
+2025-10-12 15:57:33.028 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-12 15:57:33.177 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-12 15:57:33.178 +02:00 [INF] Hosting environment: Development
+2025-10-12 15:57:33.178 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-12 15:57:35.404 +02:00 [INF] Application is shutting down...
+2025-10-12 16:00:45.247 +02:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2025-10-12 16:00:45.400 +02:00 [INF] Now listening on: https://localhost:7271
+2025-10-12 16:00:45.409 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-12 16:00:45.418 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-12 16:00:45.420 +02:00 [INF] Hosting environment: Development
+2025-10-12 16:00:45.421 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-12 16:00:49.109 +02:00 [INF] [BasicAuth] Handling request for /
+2025-10-12 16:00:49.115 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 16:00:49.120 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 16:00:49.638 +02:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-12 16:00:49.639 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 16:00:49.640 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 16:00:51.213 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-12 16:00:51.226 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 16:00:51.227 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 16:00:51.449 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-12 16:00:51.450 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 16:00:51.450 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 16:00:53.487 +02:00 [INF] Executed DbCommand (28ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Keys` AS `k`
+INNER JOIN `Servers` AS `s` ON `k`.`ServerId` = `s`.`Id`
+2025-10-12 16:01:01.289 +02:00 [INF] Application is shutting down...
+2025-10-12 16:14:58.997 +02:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2025-10-12 16:14:59.092 +02:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address https://127.0.0.1:7271: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (98): Address already in use
+   at System.Net.Sockets.Socket.UpdateStatusAfterSocketErrorAndThrowException(SocketError error, Boolean disconnectOnFailure, String callerName)
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-10-12 16:16:59.618 +02:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2025-10-12 16:16:59.754 +02:00 [INF] Now listening on: https://localhost:7271
+2025-10-12 16:16:59.766 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-12 16:16:59.782 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-12 16:16:59.785 +02:00 [INF] Hosting environment: Development
+2025-10-12 16:16:59.786 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-12 16:17:04.275 +02:00 [INF] [BasicAuth] Handling request for /
+2025-10-12 16:17:04.279 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 16:17:04.283 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 16:17:06.825 +02:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-12 16:17:06.825 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 16:17:06.828 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 16:17:13.828 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-12 16:17:13.832 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 16:17:13.832 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 16:17:14.040 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-12 16:17:14.042 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 16:17:14.042 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 16:17:15.663 +02:00 [INF] Executed DbCommand (31ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Keys` AS `k`
+INNER JOIN `Servers` AS `s` ON `k`.`ServerId` = `s`.`Id`
+2025-10-12 16:17:15.813 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-12 16:17:15.813 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 16:17:15.814 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 16:17:15.855 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-12 16:17:15.855 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-12 16:17:15.855 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-12 16:17:15.960 +02:00 [INF] Executed DbCommand (14ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Keys` AS `k`
+INNER JOIN `Servers` AS `s` ON `k`.`ServerId` = `s`.`Id`
+2025-10-12 16:17:59.034 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-12 16:17:59.036 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-12 16:17:59.298 +02:00 [INF] Executed DbCommand (15ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+ORDER BY `s`.`Id`
+2025-10-12 16:18:01.709 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-12 16:18:01.712 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-12 16:18:01.728 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-12 16:18:01.728 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-12 16:18:01.802 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Keys` AS `k`
+INNER JOIN `Servers` AS `s` ON `k`.`ServerId` = `s`.`Id`
+2025-10-12 16:18:01.848 +02:00 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+ORDER BY `s`.`Id`

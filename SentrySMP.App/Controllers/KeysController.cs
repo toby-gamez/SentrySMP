@@ -7,7 +7,6 @@ namespace SentrySMP.App.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
 public class KeysController : ControllerBase
 {
     private readonly IKeyService _keyService;
@@ -23,6 +22,7 @@ public class KeysController : ControllerBase
     /// Get all keys
     /// </summary>
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<KeyResponse>>> GetKeys()
     {
         try
@@ -41,6 +41,7 @@ public class KeysController : ControllerBase
     /// Get keys by server ID
     /// </summary>
     [HttpGet("server/{serverId}")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<KeyResponse>>> GetKeysByServer(int serverId)
     {
         try
@@ -59,6 +60,7 @@ public class KeysController : ControllerBase
     /// Get key by ID
     /// </summary>
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<ActionResult<KeyResponse>> GetKey(int id)
     {
         try
@@ -80,6 +82,7 @@ public class KeysController : ControllerBase
     /// Create new key
     /// </summary>
     [HttpPost]
+    [Authorize]
     public async Task<ActionResult<KeyResponse>> CreateKey([FromBody] CreateKeyDto createKeyDto)
     {
         try
@@ -106,6 +109,7 @@ public class KeysController : ControllerBase
     /// Update key
     /// </summary>
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<ActionResult<KeyResponse>> UpdateKey(int id, [FromBody] UpdateKeyDto updateKeyDto)
     {
         try
@@ -135,6 +139,7 @@ public class KeysController : ControllerBase
     /// Delete key
     /// </summary>
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<ActionResult> DeleteKey(int id)
     {
         try
