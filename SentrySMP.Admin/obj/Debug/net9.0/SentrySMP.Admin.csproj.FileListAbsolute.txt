@@ -78,8 +78,10 @@
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/bin/Debug/net9.0/Microsoft.Win32.SystemEvents.dll
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/bin/Debug/net9.0/MimeKit.dll
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/bin/Debug/net9.0/Mono.TextTemplating.dll
+/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/bin/Debug/net9.0/MySqlConnector.dll
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/bin/Debug/net9.0/Newtonsoft.Json.dll
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/bin/Debug/net9.0/Newtonsoft.Json.Bson.dll
+/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/bin/Debug/net9.0/Pomelo.EntityFrameworkCore.MySql.dll
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/bin/Debug/net9.0/Refit.dll
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/bin/Debug/net9.0/Refit.HttpClientFactory.dll
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/bin/Debug/net9.0/Serilog.dll
@@ -205,6 +207,7 @@
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/obj/Debug/net9.0/SentrySMP.Admin.csproj.CoreCompileInputs.cache
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/obj/Debug/net9.0/SentrySMP.Admin.MvcApplicationPartsAssemblyInfo.cs
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/obj/Debug/net9.0/SentrySMP.Admin.MvcApplicationPartsAssemblyInfo.cache
+/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/obj/Debug/net9.0/SentrySMP.Admin.sourcelink.json
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/obj/Debug/net9.0/scopedcss/Components/Layout/MainLayout.razor.rz.scp.css
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/obj/Debug/net9.0/scopedcss/Components/Layout/NavMenu.razor.rz.scp.css
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/obj/Debug/net9.0/scopedcss/bundle/SentrySMP.Admin.styles.css
@@ -271,6 +274,3 @@
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/obj/Debug/net9.0/SentrySMP.Admin.pdb
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/obj/Debug/net9.0/SentrySMP.Admin.genruntimeconfig.cache
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/obj/Debug/net9.0/ref/SentrySMP.Admin.dll
-/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/obj/Debug/net9.0/SentrySMP.Admin.sourcelink.json
-/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/bin/Debug/net9.0/MySqlConnector.dll
-/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/bin/Debug/net9.0/Pomelo.EntityFrameworkCore.MySql.dll

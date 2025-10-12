@@ -10,9 +10,10 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1>Key Management</h1>
-                <button class="btn btn-success" @onclick="ShowCreateModal">
-                    <i class="bi bi-plus-circle"></i> Add New Key
-                </button>
+                                <a href="/add-key" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i>
+                    Create Key
+                </a>
             </div>
             
             @if (loading)
@@ -86,11 +87,11 @@
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" @onclick="() => ShowEditModal(key)">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
+                                            <a href="/edit-key/@key.Id" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
                                             <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteKey(key.Id, key.Name)">
-                                                <i class="bi bi-trash"></i>
+                                                <i class="bi bi-trash3"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -111,109 +112,14 @@
     </div>
 </div>
 
-<!-- Create/Edit Modal -->
-@if (showModal)
-{
-    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="bi bi-@(isEditMode ? "pencil" : "plus-circle")"></i>
-                        @(isEditMode ? "Edit Key" : "Create New Key")
-                    </h5>
-                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
-                </div>
-                <div class="modal-body">
-                    <EditForm Model="keyModel" OnValidSubmit="SaveKey">
-                        <DataAnnotationsValidator />
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Name *</label>
-                                    <InputText @bind-Value="keyModel.Name" class="form-control" placeholder="Enter key name" />
-                                    <ValidationMessage For="() => keyModel.Name" class="text-danger" />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Price *</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">$</span>
-                                        <InputNumber @bind-Value="keyModel.Price" class="form-control" placeholder="0.00" step="0.01" />
-                                    </div>
-                                    <ValidationMessage For="() => keyModel.Price" class="text-danger" />
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Server *</label>
-                                    <InputSelect @bind-Value="keyModel.ServerId" class="form-select">
-                                        <option value="">Select a server...</option>
-                                        @if (servers != null)
-                                        {
-                                            @foreach (var server in servers)
-                                            {
-                                                <option value="@server.Id">@server.Name</option>
-                                            }
-                                        }
-                                    </InputSelect>
-                                    <ValidationMessage For="() => keyModel.ServerId" class="text-danger" />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Image URL</label>
-                                    <InputText @bind-Value="keyModel.Image" class="form-control" placeholder="https://example.com/image.jpg" />
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Description</label>
-                            <InputTextArea @bind-Value="keyModel.Description" class="form-control" rows="3" placeholder="Enter key description..." />
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Sale Percentage (0-100%)</label>
-                            <div class="input-group">
-                                <InputNumber @bind-Value="keyModel.Sale" class="form-control" placeholder="0" min="0" max="100" />
-                                <span class="input-group-text">%</span>
-                            </div>
-                            <div class="form-text">Enter 0 for no sale, or percentage discount (e.g., 20 for 20% off)</div>
-                        </div>
-                        
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @onclick="CloseModal">Cancel</button>
-                            <button type="submit" class="btn btn-@(isEditMode ? "primary" : "success")" disabled="@saving">
-                                @if (saving)
-                                {
-                                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                                }
-                                <i class="bi bi-@(isEditMode ? "check-circle" : "plus-circle")"></i>
-                                @(isEditMode ? "Update Key" : "Create Key")
-                            </button>
-                        </div>
-                    </EditForm>
-                </div>
-            </div>
-        </div>
-    </div>
-}
+
 
 @code {
     private List<KeyResponse>? keys;
     private List<ServerResponse>? servers;
     private bool loading = true;
     private string? errorMessage;
-    private bool showModal = false;
-    private bool isEditMode = false;
-    private bool saving = false;
-    private KeyModel keyModel = new();
+
     private bool isInitialized = false;
 
     protected override async Task OnInitializedAsync()
@@ -264,85 +170,7 @@
         }
     }
 
-    private void ShowCreateModal()
-    {
-        keyModel = new KeyModel();
-        isEditMode = false;
-        showModal = true;
-    }
 
-    private void ShowEditModal(KeyResponse key)
-    {
-        keyModel = new KeyModel
-        {
-            Name = key.Name,
-            Description = key.Description,
-            Price = key.Price,
-            ServerId = key.ServerId,
-            Sale = key.Sale,
-            Image = key.Image
-        };
-        keyModel.Id = key.Id; // Store the ID for editing
-        isEditMode = true;
-        showModal = true;
-    }
-
-    private void CloseModal()
-    {
-        showModal = false;
-        keyModel = new KeyModel();
-    }
-
-    private async Task SaveKey()
-    {
-        try
-        {
-            saving = true;
-            
-            if (isEditMode)
-            {
-                var updateDto = new UpdateKeyDto
-                {
-                    Name = keyModel.Name,
-                    Description = keyModel.Description ?? "",
-                    Price = keyModel.Price,
-                    ServerId = keyModel.ServerId,
-                    Sale = keyModel.Sale,
-                    Image = keyModel.Image
-                };
-                
-                await Api.UpdateKeyAsync(keyModel.Id, updateDto);
-                await JSRuntime.InvokeVoidAsync("alert", "Key updated successfully!");
-            }
-            else
-            {
-                var createDto = new CreateKeyDto
-                {
-                    Name = keyModel.Name,
-                    Description = keyModel.Description ?? "",
-                    Price = keyModel.Price,
-                    ServerId = keyModel.ServerId,
-                    Sale = keyModel.Sale,
-                    Image = keyModel.Image
-                };
-                
-                await Api.CreateKeyAsync(createDto);
-                await JSRuntime.InvokeVoidAsync("alert", "Key created successfully!");
-            }
-            
-            CloseModal();
-            await LoadKeys();
-        }
-        catch (Exception ex)
-        {
-            await JSRuntime.InvokeVoidAsync("alert", $"Error: {ex.Message}");
-            Logger.LogError(ex, "Error saving key");
-        }
-        finally
-        {
-            saving = false;
-        }
-    }
 
     private async Task DeleteKey(int keyId, string keyName)
     {

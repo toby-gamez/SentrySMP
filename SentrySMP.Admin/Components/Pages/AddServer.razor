@@ -1,0 +1,232 @@
+@page "/add-server"
+@rendermode InteractiveServer
+@using SentrySMP.Shared.DTOs
+@using SentrySMP.Shared.Interfaces
+@using System.ComponentModel.DataAnnotations
+@inject ISentryApi Api
+@inject ILogger<AddServer> Logger
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1>
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Add New Server
+                    </h1>
+                    <p class="text-muted">Create a new server for your SentrySMP system</p>
+                </div>
+                <button class="btn btn-outline-secondary" @onclick="GoBack">
+                    <i class="bi bi-arrow-left"></i> Back to Servers
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <EditForm Model="serverModel" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        @errorMessage
+                    </div>
+                }
+                
+                @if (!string.IsNullOrEmpty(successMessage))
+                {
+                    <div class="alert alert-success" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        @successMessage
+                    </div>
+                }
+                
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="mb-4">
+                            <h4 class="text-primary mb-3">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Basic Information
+                            </h4>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Server Name *</label>
+                                <InputText @bind-Value="serverModel.Name" class="form-control form-control-lg" placeholder="Enter server name" />
+                                <ValidationMessage For="() => serverModel.Name" class="text-danger" />
+                                <div class="form-text">Choose a descriptive name for your server</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-6">
+                        <div class="mb-4">
+                            <h4 class="text-primary mb-3">
+                                <i class="bi bi-router me-2"></i>
+                                RCON Configuration
+                            </h4>
+                            
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        <label class="form-label">RCON IP Address *</label>
+                                        <InputText @bind-Value="serverModel.RCONIP" class="form-control" placeholder="127.0.0.1" />
+                                        <ValidationMessage For="() => serverModel.RCONIP" class="text-danger" />
+                                        <div class="form-text">IP address where RCON server is listening</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Port *</label>
+                                        <InputNumber @bind-Value="serverModel.RCONPort" class="form-control" placeholder="25575" min="1" max="65535" />
+                                        <ValidationMessage For="() => serverModel.RCONPort" class="text-danger" />
+                                        <div class="form-text">Default: 25575</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">RCON Password *</label>
+                                <div class="input-group">
+                                    <InputText @bind-Value="serverModel.RCONPassword" class="form-control" placeholder="Enter RCON password" type="@(showPassword ? "text" : "password")" />
+                                    <button type="button" class="btn btn-outline-secondary" @onclick="TogglePasswordVisibility">
+                                        <i class="bi bi-@(showPassword ? "eye-slash" : "eye")"></i>
+                                    </button>
+                                </div>
+                                <ValidationMessage For="() => serverModel.RCONPassword" class="text-danger" />
+                                <div class="form-text">Secure password for RCON authentication</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr class="my-4">
+                
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex gap-2 justify-content-end">
+                            <button type="button" class="btn btn-outline-secondary" @onclick="GoBack">
+                                <i class="bi bi-x-circle me-1"></i> Cancel
+                            </button>
+                            <button type="submit" class="btn btn-success btn-lg px-4" disabled="@isSaving">
+                                @if (isSaving)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                    <text>Creating Server...</text>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-plus-circle me-1"></i>
+                                    <text>Create Server</text>
+                                }
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    private ServerModel serverModel = new();
+    private bool showPassword = false;
+    private bool isSaving = false;
+    private string? errorMessage;
+    private string? successMessage;
+
+    protected override void OnInitialized()
+    {
+        // Initialize with default values
+        serverModel = new ServerModel
+        {
+            RCONPort = 25575 // Default Minecraft RCON port
+        };
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/servers");
+    }
+
+    private void TogglePasswordVisibility()
+    {
+        showPassword = !showPassword;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        CreateServerDto? createDto = null;
+        
+        try
+        {
+            isSaving = true;
+            errorMessage = null;
+            successMessage = null;
+            
+            createDto = new CreateServerDto
+            {
+                Name = serverModel.Name,
+                RCONIP = serverModel.RCONIP,
+                RCONPort = serverModel.RCONPort,
+                RCONPassword = serverModel.RCONPassword
+            };
+            
+            // Log what we're sending
+            Logger.LogInformation("Creating server with data: Name={Name}, RCONIP={RCONIP}, RCONPort={RCONPort}, Password length={PasswordLength}", 
+                createDto.Name, createDto.RCONIP, createDto.RCONPort, createDto.RCONPassword?.Length ?? 0);
+            
+            await Api.CreateServerAsync(createDto);
+            
+            // Show success message and navigate after a short delay
+            successMessage = "Server created successfully! Redirecting...";
+            StateHasChanged();
+            
+            await Task.Delay(1500); // Show success message for 1.5 seconds
+            Navigation.NavigateTo("/servers");
+        }
+        catch (Exception ex)
+        {
+            // Log the full exception details
+            Logger.LogError(ex, "Error creating server. Data was: Name={Name}, RCONIP={RCONIP}, RCONPort={RCONPort}", 
+                createDto?.Name ?? "null", createDto?.RCONIP ?? "null", createDto?.RCONPort ?? 0);
+            
+            // More detailed error message
+            if (ex.Message.Contains("400"))
+            {
+                errorMessage = $"Validation error: Please check that all required fields are filled correctly. Details: {ex.Message}";
+            }
+            else
+            {
+                errorMessage = $"Error creating server: {ex.Message}";
+            }
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private class ServerModel
+    {
+        [Required]
+        [MaxLength(100)]
+        public string Name { get; set; } = "";
+        
+        [Required]
+        [MaxLength(50)]
+        public string RCONIP { get; set; } = "";
+        
+        [Range(1, 65535)]
+        public int RCONPort { get; set; } = 25575;
+        
+        [Required]
+        [MaxLength(100)]
+        public string RCONPassword { get; set; } = "";
+    }
+}

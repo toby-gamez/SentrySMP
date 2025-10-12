@@ -6,8 +6,8 @@
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Domain/obj/Debug/net9.0/SentrySMP.Domain.AssemblyInfoInputs.cache
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Domain/obj/Debug/net9.0/SentrySMP.Domain.AssemblyInfo.cs
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Domain/obj/Debug/net9.0/SentrySMP.Domain.csproj.CoreCompileInputs.cache
+/home/tobias/RiderProjects/SentrySMP/SentrySMP.Domain/obj/Debug/net9.0/SentrySMP.Domain.sourcelink.json
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Domain/obj/Debug/net9.0/SentrySMP.Domain.dll
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Domain/obj/Debug/net9.0/refint/SentrySMP.Domain.dll
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Domain/obj/Debug/net9.0/SentrySMP.Domain.pdb
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.Domain/obj/Debug/net9.0/ref/SentrySMP.Domain.dll
-/home/tobias/RiderProjects/SentrySMP/SentrySMP.Domain/obj/Debug/net9.0/SentrySMP.Domain.sourcelink.json

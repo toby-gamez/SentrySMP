@@ -1,0 +1,149 @@
+@page "/servers"
+@using SentrySMP.Shared.DTOs
+@using SentrySMP.Shared.Interfaces
+@inject ISentryApi Api
+@inject ILogger<Servers> Logger
+@inject IJSRuntime JSRuntime
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Server Management</h1>
+                <a href="/add-server" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Add New Server
+                </a>
+            </div>
+            
+            @if (loading)
+            {
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            }
+            else if (errorMessage != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    @errorMessage
+                </div>
+            }
+            else if (servers?.Any() == true)
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>RCON IP</th>
+                                <th>RCON Port</th>
+                                <th>Keys Count</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var server in servers)
+                            {
+                                <tr>
+                                    <td><strong>#@server.Id</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-primary rounded d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px;">
+                                                <i class="bi bi-server text-white"></i>
+                                            </div>
+                                            <strong>@server.Name</strong>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <code class="bg-light px-2 py-1 rounded">@server.RCONIP</code>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">@server.RCONPort</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">@(server.Keys?.Count ?? 0) keys</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="/edit-server/@server.Id" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                            <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteServer(server.Id, server.Name)">
+                                                <i class="bi bi-trash3"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle-fill"></i>
+                    No servers found. Create your first server!
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+    private List<ServerResponse>? servers;
+    private bool loading = true;
+    private string? errorMessage;
+    private bool isInitialized = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!isInitialized)
+        {
+            isInitialized = true;
+            await LoadServers();
+        }
+    }
+
+    private async Task LoadServers()
+    {
+        try
+        {
+            loading = true;
+            errorMessage = null;
+            servers = (await Api.GetServersAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading servers: {ex.Message}";
+            Logger.LogError(ex, "Error loading servers");
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private async Task DeleteServer(int serverId, string serverName)
+    {
+        if (await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete the server '{serverName}'? This will also affect all associated keys."))
+        {
+            try
+            {
+                await Api.DeleteServerAsync(serverId);
+                await JSRuntime.InvokeVoidAsync("alert", "Server deleted successfully!");
+                await LoadServers();
+            }
+            catch (Exception ex)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"Error deleting server: {ex.Message}");
+                Logger.LogError(ex, "Error deleting server {ServerId}", serverId);
+            }
+        }
+    }
+}

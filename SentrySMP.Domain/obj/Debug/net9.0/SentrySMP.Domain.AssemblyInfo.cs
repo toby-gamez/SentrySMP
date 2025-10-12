@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SentrySMP.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7e03a3f8714fc6be7b9fee4488bbc097f4b94081")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fa96abd1440a1d9fabdc8f8e5b1e0e8fa8066698")]
 [assembly: System.Reflection.AssemblyProductAttribute("SentrySMP.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SentrySMP.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
