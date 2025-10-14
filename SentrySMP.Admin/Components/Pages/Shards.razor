@@ -1,0 +1,136 @@
+@page "/shards"
+@using SentrySMP.Shared.DTOs
+@using SentrySMP.Shared.Interfaces
+@inject ISentryApi Api
+@inject ILogger<Shards> Logger
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>
+                    <i class="bi bi-box-fill text-primary me-2"></i>
+                    Shard Management
+                </h1>
+                <a href="/add-shard" class="btn btn-success">
+                    <i class="bi bi-plus-circle-fill me-2"></i>
+                    Create New Shard
+                </a>
+            </div>
+            @if (loading)
+            {
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            }
+            else if (errorMessage != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    @errorMessage
+                </div>
+            }
+            else if (shards?.Any() == true)
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th><i class="bi bi-image me-1"></i>Image</th>
+                                <th><i class="bi bi-box me-1"></i>Name</th>
+                                <th><i class="bi bi-file-text me-1"></i>Description</th>
+                                <th><i class="bi bi-currency-dollar me-1"></i>Price</th>
+                                <th><i class="bi bi-server me-1"></i>Server</th>
+                                <th><i class="bi bi-percent me-1"></i>Sale</th>
+                                <th><i class="bi bi-gear me-1"></i>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var shard in shards)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(shard.Image))
+                                        {
+                                            <img src="@shard.Image" alt="@shard.Name" style="width: 50px; height: 50px; object-fit: cover;" class="rounded">
+                                        }
+                                    </td>
+                                    <td>@shard.Name</td>
+                                    <td>@shard.Description</td>
+                                    <td>$@shard.Price.ToString("F2")</td>
+                                    <td>@shard.Server?.Name</td>
+                                    <td>@(shard.Sale > 0 ? $"{shard.Sale}%" : "-")</td>
+                                    <td>
+                                        <a class="btn btn-sm btn-primary me-2" href="/edit-shard/@shard.Id">
+                                            <i class="bi bi-pencil-square"></i> Edit
+                                        </a>
+                                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteShard(shard.Id)">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle-fill"></i>
+                    No shards found.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<ShardResponse>? shards;
+    private bool loading = true;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadShards();
+    }
+
+    private async Task LoadShards()
+    {
+        try
+        {
+            loading = true;
+            errorMessage = null;
+            shards = (await Api.GetShardsAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading shards: {ex.Message}";
+            Logger.LogError(ex, "Error loading shards");
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private async Task DeleteShard(int id)
+    {
+        if (!await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete this shard?"))
+            return;
+        try
+        {
+            await Api.DeleteShardAsync(id);
+            await LoadShards();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error deleting shard: {ex.Message}";
+            Logger.LogError(ex, "Error deleting shard");
+        }
+    }
+}

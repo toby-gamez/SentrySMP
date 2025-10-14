@@ -81,6 +81,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9TZXJ2ZXJzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/Components/Pages/Shards.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9TaGFyZHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/Components/RedirectToLogin.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9SZWRpcmVjdFRvTG9naW4ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 

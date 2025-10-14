@@ -40,6 +40,25 @@ public interface ISentryApi
     [Delete("/api/keys/{id}")]
     Task DeleteKeyAsync(int id);
     
+    // Shard endpoints
+    [Get("/api/shards")]
+    Task<IEnumerable<ShardResponse>> GetShardsAsync();
+
+    [Get("/api/shards/by-server/{serverId}")]
+    Task<IEnumerable<ShardResponse>> GetShardsByServerAsync(int serverId);
+
+    [Get("/api/shards/{id}")]
+    Task<ShardResponse> GetShardAsync(int id);
+
+    [Post("/api/shards")]
+    Task<ShardResponse> CreateShardAsync([Body] CreateShardDto shard);
+
+    [Put("/api/shards/{id}")]
+    Task<ShardResponse> UpdateShardAsync(int id, [Body] UpdateShardDto shard);
+
+    [Delete("/api/shards/{id}")]
+    Task DeleteShardAsync(int id);
+
     // File upload endpoints
     [Multipart]
     [Post("/api/files/upload")]

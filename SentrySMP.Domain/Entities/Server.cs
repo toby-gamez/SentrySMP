@@ -22,4 +22,5 @@ public class Server
     
     // Navigation property
     public virtual ICollection<Key> Keys { get; set; } = new List<Key>();
+    public virtual ICollection<Shard> Shards { get; set; } = new List<Shard>();
 }

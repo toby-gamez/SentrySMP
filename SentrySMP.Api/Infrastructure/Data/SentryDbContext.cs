@@ -11,30 +11,38 @@ public class SentryDbContext : DbContext
 
     public DbSet<Server> Servers { get; set; }
     public DbSet<Key> Keys { get; set; }
+    public DbSet<Shard> Shards { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
+        // Shard entity config (if needed)
+        modelBuilder.Entity<Shard>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.HasOne(e => e.Server)
+                  .WithMany(s => s.Shards)
+                  .HasForeignKey(e => e.ServerId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
         // Configure Server entity
         modelBuilder.Entity<Server>(entity =>
         {
             entity.HasKey(e => e.Id);
-            
             entity.Property(e => e.Id)
                 .ValueGeneratedOnAdd();
-                
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(100);
-                
             entity.Property(e => e.RCONIP)
                 .IsRequired()
                 .HasMaxLength(50);
-                
             entity.Property(e => e.RCONPort)
                 .IsRequired();
-                
             entity.Property(e => e.RCONPassword)
                 .IsRequired()
                 .HasMaxLength(100);
@@ -44,7 +52,6 @@ public class SentryDbContext : DbContext
         modelBuilder.Entity<Key>(entity =>
         {
             entity.HasKey(e => e.Id);
-            
             entity.Property(e => e.Id)
                 .ValueGeneratedOnAdd();
                 

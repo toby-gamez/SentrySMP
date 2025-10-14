@@ -18,21 +18,23 @@ public class ServerService : IServerService
         _logger = logger;
     }
 
+
     public async Task<IEnumerable<ServerResponse>> GetAllServersAsync()
     {
         var servers = await _context.Servers
             .Include(s => s.Keys)
+            .Include(s => s.Shards)
             .ToListAsync();
-
         return servers.Select(MapToResponse);
     }
+
 
     public async Task<ServerResponse?> GetServerByIdAsync(int id)
     {
         var server = await _context.Servers
             .Include(s => s.Keys)
+            .Include(s => s.Shards)
             .FirstOrDefaultAsync(s => s.Id == id);
-
         return server != null ? MapToResponse(server) : null;
     }
 
@@ -122,6 +124,15 @@ public class ServerService : IServerService
                 ServerId = k.ServerId,
                 Sale = k.Sale,
                 Image = k.Image
+            }).ToList(),
+            Shards = server.Shards?.Select(s => new ShardResponse
+            {
+                Id = s.Id,
+                Name = s.Name,
+                Description = s.Description,
+                Price = s.Price,
+                Sale = s.Sale,
+                Image = s.Image
             }).ToList()
         };
     }

@@ -22,6 +22,7 @@ public class ServerResponse
     public string RCONPassword { get; set; } = string.Empty;
     
     public List<KeyResponse>? Keys { get; set; }
+    public List<ShardResponse>? Shards { get; set; }
 }
 
 public class CreateServerDto
