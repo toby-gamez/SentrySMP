@@ -1038,3 +1038,4 @@ Refit.ApiException: Response status code does not indicate success: 404 (Not Fou
 2025-10-14 20:50:18.488 +02:00 [INF] [BasicAuth] Handling request for /shards
 2025-10-14 20:50:18.489 +02:00 [WRN] [BasicAuth] Missing Authorization header
 2025-10-14 20:50:18.490 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-14 21:30:39.869 +02:00 [INF] Application is shutting down...

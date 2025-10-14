@@ -990,6 +990,24 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\keys\d980accf-032b-4b5c-a29e-47d15643e9f4.png'))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\keys\f12e0234-56a7-4b86-a78b-86917a5ddfc1.png'))">
+      <SourceType>Package</SourceType>
+      <SourceId>SentrySMP.App</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/SentrySMP.App</BasePath>
+      <RelativePath>uploads/keys/f12e0234-56a7-4b86-a78b-86917a5ddfc1.png</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>8y6yge2iku</Fingerprint>
+      <Integrity>UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\keys\f12e0234-56a7-4b86-a78b-86917a5ddfc1.png'))</OriginalItemSpec>
+    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\keys\f333779d-5780-403b-81d7-c4d21d30156d.png'))">
       <SourceType>Package</SourceType>
       <SourceId>SentrySMP.App</SourceId>

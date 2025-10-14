@@ -2,17 +2,20 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SentrySMP.Api.Infrastructure.Data;
 
 #nullable disable
 
-namespace SentrySMP.Api.Migrations
+namespace SentrySMP.Api.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(SentryDbContext))]
-    partial class SentryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251014194724_WithCommands")]
+    partial class WithCommands
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

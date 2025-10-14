@@ -12,10 +12,20 @@ public class SentryDbContext : DbContext
     public DbSet<Server> Servers { get; set; }
     public DbSet<Key> Keys { get; set; }
     public DbSet<Shard> Shards { get; set; }
+    public DbSet<Command> Commands { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // Command entity config
+        modelBuilder.Entity<Command>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.CommandText).IsRequired();
+            entity.Property(e => e.Type).IsRequired();
+            entity.Property(e => e.TypeId).IsRequired();
+        });
 
         // Shard entity config (if needed)
         modelBuilder.Entity<Shard>(entity =>

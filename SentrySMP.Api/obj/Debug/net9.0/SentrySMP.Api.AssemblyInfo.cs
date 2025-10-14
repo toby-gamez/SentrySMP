@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SentrySMP.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+797eb9bbab762e1283cadb31d10c2f71a83000ad")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5dae85f77c5395cc1c6f6933320aa03051b4ef69")]
 [assembly: System.Reflection.AssemblyProductAttribute("SentrySMP.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SentrySMP.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

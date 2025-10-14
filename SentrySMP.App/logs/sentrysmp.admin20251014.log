@@ -4309,3 +4309,33 @@ INNER JOIN `Servers` AS `s0` ON `s`.`ServerId` = `s0`.`Id`
 SELECT `s`.`Id`, `s`.`Description`, `s`.`Image`, `s`.`Name`, `s`.`Price`, `s`.`Sale`, `s`.`ServerId`, `s0`.`Id`, `s0`.`Name`, `s0`.`RCONIP`, `s0`.`RCONPassword`, `s0`.`RCONPort`
 FROM `Shards` AS `s`
 INNER JOIN `Servers` AS `s0` ON `s`.`ServerId` = `s0`.`Id`
+2025-10-14 21:30:42.335 +02:00 [INF] Application is shutting down...
+2025-10-14 21:47:55.097 +02:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2025-10-14 21:47:55.193 +02:00 [INF] Executed DbCommand (17ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT GET_LOCK('__db29534_EFMigrationsLock', 259200)
+2025-10-14 21:47:55.297 +02:00 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE IF NOT EXISTS `__EFMigrationsHistory` (
+    `MigrationId` varchar(150) CHARACTER SET utf8mb4 NOT NULL,
+    `ProductVersion` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
+    CONSTRAINT `PK___EFMigrationsHistory` PRIMARY KEY (`MigrationId`)
+) CHARACTER SET=utf8mb4;
+2025-10-14 21:47:55.401 +02:00 [INF] Executed DbCommand (14ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='db29534' AND TABLE_NAME='__EFMigrationsHistory';
+2025-10-14 21:47:55.416 +02:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `MigrationId`, `ProductVersion`
+FROM `__EFMigrationsHistory`
+ORDER BY `MigrationId`;
+2025-10-14 21:47:55.428 +02:00 [INF] Applying migration '20251014194724_WithCommands'.
+2025-10-14 21:47:55.460 +02:00 [INF] Executed DbCommand (15ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE `Commands` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `CommandText` longtext CHARACTER SET utf8mb4 NOT NULL,
+    `Type` longtext CHARACTER SET utf8mb4 NOT NULL,
+    `TypeId` int NOT NULL,
+    CONSTRAINT `PK_Commands` PRIMARY KEY (`Id`)
+) CHARACTER SET=utf8mb4;
+2025-10-14 21:47:55.472 +02:00 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
+VALUES ('20251014194724_WithCommands', '9.0.5');
+2025-10-14 21:47:55.496 +02:00 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT RELEASE_LOCK('__db29534_EFMigrationsLock')

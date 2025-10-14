@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "+FLwoCpZLZiPKqdEmqb35ZmsufNBzXuPtLxQHNBNZp8=",
+  "Hash": "NNh9+O/pijamY/7RI3OMm2zLKSA2jFd97nMNizHeJYg=",
   "Source": "SentrySMP.App",
   "BasePath": "_content/SentrySMP.App",
   "Mode": "Default",
@@ -2178,6 +2178,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/uploads/keys/d980accf-032b-4b5c-a29e-47d15643e9f4.png"
+    },
+    {
+      "Identity": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/f12e0234-56a7-4b86-a78b-86917a5ddfc1.png",
+      "SourceId": "SentrySMP.App",
+      "SourceType": "Discovered",
+      "ContentRoot": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/",
+      "BasePath": "_content/SentrySMP.App",
+      "RelativePath": "uploads/keys/f12e0234-56a7-4b86-a78b-86917a5ddfc1#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "8y6yge2iku",
+      "Integrity": "UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/keys/f12e0234-56a7-4b86-a78b-86917a5ddfc1.png"
     },
     {
       "Identity": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/f333779d-5780-403b-81d7-c4d21d30156d.png",
@@ -16933,6 +16954,88 @@
         {
           "Name": "Last-Modified",
           "Value": "Tue, 14 Oct 2025 13:42:46 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/keys/f12e0234-56a7-4b86-a78b-86917a5ddfc1.8y6yge2iku.png",
+      "AssetFile": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/f12e0234-56a7-4b86-a78b-86917a5ddfc1.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "77769"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 18:45:30 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "8y6yge2iku"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/keys/f12e0234-56a7-4b86-a78b-86917a5ddfc1.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/keys/f12e0234-56a7-4b86-a78b-86917a5ddfc1.png",
+      "AssetFile": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/f12e0234-56a7-4b86-a78b-86917a5ddfc1.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "77769"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 18:45:30 GMT"
         },
         {
           "Name": "Cache-Control",
