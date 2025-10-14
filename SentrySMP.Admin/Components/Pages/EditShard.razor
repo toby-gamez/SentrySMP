@@ -1,0 +1,174 @@
+@using Microsoft.AspNetCore.Components.Forms
+@page "/edit-shard/{id:int}"
+@rendermode InteractiveServer
+@using SentrySMP.Shared.DTOs
+@inject ISentryApi Api
+@inject ILogger<EditShard> Logger
+@inject NavigationManager Navigation
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1>
+                        <i class="bi bi-pencil-square me-2"></i>
+                        Edit Shard
+                    </h1>
+                    <p class="text-muted">Update shard configuration</p>
+                </div>
+                <button class="btn btn-outline-secondary" @onclick="GoBack">
+                    <i class="bi bi-arrow-left"></i> Back to Shards
+                </button>
+            </div>
+        </div>
+    </div>
+    @if (loading)
+    {
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else if (shardNotFound)
+    {
+        <div class="alert alert-warning" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            Shard with ID @Id not found.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        @errorMessage
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(successMessage))
+                {
+                    <div class="alert alert-success" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        @successMessage
+                    </div>
+                }
+                <EditForm Model="shardModel" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Name</label>
+                                <InputText class="form-control" @bind-Value="shardModel.Name" />
+                                <ValidationMessage For="() => shardModel.Name" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Description</label>
+                                <InputTextArea class="form-control" @bind-Value="shardModel.Description" />
+                                <ValidationMessage For="() => shardModel.Description" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Image URL</label>
+                                <InputText class="form-control" @bind-Value="shardModel.Image" />
+                                <ValidationMessage For="() => shardModel.Image" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Price</label>
+                                <InputNumber class="form-control" @bind-Value="shardModel.Price" />
+                                <ValidationMessage For="() => shardModel.Price" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Sale (%)</label>
+                                <InputNumber class="form-control" @bind-Value="shardModel.Sale" />
+                                <ValidationMessage For="() => shardModel.Sale" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Server</label>
+                                <InputSelect class="form-select" @bind-Value="shardModel.ServerId">
+                                    <option value="">Select server</option>
+                                    @foreach (var server in servers)
+                                    {
+                                        <option value="@server.Id">@server.Name</option>
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="() => shardModel.ServerId" />
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-3">
+                        <i class="bi bi-save"></i> Save Changes
+                    </button>
+                </EditForm>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private UpdateShardDto shardModel = new();
+    private List<ServerResponse> servers = new();
+    private string? errorMessage;
+    private string? successMessage;
+    private bool loading = true;
+    private bool shardNotFound = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            loading = true;
+            servers = (await Api.GetServersAsync()).ToList();
+            var shard = await Api.GetShardAsync(Id);
+            if (shard == null)
+            {
+                shardNotFound = true;
+                return;
+            }
+            shardModel = new UpdateShardDto
+            {
+                Name = shard.Name,
+                Description = shard.Description,
+                Price = shard.Price,
+                Sale = shard.Sale,
+                Image = shard.Image,
+                ServerId = shard.Server?.Id ?? 0
+            };
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading shard: {ex.Message}";
+            Logger.LogError(ex, "Error loading shard");
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            errorMessage = null;
+            successMessage = null;
+            await Api.UpdateShardAsync(Id, shardModel);
+            successMessage = "Shard updated successfully!";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error updating shard: {ex.Message}";
+            Logger.LogError(ex, "Error updating shard");
+        }
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/shards");
+    }
+}

@@ -1,0 +1,135 @@
+@using Microsoft.AspNetCore.Components.Forms
+@page "/add-shard"
+@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@using SentrySMP.Shared.DTOs
+@inject ISentryApi Api
+@inject ILogger<AddShard> Logger
+@inject NavigationManager Navigation
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2>
+                        <i class="bi bi-plus-circle text-success"></i>
+                        Add New Shard
+                    </h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="/shards">Shards</a></li>
+                            <li class="breadcrumb-item active">Add Shard</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-box"></i>
+                        Shard Details
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            @errorMessage
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(successMessage))
+                    {
+                        <div class="alert alert-success" role="alert">
+                            <i class="bi bi-check-circle-fill"></i>
+                            @successMessage
+                        </div>
+                    }
+                    <EditForm Model="shardModel" OnValidSubmit="HandleValidSubmit">
+                        <DataAnnotationsValidator />
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Name</label>
+                                    <InputText class="form-control" @bind-Value="shardModel.Name" />
+                                    <ValidationMessage For="() => shardModel.Name" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <InputTextArea class="form-control" @bind-Value="shardModel.Description" />
+                                    <ValidationMessage For="() => shardModel.Description" />
+                                </div>
+                                <div class="mb-3">
+                                    <ImageUploader Label="Shard Image"
+                                                   ImageUrl="@shardModel.Image"
+                                                   ImageUrlChanged="@((string? url) => shardModel.Image = url)" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Price</label>
+                                    <InputNumber class="form-control" @bind-Value="shardModel.Price" />
+                                    <ValidationMessage For="() => shardModel.Price" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Sale (%)</label>
+                                    <InputNumber class="form-control" @bind-Value="shardModel.Sale" />
+                                    <ValidationMessage For="() => shardModel.Sale" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Server</label>
+                                    <InputSelect class="form-select" @bind-Value="shardModel.ServerId">
+                                        <option value="">Select server</option>
+                                        @foreach (var server in servers)
+                                        {
+                                            <option value="@server.Id">@server.Name</option>
+                                        }
+                                    </InputSelect>
+                                    <ValidationMessage For="() => shardModel.ServerId" />
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 mt-3">
+                            <i class="bi bi-plus-circle"></i> Add Shard
+                        </button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private CreateShardDto shardModel = new();
+    private List<ServerResponse> servers = new();
+    private string? errorMessage;
+    private string? successMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        servers = (await Api.GetServersAsync()).ToList();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            errorMessage = null;
+            successMessage = null;
+            await Api.CreateShardAsync(shardModel);
+            successMessage = "Shard created successfully!";
+            Navigation.NavigateTo("/shards");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error creating shard: {ex.Message}";
+            Logger.LogError(ex, "Error creating shard");
+        }
+    }
+}

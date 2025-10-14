@@ -1,0 +1,208 @@
+@page "/shards"
+@using SentrySMP.Shared.DTOs
+@using SentrySMP.Shared.Interfaces
+@inject ISentryApi Api
+@inject ILogger<Shards> Logger
+@inject SentrySMP.App.Components.State.CartState CartState
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>Shards</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Available Shards</h1>
+            @if (loading)
+            {
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            }
+            else if (errorMessage != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    @errorMessage
+                </div>
+            }
+            else if (shards?.Any() == true)
+            {
+                <div class="row">
+                    @foreach (var shard in shards)
+                    {
+                        <div class="col-md-4 col-lg-3 mb-4">
+                            <div class="card h-100">
+                                @if (!string.IsNullOrEmpty(shard.Image))
+                                {
+                                    <img src="@shard.Image" class="card-img-top" alt="@shard.Name" style="height: 200px; object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                                        <i class="bi bi-box-fill text-white" style="font-size: 3rem;"></i>
+                                    </div>
+                                }
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">@shard.Name</h5>
+                                    @if (!string.IsNullOrEmpty(shard.Description))
+                                    {
+                                        <p class="card-text flex-grow-1">@shard.Description</p>
+                                    }
+                                    <div class="mt-auto">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <div>
+                                                @if (shard.Sale > 0)
+                                                {
+                                                    <div class="mb-1">
+                                                        <span class="badge bg-danger me-2">@shard.Sale% OFF</span>
+                                                    </div>
+                                                    <div>
+                                                        <span class="text-muted text-decoration-line-through me-2" title="Original price">
+                                                            $@shard.Price.ToString("F2")
+                                                        </span>
+                                                        <strong class="text-success fs-5" title="Sale price">
+                                                            $@(CalculateSalePrice(shard.Price, shard.Sale).ToString("F2"))
+                                                        </strong>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <strong class="text-primary fs-5">$@shard.Price.ToString("F2")</strong>
+                                                }
+                                            </div>
+                                            <small class="text-muted">Server: @shard.Server?.Name</small>
+                                        </div>
+                                        <button class="btn btn-primary btn-sm w-100" @onclick="() => ShowShardDetails(shard)">
+                                            <i class="bi bi-info-circle"></i> View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle-fill"></i>
+                    No shards available at the moment.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Shard Details Modal -->
+@if (selectedShard != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-box-fill"></i>
+                        @selectedShard.Name
+                    </h5>
+                    <button type="button" class="btn-close" @onclick="CloseShardDetails"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        @if (!string.IsNullOrEmpty(selectedShard.Image))
+                        {
+                            <div class="col-md-6">
+                                <img src="@selectedShard.Image" class="img-fluid rounded" alt="@selectedShard.Name">
+                            </div>
+                        }
+                        <div class="col-md-@(string.IsNullOrEmpty(selectedShard.Image) ? "12" : "6")">
+                            <dl class="row">
+                                <dt class="col-sm-4">Name:</dt>
+                                <dd class="col-sm-8">@selectedShard.Name</dd>
+                                <dt class="col-sm-4">Price:</dt>
+                                <dd class="col-sm-8">
+                                    @if (selectedShard.Sale > 0)
+                                    {
+                                        <div class="mb-1">
+                                            <span class="badge bg-danger">@selectedShard.Sale% OFF</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-muted text-decoration-line-through me-2" title="Original price">
+                                                $@selectedShard.Price.ToString("F2")
+                                            </span>
+                                            <strong class="text-success fs-5" title="Sale price">
+                                                $@(CalculateSalePrice(selectedShard.Price, selectedShard.Sale).ToString("F2"))
+                                            </strong>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <strong class="text-primary fs-5">$@selectedShard.Price.ToString("F2")</strong>
+                                    }
+                                </dd>
+                                <dt class="col-sm-4">Server:</dt>
+                                <dd class="col-sm-8">@selectedShard.Server?.Name</dd>
+                                @if (!string.IsNullOrEmpty(selectedShard.Description))
+                                {
+                                    <dt class="col-sm-4">Description:</dt>
+                                    <dd class="col-sm-8">@selectedShard.Description</dd>
+                                }
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseShardDetails">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<ShardResponse>? shards;
+    private bool loading = true;
+    private string? errorMessage;
+    private ShardResponse? selectedShard;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadShards();
+    }
+
+    private async Task LoadShards()
+    {
+        try
+        {
+            loading = true;
+            errorMessage = null;
+            shards = (await Api.GetShardsAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading shards: {ex.Message}";
+            Logger.LogError(ex, "Error loading shards");
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private void ShowShardDetails(ShardResponse shard)
+    {
+        selectedShard = shard;
+    }
+
+    private void CloseShardDetails()
+    {
+        selectedShard = null;
+    }
+
+    private double CalculateSalePrice(double originalPrice, int salePercentage)
+    {
+        return originalPrice * (1 - salePercentage / 100.0);
+    }
+}

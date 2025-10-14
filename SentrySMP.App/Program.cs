@@ -49,7 +49,9 @@ services.AddRazorComponents().AddInteractiveServerComponents();
 
 // Register our services
 services.AddScoped<IServerService, ServerService>();
+services.AddScoped<IShardService, ShardService>();
 services.AddScoped<IKeyService, KeyService>();
+services.AddScoped<IShardService, ShardService>();
 services.AddScoped<CartState>(sp => new CartState(sp.GetRequiredService<Microsoft.JSInterop.IJSRuntime>()));
 services.AddControllers()
     .AddJsonOptions(options =>

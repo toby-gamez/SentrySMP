@@ -58,19 +58,69 @@
                                         {
                                             <img src="@shard.Image" alt="@shard.Name" style="width: 50px; height: 50px; object-fit: cover;" class="rounded">
                                         }
+                                        else
+                                        {
+                                            <div class="bg-secondary rounded d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                <i class="bi bi-box-fill text-white"></i>
+                                            </div>
+                                        }
                                     </td>
-                                    <td>@shard.Name</td>
-                                    <td>@shard.Description</td>
-                                    <td>$@shard.Price.ToString("F2")</td>
-                                    <td>@shard.Server?.Name</td>
-                                    <td>@(shard.Sale > 0 ? $"{shard.Sale}%" : "-")</td>
+                                    <td><strong>@shard.Name</strong></td>
                                     <td>
-                                        <a class="btn btn-sm btn-primary me-2" href="/edit-shard/@shard.Id">
-                                            <i class="bi bi-pencil-square"></i> Edit
-                                        </a>
-                                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteShard(shard.Id)">
-                                            <i class="bi bi-trash"></i> Delete
-                                        </button>
+                                        @if (!string.IsNullOrEmpty(shard.Description))
+                                        {
+                                            @(shard.Description.Length > 50 ? shard.Description.Substring(0, 50) + "..." : shard.Description)
+                                        }
+                                    </td>
+                                    <td>
+                                        <strong class="text-success">
+                                            <i class="bi bi-currency-dollar me-1"></i>
+                                            @shard.Price.ToString("F2")
+                                        </strong>
+                                    </td>
+                                    <td>
+                                        @if (shard.Server != null)
+                                        {
+                                            <span class="badge bg-info">
+                                                <i class="bi bi-server me-1"></i>
+                                                @shard.Server.Name
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                <i class="bi bi-server me-1"></i>
+                                                Unknown
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (shard.Sale > 0)
+                                        {
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-percent me-1"></i>
+                                                @shard.Sale% OFF
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                <i class="bi bi-dash-circle me-1"></i>
+                                                Regular
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="/edit-shard/@shard.Id" class="btn btn-sm btn-outline-primary" title="Edit Shard" data-bs-toggle="tooltip">
+                                                <i class="bi bi-pencil-square me-1"></i>
+                                                Edit
+                                            </a>
+                                            <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteShard(shard.Id)" title="Delete Shard" data-bs-toggle="tooltip">
+                                                <i class="bi bi-trash3-fill me-1"></i>
+                                                Delete
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             }
