@@ -1,3 +1,4 @@
+using SentrySMP.App.Components.State;
 using SentrySMP.Shared.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -49,6 +50,7 @@ services.AddRazorComponents().AddInteractiveServerComponents();
 // Register our services
 services.AddScoped<IServerService, ServerService>();
 services.AddScoped<IKeyService, KeyService>();
+services.AddScoped<CartState>(sp => new CartState(sp.GetRequiredService<Microsoft.JSInterop.IJSRuntime>()));
 services.AddControllers()
     .AddJsonOptions(options =>
     {

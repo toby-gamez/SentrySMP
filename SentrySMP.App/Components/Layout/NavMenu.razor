@@ -31,5 +31,15 @@
                 <span class="bi bi-key-fill" aria-hidden="true"></span> Keys
             </NavLink>
         </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link position-relative" href="cart">
+                <span class="bi bi-cart" aria-hidden="true"></span> Cart
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.8em;" 
+                      hidden="@((CartState?.CartItems.Count ?? 0) == 0)">
+                    @(CartState?.CartItems.Count ?? 0)
+                </span>
+            </NavLink>
+        </div>
     </nav>
+@inject SentrySMP.App.Components.State.CartState CartState
 </div>

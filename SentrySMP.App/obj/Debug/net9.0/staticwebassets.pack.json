@@ -197,6 +197,34 @@
       "PackagePath": "staticwebassets/uploads/keys/24fb2cd0-b040-40bd-8d59-33255697bbdf.png"
     },
     {
+      "Id": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/45e0ccb5-ea8f-467a-959a-1eece97409fa.png",
+      "PackagePath": "staticwebassets/uploads/keys/45e0ccb5-ea8f-467a-959a-1eece97409fa.png"
+    },
+    {
+      "Id": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/62be66f3-a61d-41bd-976d-7ce3d427faef.png",
+      "PackagePath": "staticwebassets/uploads/keys/62be66f3-a61d-41bd-976d-7ce3d427faef.png"
+    },
+    {
+      "Id": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/72fe95c0-8bd4-4501-8c03-331158f38488.png",
+      "PackagePath": "staticwebassets/uploads/keys/72fe95c0-8bd4-4501-8c03-331158f38488.png"
+    },
+    {
+      "Id": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/98b5be35-d95a-4866-aedf-bb8e2caf5f62.png",
+      "PackagePath": "staticwebassets/uploads/keys/98b5be35-d95a-4866-aedf-bb8e2caf5f62.png"
+    },
+    {
+      "Id": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/b07bed9a-5468-47ea-9e37-cd52e6f40286.png",
+      "PackagePath": "staticwebassets/uploads/keys/b07bed9a-5468-47ea-9e37-cd52e6f40286.png"
+    },
+    {
+      "Id": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/d980accf-032b-4b5c-a29e-47d15643e9f4.png",
+      "PackagePath": "staticwebassets/uploads/keys/d980accf-032b-4b5c-a29e-47d15643e9f4.png"
+    },
+    {
+      "Id": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/f333779d-5780-403b-81d7-c4d21d30156d.png",
+      "PackagePath": "staticwebassets/uploads/keys/f333779d-5780-403b-81d7-c4d21d30156d.png"
+    },
+    {
       "Id": "obj/Debug/net9.0/staticwebassets/msbuild.SentrySMP.App.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
       "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
     },

@@ -1,4 +1,5 @@
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/appsettings.json
+/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/appsettings.template.json
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/SentrySMP.App.staticwebassets.runtime.json
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/SentrySMP.App.staticwebassets.endpoints.json
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/SentrySMP.App
@@ -77,8 +78,10 @@
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/Microsoft.Win32.SystemEvents.dll
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/MimeKit.dll
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/Mono.TextTemplating.dll
+/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/MySqlConnector.dll
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/Newtonsoft.Json.dll
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/Newtonsoft.Json.Bson.dll
+/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/Pomelo.EntityFrameworkCore.MySql.dll
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/Refit.dll
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/Refit.HttpClientFactory.dll
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/Serilog.dll
@@ -204,6 +207,7 @@
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/SentrySMP.App.csproj.CoreCompileInputs.cache
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/SentrySMP.App.MvcApplicationPartsAssemblyInfo.cs
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/SentrySMP.App.MvcApplicationPartsAssemblyInfo.cache
+/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/SentrySMP.App.sourcelink.json
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/scopedcss/Components/Layout/MainLayout.razor.rz.scp.css
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/scopedcss/Components/Layout/NavMenu.razor.rz.scp.css
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/scopedcss/bundle/SentrySMP.App.styles.css
@@ -270,7 +274,3 @@
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/SentrySMP.App.pdb
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/SentrySMP.App.genruntimeconfig.cache
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/ref/SentrySMP.App.dll
-/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/SentrySMP.App.sourcelink.json
-/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/MySqlConnector.dll
-/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/Pomelo.EntityFrameworkCore.MySql.dll
-/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/bin/Debug/net9.0/appsettings.template.json

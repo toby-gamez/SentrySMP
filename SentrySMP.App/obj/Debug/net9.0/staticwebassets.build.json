@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "RRhFVhAeh+FUO1Wd5MEzi2e26D8snFOiHZoQTXutIAg=",
+  "Hash": "+FLwoCpZLZiPKqdEmqb35ZmsufNBzXuPtLxQHNBNZp8=",
   "Source": "SentrySMP.App",
   "BasePath": "_content/SentrySMP.App",
   "Mode": "Default",
@@ -2052,6 +2052,153 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/uploads/keys/24fb2cd0-b040-40bd-8d59-33255697bbdf.png"
+    },
+    {
+      "Identity": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/45e0ccb5-ea8f-467a-959a-1eece97409fa.png",
+      "SourceId": "SentrySMP.App",
+      "SourceType": "Discovered",
+      "ContentRoot": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/",
+      "BasePath": "_content/SentrySMP.App",
+      "RelativePath": "uploads/keys/45e0ccb5-ea8f-467a-959a-1eece97409fa#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "8y6yge2iku",
+      "Integrity": "UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/keys/45e0ccb5-ea8f-467a-959a-1eece97409fa.png"
+    },
+    {
+      "Identity": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/62be66f3-a61d-41bd-976d-7ce3d427faef.png",
+      "SourceId": "SentrySMP.App",
+      "SourceType": "Discovered",
+      "ContentRoot": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/",
+      "BasePath": "_content/SentrySMP.App",
+      "RelativePath": "uploads/keys/62be66f3-a61d-41bd-976d-7ce3d427faef#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "o7ri0uch2j",
+      "Integrity": "RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/keys/62be66f3-a61d-41bd-976d-7ce3d427faef.png"
+    },
+    {
+      "Identity": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/72fe95c0-8bd4-4501-8c03-331158f38488.png",
+      "SourceId": "SentrySMP.App",
+      "SourceType": "Discovered",
+      "ContentRoot": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/",
+      "BasePath": "_content/SentrySMP.App",
+      "RelativePath": "uploads/keys/72fe95c0-8bd4-4501-8c03-331158f38488#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "o7ri0uch2j",
+      "Integrity": "RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/keys/72fe95c0-8bd4-4501-8c03-331158f38488.png"
+    },
+    {
+      "Identity": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/98b5be35-d95a-4866-aedf-bb8e2caf5f62.png",
+      "SourceId": "SentrySMP.App",
+      "SourceType": "Discovered",
+      "ContentRoot": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/",
+      "BasePath": "_content/SentrySMP.App",
+      "RelativePath": "uploads/keys/98b5be35-d95a-4866-aedf-bb8e2caf5f62#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "o7ri0uch2j",
+      "Integrity": "RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/keys/98b5be35-d95a-4866-aedf-bb8e2caf5f62.png"
+    },
+    {
+      "Identity": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/b07bed9a-5468-47ea-9e37-cd52e6f40286.png",
+      "SourceId": "SentrySMP.App",
+      "SourceType": "Discovered",
+      "ContentRoot": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/",
+      "BasePath": "_content/SentrySMP.App",
+      "RelativePath": "uploads/keys/b07bed9a-5468-47ea-9e37-cd52e6f40286#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "8y6yge2iku",
+      "Integrity": "UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/keys/b07bed9a-5468-47ea-9e37-cd52e6f40286.png"
+    },
+    {
+      "Identity": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/d980accf-032b-4b5c-a29e-47d15643e9f4.png",
+      "SourceId": "SentrySMP.App",
+      "SourceType": "Discovered",
+      "ContentRoot": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/",
+      "BasePath": "_content/SentrySMP.App",
+      "RelativePath": "uploads/keys/d980accf-032b-4b5c-a29e-47d15643e9f4#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "8y6yge2iku",
+      "Integrity": "UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/keys/d980accf-032b-4b5c-a29e-47d15643e9f4.png"
+    },
+    {
+      "Identity": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/f333779d-5780-403b-81d7-c4d21d30156d.png",
+      "SourceId": "SentrySMP.App",
+      "SourceType": "Discovered",
+      "ContentRoot": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/",
+      "BasePath": "_content/SentrySMP.App",
+      "RelativePath": "uploads/keys/f333779d-5780-403b-81d7-c4d21d30156d#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "o7ri0uch2j",
+      "Integrity": "RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/keys/f333779d-5780-403b-81d7-c4d21d30156d.png"
     }
   ],
   "Endpoints": [
@@ -15572,7 +15719,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 12 Oct 2025 12:04:02 GMT"
+          "Value": "Tue, 14 Oct 2025 13:39:31 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15625,7 +15772,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 12 Oct 2025 12:04:02 GMT"
+          "Value": "Tue, 14 Oct 2025 13:39:31 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15662,7 +15809,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 12 Oct 2025 12:04:02 GMT"
+          "Value": "Tue, 14 Oct 2025 13:39:31 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15709,7 +15856,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 12 Oct 2025 12:04:02 GMT"
+          "Value": "Tue, 14 Oct 2025 13:39:31 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15770,7 +15917,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 12 Oct 2025 12:04:02 GMT"
+          "Value": "Tue, 14 Oct 2025 13:39:31 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15815,7 +15962,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 12 Oct 2025 12:04:02 GMT"
+          "Value": "Tue, 14 Oct 2025 13:39:31 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15870,7 +16017,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 12 Oct 2025 12:04:02 GMT"
+          "Value": "Tue, 14 Oct 2025 13:39:31 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15931,7 +16078,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 12 Oct 2025 12:04:02 GMT"
+          "Value": "Tue, 14 Oct 2025 13:39:31 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15976,7 +16123,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 12 Oct 2025 12:04:02 GMT"
+          "Value": "Tue, 14 Oct 2025 13:39:31 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -16031,7 +16178,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 12 Oct 2025 12:04:02 GMT"
+          "Value": "Tue, 14 Oct 2025 13:39:31 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -16084,7 +16231,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 12 Oct 2025 12:04:02 GMT"
+          "Value": "Tue, 14 Oct 2025 13:39:31 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -16121,7 +16268,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 12 Oct 2025 12:04:02 GMT"
+          "Value": "Tue, 14 Oct 2025 13:39:31 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -16304,6 +16451,580 @@
         {
           "Name": "integrity",
           "Value": "sha256-UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/keys/45e0ccb5-ea8f-467a-959a-1eece97409fa.8y6yge2iku.png",
+      "AssetFile": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/45e0ccb5-ea8f-467a-959a-1eece97409fa.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "77769"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 13:56:59 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "8y6yge2iku"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/keys/45e0ccb5-ea8f-467a-959a-1eece97409fa.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/keys/45e0ccb5-ea8f-467a-959a-1eece97409fa.png",
+      "AssetFile": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/45e0ccb5-ea8f-467a-959a-1eece97409fa.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "77769"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 13:56:59 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/keys/62be66f3-a61d-41bd-976d-7ce3d427faef.o7ri0uch2j.png",
+      "AssetFile": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/62be66f3-a61d-41bd-976d-7ce3d427faef.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "296806"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 13:43:12 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "o7ri0uch2j"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/keys/62be66f3-a61d-41bd-976d-7ce3d427faef.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/keys/62be66f3-a61d-41bd-976d-7ce3d427faef.png",
+      "AssetFile": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/62be66f3-a61d-41bd-976d-7ce3d427faef.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "296806"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 13:43:12 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/keys/72fe95c0-8bd4-4501-8c03-331158f38488.o7ri0uch2j.png",
+      "AssetFile": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/72fe95c0-8bd4-4501-8c03-331158f38488.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "296806"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 13:56:45 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "o7ri0uch2j"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/keys/72fe95c0-8bd4-4501-8c03-331158f38488.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/keys/72fe95c0-8bd4-4501-8c03-331158f38488.png",
+      "AssetFile": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/72fe95c0-8bd4-4501-8c03-331158f38488.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "296806"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 13:56:45 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/keys/98b5be35-d95a-4866-aedf-bb8e2caf5f62.o7ri0uch2j.png",
+      "AssetFile": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/98b5be35-d95a-4866-aedf-bb8e2caf5f62.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "296806"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 13:56:55 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "o7ri0uch2j"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/keys/98b5be35-d95a-4866-aedf-bb8e2caf5f62.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/keys/98b5be35-d95a-4866-aedf-bb8e2caf5f62.png",
+      "AssetFile": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/98b5be35-d95a-4866-aedf-bb8e2caf5f62.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "296806"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 13:56:55 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/keys/b07bed9a-5468-47ea-9e37-cd52e6f40286.8y6yge2iku.png",
+      "AssetFile": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/b07bed9a-5468-47ea-9e37-cd52e6f40286.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "77769"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 13:32:26 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "8y6yge2iku"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/keys/b07bed9a-5468-47ea-9e37-cd52e6f40286.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/keys/b07bed9a-5468-47ea-9e37-cd52e6f40286.png",
+      "AssetFile": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/b07bed9a-5468-47ea-9e37-cd52e6f40286.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "77769"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 13:32:26 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/keys/d980accf-032b-4b5c-a29e-47d15643e9f4.8y6yge2iku.png",
+      "AssetFile": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/d980accf-032b-4b5c-a29e-47d15643e9f4.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "77769"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 13:42:46 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "8y6yge2iku"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/keys/d980accf-032b-4b5c-a29e-47d15643e9f4.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/keys/d980accf-032b-4b5c-a29e-47d15643e9f4.png",
+      "AssetFile": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/d980accf-032b-4b5c-a29e-47d15643e9f4.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "77769"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 13:42:46 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/keys/f333779d-5780-403b-81d7-c4d21d30156d.o7ri0uch2j.png",
+      "AssetFile": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/f333779d-5780-403b-81d7-c4d21d30156d.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "296806"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 12 Oct 2025 20:03:44 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "o7ri0uch2j"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/keys/f333779d-5780-403b-81d7-c4d21d30156d.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/keys/f333779d-5780-403b-81d7-c4d21d30156d.png",
+      "AssetFile": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/f333779d-5780-403b-81d7-c4d21d30156d.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "296806"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 12 Oct 2025 20:03:44 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM="
         }
       ]
     }

@@ -3359,3 +3359,4 @@ SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `
 FROM `Servers` AS `s`
 LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
 ORDER BY `s`.`Id`
+2025-10-12 22:05:14.668 +02:00 [INF] Application is shutting down...

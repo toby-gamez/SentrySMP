@@ -1,0 +1,120 @@
+@page "/cart"
+@using SentrySMP.Shared.DTOs
+@inject SentrySMP.App.Components.State.CartState CartState
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+<PageTitle>Cart</PageTitle>
+
+<div class="container mt-4">
+    <h1><i class="bi bi-cart"></i> Cart</h1>
+    @if (CartState.CartItems.Count == 0)
+    {
+        <div class="alert alert-info mt-4">
+            <i class="bi bi-info-circle"></i> Your cart is empty.
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped mt-4">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Server</th>
+                    <th>Price</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cartItem in CartState.CartItems)
+                {
+                    var item = cartItem.Key;
+                    var qty = cartItem.Quantity;
+                    double unitPrice = item.Sale > 0 ? Convert.ToDouble(item.Price) * (1 - item.Sale / 100.0) : Convert.ToDouble(item.Price);
+                    <tr>
+                        <td style="width:80px">
+                            @if (!string.IsNullOrEmpty(item.Image))
+                            {
+                                <img src="@item.Image" alt="@item.Name" style="height:48px;width:48px;object-fit:cover;" class="rounded" />
+                            }
+                            else
+                            {
+                                <i class="bi bi-key-fill text-secondary" style="font-size:2rem;"></i>
+                            }
+                        </td>
+                        <td>@item.Name</td>
+                        <td>@item.Server?.Name</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(item, -1)" disabled="@(qty <= 1)">-</button>
+                                <span>@qty</span>
+                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(item, 1)" disabled="@(qty >= 10)">+</button>
+                            </div>
+                        </td>
+                        <td>
+                            @if (item.Sale > 0)
+                            {
+                                <span class="text-muted text-decoration-line-through me-2">$@item.Price.ToString("F2")</span>
+                                <span class="text-success">$@(unitPrice.ToString("F2")) × @qty = <b>$@( (unitPrice * qty).ToString("F2") )</b></span>
+                            }
+                            else
+                            {
+                                <span class="text-primary">$@item.Price.ToString("F2") × @qty = <b>$@( (unitPrice * qty).ToString("F2") )</b></span>
+                            }
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(item, -1)" disabled="@(qty <= 1)">-</button>
+                                <span>@qty</span>
+                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(item, 1)" disabled="@(qty >= 10)">+</button>
+                                <button class="btn btn-sm btn-danger ms-2" @onclick="() => RemoveFromCart(item)"><i class="bi bi-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <div>
+                <strong>Total:</strong> $@CartState.CartItems.Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity).ToString("F2")
+            </div>
+            <button class="btn btn-outline-danger" @onclick="ClearCart"><i class="bi bi-x-circle"></i> Clear Cart</button>
+        </div>
+    }
+</div>
+
+@code {
+    private bool _cartLoaded = false;
+    protected override void OnInitialized()
+    {
+        CartState.OnChange += StateHasChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_cartLoaded)
+        {
+            await CartState.LoadFromStorageAsync(JS);
+            _cartLoaded = true;
+            StateHasChanged();
+        }
+    }
+
+    public void Dispose()
+    {
+        CartState.OnChange -= StateHasChanged;
+    }
+
+    private async Task RemoveFromCart(KeyResponse item)
+    {
+        await CartState.RemoveFromCartAsync(item);
+    }
+    private async Task ClearCart()
+    {
+        await CartState.ClearCartAsync();
+    }
+    private async Task ChangeQuantity(KeyResponse item, int delta)
+    {
+        await CartState.ChangeQuantityAsync(item, delta);
+    }
+}

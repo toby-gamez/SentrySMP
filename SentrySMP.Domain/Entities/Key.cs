@@ -25,5 +25,5 @@ public class Key
     public string? Image { get; set; } // Bude obsahovat cestu k obrázku nebo URL
     
     // Navigation property
-    public virtual Server Server { get; set; } = new();
+    public virtual Server? Server { get; set; }
 }
