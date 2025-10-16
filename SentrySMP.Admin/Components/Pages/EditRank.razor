@@ -1,0 +1,326 @@
+@page "/edit-rank/{id:int}"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.JSInterop
+@using SentrySMP.Shared.DTOs
+@using SentrySMP.Shared.Interfaces
+@using System.ComponentModel.DataAnnotations
+@inject ISentryApi Api
+@inject ILogger<EditRank> Logger
+@inject NavigationManager Navigation
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1>
+                        <i class="bi bi-pencil-square me-2"></i>
+                        Edit Rank
+                    </h1>
+                    <p class="text-muted">Update rank configuration</p>
+                </div>
+                <button class="btn btn-outline-secondary" @onclick="GoBack">
+                    <i class="bi bi-arrow-left"></i> Back to Ranks
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    @if (loading)
+    {
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else if (rankNotFound)
+    {
+        <div class="alert alert-warning" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            Rank with ID @Id not found.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        @errorMessage
+                    </div>
+                }
+                
+                @if (!string.IsNullOrEmpty(successMessage))
+                {
+                    <div class="alert alert-success" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        @successMessage
+                    </div>
+                }
+                
+                <EditForm Model="rankModel" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="mb-4">
+                                <h4 class="text-primary mb-3">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Basic Information
+                                </h4>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Rank Name *</label>
+                                    <InputText @bind-Value="rankModel.Name" class="form-control form-control-lg" placeholder="Enter rank name" />
+                                    <ValidationMessage For="() => rankModel.Name" class="text-danger" />
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Price *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">€</span>
+                                        <InputNumber @bind-Value="rankModel.Price" class="form-control" placeholder="0.00" step="0.01" />
+                                    </div>
+                                    <ValidationMessage For="() => rankModel.Price" class="text-danger" />
+                                </div>
+                                
+                                <!-- Server selection removed for Rank -->
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <div class="mb-4">
+                                <h4 class="text-primary mb-3">
+                                    <i class="bi bi-image me-2"></i>
+                                    Additional Details
+                                </h4>
+                                
+                                <ImageUploader Label="Rank Image" 
+                                             ImageUrl="@rankModel.Image" 
+                                             ImageUrlChanged="@((string? url) => rankModel.Image = url)" />
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Sale Percentage (0-100%)</label>
+                                    <div class="input-group">
+                                        <InputNumber @bind-Value="rankModel.Sale" class="form-control" placeholder="0" min="0" max="100" />
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                    <div class="form-text">Enter 0 for no sale, or discount percentage</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <InputTextArea @bind-Value="rankModel.Description" class="form-control" rows="4" placeholder="Enter rank description..." />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="mb-4">
+                        <h5>Commands</h5>
+                        @if (commandInputs == null || !commandInputs.Any())
+                        {
+                            <div class="text-muted">No commands attached to this rank.</div>
+                        }
+                        @for (int i = 0; i < (commandInputs?.Count ?? 0); i++)
+                        {
+                            var idx = i;
+                            var cmd = commandInputs![idx];
+                            <div class="input-group mb-2">
+                                <InputText @bind-Value="cmd.CommandText" class="form-control" />
+                                <button type="button" class="btn btn-outline-danger" @onclick="() => RemoveCommand(idx)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        }
+                        <button type="button" class="btn btn-sm btn-outline-primary" @onclick="AddCommand">
+                            <i class="bi bi-plus"></i> Add Command
+                        </button>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-flex gap-2 justify-content-end">
+                                <button type="button" class="btn btn-outline-secondary" @onclick="GoBack">
+                                    <i class="bi bi-x-circle me-1"></i> Cancel
+                                </button>
+                                <button type="submit" class="btn btn-primary btn-lg px-4" disabled="@isSaving">
+                                    @if (isSaving)
+                                    {
+                                        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                        <text>Updating Rank...</text>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-check-circle me-1"></i>
+                                        <text>Update Rank</text>
+                                    }
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    
+    private RankModel rankModel = new();
+    private bool isSaving = false;
+    private bool loading = true;
+    private bool rankNotFound = false;
+    private string? errorMessage;
+    private string? successMessage;
+    private List<CommandInputModel>? commandInputs = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+    await Task.WhenAll(LoadRank());
+    }
+
+    private async Task LoadRank()
+    {
+        try
+        {
+            var rank = await Api.GetRankAsync(Id);
+            
+            rankModel = new RankModel
+            {
+                Name = rank.Name,
+                Description = rank.Description,
+                Price = rank.Price,
+                Sale = rank.Sale,
+                Image = rank.Image
+            };
+            // populate command inputs from rank response if present
+            if (rank.Commands != null && rank.Commands.Any())
+            {
+                commandInputs = rank.Commands.Select(c => new CommandInputModel { CommandText = c.CommandText }).ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            if (ex.Message.Contains("404") || ex.Message.Contains("Not Found"))
+            {
+                rankNotFound = true;
+            }
+            else
+            {
+                errorMessage = $"Error loading rank: {ex.Message}";
+                Logger.LogError(ex, "Error loading rank {RankId}", Id);
+            }
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    // No server list required for Rank
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/ranks");
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        UpdateRankDto? updateDto = null;
+        
+        try
+        {
+            isSaving = true;
+            errorMessage = null;
+            successMessage = null;
+            
+            updateDto = new UpdateRankDto
+            {
+                Name = rankModel.Name,
+                Description = rankModel.Description ?? "",
+                Price = rankModel.Price,
+                Sale = rankModel.Sale,
+                Image = rankModel.Image
+            };
+
+            if (commandInputs != null && commandInputs.Any())
+            {
+                updateDto.Commands = commandInputs.Select(c => new CreateCommandDto { CommandText = c.CommandText }).ToList();
+            }
+            
+            Logger.LogInformation("Updating rank {RankId} with data: Name={Name}, Price={Price}", Id, updateDto.Name, updateDto.Price);
+            
+            await Api.UpdateRankAsync(Id, updateDto);
+            
+            successMessage = "Rank updated successfully! Redirecting...";
+            StateHasChanged();
+            
+            await Task.Delay(1500);
+            Navigation.NavigateTo("/ranks");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error updating rank {RankId}. Data was: Name={Name}, Price={Price}", Id, updateDto?.Name ?? "null", updateDto?.Price ?? 0);
+            
+            if (ex.Message.Contains("400"))
+            {
+                errorMessage = $"Validation error: Please check that all required fields are filled correctly. Details: {ex.Message}";
+            }
+            else
+            {
+                errorMessage = $"Error updating rank: {ex.Message}";
+            }
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private class RankModel
+    {
+        [Required]
+        [MaxLength(100)]
+        public string Name { get; set; } = "";
+        
+        [MaxLength(500)]
+        public string? Description { get; set; }
+        
+        [Required]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
+        public double Price { get; set; }
+        
+        [Range(0, 100)]
+        public int Sale { get; set; }
+        
+        [MaxLength(500)]
+        public string? Image { get; set; }
+    }
+
+    private class CommandInputModel
+    {
+        public string CommandText { get; set; } = string.Empty;
+    }
+
+    private void AddCommand()
+    {
+        if (commandInputs == null) commandInputs = new List<CommandInputModel>();
+        commandInputs.Add(new CommandInputModel());
+    }
+
+    private void RemoveCommand(int index)
+    {
+        if (commandInputs == null) return;
+        if (index < 0 || index >= commandInputs.Count) return;
+        commandInputs.RemoveAt(index);
+    }
+}

@@ -11,6 +11,7 @@ public class SentryDbContext : DbContext
 
     public DbSet<Server> Servers { get; set; }
     public DbSet<Key> Keys { get; set; }
+    public DbSet<Rank> Ranks { get; set; }
     public DbSet<Bundle> Bundles { get; set; }
     public DbSet<Shard> Shards { get; set; }
     public DbSet<Command> Commands { get; set; }
@@ -89,6 +90,32 @@ public class SentryDbContext : DbContext
                 .WithMany(s => s.Keys)
                 .HasForeignKey(e => e.ServerId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Configure Rank entity (similar to Key)
+        modelBuilder.Entity<Rank>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id)
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(e => e.Description)
+                .HasMaxLength(500);
+
+            entity.Property(e => e.Price)
+                .IsRequired()
+                .HasColumnType("float");
+
+            entity.Property(e => e.Sale)
+                .HasColumnType("float")
+                .HasDefaultValue(0);
+
+            entity.Property(e => e.Image)
+                .HasMaxLength(255);
         });
 
         // Configure Bundle entity (similar to Key)

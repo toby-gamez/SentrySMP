@@ -12,119 +12,112 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h2>
-                        <i class="bi bi-plus-circle text-success"></i>
-                        Add New Shard
-                    </h2>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="/shards">Shards</a></li>
-                            <li class="breadcrumb-item active">Add Shard</li>
-                        </ol>
-                    </nav>
+                    <h1>
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Add Shard
+                    </h1>
+                    <p class="text-muted">Create shard configuration</p>
                 </div>
+                <button class="btn btn-outline-secondary" @onclick="GoBack">
+                    <i class="bi bi-arrow-left"></i> Back to Shards
+                </button>
             </div>
         </div>
     </div>
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow">
-                <div class="card-header bg-success text-white">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-box"></i>
-                        Shard Details
-                    </h5>
-                </div>
-                <div class="card-body">
-                    @if (!string.IsNullOrEmpty(errorMessage))
-                    {
-                        <div class="alert alert-danger" role="alert">
-                            <i class="bi bi-exclamation-triangle-fill"></i>
-                            @errorMessage
-                        </div>
-                    }
-                    @if (!string.IsNullOrEmpty(successMessage))
-                    {
-                        <div class="alert alert-success" role="alert">
-                            <i class="bi bi-check-circle-fill"></i>
-                            @successMessage
-                        </div>
-                    }
-                    <EditForm Model="shardModel" OnValidSubmit="HandleValidSubmit">
-                        <DataAnnotationsValidator />
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Name</label>
-                                    <InputText class="form-control" @bind-Value="shardModel.Name" />
-                                    <ValidationMessage For="() => shardModel.Name" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Description</label>
-                                    <InputTextArea class="form-control" @bind-Value="shardModel.Description" />
-                                    <ValidationMessage For="() => shardModel.Description" />
-                                </div>
-                                <div class="mb-3">
-                                    <ImageUploader Label="Shard Image"
-                                                   ImageUrl="@shardModel.Image"
-                                                   ImageUrlChanged="@((string? url) => shardModel.Image = url)" />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Price</label>
-                                    <InputNumber class="form-control" @bind-Value="shardModel.Price" />
-                                    <ValidationMessage For="() => shardModel.Price" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Sale (%)</label>
-                                    <InputNumber class="form-control" @bind-Value="shardModel.Sale" />
-                                    <ValidationMessage For="() => shardModel.Sale" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Server</label>
-                                    <InputSelect class="form-select" @bind-Value="shardModel.ServerId">
-                                        <option value="">Select server</option>
-                                        @foreach (var server in servers)
-                                        {
-                                            <option value="@server.Id">@server.Name</option>
-                                        }
-                                    </InputSelect>
-                                    <ValidationMessage For="() => shardModel.ServerId" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Commands</label>
-                            @if (shardCommands == null || !shardCommands.Any())
-                            {
-                                <div class="text-muted mb-2">No commands added.</div>
-                            }
-                            @for (int i = 0; i < (shardCommands?.Count ?? 0); i++)
-                            {
-                                var idx = i;
-                                var cmd = shardCommands![idx];
-                                <div class="input-group mb-2">
-                                    <InputText @bind-Value="cmd.CommandText" class="form-control" />
-                                    <button type="button" class="btn btn-outline-danger" @onclick="() => RemoveShardCommand(idx)">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            }
-                            <button type="button" class="btn btn-sm btn-outline-primary mb-3" @onclick="AddShardCommand">
-                                <i class="bi bi-plus"></i> Add Command
-                            </button>
-                        </div>
 
-                        <button type="submit" class="btn btn-success w-100 mt-1">
-                            <i class="bi bi-plus-circle"></i> Add Shard
-                        </button>
-                    </EditForm>
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            @errorMessage
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            @successMessage
+        </div>
+    }
+
+    <EditForm Model="shardModel" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <InputText class="form-control" @bind-Value="shardModel.Name" />
+                    <ValidationMessage For="() => shardModel.Name" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <InputTextArea class="form-control" @bind-Value="shardModel.Description" />
+                    <ValidationMessage For="() => shardModel.Description" />
+                </div>
+                <div class="mb-3">
+                    <ImageUploader Label="Shard Image"
+                                   ImageUrl="@shardModel.Image"
+                                   ImageUrlChanged="@((string? url) => shardModel.Image = url)" />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Price</label>
+                    <InputNumber class="form-control" @bind-Value="shardModel.Price" />
+                    <ValidationMessage For="() => shardModel.Price" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Sale (%)</label>
+                    <InputNumber class="form-control" @bind-Value="shardModel.Sale" />
+                    <ValidationMessage For="() => shardModel.Sale" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Server</label>
+                    <InputSelect class="form-select" @bind-Value="shardModel.ServerId">
+                        <option value="">Select server</option>
+                        @foreach (var server in servers)
+                        {
+                            <option value="@server.Id">@server.Name</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="() => shardModel.ServerId" />
                 </div>
             </div>
         </div>
-    </div>
+        <div class="mb-3 mt-3">
+            <label class="form-label">Commands</label>
+            @if (shardCommands == null || !shardCommands.Any())
+            {
+                <div class="text-muted">No commands attached.</div>
+            }
+            @for (int i = 0; i < (shardCommands?.Count ?? 0); i++)
+            {
+                var idx = i;
+                var cmd = shardCommands![idx];
+                <div class="input-group mb-2">
+                    <InputText @bind-Value="cmd.CommandText" class="form-control" />
+                    <button type="button" class="btn btn-outline-danger" @onclick="() => RemoveShardCommand(idx)">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            }
+            <button type="button" class="btn btn-sm btn-outline-primary" @onclick="AddShardCommand">
+                <i class="bi bi-plus"></i> Add Command
+            </button>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex gap-2 justify-content-end">
+                    <button type="button" class="btn btn-outline-secondary" @onclick="GoBack">
+                        <i class="bi bi-x-circle me-1"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
+                        <i class="bi bi-plus-circle"></i> Create Shard
+                    </button>
+                </div>
+            </div>
+        </div>
+    </EditForm>
 </div>
 
 @code {
@@ -133,6 +126,7 @@
     private string? errorMessage;
     private string? successMessage;
     private List<CommandInputModel>? shardCommands = new();
+    private bool isSaving = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -143,6 +137,7 @@
     {
         try
         {
+            isSaving = true;
             errorMessage = null;
             successMessage = null;
             if (shardCommands != null && shardCommands.Any())
@@ -157,6 +152,10 @@
         {
             errorMessage = $"Error creating shard: {ex.Message}";
             Logger.LogError(ex, "Error creating shard");
+        }
+        finally
+        {
+            isSaving = false;
         }
     }
 
@@ -176,5 +175,10 @@
         if (shardCommands == null) return;
         if (index < 0 || index >= shardCommands.Count) return;
         shardCommands.RemoveAt(index);
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/shards");
     }
 }

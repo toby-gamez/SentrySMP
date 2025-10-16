@@ -40,6 +40,23 @@ public interface ISentryApi
     [Delete("/api/keys/{id}")]
     Task DeleteKeyAsync(int id);
 
+    // Rank endpoints
+    [Get("/api/ranks")]
+    Task<IEnumerable<RankResponse>> GetRanksAsync();
+
+
+    [Get("/api/ranks/{id}")]
+    Task<RankResponse> GetRankAsync(int id);
+
+    [Post("/api/ranks")]
+    Task<RankResponse> CreateRankAsync([Body] CreateRankDto rank);
+
+    [Put("/api/ranks/{id}")]
+    Task<RankResponse> UpdateRankAsync(int id, [Body] UpdateRankDto rank);
+
+    [Delete("/api/ranks/{id}")]
+    Task DeleteRankAsync(int id);
+
     // Bundle endpoints
     [Get("/api/bundles")]
     Task<IEnumerable<BundleResponse>> GetBundlesAsync();
