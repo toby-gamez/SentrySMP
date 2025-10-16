@@ -164,6 +164,11 @@ public class KeyService : IKeyService
         if (key == null)
             return false;
 
+        // Remove associated commands (cascade-like behavior)
+        var commands = await _context.Commands.Where(c => c.Type == "KEY" && c.TypeId == id).ToListAsync();
+        if (commands.Any())
+            _context.Commands.RemoveRange(commands);
+
         _context.Keys.Remove(key);
         await _context.SaveChangesAsync();
         return true;

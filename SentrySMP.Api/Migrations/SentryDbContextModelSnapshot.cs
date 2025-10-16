@@ -21,6 +21,46 @@ namespace SentrySMP.Api.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("SentrySMP.Domain.Entities.Bundle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("Image")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<float>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<float>("Sale")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("float")
+                        .HasDefaultValue(0f);
+
+                    b.Property<int>("ServerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServerId");
+
+                    b.ToTable("Bundles");
+                });
+
             modelBuilder.Entity("SentrySMP.Domain.Entities.Command", b =>
                 {
                     b.Property<int>("Id")
@@ -152,6 +192,17 @@ namespace SentrySMP.Api.Migrations
                     b.ToTable("Shards");
                 });
 
+            modelBuilder.Entity("SentrySMP.Domain.Entities.Bundle", b =>
+                {
+                    b.HasOne("SentrySMP.Domain.Entities.Server", "Server")
+                        .WithMany("Bundles")
+                        .HasForeignKey("ServerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Server");
+                });
+
             modelBuilder.Entity("SentrySMP.Domain.Entities.Key", b =>
                 {
                     b.HasOne("SentrySMP.Domain.Entities.Server", "Server")
@@ -176,6 +227,8 @@ namespace SentrySMP.Api.Migrations
 
             modelBuilder.Entity("SentrySMP.Domain.Entities.Server", b =>
                 {
+                    b.Navigation("Bundles");
+
                     b.Navigation("Keys");
 
                     b.Navigation("Shards");

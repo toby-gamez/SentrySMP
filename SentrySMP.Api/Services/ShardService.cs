@@ -126,6 +126,11 @@ public class ShardService : IShardService
     {
         var shard = await _context.Shards.FindAsync(id);
         if (shard == null) return false;
+        // Remove associated commands (cascade-like)
+        var commands = await _context.Commands.Where(c => c.Type == "SHARD" && c.TypeId == id).ToListAsync();
+        if (commands.Any())
+            _context.Commands.RemoveRange(commands);
+
         _context.Shards.Remove(shard);
         await _context.SaveChangesAsync();
         return true;

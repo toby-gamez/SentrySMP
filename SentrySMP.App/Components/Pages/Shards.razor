@@ -75,16 +75,16 @@
                                                     </div>
                                                     <div>
                                                         <span class="text-muted text-decoration-line-through me-2" title="Original price">
-                                                            $@shard.Price.ToString("F2")
+                                                            €@shard.Price.ToString("F2")
                                                         </span>
                                                         <strong class="text-success fs-5" title="Sale price">
-                                                            $@(CalculateSalePrice(shard.Price, shard.Sale).ToString("F2"))
+                                                            €@(CalculateSalePrice(shard.Price, shard.Sale).ToString("F2"))
                                                         </strong>
                                                     </div>
                                                 }
                                                 else
                                                 {
-                                                    <strong class="text-primary fs-5">$@shard.Price.ToString("F2")</strong>
+                                                    <strong class="text-primary fs-5">€@shard.Price.ToString("F2")</strong>
                                                 }
                                             </div>
                                             <small class="text-muted">Server: @shard.Server?.Name</small>
@@ -165,16 +165,16 @@
                                         </div>
                                         <div>
                                             <span class="text-muted text-decoration-line-through me-2" title="Original price">
-                                                $@selectedShard.Price.ToString("F2")
+                                                €@selectedShard.Price.ToString("F2")
                                             </span>
                                             <strong class="text-success fs-5" title="Sale price">
-                                                $@(CalculateSalePrice(selectedShard.Price, selectedShard.Sale).ToString("F2"))
+                                                €@(CalculateSalePrice(selectedShard.Price, selectedShard.Sale).ToString("F2"))
                                             </strong>
                                         </div>
                                     }
                                     else
                                     {
-                                        <strong class="text-primary fs-5">$@selectedShard.Price.ToString("F2")</strong>
+                                        <strong class="text-primary fs-5">€@selectedShard.Price.ToString("F2")</strong>
                                     }
                                 </dd>
                                 <dt class="col-sm-4">Server:</dt>

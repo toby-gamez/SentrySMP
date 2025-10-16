@@ -45,6 +45,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9MYXlvdXQvRW1wdHlMYXlvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/Components/Pages/AddBundle.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9BZGRCdW5kbGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/Components/Pages/AddKey.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9BZGRLZXkucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
@@ -55,6 +59,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/Components/Pages/AddShard.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9BZGRTaGFyZC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/Components/Pages/Bundles.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9CdW5kbGVzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/Components/Pages/EditBundle.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9FZGl0QnVuZGxlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/Components/Pages/EditKey.razor]

@@ -882,6 +882,24 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\keys\24fb2cd0-b040-40bd-8d59-33255697bbdf.png'))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\keys\39b5f7ec-3479-47a1-83a9-500121762364.png'))">
+      <SourceType>Package</SourceType>
+      <SourceId>SentrySMP.App</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/SentrySMP.App</BasePath>
+      <RelativePath>uploads/keys/39b5f7ec-3479-47a1-83a9-500121762364.png</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>8y6yge2iku</Fingerprint>
+      <Integrity>UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\keys\39b5f7ec-3479-47a1-83a9-500121762364.png'))</OriginalItemSpec>
+    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\keys\45e0ccb5-ea8f-467a-959a-1eece97409fa.png'))">
       <SourceType>Package</SourceType>
       <SourceId>SentrySMP.App</SourceId>
@@ -989,6 +1007,24 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\keys\b07bed9a-5468-47ea-9e37-cd52e6f40286.png'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\keys\c8f19540-c1b4-4314-90cb-1606d993f3a5.png'))">
+      <SourceType>Package</SourceType>
+      <SourceId>SentrySMP.App</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/SentrySMP.App</BasePath>
+      <RelativePath>uploads/keys/c8f19540-c1b4-4314-90cb-1606d993f3a5.png</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>8y6yge2iku</Fingerprint>
+      <Integrity>UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\keys\c8f19540-c1b4-4314-90cb-1606d993f3a5.png'))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\keys\d980accf-032b-4b5c-a29e-47d15643e9f4.png'))">
       <SourceType>Package</SourceType>

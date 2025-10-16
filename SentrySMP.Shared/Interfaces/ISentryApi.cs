@@ -39,6 +39,25 @@ public interface ISentryApi
     
     [Delete("/api/keys/{id}")]
     Task DeleteKeyAsync(int id);
+
+    // Bundle endpoints
+    [Get("/api/bundles")]
+    Task<IEnumerable<BundleResponse>> GetBundlesAsync();
+
+    [Get("/api/bundles/server/{serverId}")]
+    Task<IEnumerable<BundleResponse>> GetBundlesByServerAsync(int serverId);
+
+    [Get("/api/bundles/{id}")]
+    Task<BundleResponse> GetBundleAsync(int id);
+
+    [Post("/api/bundles")]
+    Task<BundleResponse> CreateBundleAsync([Body] CreateBundleDto bundle);
+
+    [Put("/api/bundles/{id}")]
+    Task<BundleResponse> UpdateBundleAsync(int id, [Body] UpdateBundleDto bundle);
+
+    [Delete("/api/bundles/{id}")]
+    Task DeleteBundleAsync(int id);
     
     // Shard endpoints
     [Get("/api/shards")]

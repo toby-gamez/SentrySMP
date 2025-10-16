@@ -1,0 +1,269 @@
+@page "/add-bundle"
+@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@using SentrySMP.Shared.DTOs
+@using SentrySMP.Shared.Interfaces
+@inject ISentryApi Api
+@inject ILogger<AddBundle> Logger
+@inject NavigationManager Navigation
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2>
+                        <i class="bi bi-plus-circle text-success"></i>
+                        Add New Bundle
+                    </h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="/bundles">Bundles</a></li>
+                            <li class="breadcrumb-item active">Add Bundle</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-gift-fill"></i>
+                        Bundle Details
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            @errorMessage
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(successMessage))
+                    {
+                        <div class="alert alert-success" role="alert">
+                            <i class="bi bi-check-circle-fill"></i>
+                            @successMessage
+                        </div>
+                    }
+
+                    <EditForm Model="bundleModel" OnValidSubmit="HandleValidSubmit">
+                        <DataAnnotationsValidator />
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Name *</label>
+                                    <InputText @bind-Value="bundleModel.Name" class="form-control" placeholder="Enter bundle name" />
+                                    <ValidationMessage For="() => bundleModel.Name" class="text-danger" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Price *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">€</span>
+                                        <InputNumber @bind-Value="bundleModel.Price" class="form-control" placeholder="0.00" step="0.01" />
+                                    </div>
+                                    <ValidationMessage For="() => bundleModel.Price" class="text-danger" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Server *</label>
+                                    <InputSelect @bind-Value="bundleModel.ServerId" class="form-select">
+                                        <option value="">Select a server...</option>
+                                        @if (servers != null)
+                                        {
+                                            @foreach (var server in servers)
+                                            {
+                                                <option value="@server.Id">@server.Name</option>
+                                            }
+                                        }
+                                    </InputSelect>
+                                    <ValidationMessage For="() => bundleModel.ServerId" class="text-danger" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <ImageUploader Label="Bundle Image" 
+                                             ImageUrl="@bundleModel.Image" 
+                                             ImageUrlChanged="@((string? url) => bundleModel.Image = url)" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <InputTextArea @bind-Value="bundleModel.Description" class="form-control" rows="3" placeholder="Enter bundle description..." />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Sale Percentage (0-100%)</label>
+                            <div class="input-group">
+                                <InputNumber @bind-Value="bundleModel.Sale" class="form-control" placeholder="0" min="0" max="100" />
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <div class="form-text text-muted">Enter 0 for no sale, or percentage discount (e.g., 20 for 20% off)</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Commands</label>
+                            <div>
+                                @if (bundleModel.Commands == null || !bundleModel.Commands.Any())
+                                {
+                                    <div class="text-muted mb-2">No commands added.</div>
+                                }
+                                @for (int i = 0; i < (bundleModel.Commands?.Count ?? 0); i++)
+                                {
+                                    var idx = i;
+                                    var cmd = bundleModel.Commands![idx];
+                                    <div class="input-group mb-2">
+                                        <InputText @bind-Value="cmd.CommandText" class="form-control" placeholder="Enter command text" />
+                                        <button type="button" class="btn btn-outline-danger" @onclick="() => RemoveCommand(idx)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                }
+                                <button type="button" class="btn btn-sm btn-outline-primary" @onclick="AddCommand">
+                                    <i class="bi bi-plus"></i> Add Command
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="/bundles" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i>
+                                Back to Bundles
+                            </a>
+                            <button type="submit" class="btn btn-success" disabled="@saving">
+                                @if (saving)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                }
+                                <i class="bi bi-plus-circle"></i>
+                                Create Bundle
+                            </button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private BundleModel bundleModel = new();
+    private List<ServerResponse>? servers;
+    private bool saving = false;
+    private string? errorMessage;
+    private string? successMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadServers();
+    }
+
+    private async Task LoadServers()
+    {
+        try
+        {
+            servers = (await Api.GetServersAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            servers = new List<ServerResponse>();
+            errorMessage = $"Error loading servers: {ex.Message}";
+            Logger.LogError(ex, "Error loading servers");
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            saving = true;
+            errorMessage = null;
+            successMessage = null;
+
+            var createDto = new CreateBundleDto
+            {
+                Name = bundleModel.Name,
+                Description = bundleModel.Description ?? "",
+                Price = bundleModel.Price,
+                ServerId = bundleModel.ServerId,
+                Sale = bundleModel.Sale,
+                Image = bundleModel.Image
+            };
+
+            if (bundleModel.Commands != null && bundleModel.Commands.Any())
+            {
+                createDto.Commands = bundleModel.Commands.Select(c => new CreateCommandDto { CommandText = c.CommandText }).ToList();
+            }
+
+            await Api.CreateBundleAsync(createDto);
+
+            successMessage = "Bundle created successfully!";
+            await Task.Delay(1200);
+            Navigation.NavigateTo("/bundles");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error creating bundle: {ex.Message}";
+            Logger.LogError(ex, "Error creating bundle");
+        }
+        finally
+        {
+            saving = false;
+        }
+    }
+
+    private class BundleModel
+    {
+        [Required]
+        [MaxLength(100)]
+        public string Name { get; set; } = "";
+
+        [MaxLength(500)]
+        public string Description { get; set; } = "";
+
+        [Range(0, double.MaxValue)]
+        public double Price { get; set; }
+
+        [Required]
+        public int ServerId { get; set; }
+
+        public int Sale { get; set; } = 0;
+
+        public string? Image { get; set; }
+        // Commands to attach to the new bundle
+        public List<CommandInputModel>? Commands { get; set; } = new();
+    }
+
+    private class CommandInputModel
+    {
+        public string CommandText { get; set; } = string.Empty;
+    }
+
+    private void AddCommand()
+    {
+        if (bundleModel.Commands == null)
+            bundleModel.Commands = new List<CommandInputModel>();
+        bundleModel.Commands.Add(new CommandInputModel());
+    }
+
+    private void RemoveCommand(int index)
+    {
+        if (bundleModel.Commands == null) return;
+        if (index < 0 || index >= bundleModel.Commands.Count) return;
+        bundleModel.Commands.RemoveAt(index);
+    }
+}

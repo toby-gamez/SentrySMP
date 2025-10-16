@@ -76,16 +76,16 @@
                                                     </div>
                                                     <div>
                                                         <span class="text-muted text-decoration-line-through me-2" title="Original price">
-                                                            $@key.Price.ToString("F2")
+                                                            €@key.Price.ToString("F2")
                                                         </span>
                                                         <strong class="text-success fs-5" title="Sale price">
-                                                            $@(CalculateSalePrice(key.Price, key.Sale).ToString("F2"))
+                                                            €@(CalculateSalePrice(key.Price, key.Sale).ToString("F2"))
                                                         </strong>
                                                     </div>
                                                 }
                                                 else
                                                 {
-                                                    <strong class="text-primary fs-5">$@key.Price.ToString("F2")</strong>
+                                                    <strong class="text-primary fs-5">€@key.Price.ToString("F2")</strong>
                                                 }
                                             </div>
                                             <small class="text-muted">Server: @key.Server?.Name</small>
@@ -165,16 +165,16 @@
                                         </div>
                                         <div>
                                             <span class="text-muted text-decoration-line-through me-2" title="Original price">
-                                                $@selectedKey.Price.ToString("F2")
+                                                €@selectedKey.Price.ToString("F2")
                                             </span>
                                             <strong class="text-success fs-5" title="Sale price">
-                                                $@(CalculateSalePrice(selectedKey.Price, selectedKey.Sale).ToString("F2"))
+                                                €@(CalculateSalePrice(selectedKey.Price, selectedKey.Sale).ToString("F2"))
                                             </strong>
                                         </div>
                                     }
                                     else
                                     {
-                                        <strong class="text-primary fs-5">$@selectedKey.Price.ToString("F2")</strong>
+                                        <strong class="text-primary fs-5">€@selectedKey.Price.ToString("F2")</strong>
                                     }
                                 </dd>
                                 

@@ -1778,3 +1778,952 @@ LIMIT 1
 SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
 FROM `Commands` AS `c`
 WHERE (`c`.`Type` = 'SHARD') AND (`c`.`TypeId` = @__shard_Id_0)
+2025-10-16 15:51:00.030 +02:00 [INF] Application is shutting down...
+2025-10-16 16:20:10.700 +02:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2025-10-16 16:20:11.091 +02:00 [INF] Now listening on: https://localhost:7271
+2025-10-16 16:20:11.106 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-16 16:20:11.127 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-16 16:20:11.131 +02:00 [INF] Hosting environment: Development
+2025-10-16 16:20:11.131 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-16 16:20:29.499 +02:00 [INF] [BasicAuth] Handling request for /
+2025-10-16 16:20:29.510 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:20:29.527 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:20:30.468 +02:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-16 16:20:30.472 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:20:30.473 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:20:33.032 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-16 16:20:33.046 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:20:33.047 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:20:33.482 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-16 16:20:33.482 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:20:33.483 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:20:33.848 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-16 16:20:33.848 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:20:33.849 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:20:33.859 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-16 16:20:33.860 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:20:33.860 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:20:36.206 +02:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-16 16:20:36.214 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:20:36.214 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:20:36.260 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-16 16:20:36.261 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:20:36.262 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:20:40.768 +02:00 [INF] Executed DbCommand (92ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Keys` AS `k`
+INNER JOIN `Servers` AS `s` ON `k`.`ServerId` = `s`.`Id`
+2025-10-16 16:20:40.768 +02:00 [INF] Executed DbCommand (93ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Keys` AS `k`
+INNER JOIN `Servers` AS `s` ON `k`.`ServerId` = `s`.`Id`
+2025-10-16 16:20:40.769 +02:00 [INF] Executed DbCommand (93ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Keys` AS `k`
+INNER JOIN `Servers` AS `s` ON `k`.`ServerId` = `s`.`Id`
+2025-10-16 16:20:41.662 +02:00 [INF] Executed DbCommand (19ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'KEY') AND `c`.`TypeId` IN (6, 7, 8, 9)
+2025-10-16 16:20:41.662 +02:00 [INF] Executed DbCommand (22ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'KEY') AND `c`.`TypeId` IN (6, 7, 8, 9)
+2025-10-16 16:20:41.664 +02:00 [INF] Executed DbCommand (22ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'KEY') AND `c`.`TypeId` IN (6, 7, 8, 9)
+2025-10-16 16:20:42.991 +02:00 [INF] [BasicAuth] Handling request for /_blazor/initializers
+2025-10-16 16:20:42.992 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:20:42.992 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:20:43.089 +02:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-16 16:20:43.093 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:20:43.093 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:20:43.164 +02:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-16 16:20:43.165 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:20:43.165 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:20:43.816 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-16 16:20:43.817 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:20:43.817 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:20:43.981 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Keys` AS `k`
+INNER JOIN `Servers` AS `s` ON `k`.`ServerId` = `s`.`Id`
+2025-10-16 16:20:44.009 +02:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'KEY') AND `c`.`TypeId` IN (6, 7, 8, 9)
+2025-10-16 16:21:51.710 +02:00 [INF] [BasicAuth] Handling request for /cart
+2025-10-16 16:21:51.712 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:21:51.713 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:41:50.359 +02:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2025-10-16 16:41:50.457 +02:00 [INF] Executed DbCommand (17ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT GET_LOCK('__db29534_EFMigrationsLock', 259200)
+2025-10-16 16:41:50.564 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE IF NOT EXISTS `__EFMigrationsHistory` (
+    `MigrationId` varchar(150) CHARACTER SET utf8mb4 NOT NULL,
+    `ProductVersion` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
+    CONSTRAINT `PK___EFMigrationsHistory` PRIMARY KEY (`MigrationId`)
+) CHARACTER SET=utf8mb4;
+2025-10-16 16:41:50.673 +02:00 [INF] Executed DbCommand (14ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='db29534' AND TABLE_NAME='__EFMigrationsHistory';
+2025-10-16 16:41:50.688 +02:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `MigrationId`, `ProductVersion`
+FROM `__EFMigrationsHistory`
+ORDER BY `MigrationId`;
+2025-10-16 16:41:50.700 +02:00 [INF] Applying migration '20251016144112_WithBundles'.
+2025-10-16 16:41:50.774 +02:00 [INF] Executed DbCommand (19ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE `Bundles` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `Name` varchar(100) CHARACTER SET utf8mb4 NOT NULL,
+    `Description` varchar(500) CHARACTER SET utf8mb4 NOT NULL,
+    `Price` float NOT NULL,
+    `ServerId` int NOT NULL,
+    `Sale` float NOT NULL DEFAULT 0,
+    `Image` varchar(255) CHARACTER SET utf8mb4 NULL,
+    CONSTRAINT `PK_Bundles` PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_Bundles_Servers_ServerId` FOREIGN KEY (`ServerId`) REFERENCES `Servers` (`Id`) ON DELETE CASCADE
+) CHARACTER SET=utf8mb4;
+2025-10-16 16:41:50.796 +02:00 [INF] Executed DbCommand (22ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX `IX_Bundles_ServerId` ON `Bundles` (`ServerId`);
+2025-10-16 16:41:50.809 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
+VALUES ('20251016144112_WithBundles', '9.0.5');
+2025-10-16 16:41:50.837 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT RELEASE_LOCK('__db29534_EFMigrationsLock')
+2025-10-16 16:42:41.116 +02:00 [INF] Application is shutting down...
+2025-10-16 16:42:41.130 +02:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-16 16:42:41.133 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:42:41.134 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:42:48.011 +02:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2025-10-16 16:42:48.189 +02:00 [INF] Now listening on: https://localhost:7271
+2025-10-16 16:42:48.199 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-16 16:42:48.214 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-16 16:42:48.216 +02:00 [INF] Hosting environment: Development
+2025-10-16 16:42:48.218 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-16 16:42:49.510 +02:00 [INF] [BasicAuth] Handling request for /
+2025-10-16 16:42:49.513 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:42:49.516 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:42:50.032 +02:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-16 16:42:50.033 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:42:50.041 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:43:16.229 +02:00 [INF] [BasicAuth] Handling request for /api/Bundles
+2025-10-16 16:43:16.230 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:43:16.231 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:43:18.654 +02:00 [INF] Executed DbCommand (51ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 16:51:11.574 +02:00 [INF] Application is shutting down...
+2025-10-16 16:51:17.460 +02:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2025-10-16 16:51:17.540 +02:00 [INF] Now listening on: https://localhost:7271
+2025-10-16 16:51:17.542 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-16 16:51:17.546 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-16 16:51:17.546 +02:00 [INF] Hosting environment: Development
+2025-10-16 16:51:17.547 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-16 16:51:18.270 +02:00 [INF] [BasicAuth] Handling request for /
+2025-10-16 16:51:18.273 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:51:18.277 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:51:18.723 +02:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-16 16:51:18.726 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:51:18.726 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:51:20.296 +02:00 [INF] [BasicAuth] Handling request for /bundles
+2025-10-16 16:51:20.297 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:51:20.297 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:51:20.501 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 16:51:20.511 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:51:20.511 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:51:23.073 +02:00 [INF] Executed DbCommand (97ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 16:51:23.413 +02:00 [INF] [BasicAuth] Handling request for /_blazor/initializers
+2025-10-16 16:51:23.414 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:51:23.415 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:51:23.437 +02:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-16 16:51:23.441 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:51:23.441 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:51:23.465 +02:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-16 16:51:23.465 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:51:23.465 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:51:23.754 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 16:51:23.755 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 16:51:23.755 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 16:51:23.920 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 16:52:12.289 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 16:52:12.290 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 16:52:12.449 +02:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-10-16 16:52:12.512 +02:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 16:52:19.283 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 16:52:19.285 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 16:52:19.290 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 16:52:19.293 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 16:52:19.370 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 16:52:19.418 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 16:52:19.469 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 16:52:19.470 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 16:52:19.472 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 16:52:19.473 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 16:52:19.547 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 16:52:19.555 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 16:52:29.755 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 16:52:29.756 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 16:52:29.840 +02:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 16:52:29.864 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 16:52:29.864 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 16:52:29.942 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:02:49.628 +02:00 [INF] Application is shutting down...
+2025-10-16 17:03:06.757 +02:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2025-10-16 17:03:06.874 +02:00 [INF] Now listening on: https://localhost:7271
+2025-10-16 17:03:06.877 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-16 17:03:06.881 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-16 17:03:06.882 +02:00 [INF] Hosting environment: Development
+2025-10-16 17:03:06.882 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-16 17:03:08.396 +02:00 [INF] [BasicAuth] Handling request for /
+2025-10-16 17:03:08.399 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:03:08.401 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:03:08.504 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:03:08.504 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:03:08.505 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:03:08.823 +02:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-16 17:03:08.824 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:03:08.825 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:03:10.681 +02:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-16 17:03:10.681 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:03:10.681 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:03:10.712 +02:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-16 17:03:10.713 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:03:10.713 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:03:10.876 +02:00 [INF] [BasicAuth] Handling request for /bundles
+2025-10-16 17:03:10.876 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:03:10.877 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:03:11.103 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:03:11.104 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:03:11.104 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:03:11.221 +02:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-10-16 17:03:11.518 +02:00 [INF] Executed DbCommand (54ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:03:11.518 +02:00 [INF] Executed DbCommand (54ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:03:11.812 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE FALSE
+2025-10-16 17:03:12.154 +02:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-16 17:03:12.158 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:03:12.164 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:03:13.295 +02:00 [INF] [BasicAuth] Handling request for /_blazor/initializers
+2025-10-16 17:03:13.297 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:03:13.300 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:03:13.388 +02:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-16 17:03:13.389 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:03:13.389 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:03:13.416 +02:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-16 17:03:13.417 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:03:13.418 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:03:14.179 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:03:14.179 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:03:14.180 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:03:14.240 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:03:14.241 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:03:14.241 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:03:14.380 +02:00 [INF] Executed DbCommand (15ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:03:14.380 +02:00 [INF] Executed DbCommand (15ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:03:14.407 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE FALSE
+2025-10-16 17:03:34.665 +02:00 [INF] [BasicAuth] Handling request for /bundles
+2025-10-16 17:03:34.667 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:03:34.669 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:03:34.683 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:03:34.684 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:03:34.685 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:03:34.766 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:03:34.791 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE FALSE
+2025-10-16 17:03:34.841 +02:00 [INF] [BasicAuth] Handling request for /_blazor/initializers
+2025-10-16 17:03:34.841 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:03:34.841 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:03:34.869 +02:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-16 17:03:34.870 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:03:34.870 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:03:34.888 +02:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-16 17:03:34.889 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:03:34.889 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:03:34.916 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:03:34.917 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:03:34.917 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:03:34.993 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:03:35.023 +02:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE FALSE
+2025-10-16 17:03:46.727 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:03:46.727 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:03:46.808 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:05:19.972 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:05:19.972 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:05:19.973 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:05:19.974 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:05:20.047 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:05:20.048 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:05:20.075 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE FALSE
+2025-10-16 17:05:20.107 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:05:20.111 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:05:20.107 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:05:20.113 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:05:20.189 +02:00 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:05:20.190 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:05:20.214 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE FALSE
+2025-10-16 17:05:21.541 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:05:21.543 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:05:21.621 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:05:21.654 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:05:21.655 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:05:21.729 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:06:29.951 +02:00 [INF] [BasicAuth] Handling request for /api/files/upload
+2025-10-16 17:06:29.951 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:06:30.047 +02:00 [INF] Successfully uploaded file screenshot-2025-09-28_14-31-28.png as c8f19540-c1b4-4314-90cb-1606d993f3a5.png
+2025-10-16 17:06:45.594 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:06:45.594 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:06:45.777 +02:00 [INF] Executed DbCommand (35ms) [Parameters=[@__createBundleDto_ServerId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM `Servers` AS `s`
+    WHERE `s`.`Id` = @__createBundleDto_ServerId_0)
+2025-10-16 17:06:46.040 +02:00 [INF] Executed DbCommand (13ms) [Parameters=[@p0='?' (Size = 500), @p1='?' (Size = 255), @p2='?' (Size = 100), @p3='?' (DbType = Single), @p4='?' (DbType = Single), @p5='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SET AUTOCOMMIT = 1;
+INSERT INTO `Bundles` (`Description`, `Image`, `Name`, `Price`, `Sale`, `ServerId`)
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5)
+RETURNING `Id`;
+2025-10-16 17:06:46.151 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[@p0='?' (Size = 4000), @p1='?' (Size = 4000), @p2='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SET AUTOCOMMIT = 1;
+INSERT INTO `Commands` (`CommandText`, `Type`, `TypeId`)
+VALUES (@p0, @p1, @p2)
+RETURNING `Id`;
+2025-10-16 17:06:46.215 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Servers` AS `s`
+WHERE `s`.`Id` = @__p_0
+LIMIT 1
+2025-10-16 17:06:46.255 +02:00 [INF] Executed DbCommand (13ms) [Parameters=[@__bundle_Id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'BUNDLE') AND (`c`.`TypeId` = @__bundle_Id_0)
+2025-10-16 17:06:47.560 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:06:47.560 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:06:47.566 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:06:47.567 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:06:47.639 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:06:47.642 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:06:47.667 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'BUNDLE') AND (`c`.`TypeId` = 1)
+2025-10-16 17:06:47.694 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:06:47.694 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:06:47.695 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:06:47.696 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:06:47.768 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:06:47.770 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:06:47.793 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'BUNDLE') AND (`c`.`TypeId` = 1)
+2025-10-16 17:11:44.082 +02:00 [INF] Application is shutting down...
+2025-10-16 17:11:44.095 +02:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-16 17:11:44.095 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:11:44.095 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:11:53.012 +02:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2025-10-16 17:11:53.114 +02:00 [INF] Now listening on: https://localhost:7271
+2025-10-16 17:11:53.119 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-16 17:11:53.124 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-16 17:11:53.125 +02:00 [INF] Hosting environment: Development
+2025-10-16 17:11:53.126 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-16 17:11:53.580 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:11:53.584 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:11:53.591 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:11:53.590 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:11:53.597 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:11:53.598 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:11:53.899 +02:00 [INF] [BasicAuth] Handling request for /
+2025-10-16 17:11:53.900 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:11:53.903 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:11:54.351 +02:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-16 17:11:54.353 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:11:54.354 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:11:55.117 +02:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-16 17:11:55.117 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:11:55.117 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:11:55.148 +02:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-16 17:11:55.148 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:11:55.149 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:11:55.327 +02:00 [INF] [BasicAuth] Handling request for /bundles
+2025-10-16 17:11:55.328 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:11:55.328 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:11:55.591 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:11:55.592 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:11:55.592 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:11:56.752 +02:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-10-16 17:11:57.076 +02:00 [INF] Executed DbCommand (72ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:11:57.075 +02:00 [INF] Executed DbCommand (71ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:11:57.077 +02:00 [INF] Executed DbCommand (72ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:11:57.614 +02:00 [INF] Executed DbCommand (18ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'BUNDLE') AND (`c`.`TypeId` = 1)
+2025-10-16 17:11:57.614 +02:00 [INF] Executed DbCommand (16ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'BUNDLE') AND (`c`.`TypeId` = 1)
+2025-10-16 17:12:09.450 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:12:09.451 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:12:09.595 +02:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:12:18.596 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:12:18.605 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:12:18.613 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:12:18.614 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:12:18.692 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:12:18.697 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:12:18.718 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'BUNDLE') AND (`c`.`TypeId` = 1)
+2025-10-16 17:12:18.742 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:12:18.743 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:12:18.743 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:12:18.744 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:12:18.823 +02:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:12:18.824 +02:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:12:18.852 +02:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'BUNDLE') AND (`c`.`TypeId` = 1)
+2025-10-16 17:12:39.835 +02:00 [INF] [BasicAuth] Handling request for /api/bundles/1
+2025-10-16 17:12:39.835 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:12:40.052 +02:00 [INF] Executed DbCommand (39ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`
+FROM `Bundles` AS `b`
+WHERE `b`.`Id` = @__p_0
+LIMIT 1
+2025-10-16 17:12:40.084 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'BUNDLE') AND (`c`.`TypeId` = @__id_0)
+2025-10-16 17:12:40.313 +02:00 [INF] Executed DbCommand (14ms) [Parameters=[@p0='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+DELETE FROM `Bundles`
+WHERE `Id` = @p0
+RETURNING 1;
+DELETE FROM `Commands`
+WHERE `Id` = @p1
+RETURNING 1;
+2025-10-16 17:12:41.615 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:12:41.617 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:12:41.693 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:12:41.719 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE FALSE
+2025-10-16 17:12:54.881 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:12:54.882 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:12:54.970 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:12:54.995 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:12:54.995 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:12:55.078 +02:00 [INF] Executed DbCommand (15ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:13:06.378 +02:00 [INF] [BasicAuth] Handling request for /api/files/upload
+2025-10-16 17:13:06.378 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:13:06.451 +02:00 [INF] Successfully uploaded file screenshot-2025-09-28_14-31-28.png as 39b5f7ec-3479-47a1-83a9-500121762364.png
+2025-10-16 17:13:33.292 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:13:33.294 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:13:33.451 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[@__createBundleDto_ServerId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM `Servers` AS `s`
+    WHERE `s`.`Id` = @__createBundleDto_ServerId_0)
+2025-10-16 17:13:33.543 +02:00 [INF] Executed DbCommand (13ms) [Parameters=[@p0='?' (Size = 500), @p1='?' (Size = 255), @p2='?' (Size = 100), @p3='?' (DbType = Single), @p4='?' (DbType = Single), @p5='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SET AUTOCOMMIT = 1;
+INSERT INTO `Bundles` (`Description`, `Image`, `Name`, `Price`, `Sale`, `ServerId`)
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5)
+RETURNING `Id`;
+2025-10-16 17:13:33.625 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[@p0='?' (Size = 4000), @p1='?' (Size = 4000), @p2='?' (DbType = Int32), @p3='?' (Size = 4000), @p4='?' (Size = 4000), @p5='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO `Commands` (`CommandText`, `Type`, `TypeId`)
+VALUES (@p0, @p1, @p2)
+RETURNING `Id`;
+INSERT INTO `Commands` (`CommandText`, `Type`, `TypeId`)
+VALUES (@p3, @p4, @p5)
+RETURNING `Id`;
+2025-10-16 17:13:33.694 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Servers` AS `s`
+WHERE `s`.`Id` = @__p_0
+LIMIT 1
+2025-10-16 17:13:33.728 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[@__bundle_Id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'BUNDLE') AND (`c`.`TypeId` = @__bundle_Id_0)
+2025-10-16 17:13:35.030 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:13:35.030 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:13:35.040 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:13:35.040 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:13:35.120 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:13:35.134 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:13:35.145 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'BUNDLE') AND (`c`.`TypeId` = 2)
+2025-10-16 17:13:35.175 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:13:35.175 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:13:35.175 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:13:35.178 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:13:35.255 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:13:35.257 +02:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:13:35.284 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'BUNDLE') AND (`c`.`TypeId` = 2)
+2025-10-16 17:13:43.376 +02:00 [INF] [BasicAuth] Handling request for /bundles
+2025-10-16 17:13:43.377 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:13:43.377 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:13:43.408 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:13:43.409 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:13:43.410 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:13:43.485 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:13:43.510 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'BUNDLE') AND (`c`.`TypeId` = 2)
+2025-10-16 17:13:43.567 +02:00 [INF] [BasicAuth] Handling request for /_blazor/initializers
+2025-10-16 17:13:43.568 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:13:43.569 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:13:43.591 +02:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-16 17:13:43.592 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:13:43.592 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:13:43.608 +02:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-16 17:13:43.608 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:13:43.609 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:13:43.775 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:13:43.776 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:13:43.776 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:13:43.851 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:13:43.876 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'BUNDLE') AND (`c`.`TypeId` = 2)
+2025-10-16 17:13:48.446 +02:00 [INF] [BasicAuth] Handling request for /cart
+2025-10-16 17:13:48.447 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:13:48.447 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:27.403 +02:00 [INF] Application is shutting down...
+2025-10-16 17:19:34.801 +02:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2025-10-16 17:19:34.932 +02:00 [INF] Now listening on: https://localhost:7271
+2025-10-16 17:19:34.944 +02:00 [INF] Now listening on: http://localhost:5230
+2025-10-16 17:19:34.962 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-16 17:19:34.963 +02:00 [INF] Hosting environment: Development
+2025-10-16 17:19:34.963 +02:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-16 17:19:36.192 +02:00 [INF] [BasicAuth] Handling request for /
+2025-10-16 17:19:36.196 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:36.200 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:36.779 +02:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-16 17:19:36.779 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:36.779 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:37.750 +02:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-16 17:19:37.751 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:37.752 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:37.796 +02:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-16 17:19:37.796 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:37.796 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:37.988 +02:00 [INF] [BasicAuth] Handling request for /cart
+2025-10-16 17:19:37.988 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:37.988 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:38.520 +02:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-16 17:19:38.521 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:38.522 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:38.776 +02:00 [INF] [BasicAuth] Handling request for /cart
+2025-10-16 17:19:38.781 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:38.782 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:38.904 +02:00 [INF] [BasicAuth] Handling request for /_blazor/initializers
+2025-10-16 17:19:38.905 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:38.905 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:38.952 +02:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-16 17:19:38.955 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:38.955 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:39.014 +02:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-16 17:19:39.016 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:39.017 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:39.379 +02:00 [INF] [BasicAuth] Handling request for /_blazor/initializers
+2025-10-16 17:19:39.384 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:39.387 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:39.468 +02:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-16 17:19:39.476 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:39.478 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:39.535 +02:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-16 17:19:39.536 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:39.537 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:50.044 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:19:50.044 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:19:50.046 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:50.046 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:50.046 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:50.046 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:52.557 +02:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-10-16 17:19:52.831 +02:00 [INF] Executed DbCommand (55ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:19:52.831 +02:00 [INF] Executed DbCommand (54ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:19:53.189 +02:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'BUNDLE') AND (`c`.`TypeId` = 2)
+2025-10-16 17:19:53.969 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:19:53.970 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:19:53.971 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:53.971 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:53.971 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:53.971 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:54.137 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:19:54.139 +02:00 [INF] Executed DbCommand (14ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:19:54.167 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'BUNDLE') AND (`c`.`TypeId` = 2)
+2025-10-16 17:19:55.134 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-16 17:19:55.134 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:55.134 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:55.138 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:19:55.138 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:55.139 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:55.220 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:19:55.243 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Keys` AS `k`
+INNER JOIN `Servers` AS `s` ON `k`.`ServerId` = `s`.`Id`
+2025-10-16 17:19:55.287 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'KEY') AND `c`.`TypeId` IN (6, 7, 8, 9)
+2025-10-16 17:19:55.353 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-16 17:19:55.358 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:55.358 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:55.353 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:19:55.359 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 17:19:55.359 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-16 17:19:55.449 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Keys` AS `k`
+INNER JOIN `Servers` AS `s` ON `k`.`ServerId` = `s`.`Id`
+2025-10-16 17:19:55.454 +02:00 [INF] Executed DbCommand (20ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:19:55.476 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'KEY') AND `c`.`TypeId` IN (6, 7, 8, 9)
+2025-10-16 17:19:57.777 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:19:57.778 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:19:57.855 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:19:59.407 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:19:59.407 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:19:59.408 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:19:59.408 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:19:59.491 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:19:59.492 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:19:59.520 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'BUNDLE') AND (`c`.`TypeId` = 2)
+2025-10-16 17:19:59.557 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:19:59.559 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:19:59.557 +02:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-16 17:19:59.561 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:19:59.637 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:19:59.639 +02:00 [INF] Executed DbCommand (14ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-16 17:19:59.669 +02:00 [INF] Executed DbCommand (14ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'BUNDLE') AND (`c`.`TypeId` = 2)
+2025-10-16 17:20:01.472 +02:00 [INF] [BasicAuth] Handling request for /api/shards
+2025-10-16 17:20:01.472 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:20:01.593 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Description`, `s`.`Image`, `s`.`Name`, `s`.`Price`, `s`.`Sale`, `s`.`ServerId`, `s0`.`Id`, `s0`.`Name`, `s0`.`RCONIP`, `s0`.`RCONPassword`, `s0`.`RCONPort`
+FROM `Shards` AS `s`
+INNER JOIN `Servers` AS `s0` ON `s`.`ServerId` = `s0`.`Id`
+2025-10-16 17:20:01.625 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'SHARD') AND `c`.`TypeId` IN (1, 2)
+2025-10-16 17:20:01.650 +02:00 [INF] [BasicAuth] Handling request for /api/shards
+2025-10-16 17:20:01.650 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:20:01.727 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Description`, `s`.`Image`, `s`.`Name`, `s`.`Price`, `s`.`Sale`, `s`.`ServerId`, `s0`.`Id`, `s0`.`Name`, `s0`.`RCONIP`, `s0`.`RCONPassword`, `s0`.`RCONPort`
+FROM `Shards` AS `s`
+INNER JOIN `Servers` AS `s0` ON `s`.`ServerId` = `s0`.`Id`
+2025-10-16 17:20:01.752 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'SHARD') AND `c`.`TypeId` IN (1, 2)
+2025-10-16 17:20:09.227 +02:00 [INF] [BasicAuth] Handling request for /api/shards
+2025-10-16 17:20:09.227 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:20:09.322 +02:00 [INF] Executed DbCommand (28ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Description`, `s`.`Image`, `s`.`Name`, `s`.`Price`, `s`.`Sale`, `s`.`ServerId`, `s0`.`Id`, `s0`.`Name`, `s0`.`RCONIP`, `s0`.`RCONPassword`, `s0`.`RCONPort`
+FROM `Shards` AS `s`
+INNER JOIN `Servers` AS `s0` ON `s`.`ServerId` = `s0`.`Id`
+2025-10-16 17:20:09.347 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'SHARD') AND `c`.`TypeId` IN (1, 2)
+2025-10-16 17:20:09.777 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-16 17:20:09.777 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:20:09.778 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:20:09.777 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:20:09.860 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Keys` AS `k`
+INNER JOIN `Servers` AS `s` ON `k`.`ServerId` = `s`.`Id`
+2025-10-16 17:20:09.860 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:20:09.886 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'KEY') AND `c`.`TypeId` IN (6, 7, 8, 9)
+2025-10-16 17:20:09.917 +02:00 [INF] [BasicAuth] Handling request for /api/keys
+2025-10-16 17:20:09.918 +02:00 [INF] [BasicAuth] Handling request for /api/servers
+2025-10-16 17:20:09.921 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:20:09.921 +02:00 [INF] [BasicAuth] User 'admin' authenticated successfully
+2025-10-16 17:20:09.998 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Keys` AS `k`
+INNER JOIN `Servers` AS `s` ON `k`.`ServerId` = `s`.`Id`
+2025-10-16 17:20:09.998 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 17:20:10.024 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'KEY') AND `c`.`TypeId` IN (6, 7, 8, 9)
+2025-10-16 17:20:15.156 +02:00 [INF] Application is shutting down...
