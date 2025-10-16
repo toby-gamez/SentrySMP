@@ -1,16 +1,16 @@
 using SentrySMP.Shared.DTOs;
 namespace SentrySMP.Shared.DTOs
 {
-    public class ShardResponse
+    public class ShardResponse : ProductResponse
     {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string? Description { get; set; }
-        public double Price { get; set; }
-        public int Sale { get; set; }
-        public string? Image { get; set; }
-        public ServerResponse? Server { get; set; }
-        // TODO: Add composition/ingredients if needed
+        // Shard-specific fields
+        // Commands attached to this shard
+        public List<CommandDto>? Commands { get; set; }
+
+        public ShardResponse()
+        {
+            Type = "Shard";
+        }
     }
 
     public class CreateShardDto
@@ -21,7 +21,8 @@ namespace SentrySMP.Shared.DTOs
         public int Sale { get; set; }
         public string? Image { get; set; }
         public int ServerId { get; set; }
-        // TODO: Add composition/ingredients if needed
+        // Optional commands to attach to this shard
+        public List<CreateCommandDto>? Commands { get; set; }
     }
 
     public class UpdateShardDto
@@ -32,6 +33,7 @@ namespace SentrySMP.Shared.DTOs
         public int Sale { get; set; }
         public string? Image { get; set; }
         public int ServerId { get; set; }
-        // TODO: Add composition/ingredients if needed
+        // Optional commands to attach to this shard (replaces existing when provided)
+        public List<CreateCommandDto>? Commands { get; set; }
     }
 }

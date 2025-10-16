@@ -21,7 +21,17 @@ public class KeyService : IKeyService
             .Include(k => k.Server)
             .ToListAsync();
 
-        return keys.Select(MapToResponse);
+        // Fetch all commands for these keys in a single query to avoid concurrent DbContext usage
+        var keyIds = keys.Select(k => k.Id).ToList();
+        var allCommands = await _context.Commands
+            .Where(c => c.Type == "KEY" && keyIds.Contains(c.TypeId))
+            .ToListAsync();
+
+        var commandsByKey = allCommands.GroupBy(c => c.TypeId).ToDictionary(g => g.Key, g => g.ToList());
+
+        // Map synchronously using the in-memory command lists
+        var responses = keys.Select(k => MapToResponse(k, commandsByKey.TryGetValue(k.Id, out var cmds) ? cmds : new List<Command>()));
+        return responses;
     }
 
     public async Task<IEnumerable<KeyResponse>> GetKeysByServerIdAsync(int serverId)
@@ -30,8 +40,14 @@ public class KeyService : IKeyService
             .Include(k => k.Server)
             .Where(k => k.ServerId == serverId)
             .ToListAsync();
+        var keyIds = keys.Select(k => k.Id).ToList();
+        var allCommands = await _context.Commands
+            .Where(c => c.Type == "KEY" && keyIds.Contains(c.TypeId))
+            .ToListAsync();
 
-        return keys.Select(MapToResponse);
+        var commandsByKey = allCommands.GroupBy(c => c.TypeId).ToDictionary(g => g.Key, g => g.ToList());
+        var responses = keys.Select(k => MapToResponse(k, commandsByKey.TryGetValue(k.Id, out var cmds) ? cmds : new List<Command>()));
+        return responses;
     }
 
     public async Task<KeyResponse?> GetKeyByIdAsync(int id)
@@ -40,7 +56,9 @@ public class KeyService : IKeyService
             .Include(k => k.Server)
             .FirstOrDefaultAsync(k => k.Id == id);
 
-        return key != null ? MapToResponse(key) : null;
+        if (key == null) return null;
+        var commands = await _context.Commands.Where(c => c.Type == "KEY" && c.TypeId == key.Id).ToListAsync();
+        return MapToResponse(key, commands);
     }
 
     public async Task<KeyResponse> CreateKeyAsync(CreateKeyDto createKeyDto)
@@ -63,12 +81,27 @@ public class KeyService : IKeyService
         _context.Keys.Add(key);
         await _context.SaveChangesAsync();
 
+        // If commands were provided, attach them
+        if (createKeyDto.Commands != null && createKeyDto.Commands.Any())
+        {
+            var toAdd = createKeyDto.Commands.Select(c => new Command
+            {
+                CommandText = c.CommandText,
+                Type = "KEY",
+                TypeId = key.Id
+            }).ToList();
+
+            _context.Commands.AddRange(toAdd);
+            await _context.SaveChangesAsync();
+        }
+
         // Load the server for the response
         await _context.Entry(key)
             .Reference(k => k.Server)
             .LoadAsync();
 
-        return MapToResponse(key);
+        var commands = await _context.Commands.Where(c => c.Type == "KEY" && c.TypeId == key.Id).ToListAsync();
+        return MapToResponse(key, commands);
     }
 
     public async Task<KeyResponse?> UpdateKeyAsync(int id, UpdateKeyDto updateKeyDto)
@@ -94,6 +127,22 @@ public class KeyService : IKeyService
         key.ServerId = updateKeyDto.ServerId;
         key.Sale = updateKeyDto.Sale;
         key.Image = updateKeyDto.Image;
+        // If commands are provided in the update, replace existing commands for this key
+        if (updateKeyDto.Commands != null)
+        {
+            var existing = await _context.Commands.Where(c => c.Type == "KEY" && c.TypeId == key.Id).ToListAsync();
+            if (existing.Any())
+                _context.Commands.RemoveRange(existing);
+
+            var newCommands = updateKeyDto.Commands.Select(c => new Command
+            {
+                CommandText = c.CommandText,
+                Type = "KEY",
+                TypeId = key.Id
+            }).ToList();
+            if (newCommands.Any())
+                _context.Commands.AddRange(newCommands);
+        }
 
         await _context.SaveChangesAsync();
         
@@ -105,7 +154,8 @@ public class KeyService : IKeyService
                 .LoadAsync();
         }
 
-        return MapToResponse(key);
+        var commands = await _context.Commands.Where(c => c.Type == "KEY" && c.TypeId == key.Id).ToListAsync();
+        return MapToResponse(key, commands);
     }
 
     public async Task<bool> DeleteKeyAsync(int id)
@@ -119,8 +169,16 @@ public class KeyService : IKeyService
         return true;
     }
 
-    private static KeyResponse MapToResponse(Key key)
+    private KeyResponse MapToResponse(Key key, List<Command> commands)
     {
+        var commandDtos = commands.Select(c => new CommandDto
+        {
+            Id = c.Id,
+            CommandText = c.CommandText,
+            Type = c.Type,
+            TypeId = c.TypeId
+        }).ToList();
+
         return new KeyResponse
         {
             Id = key.Id,
@@ -137,7 +195,8 @@ public class KeyService : IKeyService
                 RCONIP = key.Server.RCONIP,
                 RCONPort = key.Server.RCONPort,
                 RCONPassword = key.Server.RCONPassword
-            } : null
+            } : null,
+            Commands = commandDtos
         };
     }
 }

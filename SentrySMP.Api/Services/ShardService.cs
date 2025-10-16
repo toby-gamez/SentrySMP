@@ -20,7 +20,15 @@ public class ShardService : IShardService
         var shards = await _context.Shards
             .Include(s => s.Server)
             .ToListAsync();
-        return shards.Select(MapToResponse);
+        var shardIds = shards.Select(s => s.Id).ToList();
+        var allCommands = await _context.Commands
+            .Where(c => c.Type == "SHARD" && shardIds.Contains(c.TypeId))
+            .ToListAsync();
+
+        var commandsByShard = allCommands.GroupBy(c => c.TypeId).ToDictionary(g => g.Key, g => g.ToList());
+
+        var responses = shards.Select(s => MapToResponse(s, commandsByShard.TryGetValue(s.Id, out var cmds) ? cmds : new List<Command>()));
+        return responses;
     }
 
     public async Task<IEnumerable<ShardResponse>> GetShardsByServerIdAsync(int serverId)
@@ -29,7 +37,14 @@ public class ShardService : IShardService
             .Include(s => s.Server)
             .Where(s => s.ServerId == serverId)
             .ToListAsync();
-        return shards.Select(MapToResponse);
+        var shardIds = shards.Select(s => s.Id).ToList();
+        var allCommands = await _context.Commands
+            .Where(c => c.Type == "SHARD" && shardIds.Contains(c.TypeId))
+            .ToListAsync();
+
+        var commandsByShard = allCommands.GroupBy(c => c.TypeId).ToDictionary(g => g.Key, g => g.ToList());
+        var responses = shards.Select(s => MapToResponse(s, commandsByShard.TryGetValue(s.Id, out var cmds) ? cmds : new List<Command>()));
+        return responses;
     }
 
     public async Task<ShardResponse?> GetShardByIdAsync(int id)
@@ -37,7 +52,9 @@ public class ShardService : IShardService
         var shard = await _context.Shards
             .Include(s => s.Server)
             .FirstOrDefaultAsync(s => s.Id == id);
-        return shard != null ? MapToResponse(shard) : null;
+        if (shard == null) return null;
+        var commands = await _context.Commands.Where(c => c.Type == "SHARD" && c.TypeId == shard.Id).ToListAsync();
+        return MapToResponse(shard, commands);
     }
 
     public async Task<ShardResponse> CreateShardAsync(CreateShardDto createShardDto)
@@ -57,7 +74,21 @@ public class ShardService : IShardService
         };
         _context.Shards.Add(shard);
         await _context.SaveChangesAsync();
-        return MapToResponse(shard);
+        // Attach commands if provided
+        if (createShardDto.Commands != null && createShardDto.Commands.Any())
+        {
+            var toAdd = createShardDto.Commands.Select(c => new Command
+            {
+                CommandText = c.CommandText,
+                Type = "SHARD",
+                TypeId = shard.Id
+            }).ToList();
+            _context.Commands.AddRange(toAdd);
+            await _context.SaveChangesAsync();
+        }
+
+        var commands = await _context.Commands.Where(c => c.Type == "SHARD" && c.TypeId == shard.Id).ToListAsync();
+        return MapToResponse(shard, commands);
     }
 
     public async Task<ShardResponse?> UpdateShardAsync(int id, UpdateShardDto updateShardDto)
@@ -70,8 +101,25 @@ public class ShardService : IShardService
         shard.ServerId = updateShardDto.ServerId;
         shard.Sale = updateShardDto.Sale;
         shard.Image = updateShardDto.Image;
+        // If commands provided, replace existing
+        if (updateShardDto.Commands != null)
+        {
+            var existing = await _context.Commands.Where(c => c.Type == "SHARD" && c.TypeId == shard.Id).ToListAsync();
+            if (existing.Any())
+                _context.Commands.RemoveRange(existing);
+
+            var newCommands = updateShardDto.Commands.Select(c => new Command
+            {
+                CommandText = c.CommandText,
+                Type = "SHARD",
+                TypeId = shard.Id
+            }).ToList();
+            if (newCommands.Any())
+                _context.Commands.AddRange(newCommands);
+        }
         await _context.SaveChangesAsync();
-        return MapToResponse(shard);
+        var commands = await _context.Commands.Where(c => c.Type == "SHARD" && c.TypeId == shard.Id).ToListAsync();
+        return MapToResponse(shard, commands);
     }
 
     public async Task<bool> DeleteShardAsync(int id)
@@ -98,6 +146,32 @@ public class ShardService : IShardService
                 Id = shard.Server.Id,
                 Name = shard.Server.Name
             } : null
+        };
+    }
+    private ShardResponse MapToResponse(Shard shard, List<Command> commands)
+    {
+        var commandDtos = commands.Select(c => new CommandDto
+        {
+            Id = c.Id,
+            CommandText = c.CommandText,
+            Type = c.Type,
+            TypeId = c.TypeId
+        }).ToList();
+
+        return new ShardResponse
+        {
+            Id = shard.Id,
+            Name = shard.Name,
+            Description = shard.Description,
+            Price = shard.Price,
+            Sale = shard.Sale,
+            Image = shard.Image,
+            Server = shard.Server != null ? new ServerResponse
+            {
+                Id = shard.Server.Id,
+                Name = shard.Server.Name
+            } : null,
+            Commands = commandDtos
         };
     }
 }

@@ -13,6 +13,20 @@
     <div class="row">
         <div class="col-12">
             <h1 class="mb-4">Available Shards</h1>
+            <!-- Server filter dropdown -->
+            @if (shards?.Any() == true)
+            {
+                <div class="mb-3 d-flex align-items-center gap-2">
+                    <label for="serverFilter" class="form-label mb-0">Filter by server:</label>
+                    <select id="serverFilter" class="form-select w-auto" @onchange="OnServerFilterChanged">
+                        <option value="">All servers</option>
+                        @foreach (var server in servers)
+                        {
+                            <option value="@server.Id" selected="@(server.Id == selectedServerId)">@server.Name</option>
+                        }
+                    </select>
+                </div>
+            }
             @if (loading)
             {
                 <div class="d-flex justify-content-center">
@@ -28,10 +42,10 @@
                     @errorMessage
                 </div>
             }
-            else if (shards?.Any() == true)
+            else if (filteredShards?.Any() == true)
             {
                 <div class="row">
-                    @foreach (var shard in shards)
+                    @foreach (var shard in filteredShards)
                     {
                         <div class="col-md-4 col-lg-3 mb-4">
                             <div class="card h-100">
@@ -78,6 +92,27 @@
                                         <button class="btn btn-primary btn-sm w-100" @onclick="() => ShowShardDetails(shard)">
                                             <i class="bi bi-info-circle"></i> View Details
                                         </button>
+                                        @{
+                                            var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == shard.Id && i.Key.Type == "Shard");
+                                        }
+                                        @if (cartItem == null)
+                                        {
+                                            <button class="btn btn-outline-success btn-sm w-100 mt-2" @onclick="async () => await AddToCart(shard)">
+                                                <i class="bi bi-cart-plus"></i> Add to Cart
+                                            </button>
+                                            @if (addedShardId == shard.Id)
+                                            {
+                                                <div class="alert alert-success py-1 px-2 mt-2 mb-0 text-center" style="font-size:0.95em;">Přidáno!</div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <div class="d-flex align-items-center gap-2 mt-2 justify-content-center">
+                                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(shard, -1)" disabled="@(cartItem.Quantity <= 1)">-</button>
+                                                <span>@cartItem.Quantity</span>
+                                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(shard, 1)" disabled="@(cartItem.Quantity >= 10)">+</button>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -155,6 +190,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @onclick="CloseShardDetails">Close</button>
+                    <button type="button" class="btn btn-success" @onclick="async () => await AddSelectedToCart()">
+                        <i class="bi bi-cart-plus"></i> Purchase
+                    </button>
                 </div>
             </div>
         </div>
@@ -163,13 +201,29 @@
 
 @code {
     private List<ShardResponse>? shards;
+    private List<ShardResponse>? filteredShards;
+    private List<ServerResponse> servers = new();
+    private int? selectedServerId;
     private bool loading = true;
     private string? errorMessage;
     private ShardResponse? selectedShard;
 
+    private bool _cartLoaded = false;
+    private int? addedShardId;
+
     protected override async Task OnInitializedAsync()
     {
         await LoadShards();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_cartLoaded)
+        {
+            await CartState.LoadFromStorageAsync(JS);
+            _cartLoaded = true;
+            StateHasChanged();
+        }
     }
 
     private async Task LoadShards()
@@ -179,6 +233,15 @@
             loading = true;
             errorMessage = null;
             shards = (await Api.GetShardsAsync()).ToList();
+            // build server list from shards and apply filter
+            servers = shards
+                .Where(s => s.Server != null)
+                .Select(s => s.Server!)
+                .GroupBy(s => s.Id)
+                .Select(g => g.First())
+                .OrderBy(s => s.Name)
+                .ToList();
+            ApplyServerFilter();
         }
         catch (Exception ex)
         {
@@ -189,6 +252,33 @@
         {
             loading = false;
         }
+    }
+
+    private void ApplyServerFilter()
+    {
+        if (selectedServerId.HasValue)
+        {
+            filteredShards = shards?.Where(s => s.Server?.Id == selectedServerId.Value).ToList();
+        }
+        else
+        {
+            filteredShards = shards;
+        }
+    }
+
+    private void OnServerFilterChanged(ChangeEventArgs e)
+    {
+        var value = e.Value?.ToString();
+        if (int.TryParse(value, out var id))
+        {
+            selectedServerId = id;
+        }
+        else
+        {
+            selectedServerId = null;
+        }
+        ApplyServerFilter();
+        StateHasChanged();
     }
 
     private void ShowShardDetails(ShardResponse shard)
@@ -204,5 +294,29 @@
     private double CalculateSalePrice(double originalPrice, int salePercentage)
     {
         return originalPrice * (1 - salePercentage / 100.0);
+    }
+
+    private async Task AddToCart(ShardResponse shard)
+    {
+        await JS.InvokeVoidAsync("console.log", $"AddToCart: {shard.Name} (ID: {shard.Id})");
+        await CartState.AddToCartAsync(shard);
+        addedShardId = shard.Id;
+        StateHasChanged();
+        await Task.Delay(1200);
+        if (addedShardId == shard.Id) { addedShardId = null; StateHasChanged(); }
+    }
+
+    private async Task ChangeQuantity(ShardResponse shard, int delta)
+    {
+        await CartState.ChangeQuantityAsync(shard, delta);
+    }
+
+    private async Task AddSelectedToCart()
+    {
+        if (selectedShard != null)
+        {
+            await JS.InvokeVoidAsync("console.log", $"AddSelectedToCart: {selectedShard.Name} (ID: {selectedShard.Id})");
+            await CartState.AddToCartAsync(selectedShard);
+        }
     }
 }

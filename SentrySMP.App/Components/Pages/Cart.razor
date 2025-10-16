@@ -105,7 +105,7 @@
         CartState.OnChange -= StateHasChanged;
     }
 
-    private async Task RemoveFromCart(KeyResponse item)
+    private async Task RemoveFromCart(ProductResponse item)
     {
         await CartState.RemoveFromCartAsync(item);
     }
@@ -113,7 +113,7 @@
     {
         await CartState.ClearCartAsync();
     }
-    private async Task ChangeQuantity(KeyResponse item, int delta)
+    private async Task ChangeQuantity(ProductResponse item, int delta)
     {
         await CartState.ChangeQuantityAsync(item, delta);
     }

@@ -95,7 +95,29 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-success w-100 mt-3">
+                        <div class="mb-3">
+                            <label class="form-label">Commands</label>
+                            @if (shardCommands == null || !shardCommands.Any())
+                            {
+                                <div class="text-muted mb-2">No commands added.</div>
+                            }
+                            @for (int i = 0; i < (shardCommands?.Count ?? 0); i++)
+                            {
+                                var idx = i;
+                                var cmd = shardCommands![idx];
+                                <div class="input-group mb-2">
+                                    <InputText @bind-Value="cmd.CommandText" class="form-control" />
+                                    <button type="button" class="btn btn-outline-danger" @onclick="() => RemoveShardCommand(idx)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            }
+                            <button type="button" class="btn btn-sm btn-outline-primary mb-3" @onclick="AddShardCommand">
+                                <i class="bi bi-plus"></i> Add Command
+                            </button>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 mt-1">
                             <i class="bi bi-plus-circle"></i> Add Shard
                         </button>
                     </EditForm>
@@ -110,6 +132,7 @@
     private List<ServerResponse> servers = new();
     private string? errorMessage;
     private string? successMessage;
+    private List<CommandInputModel>? shardCommands = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -122,6 +145,10 @@
         {
             errorMessage = null;
             successMessage = null;
+            if (shardCommands != null && shardCommands.Any())
+            {
+                shardModel.Commands = shardCommands.Select(c => new CreateCommandDto { CommandText = c.CommandText }).ToList();
+            }
             await Api.CreateShardAsync(shardModel);
             successMessage = "Shard created successfully!";
             Navigation.NavigateTo("/shards");
@@ -131,5 +158,23 @@
             errorMessage = $"Error creating shard: {ex.Message}";
             Logger.LogError(ex, "Error creating shard");
         }
+    }
+
+    private class CommandInputModel
+    {
+        public string CommandText { get; set; } = string.Empty;
+    }
+
+    private void AddShardCommand()
+    {
+        if (shardCommands == null) shardCommands = new List<CommandInputModel>();
+        shardCommands.Add(new CommandInputModel());
+    }
+
+    private void RemoveShardCommand(int index)
+    {
+        if (shardCommands == null) return;
+        if (index < 0 || index >= shardCommands.Count) return;
+        shardCommands.RemoveAt(index);
     }
 }

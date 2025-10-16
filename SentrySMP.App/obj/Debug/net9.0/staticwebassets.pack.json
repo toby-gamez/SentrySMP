@@ -201,6 +201,10 @@
       "PackagePath": "staticwebassets/uploads/keys/45e0ccb5-ea8f-467a-959a-1eece97409fa.png"
     },
     {
+      "Id": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/48d4dad7-49de-43d9-b67d-4f1c6b6243b2.png",
+      "PackagePath": "staticwebassets/uploads/keys/48d4dad7-49de-43d9-b67d-4f1c6b6243b2.png"
+    },
+    {
       "Id": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/62be66f3-a61d-41bd-976d-7ce3d427faef.png",
       "PackagePath": "staticwebassets/uploads/keys/62be66f3-a61d-41bd-976d-7ce3d427faef.png"
     },
@@ -227,6 +231,10 @@
     {
       "Id": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/f333779d-5780-403b-81d7-c4d21d30156d.png",
       "PackagePath": "staticwebassets/uploads/keys/f333779d-5780-403b-81d7-c4d21d30156d.png"
+    },
+    {
+      "Id": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/f98341a8-3307-47ed-96a7-52ce9f9068bd.png",
+      "PackagePath": "staticwebassets/uploads/keys/f98341a8-3307-47ed-96a7-52ce9f9068bd.png"
     },
     {
       "Id": "obj/Debug/net9.0/staticwebassets/msbuild.SentrySMP.App.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",

@@ -47,9 +47,9 @@ namespace SentrySMP.App.Components.State
         private readonly List<CartItem> _cartItems = new();
         public IReadOnlyList<CartItem> CartItems => _cartItems;
 
-        public async Task AddToCartAsync(KeyResponse key)
+        public async Task AddToCartAsync(ProductResponse key)
         {
-            var item = _cartItems.FirstOrDefault(i => i.Key.Id == key.Id);
+            var item = _cartItems.FirstOrDefault(i => i.Key.Id == key.Id && i.Key.Type == key.Type);
             if (item != null)
             {
                 if (item.Quantity < 10)
@@ -65,9 +65,9 @@ namespace SentrySMP.App.Components.State
             await SaveToStorageAsync();
         }
 
-        public async Task RemoveFromCartAsync(KeyResponse key)
+        public async Task RemoveFromCartAsync(ProductResponse key)
         {
-            var item = _cartItems.FirstOrDefault(i => i.Key.Id == key.Id);
+            var item = _cartItems.FirstOrDefault(i => i.Key.Id == key.Id && i.Key.Type == key.Type);
             if (item != null)
             {
                 _cartItems.Remove(item);
@@ -76,9 +76,9 @@ namespace SentrySMP.App.Components.State
             }
         }
 
-        public async Task ChangeQuantityAsync(KeyResponse key, int delta)
+        public async Task ChangeQuantityAsync(ProductResponse key, int delta)
         {
-            var item = _cartItems.FirstOrDefault(i => i.Key.Id == key.Id);
+            var item = _cartItems.FirstOrDefault(i => i.Key.Id == key.Id && i.Key.Type == key.Type);
             if (item != null)
             {
                 item.Quantity = Math.Clamp(item.Quantity + delta, 1, 10);

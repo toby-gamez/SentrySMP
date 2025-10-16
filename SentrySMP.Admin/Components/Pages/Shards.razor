@@ -46,6 +46,7 @@
                                 <th><i class="bi bi-currency-dollar me-1"></i>Price</th>
                                 <th><i class="bi bi-server me-1"></i>Server</th>
                                 <th><i class="bi bi-percent me-1"></i>Sale</th>
+                                <th><i class="bi bi-terminal me-1"></i>Commands</th>
                                 <th><i class="bi bi-gear me-1"></i>Actions</th>
                             </tr>
                         </thead>
@@ -108,6 +109,20 @@
                                                 <i class="bi bi-dash-circle me-1"></i>
                                                 Regular
                                             </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (shard.Commands != null && shard.Commands.Any())
+                                        {
+                                            var cmdText = string.Join(", ", shard.Commands.Select(c => c.CommandText));
+                                            <span class="badge bg-info" title="@cmdText">
+                                                <i class="bi bi-terminal me-1"></i>
+                                                @shard.Commands.Count
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">—</span>
                                         }
                                     </td>
                                     <td>
