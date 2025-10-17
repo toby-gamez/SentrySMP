@@ -61,6 +61,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9LZXlzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Components/Pages/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Mb2dpbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Components/Pages/Ranks.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9SYW5rcy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -75,6 +79,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Components/Routes.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Sb3V0ZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Components/Shared/ShowUsername.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9TaGFyZWQvU2hvd1VzZXJuYW1lLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Components/Shared/UserBadge.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9TaGFyZWQvVXNlckJhZGdlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/Components/_Imports.razor]

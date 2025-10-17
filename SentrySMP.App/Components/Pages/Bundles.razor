@@ -1,4 +1,5 @@
 @page "/bundles"
+<SentrySMP.App.Components.Shared.ShowUsername />
 @using SentrySMP.Shared.DTOs
 @using SentrySMP.Shared.Interfaces
 @inject ISentryApi Api
@@ -191,9 +192,27 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @onclick="CloseBundleDetails">Close</button>
-                    <button type="button" class="btn btn-success" @onclick="async () => await AddSelectedToCart()">
-                        <i class="bi bi-cart-plus"></i> Purchase
-                    </button>
+                    @{
+                        var cartItemModal = CartState.CartItems.FirstOrDefault(i => i.Key.Id == selectedBundle!.Id);
+                    }
+                    @if (cartItemModal == null)
+                    {
+                        <button type="button" class="btn btn-outline-success" @onclick="async () => await AddToCart(selectedBundle!)">
+                            <i class="bi bi-cart-plus"></i> Add to Cart
+                        </button>
+                        @if (addedBundleId == selectedBundle!.Id)
+                        {
+                            <div class="alert alert-success py-1 px-2 ms-2 mb-0" style="font-size:0.95em;">Přidáno!</div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(selectedBundle!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
+                            <span>@cartItemModal.Quantity</span>
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(selectedBundle!, 1)" disabled="@(cartItemModal.Quantity >= 10)">+</button>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -341,18 +360,7 @@
     {
         if (selectedBundle != null)
         {
-            var keyLike = new KeyResponse
-            {
-                Id = selectedBundle.Id,
-                Name = selectedBundle.Name,
-                Description = selectedBundle.Description,
-                Price = selectedBundle.Price,
-                ServerId = selectedBundle.ServerId,
-                Sale = selectedBundle.Sale,
-                Image = selectedBundle.Image,
-                Server = selectedBundle.Server
-            };
-            await CartState.AddToCartAsync(keyLike);
+            await AddToCart(selectedBundle);
         }
     }
 }

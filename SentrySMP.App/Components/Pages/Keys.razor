@@ -1,4 +1,5 @@
 @page "/keys"
+<SentrySMP.App.Components.Shared.ShowUsername />
 @using SentrySMP.Shared.DTOs
 @using SentrySMP.Shared.Interfaces
 @inject ISentryApi Api
@@ -192,9 +193,27 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @onclick="CloseKeyDetails">Close</button>
-                    <button type="button" class="btn btn-success" @onclick="async () => await AddSelectedToCart()">
-                        <i class="bi bi-cart-plus"></i> Purchase
-                    </button>
+                    @{
+                        var cartItemModal = CartState.CartItems.FirstOrDefault(i => i.Key.Id == selectedKey!.Id);
+                    }
+                    @if (cartItemModal == null)
+                    {
+                        <button type="button" class="btn btn-outline-success" @onclick="async () => await AddToCart(selectedKey!)">
+                            <i class="bi bi-cart-plus"></i> Add to Cart
+                        </button>
+                        @if (addedKeyId == selectedKey!.Id)
+                        {
+                            <div class="alert alert-success py-1 px-2 ms-2 mb-0" style="font-size:0.95em;">Přidáno!</div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(selectedKey!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
+                            <span>@cartItemModal.Quantity</span>
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(selectedKey!, 1)" disabled="@(cartItemModal.Quantity >= 10)">+</button>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -315,8 +334,8 @@
     {
         if (selectedKey != null)
         {
-            await JS.InvokeVoidAsync("console.log", $"AddSelectedToCart: {selectedKey.Name} (ID: {selectedKey.Id})");
-            await CartState.AddToCartAsync(selectedKey);
+            // Reuse the same AddToCart flow so UI feedback (Přidáno!) is consistent
+            await AddToCart(selectedKey);
         }
     }
 

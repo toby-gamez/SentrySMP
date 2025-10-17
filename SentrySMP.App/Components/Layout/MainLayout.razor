@@ -11,7 +11,12 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between w-100">
+                <a href="https://learn.microsoft.com/aspnet/core/" target="_blank" class="mb-2 mb-sm-0">About</a>
+                <div class="ms-sm-auto">
+                    <!-- Username removed from MainLayout; shown on Login page only -->
+                </div>
+            </div>
         </div>
 
         <article class="content px-4">
@@ -19,6 +24,9 @@
         </article>
     </main>
 </div>
+
+@code {
+}
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.

@@ -1,0 +1,68 @@
+@inject SentrySMP.App.Authentication.UserService UserService
+
+@inject NavigationManager Navigation
+
+@if (!string.IsNullOrEmpty(CurrentDisplay))
+{
+    <div class="mb-3 d-flex align-items-center gap-3">
+        <div>
+            <small class="text-muted">Přihlášen jako</small>
+            <div><strong>@CurrentDisplay</strong></div>
+        </div>
+        <div>
+            <button class="btn btn-sm btn-outline-secondary" @onclick="Logout">Odhlásit</button>
+        </div>
+    </div>
+}
+else
+{
+    <div class="mb-3">
+        <a class="btn btn-sm btn-primary" href="/login">Přihlásit</a>
+    </div>
+}
+
+@code {
+    private string? CurrentDisplay;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var stored = await UserService.GetUsernameAsync();
+            if (!string.IsNullOrEmpty(stored))
+            {
+                // Show the stored value exactly as-is so Bedrock entries keep the leading '.' prefix
+                // Show only the stored username (keep any leading '.' for Bedrock)
+                CurrentDisplay = stored;
+                StateHasChanged();
+            }
+            UserService.OnChange += OnUserChanged;
+        }
+    }
+
+    private async void OnUserChanged()
+    {
+        var stored = await UserService.GetUsernameAsync();
+        if (string.IsNullOrEmpty(stored))
+        {
+            CurrentDisplay = null;
+        }
+        else
+        {
+            CurrentDisplay = stored;
+        }
+        StateHasChanged();
+    }
+
+    private async Task Logout()
+    {
+        await UserService.SetUsernameAsync(null);
+        await UserService.SetEditionAsync(null);
+        Navigation.NavigateTo("/");
+    }
+
+    public void Dispose()
+    {
+        UserService.OnChange -= OnUserChanged;
+    }
+}

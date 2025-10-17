@@ -1,4 +1,5 @@
 @page "/ranks"
+<SentrySMP.App.Components.Shared.ShowUsername />
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.JSInterop
@@ -186,9 +187,27 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @onclick="CloseRankDetails">Close</button>
-                    <button type="button" class="btn btn-success" @onclick="async () => await AddSelectedToCart()">
-                        <i class="bi bi-cart-plus"></i> Purchase
-                    </button>
+                    @{
+                        var cartItemModal = CartState.CartItems.FirstOrDefault(i => i.Key.Id == selectedRank!.Id && i.Key.Type == selectedRank.Type);
+                    }
+                    @if (cartItemModal == null)
+                    {
+                        <button type="button" class="btn btn-outline-success" @onclick="async () => await AddToCart(selectedRank!)">
+                            <i class="bi bi-cart-plus"></i> Add to Cart
+                        </button>
+                        @if (addedRankId == selectedRank!.Id)
+                        {
+                            <div class="alert alert-success py-1 px-2 ms-2 mb-0" style="font-size:0.95em;">Přidáno!</div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(selectedRank!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
+                            <span>@cartItemModal.Quantity</span>
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(selectedRank!, 1)" disabled="@(cartItemModal.Quantity >= 10)">+</button>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -274,10 +293,7 @@
     {
         if (selectedRank != null)
         {
-            await JS.InvokeVoidAsync("console.log", $"AddSelectedToCart: {selectedRank.Name} (ID: {selectedRank.Id})");
-            await CartState.AddToCartAsync(selectedRank);
+            await AddToCart(selectedRank);
         }
     }
-
-    // (No custom ServerDto needed, using ServerResponse from DTOs)
 }

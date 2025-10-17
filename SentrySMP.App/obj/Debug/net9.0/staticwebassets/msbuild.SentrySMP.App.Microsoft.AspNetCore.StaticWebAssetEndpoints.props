@@ -36,6 +36,18 @@
       <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"u0ggtt5v8x"},{"Name":"integrity","Value":"sha256-HpY4ryE8eDQ4GWf/LTz6g/d4KlRVyMNb\u002B7RmYhphlGE="},{"Name":"label","Value":"_content/SentrySMP.App/images/favicon.png"}]]]></EndpointProperties>
       <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"17034"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u0022HpY4ryE8eDQ4GWf/LTz6g/d4KlRVyMNb\u002B7RmYhphlGE=\u0022"},{"Name":"Last-Modified","Value":"Fri, 17 Oct 2025 13:42:56 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/SentrySMP.App/js/sentrysmp.storage.iewmcu3g5l.js">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\sentrysmp.storage.js'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"iewmcu3g5l"},{"Name":"integrity","Value":"sha256-ikHNNRuVSYlcBdxaMEpZCXYSCWHGbm5YzRL7Jr9juRw="},{"Name":"label","Value":"_content/SentrySMP.App/js/sentrysmp.storage.js"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"266"},{"Name":"Content-Type","Value":"text/javascript"},{"Name":"ETag","Value":"\u0022ikHNNRuVSYlcBdxaMEpZCXYSCWHGbm5YzRL7Jr9juRw=\u0022"},{"Name":"Last-Modified","Value":"Fri, 17 Oct 2025 19:20:27 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/SentrySMP.App/js/sentrysmp.storage.js">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\sentrysmp.storage.js'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-ikHNNRuVSYlcBdxaMEpZCXYSCWHGbm5YzRL7Jr9juRw="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"266"},{"Name":"Content-Type","Value":"text/javascript"},{"Name":"ETag","Value":"\u0022ikHNNRuVSYlcBdxaMEpZCXYSCWHGbm5YzRL7Jr9juRw=\u0022"},{"Name":"Last-Modified","Value":"Fri, 17 Oct 2025 19:20:27 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/SentrySMP.App/lib/bootstrap/dist/css/bootstrap-grid.bqjiyaj88i.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\lib\bootstrap\dist\css\bootstrap-grid.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
@@ -568,13 +580,25 @@
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\SentrySMP.App.gh6ulrnnuq.bundle.scp.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
       <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-rNI40EVZMK7V4vEgTd\u002BxiZBoTssbdmAQdhH49Va4JTg="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"5768"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022rNI40EVZMK7V4vEgTd\u002BxiZBoTssbdmAQdhH49Va4JTg=\u0022"},{"Name":"Last-Modified","Value":"Tue, 14 Oct 2025 13:39:31 GMT"}]]]></ResponseHeaders>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"5768"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022rNI40EVZMK7V4vEgTd\u002BxiZBoTssbdmAQdhH49Va4JTg=\u0022"},{"Name":"Last-Modified","Value":"Fri, 17 Oct 2025 20:50:56 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/SentrySMP.App/SentrySMP.App.gh6ulrnnuq.bundle.scp.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\SentrySMP.App.gh6ulrnnuq.bundle.scp.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
       <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"gh6ulrnnuq"},{"Name":"integrity","Value":"sha256-rNI40EVZMK7V4vEgTd\u002BxiZBoTssbdmAQdhH49Va4JTg="},{"Name":"label","Value":"_content/SentrySMP.App/SentrySMP.App.bundle.scp.css"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"5768"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022rNI40EVZMK7V4vEgTd\u002BxiZBoTssbdmAQdhH49Va4JTg=\u0022"},{"Name":"Last-Modified","Value":"Tue, 14 Oct 2025 13:39:31 GMT"}]]]></ResponseHeaders>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"5768"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022rNI40EVZMK7V4vEgTd\u002BxiZBoTssbdmAQdhH49Va4JTg=\u0022"},{"Name":"Last-Modified","Value":"Fri, 17 Oct 2025 20:50:56 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/SentrySMP.App/uploads/keys/027b2445-d8c4-4e06-ab1a-331fd6ebd942.8y6yge2iku.png">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\keys\027b2445-d8c4-4e06-ab1a-331fd6ebd942.png'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"8y6yge2iku"},{"Name":"integrity","Value":"sha256-UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw="},{"Name":"label","Value":"_content/SentrySMP.App/uploads/keys/027b2445-d8c4-4e06-ab1a-331fd6ebd942.png"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"77769"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u0022UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw=\u0022"},{"Name":"Last-Modified","Value":"Fri, 17 Oct 2025 16:29:42 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/SentrySMP.App/uploads/keys/027b2445-d8c4-4e06-ab1a-331fd6ebd942.png">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\keys\027b2445-d8c4-4e06-ab1a-331fd6ebd942.png'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"77769"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u0022UADuuTU/tVe3uoTi4Tkco76pRAR5zknyFLZG9Rh0RNw=\u0022"},{"Name":"Last-Modified","Value":"Fri, 17 Oct 2025 16:29:42 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/SentrySMP.App/uploads/keys/086b3baa-a104-4e16-bf6d-9bfc4f3c9f8d.8y6yge2iku.png">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\keys\086b3baa-a104-4e16-bf6d-9bfc4f3c9f8d.png'))</AssetFile>

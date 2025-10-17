@@ -1,0 +1,52 @@
+@inject SentrySMP.App.Authentication.UserService UserService
+@inject NavigationManager Navigation
+@implements IDisposable
+
+@if (!string.IsNullOrEmpty(Username))
+{
+    var display = Username.StartsWith('.') ? Username.TrimStart('.') : Username;
+    var platform = Username.StartsWith('.') ? "Bedrock" : "Java";
+    <span class="me-2">Přihlášen: <strong>@display</strong> <small class="text-muted">(@platform)</small></span>
+    <button class="btn btn-sm btn-outline-secondary" @onclick="Logout">Odhlásit</button>
+}
+else
+{
+    <a class="btn btn-sm btn-outline-secondary" href="/login">Přihlásit</a>
+}
+
+@code {
+    private string? Username;
+    private bool _initialized;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!_initialized)
+        {
+            _initialized = true;
+            // Subscribe first to avoid missing an OnChange fired during initialization
+            UserService.OnChange += OnUserChanged;
+            var newName = await UserService.GetUsernameAsync();
+            if (newName != Username)
+            {
+                Username = newName;
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async void OnUserChanged()
+    {
+        Username = await UserService.GetUsernameAsync();
+        StateHasChanged();
+    }
+
+    private async Task Logout()
+    {
+        await UserService.SetUsernameAsync(null);
+    }
+
+    public void Dispose()
+    {
+        UserService.OnChange -= OnUserChanged;
+    }
+}

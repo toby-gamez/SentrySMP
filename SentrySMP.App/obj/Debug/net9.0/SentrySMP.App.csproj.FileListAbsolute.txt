@@ -213,6 +213,7 @@
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/scopedcss/bundle/SentrySMP.App.styles.css
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/scopedcss/projectbundle/SentrySMP.App.bundle.scp.css
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/compressed/a0oqpkgi0c-w7mf952350.gz
+/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/compressed/0knh7z7zq8-iewmcu3g5l.gz
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/compressed/zlc0y6tngt-bqjiyaj88i.gz
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/compressed/lbymogcu43-c2jlpeoesf.gz
 /home/tobias/RiderProjects/SentrySMP/SentrySMP.App/obj/Debug/net9.0/compressed/zh01fy1xvy-erw9l3u2r3.gz

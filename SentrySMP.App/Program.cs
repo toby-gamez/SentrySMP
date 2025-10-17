@@ -67,6 +67,7 @@ services.AddEndpointsApiExplorer();
 
 services.AddSingleton<CredentialStore>();
 services.AddTransient<HttpLoggingHandler>();
+services.AddScoped<UserService>();
 
 services.AddRefitClient<ISentryApi>()
     .ConfigureHttpClient(c =>

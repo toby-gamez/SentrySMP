@@ -1,0 +1,106 @@
+@page "/login"
+@using Microsoft.AspNetCore.Components.Forms
+@inject SentrySMP.App.Authentication.UserService UserService
+@inject NavigationManager Navigation
+
+@rendermode InteractiveServer
+
+<h3>Login</h3>
+
+@if (!string.IsNullOrEmpty(ExistingUsername))
+{
+    <h1 class="display-4">@ExistingUsername (@(IsBedrock ? "Bedrock" : "Java"))</h1>
+}
+
+<div class="mb-3">
+    <label for="username" class="form-label">Minecraft jméno</label>
+    @if (IsBedrock)
+    {
+        <div class="input-group">
+            <span class="input-group-text">.</span>
+            <input id="username" class="form-control" @bind="UsernameEditable" />
+        </div>
+    }
+    else
+    {
+        <input id="username" class="form-control" @bind="UsernameEditable" />
+    }
+    <div class="form-text">Zadejte pouze jméno. Nebudeme ověřovat.</div>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Typ účtu</label>
+    <div>
+        <InputRadioGroup class="d-flex gap-3" @bind-Value="AccountType">
+            <div class="form-check form-check-inline">
+                <InputRadio class="form-check-input" id="javaRadio" Value='@("java")' />
+                <label class="form-check-label" for="javaRadio">Java</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <InputRadio class="form-check-input" id="bedrockRadio" Value='@("bedrock")' />
+                <label class="form-check-label" for="bedrockRadio">Bedrock</label>
+            </div>
+        </InputRadioGroup>
+    </div>
+</div>
+
+<button class="btn btn-primary me-2" @onclick="Save">Přihlásit</button>
+<button class="btn btn-secondary" @onclick="Cancel">Zrušit</button>
+
+@code {
+    // The value the user types in the input (no leading dot)
+    private string? UsernameEditable { get; set; }
+    // The full stored username as read from storage (may include leading dot for Bedrock)
+    private string? ExistingUsername { get; set; }
+    private bool IsBedrock => string.Equals(AccountType, "bedrock", StringComparison.OrdinalIgnoreCase);
+    private string AccountType { get; set; } = "java";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var stored = await UserService.GetUsernameAsync();
+        if (!string.IsNullOrEmpty(stored))
+        {
+            // Storage conventions:
+            // - Bedrock: prefix with '.' (e.g. ".Notch")
+            // - Java: plain name (e.g. "Notch")
+            ExistingUsername = stored;
+            if (stored.StartsWith('.'))
+            {
+                AccountType = "bedrock";
+                // Editable should not include the dot
+                UsernameEditable = stored.Substring(1);
+            }
+            else
+            {
+                AccountType = "java";
+                UsernameEditable = stored;
+            }
+        }
+    }
+
+    private async Task Save()
+    {
+        // Only add the dot at save time for Bedrock. The input (UsernameEditable)
+        // never contains the dot and the user cannot delete it.
+        if (!string.IsNullOrWhiteSpace(UsernameEditable))
+        {
+            var toStore = UsernameEditable!;
+            if (IsBedrock)
+            {
+                if (!toStore.StartsWith('.'))
+                {
+                    toStore = "." + toStore;
+                }
+            }
+            await UserService.SetUsernameAsync(toStore);
+            // Persist edition to localStorage to match the PHP flow
+            await UserService.SetEditionAsync(AccountType);
+        }
+        Navigation.NavigateTo("/");
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/");
+    }
+}
