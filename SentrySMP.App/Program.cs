@@ -1,5 +1,6 @@
 using SentrySMP.App.Components.State;
 using SentrySMP.Shared.Interfaces;
+using SentrySMP.Api.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -54,6 +55,7 @@ services.AddScoped<IKeyService, KeyService>();
 services.AddScoped<IBundleService, BundleService>();
 services.AddScoped<IRankService, RankService>();
 services.AddScoped<IShardService, ShardService>();
+services.AddScoped<IBattlePassService, BattlePassService>();
 services.AddScoped<ICommandService, CommandService>();
 services.AddScoped<CartState>(sp => new CartState(sp.GetRequiredService<Microsoft.JSInterop.IJSRuntime>()));
 services.AddControllers()

@@ -5426,3 +5426,7 @@ FROM `Servers` AS `s`
 LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
 LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
 ORDER BY `s`.`Id`, `k`.`Id`
+2025-10-16 21:43:39.726 +02:00 [INF] Application is shutting down...
+2025-10-16 21:43:39.734 +02:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-16 21:43:39.735 +02:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-16 21:43:39.735 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header

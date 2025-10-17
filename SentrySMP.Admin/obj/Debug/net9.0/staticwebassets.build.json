@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "uAoeWREOq2F8vaHuwX6wlZKX5lUbir0JpkNPxE2f0L0=",
+  "Hash": "lVUNcbyDmnzdGt/HUOiXrDWUcp9oEwx/8E+QD4tn+Og=",
   "Source": "SentrySMP.Admin",
   "BasePath": "_content/SentrySMP.Admin",
   "Mode": "Default",
@@ -1081,8 +1081,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "ifv42okdf2",
-      "Integrity": "4mWsDy3aHl36ZbGt8zByK7Pvd4kRUoNgTYzRnwmPHwg=",
+      "Fingerprint": "u0ggtt5v8x",
+      "Integrity": "HpY4ryE8eDQ4GWf/LTz6g/d4KlRVyMNb+7RmYhphlGE=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/favicon.png"
@@ -2312,51 +2312,6 @@
       ]
     },
     {
-      "Route": "favicon.ifv42okdf2.png",
-      "AssetFile": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/wwwroot/favicon.png",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "1148"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "image/png"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"4mWsDy3aHl36ZbGt8zByK7Pvd4kRUoNgTYzRnwmPHwg=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Sun, 12 Oct 2025 08:24:22 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "ifv42okdf2"
-        },
-        {
-          "Name": "label",
-          "Value": "favicon.png"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-4mWsDy3aHl36ZbGt8zByK7Pvd4kRUoNgTYzRnwmPHwg="
-        }
-      ]
-    },
-    {
       "Route": "favicon.png",
       "AssetFile": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/wwwroot/favicon.png",
       "Selectors": [],
@@ -2367,7 +2322,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "1148"
+          "Value": "17034"
         },
         {
           "Name": "Content-Type",
@@ -2375,11 +2330,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"4mWsDy3aHl36ZbGt8zByK7Pvd4kRUoNgTYzRnwmPHwg=\""
+          "Value": "\"HpY4ryE8eDQ4GWf/LTz6g/d4KlRVyMNb+7RmYhphlGE=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 12 Oct 2025 08:24:22 GMT"
+          "Value": "Fri, 17 Oct 2025 13:42:56 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -2389,7 +2344,52 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-4mWsDy3aHl36ZbGt8zByK7Pvd4kRUoNgTYzRnwmPHwg="
+          "Value": "sha256-HpY4ryE8eDQ4GWf/LTz6g/d4KlRVyMNb+7RmYhphlGE="
+        }
+      ]
+    },
+    {
+      "Route": "favicon.u0ggtt5v8x.png",
+      "AssetFile": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/wwwroot/favicon.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "17034"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"HpY4ryE8eDQ4GWf/LTz6g/d4KlRVyMNb+7RmYhphlGE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 17 Oct 2025 13:42:56 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "u0ggtt5v8x"
+        },
+        {
+          "Name": "label",
+          "Value": "favicon.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-HpY4ryE8eDQ4GWf/LTz6g/d4KlRVyMNb+7RmYhphlGE="
         }
       ]
     },
@@ -15530,7 +15530,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 18:09:07 GMT"
+          "Value": "Fri, 17 Oct 2025 13:45:12 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15591,7 +15591,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 18:09:07 GMT"
+          "Value": "Fri, 17 Oct 2025 13:45:12 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15636,7 +15636,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 18:09:07 GMT"
+          "Value": "Fri, 17 Oct 2025 13:45:12 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15691,7 +15691,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 18:09:07 GMT"
+          "Value": "Fri, 17 Oct 2025 13:45:12 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15752,7 +15752,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 18:09:07 GMT"
+          "Value": "Fri, 17 Oct 2025 13:45:12 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15797,7 +15797,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 18:09:07 GMT"
+          "Value": "Fri, 17 Oct 2025 13:45:12 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15852,7 +15852,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 18:09:07 GMT"
+          "Value": "Fri, 17 Oct 2025 13:45:12 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15905,7 +15905,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 18:09:07 GMT"
+          "Value": "Fri, 17 Oct 2025 13:45:12 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15942,7 +15942,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 18:09:07 GMT"
+          "Value": "Fri, 17 Oct 2025 13:45:12 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15989,7 +15989,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 18:09:07 GMT"
+          "Value": "Fri, 17 Oct 2025 13:45:12 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -16042,7 +16042,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 18:09:07 GMT"
+          "Value": "Fri, 17 Oct 2025 13:45:12 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -16079,7 +16079,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 18:09:07 GMT"
+          "Value": "Fri, 17 Oct 2025 13:45:12 GMT"
         },
         {
           "Name": "Cache-Control",

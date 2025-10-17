@@ -75,6 +75,25 @@ public interface ISentryApi
 
     [Delete("/api/bundles/{id}")]
     Task DeleteBundleAsync(int id);
+
+    // BattlePass endpoints
+    [Get("/api/battlepasses")]
+    Task<IEnumerable<BattlePassResponse>> GetBattlePassesAsync();
+
+    [Get("/api/battlepasses/server/{serverId}")]
+    Task<IEnumerable<BattlePassResponse>> GetBattlePassesByServerAsync(int serverId);
+
+    [Get("/api/battlepasses/{id}")]
+    Task<BattlePassResponse> GetBattlePassAsync(int id);
+
+    [Post("/api/battlepasses")]
+    Task<BattlePassResponse> CreateBattlePassAsync([Body] CreateBattlePassDto bp);
+
+    [Put("/api/battlepasses/{id}")]
+    Task<BattlePassResponse> UpdateBattlePassAsync(int id, [Body] UpdateBattlePassDto bp);
+
+    [Delete("/api/battlepasses/{id}")]
+    Task DeleteBattlePassAsync(int id);
     
     // Shard endpoints
     [Get("/api/shards")]

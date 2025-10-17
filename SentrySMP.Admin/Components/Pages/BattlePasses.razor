@@ -1,0 +1,185 @@
+@page "/battlepasses"
+@using SentrySMP.Shared.DTOs
+@using Microsoft.AspNetCore.Components
+@using SentrySMP.Shared.Interfaces
+@inject ISentryApi Api
+@inject ILogger<BattlePasses> Logger
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+
+<PageTitle>BattlePasses - SentrySMP Admin</PageTitle>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>
+                    <i class="bi bi-ticket-fill text-primary me-2"></i>
+                    Battle pass Management
+                </h1>
+                <a href="/add-battlepass" class="btn btn-success">
+                    <i class="bi bi-plus-circle-fill me-2"></i>
+                    Create New Battle pass
+                </a>
+            </div>
+            
+            @if (loading)
+            {
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            }
+            else if (errorMessage != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    @errorMessage
+                </div>
+            }
+            else if (items?.Any() == true)
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th><i class="bi bi-image me-1"></i>Image</th>
+                                <th><i class="bi bi-ticket me-1"></i>Name</th>
+                                <th><i class="bi bi-file-text me-1"></i>Description</th>
+                                <th><i class="bi bi-currency-euro me-1"></i>Price</th>
+                                <th><i class="bi bi-server me-1"></i>Server</th>
+                                <th><i class="bi bi-percent me-1"></i>Sale</th>
+                                <th><i class="bi bi-gear me-1"></i>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var it in items)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(it.Image))
+                                        {
+                                            <img src="@it.Image" alt="@it.Name" style="width: 50px; height: 50px; object-fit: cover;" class="rounded">
+                                        }
+                                        else
+                                        {
+                                            <div class="bg-secondary rounded d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                <i class="bi bi-ticket-fill text-white"></i>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td><strong>@it.Name</strong></td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(it.Description))
+                                        {
+                                            @(it.Description.Length > 50 ? it.Description.Substring(0, 50) + "..." : it.Description)
+                                        }
+                                    </td>
+                                    <td>
+                                        <strong class="text-success">
+                                            <i class="bi bi-currency-euro me-1"></i>
+                                            @it.Price.ToString("F2")
+                                        </strong>
+                                    </td>
+                                    <td>
+                                        @{ var serverName = it.Server?.Name ?? $"Server {it.ServerId}"; }
+                                        <span class="badge bg-info">
+                                            <i class="bi bi-server me-1"></i>
+                                            @serverName
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (it.Sale > 0)
+                                        {
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-percent me-1"></i>
+                                                @it.Sale% OFF
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                <i class="bi bi-dash-circle me-1"></i>
+                                                Regular
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                                <a href="/edit-battlepass/@it.Id" class="btn btn-sm btn-outline-primary" title="Edit Battle pass" data-bs-toggle="tooltip">
+                                                <i class="bi bi-pencil-square me-1"></i>
+                                                Edit
+                                            </a>
+                                            <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteItem(it.Id, it.Name)" title="Delete BattlePass" data-bs-toggle="tooltip">
+                                                <i class="bi bi-trash3-fill me-1"></i>
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle-fill"></i>
+                    No battlepasses found. Create your first battlepass!
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<BattlePassResponse>? items;
+    private List<ServerResponse>? servers;
+    private bool loading = true;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            loading = true;
+            errorMessage = null;
+            items = (await Api.GetBattlePassesAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading battlepasses: {ex.Message}";
+            Logger.LogError(ex, "Error loading battlepasses");
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private async Task DeleteItem(int id, string name)
+    {
+        if (await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete the battlepass '{name}'?"))
+        {
+            try
+            {
+                await Api.DeleteBattlePassAsync(id);
+                await JSRuntime.InvokeVoidAsync("alert", "BattlePass deleted successfully!");
+                await LoadData();
+            }
+            catch (Exception ex)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"Error deleting battlepass: {ex.Message}");
+                Logger.LogError(ex, "Error deleting battlepass {Id}", id);
+            }
+        }
+    }
+}

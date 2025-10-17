@@ -1,0 +1,191 @@
+@page "/add-battlepass"
+@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
+@using SentrySMP.Shared.DTOs
+@using SentrySMP.Shared.Interfaces
+@inject ISentryApi Api
+@inject ILogger<AddBattlePass> Logger
+@inject NavigationManager Navigation
+<PageTitle>Add Battle pass - SentrySMP Admin</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1>
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Add Battle pass
+                    </h1>
+                    <p class="text-muted">Create a new battle pass</p>
+                </div>
+                <button class="btn btn-outline-secondary" @onclick="GoBack">
+                    <i class="bi bi-arrow-left"></i> Back to Battle passes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    @errorMessage
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(successMessage))
+            {
+                <div class="alert alert-success" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    @successMessage
+                </div>
+            }
+
+            <EditForm Model="model" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="mb-4">
+                            <h4 class="text-primary mb-3">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Basic Information
+                            </h4>
+
+                            <div class="mb-3">
+                                <label class="form-label">Name *</label>
+                                <InputText @bind-Value="model.Name" class="form-control form-control-lg" placeholder="Enter name" />
+                                <ValidationMessage For="() => model.Name" class="text-danger" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Price *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">€</span>
+                                    <InputNumber @bind-Value="model.Price" class="form-control" placeholder="0.00" step="0.01" />
+                                </div>
+                                <ValidationMessage For="() => model.Price" class="text-danger" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Server *</label>
+                                <InputSelect @bind-Value="model.ServerId" class="form-select">
+                                    <option value="">Select a server...</option>
+                                    @if (servers != null)
+                                    {
+                                        @foreach (var s in servers)
+                                        {
+                                            <option value="@s.Id">@s.Name</option>
+                                        }
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="() => model.ServerId" class="text-danger" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="mb-4">
+                            <h4 class="text-primary mb-3">
+                                <i class="bi bi-image me-2"></i>
+                                Additional Details
+                            </h4>
+
+                            <ImageUploader Label="Image" ImageUrl="@model.Image" ImageUrlChanged="@((string? url) => model.Image = url)" />
+
+                            <div class="mb-3">
+                                <label class="form-label">Sale Percentage (0-100%)</label>
+                                <div class="input-group">
+                                    <InputNumber @bind-Value="model.Sale" class="form-control" placeholder="0" min="0" max="100" />
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                <div class="form-text">Enter 0 for no sale, or discount percentage</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Description</label>
+                                <InputTextArea @bind-Value="model.Description" class="form-control" rows="4" placeholder="Enter description..." />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex gap-2 justify-content-end">
+                            <button type="button" class="btn btn-outline-secondary" @onclick="GoBack">Cancel</button>
+                            <button type="submit" class="btn btn-primary btn-lg px-4" disabled="@saving">
+                                @if (saving)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                    <text>Creating...</text>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-plus-circle me-1"></i>
+                                        <text>Create</text>
+                                }
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    private CreateBattlePassDto model = new();
+    private List<ServerResponse>? servers;
+    private bool saving = false;
+    private string? errorMessage;
+    private string? successMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadServers();
+    }
+
+    private async Task LoadServers()
+    {
+        try
+        {
+            servers = (await Api.GetServersAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            servers = new List<ServerResponse>();
+            errorMessage = $"Error loading servers: {ex.Message}";
+            Logger.LogError(ex, "Error loading servers");
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            saving = true;
+            errorMessage = null;
+            successMessage = null;
+            await Api.CreateBattlePassAsync(model);
+            successMessage = "BattlePass created successfully!";
+            await Task.Delay(1200);
+            Navigation.NavigateTo("/battlepasses");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error creating battlepass: {ex.Message}";
+            Logger.LogError(ex, "Error creating battlepass");
+        }
+        finally
+        {
+            saving = false;
+        }
+    }
+
+    private void GoBack() => Navigation.NavigateTo("/battlepasses");
+}

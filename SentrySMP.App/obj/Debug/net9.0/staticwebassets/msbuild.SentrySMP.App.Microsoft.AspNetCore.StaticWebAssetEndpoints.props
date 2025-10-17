@@ -12,17 +12,29 @@
       <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"w7mf952350"},{"Name":"integrity","Value":"sha256-PNvEyASL960qpWmVJ5Purzbr0F4hodQnu\u002Bu/XkKHuE0="},{"Name":"label","Value":"_content/SentrySMP.App/app.css"}]]]></EndpointProperties>
       <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"2841"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022PNvEyASL960qpWmVJ5Purzbr0F4hodQnu\u002Bu/XkKHuE0=\u0022"},{"Name":"Last-Modified","Value":"Sun, 12 Oct 2025 08:14:55 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
-    <StaticWebAssetEndpoint Include="_content/SentrySMP.App/favicon.ifv42okdf2.png">
-      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\favicon.png'))</AssetFile>
-      <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"ifv42okdf2"},{"Name":"integrity","Value":"sha256-4mWsDy3aHl36ZbGt8zByK7Pvd4kRUoNgTYzRnwmPHwg="},{"Name":"label","Value":"_content/SentrySMP.App/favicon.png"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1148"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u00224mWsDy3aHl36ZbGt8zByK7Pvd4kRUoNgTYzRnwmPHwg=\u0022"},{"Name":"Last-Modified","Value":"Sun, 12 Oct 2025 08:14:53 GMT"}]]]></ResponseHeaders>
-    </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/SentrySMP.App/favicon.png">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\favicon.png'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-4mWsDy3aHl36ZbGt8zByK7Pvd4kRUoNgTYzRnwmPHwg="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"1148"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u00224mWsDy3aHl36ZbGt8zByK7Pvd4kRUoNgTYzRnwmPHwg=\u0022"},{"Name":"Last-Modified","Value":"Sun, 12 Oct 2025 08:14:53 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-HpY4ryE8eDQ4GWf/LTz6g/d4KlRVyMNb\u002B7RmYhphlGE="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"17034"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u0022HpY4ryE8eDQ4GWf/LTz6g/d4KlRVyMNb\u002B7RmYhphlGE=\u0022"},{"Name":"Last-Modified","Value":"Fri, 17 Oct 2025 13:42:56 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/SentrySMP.App/favicon.u0ggtt5v8x.png">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\favicon.png'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"u0ggtt5v8x"},{"Name":"integrity","Value":"sha256-HpY4ryE8eDQ4GWf/LTz6g/d4KlRVyMNb\u002B7RmYhphlGE="},{"Name":"label","Value":"_content/SentrySMP.App/favicon.png"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"17034"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u0022HpY4ryE8eDQ4GWf/LTz6g/d4KlRVyMNb\u002B7RmYhphlGE=\u0022"},{"Name":"Last-Modified","Value":"Fri, 17 Oct 2025 13:42:56 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/SentrySMP.App/images/favicon.png">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\favicon.png'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-HpY4ryE8eDQ4GWf/LTz6g/d4KlRVyMNb\u002B7RmYhphlGE="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"17034"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u0022HpY4ryE8eDQ4GWf/LTz6g/d4KlRVyMNb\u002B7RmYhphlGE=\u0022"},{"Name":"Last-Modified","Value":"Fri, 17 Oct 2025 13:42:56 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/SentrySMP.App/images/favicon.u0ggtt5v8x.png">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\favicon.png'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"u0ggtt5v8x"},{"Name":"integrity","Value":"sha256-HpY4ryE8eDQ4GWf/LTz6g/d4KlRVyMNb\u002B7RmYhphlGE="},{"Name":"label","Value":"_content/SentrySMP.App/images/favicon.png"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"17034"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u0022HpY4ryE8eDQ4GWf/LTz6g/d4KlRVyMNb\u002B7RmYhphlGE=\u0022"},{"Name":"Last-Modified","Value":"Fri, 17 Oct 2025 13:42:56 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/SentrySMP.App/lib/bootstrap/dist/css/bootstrap-grid.bqjiyaj88i.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\lib\bootstrap\dist\css\bootstrap-grid.css'))</AssetFile>
@@ -647,6 +659,18 @@
       <Selectors><![CDATA[[]]]></Selectors>
       <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM="}]]]></EndpointProperties>
       <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"296806"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u0022RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM=\u0022"},{"Name":"Last-Modified","Value":"Tue, 14 Oct 2025 13:43:12 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/SentrySMP.App/uploads/keys/66035868-ff70-4798-87d6-3dbef5d8b420.o7ri0uch2j.png">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\keys\66035868-ff70-4798-87d6-3dbef5d8b420.png'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"o7ri0uch2j"},{"Name":"integrity","Value":"sha256-RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM="},{"Name":"label","Value":"_content/SentrySMP.App/uploads/keys/66035868-ff70-4798-87d6-3dbef5d8b420.png"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"296806"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u0022RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM=\u0022"},{"Name":"Last-Modified","Value":"Thu, 16 Oct 2025 19:17:13 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/SentrySMP.App/uploads/keys/66035868-ff70-4798-87d6-3dbef5d8b420.png">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\keys\66035868-ff70-4798-87d6-3dbef5d8b420.png'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"296806"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u0022RJJx/wqwU3xLEigaIWK65mhHLo9r/KtqVbFL0pPQCLM=\u0022"},{"Name":"Last-Modified","Value":"Thu, 16 Oct 2025 19:17:13 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/SentrySMP.App/uploads/keys/72fe95c0-8bd4-4501-8c03-331158f38488.o7ri0uch2j.png">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\keys\72fe95c0-8bd4-4501-8c03-331158f38488.png'))</AssetFile>

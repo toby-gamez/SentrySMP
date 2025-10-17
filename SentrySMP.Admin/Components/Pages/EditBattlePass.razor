@@ -1,0 +1,176 @@
+@page "/edit-battlepass/{id:int}"
+@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
+@using SentrySMP.Shared.DTOs
+@using SentrySMP.Shared.Interfaces
+@inject ISentryApi Api
+@inject ILogger<EditBattlePass> Logger
+@inject NavigationManager Navigation
+
+<PageTitle>Edit Battle pass - SentrySMP Admin</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                        <h1>
+                            <i class="bi bi-pencil-square me-2"></i>
+                            Edit Battle pass
+                        </h1>
+                        <p class="text-muted">Update battle pass</p>
+                </div>
+                <button class="btn btn-outline-secondary" @onclick="GoBack">
+                    <i class="bi bi-arrow-left"></i> Back to BattlePasses
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @if (loading)
+    {
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else if (notFound)
+    {
+                <div class="alert alert-warning">Battle pass with ID @Id not found.</div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="alert alert-danger">@errorMessage</div>
+                }
+                @if (!string.IsNullOrEmpty(successMessage))
+                {
+                    <div class="alert alert-success">@successMessage</div>
+                }
+
+                <EditForm Model="model" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="mb-4">
+                                <h4 class="text-primary mb-3"><i class="bi bi-info-circle me-2"></i>Basic Information</h4>
+                                <div class="mb-3">
+                                    <label class="form-label">Name *</label>
+                                    <InputText @bind-Value="model.Name" class="form-control form-control-lg" />
+                                    <ValidationMessage For="() => model.Name" class="text-danger" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Price *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">€</span>
+                                        <InputNumber @bind-Value="model.Price" class="form-control" step="0.01" />
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Server *</label>
+                                    <InputSelect @bind-Value="model.ServerId" class="form-select">
+                                        <option value="">Select a server...</option>
+                                        @if (servers != null)
+                                        {
+                                            @foreach (var s in servers)
+                                            {
+                                                <option value="@s.Id">@s.Name</option>
+                                            }
+                                        }
+                                    </InputSelect>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-4">
+                                <h4 class="text-primary mb-3"><i class="bi bi-image me-2"></i>Additional Details</h4>
+                                <ImageUploader Label="Image" ImageUrl="@model.Image" ImageUrlChanged="@((string? url) => model.Image = url)" />
+                                <div class="mb-3">
+                                    <label class="form-label">Sale Percentage (0-100%)</label>
+                                    <InputNumber @bind-Value="model.Sale" class="form-control" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <InputTextArea @bind-Value="model.Description" class="form-control" rows="4" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-outline-secondary" @onclick="GoBack">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private UpdateBattlePassDto model = new();
+    private List<ServerResponse>? servers;
+    private bool loading = true;
+    private bool notFound = false;
+    private string? errorMessage;
+    private string? successMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.WhenAll(LoadServers(), LoadItem());
+    }
+
+    private async Task LoadServers()
+    {
+        try { servers = (await Api.GetServersAsync()).ToList(); } catch { servers = new(); }
+    }
+
+    private async Task LoadItem()
+    {
+        try
+        {
+            var bp = await Api.GetBattlePassAsync(Id);
+            model = new UpdateBattlePassDto
+            {
+                Name = bp.Name,
+                Description = bp.Description ?? string.Empty,
+                Price = bp.Price,
+                ServerId = bp.ServerId,
+                Sale = bp.Sale,
+                Image = bp.Image
+            };
+        }
+        catch (Exception ex)
+        {
+            if (ex.Message.Contains("404") || ex.Message.Contains("Not Found")) notFound = true;
+            else errorMessage = $"Error loading battlepass: {ex.Message}";
+        }
+        finally { loading = false; }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            await Api.UpdateBattlePassAsync(Id, model);
+            successMessage = "Updated successfully";
+            await Task.Delay(1000);
+            Navigation.NavigateTo("/battlepasses");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error updating: {ex.Message}";
+        }
+    }
+
+    private void GoBack() => Navigation.NavigateTo("/battlepasses");
+}

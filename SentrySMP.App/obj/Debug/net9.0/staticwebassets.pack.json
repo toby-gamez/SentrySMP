@@ -13,6 +13,10 @@
       "PackagePath": "staticwebassets/favicon.png"
     },
     {
+      "Id": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/images/favicon.png",
+      "PackagePath": "staticwebassets/images/favicon.png"
+    },
+    {
       "Id": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.css",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-grid.css"
     },
@@ -215,6 +219,10 @@
     {
       "Id": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/62be66f3-a61d-41bd-976d-7ce3d427faef.png",
       "PackagePath": "staticwebassets/uploads/keys/62be66f3-a61d-41bd-976d-7ce3d427faef.png"
+    },
+    {
+      "Id": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/66035868-ff70-4798-87d6-3dbef5d8b420.png",
+      "PackagePath": "staticwebassets/uploads/keys/66035868-ff70-4798-87d6-3dbef5d8b420.png"
     },
     {
       "Id": "/home/tobias/RiderProjects/SentrySMP/SentrySMP.App/wwwroot/uploads/keys/72fe95c0-8bd4-4501-8c03-331158f38488.png",
