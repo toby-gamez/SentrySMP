@@ -95,6 +95,13 @@ public interface ISentryApi
     [Delete("/api/battlepasses/{id}")]
     Task DeleteBattlePassAsync(int id);
     
+    // Status endpoints (MC / Discord)
+    [Get("/api/status/mc")]
+    Task<McStatusResponse> GetMcStatusAsync();
+
+    [Get("/api/status/discord")]
+    Task<DiscordStatusResponse> GetDiscordStatusAsync();
+    
     // Shard endpoints
     [Get("/api/shards")]
     Task<IEnumerable<ShardResponse>> GetShardsAsync();

@@ -77,5 +77,43 @@ namespace SentrySMP.App.Authentication
             }
             OnChange?.Invoke();
         }
+
+        // Mirror the PHP response structure for client-side use
+        public class UserInfo
+        {
+            public bool LoggedIn { get; set; }
+            public string? Username { get; set; }
+            public string? Edition { get; set; }
+            public string? Skin { get; set; }
+        }
+
+        public async Task<UserInfo> GetUserInfoAsync()
+        {
+            var username = await GetUsernameAsync();
+            var edition = await GetEditionAsync() ?? "java";
+
+            var info = new UserInfo
+            {
+                LoggedIn = !string.IsNullOrEmpty(username),
+                Username = username,
+                Edition = edition
+            };
+
+            if (info.LoggedIn)
+            {
+                if (string.Equals(edition, "java", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Java: use user head
+                    info.Skin = $"https://minotar.net/helm/{Uri.EscapeDataString(username!)} /100".Replace(" ", "");
+                }
+                else
+                {
+                    // Bedrock / cracked: default Steve head
+                    info.Skin = "https://minotar.net/helm/MHF_Steve/100";
+                }
+            }
+
+            return info;
+        }
     }
 }

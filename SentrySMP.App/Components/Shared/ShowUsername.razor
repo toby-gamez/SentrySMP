@@ -1,39 +1,49 @@
 @inject SentrySMP.App.Authentication.UserService UserService
 
 @inject NavigationManager Navigation
+@inject SentrySMP.App.Services.StatusService StatusService
+@implements IDisposable
 
 @if (!string.IsNullOrEmpty(CurrentDisplay))
 {
     <div class="mb-3 d-flex align-items-center gap-3">
-        <div>
-            <small class="text-muted">Přihlášen jako</small>
-            <div><strong>@CurrentDisplay</strong></div>
+            <div class="d-flex align-items-center gap-2">
+            @if (!string.IsNullOrEmpty(SkinUrl) && string.Equals(Edition, "java", StringComparison.OrdinalIgnoreCase))
+            {
+                <img src="@SkinUrl" alt="skin" style="width:32px;height:32px;border-radius:4px;" />
+            }
+            <div>
+                <small class="text-muted">Signed in as</small>
+                <div><strong>@CurrentDisplay</strong></div>
+            </div>
         </div>
         <div>
-            <button class="btn btn-sm btn-outline-secondary" @onclick="Logout">Odhlásit</button>
+            <button class="btn btn-sm btn-outline-secondary" @onclick="Logout">Log out</button>
         </div>
     </div>
 }
 else
 {
     <div class="mb-3">
-        <a class="btn btn-sm btn-primary" href="/login">Přihlásit</a>
+        <a class="btn btn-sm btn-primary" href="/login">Log in</a>
     </div>
 }
 
 @code {
     private string? CurrentDisplay;
+    private string? SkinUrl;
+    private string? Edition;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var stored = await UserService.GetUsernameAsync();
-            if (!string.IsNullOrEmpty(stored))
+            var info = await UserService.GetUserInfoAsync();
+            if (info.LoggedIn)
             {
-                // Show the stored value exactly as-is so Bedrock entries keep the leading '.' prefix
-                // Show only the stored username (keep any leading '.' for Bedrock)
-                CurrentDisplay = stored;
+                CurrentDisplay = info.Username;
+                Edition = info.Edition;
+                SkinUrl = info.Skin;
                 StateHasChanged();
             }
             UserService.OnChange += OnUserChanged;
@@ -42,14 +52,18 @@ else
 
     private async void OnUserChanged()
     {
-        var stored = await UserService.GetUsernameAsync();
-        if (string.IsNullOrEmpty(stored))
+        var info = await UserService.GetUserInfoAsync();
+        if (!info.LoggedIn)
         {
             CurrentDisplay = null;
+            SkinUrl = null;
+            Edition = null;
         }
         else
         {
-            CurrentDisplay = stored;
+            CurrentDisplay = info.Username;
+            Edition = info.Edition;
+            SkinUrl = info.Skin;
         }
         StateHasChanged();
     }

@@ -1,8 +1,46 @@
 ﻿@page "/"
+@inject SentrySMP.App.Services.StatusService StatusService
 <SentrySMP.App.Components.Shared.ShowUsername />
-
+@rendermode InteractiveServer
 <PageTitle>Home - SentrySMP</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+<div class="status-counters">
+	<h3>Server status</h3>
+	<div>Player count: @(McPlayers.HasValue ? McPlayers.Value.ToString() : "—")</div>
+	<div>Discord members: @(DiscordMembers.HasValue ? DiscordMembers.Value.ToString() : "—")</div>
+</div>
+
+@code {
+	private int? McPlayers;
+	private int? DiscordMembers;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender) return;
+
+		// load counts but don't block the initial render
+		try
+		{
+			McPlayers = await StatusService.GetMcPlayersAsync();
+		}
+		catch
+		{
+			McPlayers = null;
+		}
+
+		try
+		{
+			DiscordMembers = await StatusService.GetDiscordMembersAsync();
+		}
+		catch
+		{
+			DiscordMembers = null;
+		}
+
+		StateHasChanged();
+	}
+}

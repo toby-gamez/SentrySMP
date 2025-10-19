@@ -4,32 +4,38 @@
 @inject NavigationManager Navigation
 
 @rendermode InteractiveServer
+<PageTitle>Login - SentrySMP</PageTitle>
 
 <h3>Login</h3>
 
 @if (!string.IsNullOrEmpty(ExistingUsername))
 {
-    <h1 class="display-4">@ExistingUsername (@(IsBedrock ? "Bedrock" : "Java"))</h1>
+    <h1 class="display-1">@ExistingUsername (@(IsBedrock ? "Bedrock" : "Java"))</h1>
 }
-
 <div class="mb-3">
-    <label for="username" class="form-label">Minecraft jméno</label>
+    <div class="skin-preview-div">
+        <img id="skin-preview" src="@PreviewUrl" alt="Skin preview" style="width:100px;height:100px;" />
+    </div>
+    
+</div>
+<div class="mb-3">
+    <label for="username" class="form-label">Minecraft name</label>
     @if (IsBedrock)
     {
         <div class="input-group">
             <span class="input-group-text">.</span>
-            <input id="username" class="form-control" @bind="UsernameEditable" />
+            <input id="username" class="form-control" @bind="UsernameEditable" @bind:event="oninput" />
         </div>
     }
     else
     {
-        <input id="username" class="form-control" @bind="UsernameEditable" />
+        <input id="username" class="form-control" @bind="UsernameEditable" @bind:event="oninput" />
     }
-    <div class="form-text">Zadejte pouze jméno. Nebudeme ověřovat.</div>
+    <div class="form-text">Enter username only.</div>
 </div>
 
 <div class="mb-3">
-    <label class="form-label">Typ účtu</label>
+    <label class="form-label">Account type</label>
     <div>
         <InputRadioGroup class="d-flex gap-3" @bind-Value="AccountType">
             <div class="form-check form-check-inline">
@@ -43,17 +49,41 @@
         </InputRadioGroup>
     </div>
 </div>
-
-<button class="btn btn-primary me-2" @onclick="Save">Přihlásit</button>
-<button class="btn btn-secondary" @onclick="Cancel">Zrušit</button>
+<button class="btn btn-primary me-2" @onclick="Save">Log in</button>
+<button class="btn btn-secondary" @onclick="Cancel">Cancel</button>
 
 @code {
     // The value the user types in the input (no leading dot)
-    private string? UsernameEditable { get; set; }
+    private string? _usernameEditable;
+    private string? UsernameEditable
+    {
+        get => _usernameEditable;
+        set
+        {
+            _usernameEditable = value;
+            UpdatePreview();
+        }
+    }
+
     // The full stored username as read from storage (may include leading dot for Bedrock)
     private string? ExistingUsername { get; set; }
     private bool IsBedrock => string.Equals(AccountType, "bedrock", StringComparison.OrdinalIgnoreCase);
-    private string AccountType { get; set; } = "java";
+
+    private string _accountType = "java";
+    private string AccountType
+    {
+        get => _accountType;
+        set
+        {
+            if (_accountType != value)
+            {
+                _accountType = value;
+                UpdatePreview();
+            }
+        }
+    }
+
+    private string PreviewUrl { get; set; } = "https://minotar.net/helm/MHF_Steve/100";
 
     protected override async Task OnInitializedAsync()
     {
@@ -75,8 +105,14 @@
                 AccountType = "java";
                 UsernameEditable = stored;
             }
+            // Initialize preview after setting existing values
+            UpdatePreview();
         }
+
+        
     }
+
+    
 
     private async Task Save()
     {
@@ -97,6 +133,28 @@
             await UserService.SetEditionAsync(AccountType);
         }
         Navigation.NavigateTo("/");
+    }
+
+    private void UpdatePreview()
+    {
+        // Determine preview based on current editable name and selected account type
+        var name = UsernameEditable ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            PreviewUrl = "https://minotar.net/helm/MHF_Steve/100";
+            StateHasChanged();
+            return;
+        }
+
+        if (string.Equals(AccountType, "bedrock", StringComparison.OrdinalIgnoreCase) || string.Equals(AccountType, "cracked", StringComparison.OrdinalIgnoreCase))
+        {
+            PreviewUrl = "https://minotar.net/helm/MHF_Steve/100";
+        }
+        else
+        {
+            PreviewUrl = $"https://minotar.net/helm/{Uri.EscapeDataString(name)}/100";
+        }
+        StateHasChanged();
     }
 
     private void Cancel()

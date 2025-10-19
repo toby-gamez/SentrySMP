@@ -1,4 +1,6 @@
 using SentrySMP.App.Components.State;
+using System.IO;
+using DotNetEnv;
 using SentrySMP.Shared.Interfaces;
 using SentrySMP.Api.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -9,13 +11,19 @@ using Refit;
 using Serilog;
 using SentrySMP.Api.Authentication;
 using SentrySMP.Api.Infrastructure.Data;
-using SentrySMP.Api.Services;
 using SentrySMP.App.Authentication;
 using SentrySMP.App.Components;
 using SentrySMP.App.Handlers;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Load .env if present (development and simple production setups)
+try
+{
+    DotNetEnv.Env.Load(Path.Combine(builder.Environment.ContentRootPath, ".env"));
+}
+catch { }
 
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
@@ -57,6 +65,7 @@ services.AddScoped<IRankService, RankService>();
 services.AddScoped<IShardService, ShardService>();
 services.AddScoped<IBattlePassService, BattlePassService>();
 services.AddScoped<ICommandService, CommandService>();
+services.AddScoped<IStatusService, StatusService>();
 services.AddScoped<CartState>(sp => new CartState(sp.GetRequiredService<Microsoft.JSInterop.IJSRuntime>()));
 services.AddControllers()
     .AddJsonOptions(options =>
@@ -68,6 +77,8 @@ services.AddEndpointsApiExplorer();
 services.AddSingleton<CredentialStore>();
 services.AddTransient<HttpLoggingHandler>();
 services.AddScoped<UserService>();
+// App status service to fetch Discord and Minecraft counts
+services.AddScoped<SentrySMP.App.Services.StatusService>();
 
 services.AddRefitClient<ISentryApi>()
     .ConfigureHttpClient(c =>

@@ -1,22 +1,32 @@
 @inject SentrySMP.App.Authentication.UserService UserService
 @inject NavigationManager Navigation
+@inject SentrySMP.App.Services.StatusService StatusService
 @implements IDisposable
 
 @if (!string.IsNullOrEmpty(Username))
 {
     var display = Username.StartsWith('.') ? Username.TrimStart('.') : Username;
     var platform = Username.StartsWith('.') ? "Bedrock" : "Java";
-    <span class="me-2">Přihlášen: <strong>@display</strong> <small class="text-muted">(@platform)</small></span>
-    <button class="btn btn-sm btn-outline-secondary" @onclick="Logout">Odhlásit</button>
+    <div class="d-flex align-items-center gap-2">
+        <span class="me-2">Signed in: <strong>@display</strong> <small class="text-muted">(@platform)</small></span>
+        <button class="btn btn-sm btn-outline-secondary" @onclick="Logout">Log out</button>
+    </div>
+    <div class="small text-muted mt-1">
+        <div>Player count: @(McPlayers.HasValue ? McPlayers.Value.ToString() : "—")</div>
+        <div>Discord members: @(DiscordMembers.HasValue ? DiscordMembers.Value.ToString() : "—")</div>
+    </div>
 }
 else
 {
-    <a class="btn btn-sm btn-outline-secondary" href="/login">Přihlásit</a>
+    <a class="btn btn-sm btn-outline-secondary" href="/login">Log in</a>
 }
 
 @code {
     private string? Username;
     private bool _initialized;
+
+    private int? McPlayers { get; set; }
+    private int? DiscordMembers { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -31,12 +41,22 @@ else
                 Username = newName;
                 StateHasChanged();
             }
+
+            // Load counts in background
+            _ = LoadCountsAsync();
         }
     }
 
     private async void OnUserChanged()
     {
         Username = await UserService.GetUsernameAsync();
+        StateHasChanged();
+    }
+
+    private async Task LoadCountsAsync()
+    {
+        try { McPlayers = await StatusService.GetMcPlayersAsync(); } catch { McPlayers = null; }
+        try { DiscordMembers = await StatusService.GetDiscordMembersAsync(); } catch { DiscordMembers = null; }
         StateHasChanged();
     }
 
