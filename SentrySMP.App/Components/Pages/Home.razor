@@ -1,6 +1,6 @@
 ﻿@page "/"
 @inject SentrySMP.App.Services.StatusService StatusService
-<SentrySMP.App.Components.Shared.ShowUsername />
+@inject SentrySMP.Shared.Interfaces.IAnnouncementsService AnnouncementsService
 @rendermode InteractiveServer
 <PageTitle>Home - SentrySMP</PageTitle>
 
@@ -14,15 +14,59 @@ Welcome to your new app.
 	<div>Discord members: @(DiscordMembers.HasValue ? DiscordMembers.Value.ToString() : "—")</div>
 </div>
 
+<div class="home-news mt-4">
+	<h3>Latest announcements</h3>
+	@if (homeLoading)
+	{
+		<div class="small text-muted">Loading announcements…</div>
+	}
+	else if (homeError != null)
+	{
+		<div class="text-danger">@homeError</div>
+	}
+	else if (homeAnnouncements?.Any() == true)
+	{
+		<div class="list-group">
+			@foreach (var a in homeAnnouncements)
+			{
+				<div class="list-group-item">
+					<div class="d-flex w-100 justify-content-between">
+						<h5 class="mb-1">@a.Title</h5>
+						<small>@a.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</small>
+					</div>
+					<div class="small text-muted">By @a.Author</div>
+					<div class="mt-2">@((MarkupString)a.HtmlContent)</div>
+				</div>
+			}
+		</div>
+	}
+	else
+	{
+		<div class="text-muted">No announcements</div>
+	}
+</div>
+
 @code {
 	private int? McPlayers;
 	private int? DiscordMembers;
+
+	// consolidated lifecycle method below handles counts and home announcements
+
+	// home announcements
+	private bool homeLoading = true;
+	private string? homeError;
+	private List<AnnouncementDtoWithHtml>? homeAnnouncements;
+
+	protected override async Task OnInitializedAsync()
+	{
+		// nothing here; leave lifecycle in OnAfterRender for non-blocking counts
+	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (!firstRender) return;
 
-		// load counts but don't block the initial render
+		// load counts (existing)
 		try
 		{
 			McPlayers = await StatusService.GetMcPlayersAsync();
@@ -41,6 +85,44 @@ Welcome to your new app.
 			DiscordMembers = null;
 		}
 
+		// load top 3 announcements but don't block render
+		_ = LoadHomeAnnouncements();
+
 		StateHasChanged();
+	}
+
+	private async Task LoadHomeAnnouncements()
+	{
+		try
+		{
+			homeLoading = true;
+			homeError = null;
+			var res = (await AnnouncementsService.GetLatestAnnouncementsAsync()).Take(3).ToList();
+			var pipeline = new Markdig.MarkdownPipelineBuilder().Build();
+			homeAnnouncements = res.Select(r => new AnnouncementDtoWithHtml
+			{
+				Id = r.Id,
+				Title = r.Title,
+				Author = r.Author,
+				Content = r.Content,
+				CreatedAt = r.CreatedAt,
+				HtmlContent = Markdig.Markdown.ToHtml(r.Content ?? string.Empty, pipeline)
+			}).ToList();
+		}
+		catch
+		{
+			homeError = "Failed to load announcements";
+		}
+		finally
+		{
+			homeLoading = false;
+			StateHasChanged();
+		}
+	}
+
+	// small local helper wrapper for HTML used on home page
+	private class AnnouncementDtoWithHtml : SentrySMP.Shared.DTOs.AnnouncementDto
+	{
+		public string HtmlContent { get; set; } = string.Empty;
 	}
 }
