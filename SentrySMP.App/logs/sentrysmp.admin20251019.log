@@ -2298,3 +2298,4 @@ WHERE (`c`.`Type` = 'RANK') AND (`c`.`TypeId` = 2)
 2025-10-19 21:50:50.405 +02:00 [WRN] [BasicAuth] Missing Authorization header
 2025-10-19 21:50:50.405 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
 2025-10-19 21:50:50.407 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-19 21:56:08.111 +02:00 [INF] Application is shutting down...

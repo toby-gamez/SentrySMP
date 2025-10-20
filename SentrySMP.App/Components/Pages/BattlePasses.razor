@@ -16,6 +16,20 @@
     <div class="row">
         <div class="col-12">
             <h1 class="mb-4">Available Battle passes</h1>
+            <!-- Server filter dropdown -->
+            @if (items?.Any() == true)
+            {
+                <div class="mb-3 d-flex align-items-center gap-2">
+                    <label for="serverFilter" class="form-label mb-0">Filter by server:</label>
+                    <select id="serverFilter" class="form-select w-auto" @onchange="OnServerFilterChanged">
+                        <option value="">All servers</option>
+                        @foreach (var server in servers)
+                        {
+                            <option value="@server.Id" selected="@(server.Id == selectedServerId)">@server.Name</option>
+                        }
+                    </select>
+                </div>
+            }
             @if (loading)
             {
                 <div class="d-flex justify-content-center">
@@ -28,10 +42,10 @@
             {
                 <div class="alert alert-danger" role="alert">@errorMessage</div>
             }
-            else if (items?.Any() == true)
+            else if (filteredItems?.Any() == true)
             {
                 <div class="row">
-                    @foreach (var it in items)
+                    @foreach (var it in filteredItems)
                     {
                         var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == it.Id && i.Key.Type == it.Type);
                         <div class="col-md-4 col-lg-3 mb-4">
@@ -101,6 +115,9 @@
 
 @code {
     private List<BattlePassResponse>? items;
+    private List<BattlePassResponse>? filteredItems;
+    private List<ServerResponse> servers = new();
+    private int? selectedServerId;
     private bool loading = true;
     private string? errorMessage;
     private int? addedId;
@@ -116,14 +133,63 @@
         {
             await CartState.LoadFromStorageAsync(JS);
             StateHasChanged();
-        }
+                }
     }
 
     private async Task LoadItems()
     {
-        try { loading = true; items = (await Api.GetBattlePassesAsync()).ToList(); }
-        catch (Exception ex) { errorMessage = $"Error loading: {ex.Message}"; Logger.LogError(ex, "Error"); }
-        finally { loading = false; }
+        try
+        {
+            loading = true;
+            errorMessage = null;
+            items = (await Api.GetBattlePassesAsync()).ToList();
+            // build server list from items
+            servers = items
+                .Where(i => i.Server != null)
+                .Select(i => i.Server!)
+                .GroupBy(s => s.Id)
+                .Select(g => g.First())
+                .OrderBy(s => s.Name)
+                .ToList();
+            ApplyServerFilter();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading: {ex.Message}";
+            Logger.LogError(ex, "Error");
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    // build server list and apply server filter
+    private void ApplyServerFilter()
+    {
+        if (selectedServerId.HasValue)
+        {
+            filteredItems = items?.Where(i => i.Server?.Id == selectedServerId.Value).ToList();
+        }
+        else
+        {
+            filteredItems = items;
+        }
+    }
+
+    private void OnServerFilterChanged(ChangeEventArgs e)
+    {
+        var value = e.Value?.ToString();
+        if (int.TryParse(value, out var id))
+        {
+            selectedServerId = id;
+        }
+        else
+        {
+            selectedServerId = null;
+        }
+        ApplyServerFilter();
+        StateHasChanged();
     }
 
     private double CalculateSalePrice(double price, int sale) => price * (1 - sale / 100.0);

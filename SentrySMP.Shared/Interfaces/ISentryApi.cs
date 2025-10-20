@@ -102,6 +102,10 @@ public interface ISentryApi
     [Get("/api/status/discord")]
     Task<DiscordStatusResponse> GetDiscordStatusAsync();
     
+    // Announcements / News
+    [Get("/api/announcements")]
+    Task<IEnumerable<SentrySMP.Shared.DTOs.AnnouncementDto>> GetAnnouncementsAsync();
+    
     // Shard endpoints
     [Get("/api/shards")]
     Task<IEnumerable<ShardResponse>> GetShardsAsync();

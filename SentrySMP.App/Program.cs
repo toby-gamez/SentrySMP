@@ -66,6 +66,7 @@ services.AddScoped<IShardService, ShardService>();
 services.AddScoped<IBattlePassService, BattlePassService>();
 services.AddScoped<ICommandService, CommandService>();
 services.AddScoped<IStatusService, StatusService>();
+services.AddScoped<SentrySMP.Shared.Interfaces.IAnnouncementsService, SentrySMP.Api.Services.AnnouncementsService>();
 services.AddScoped<CartState>(sp => new CartState(sp.GetRequiredService<Microsoft.JSInterop.IJSRuntime>()));
 services.AddControllers()
     .AddJsonOptions(options =>

@@ -1,0 +1,120 @@
+@page "/news"
+@using SentrySMP.Shared.DTOs
+@using SentrySMP.Shared.Interfaces
+@using Markdig
+@using Microsoft.AspNetCore.Components
+@inject IAnnouncementsService AnnouncementsService
+@inject ILogger<News> Logger
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>News - SentrySMP</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Latest announcements</h1>
+
+    @if (loading)
+    {
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else if (errorMessage != null)
+    {
+        <div class="alert alert-danger" role="alert">@errorMessage</div>
+    }
+    else if (announcementWrappers?.Any() == true)
+    {
+        <div class="announcements-grid" id="latestAnnouncements">
+            @foreach (var a in announcementWrappers)
+            {
+                <div class="announcement mb-4 p-3 border rounded">
+                    <div class="info mb-2">
+                        <h3>@a.Title</h3>
+                        <small>Author: @a.Author | @a.CreatedAt.ToLocalTime().ToString()</small>
+                    </div>
+                    <div class="announcement-content" @key="a.Id">@((MarkupString)a.HtmlContent)</div>
+                </div>
+            }
+        </div>
+        <div style="margin-left: auto; margin-right: auto; width: min-content;">
+            <button class="btn btn-outline-primary" @onclick="() => ShowMore()" style="height:40px; width:100px">Show more</button>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">No announcements available at the moment.</div>
+    }
+</div>
+</div>
+</div>
+
+@code {
+    // private List<AnnouncementDto>? announcements; // not used anymore
+    private bool loading = true;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAnnouncements();
+    }
+
+    private async Task LoadAnnouncements()
+    {
+        try
+        {
+            loading = true;
+            errorMessage = null;
+            var res = (await AnnouncementsService.GetLatestAnnouncementsAsync()).ToList();
+            // Convert markdown to HTML using Markdig
+            var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+
+            announcementWrappers = res.Select(r => new AnnouncementDtoWithHtml
+            {
+                Id = r.Id,
+                Title = r.Title,
+                Author = r.Author,
+                Content = r.Content,
+                CreatedAt = r.CreatedAt,
+                HtmlContent = Markdig.Markdown.ToHtml(r.Content ?? string.Empty, pipeline)
+            }).ToList();
+
+        StateHasChanged();
+
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading announcements: {ex.Message}";
+            Logger.LogError(ex, "Error fetching announcements");
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    // local wrapper list that Razor will iterate (has HtmlContent)
+    private List<AnnouncementDtoWithHtml> announcementWrappers = new();
+
+    // paging state for Show more
+    private int pageSize = 5;
+    private int currentPage = 1;
+
+    private IEnumerable<AnnouncementDtoWithHtml> PagedAnnouncements => announcementWrappers.Take(currentPage * pageSize);
+
+    // small local helper wrapper type
+    private class AnnouncementDtoWithHtml : AnnouncementDto
+    {
+        public string HtmlContent { get; set; } = string.Empty;
+    }
+
+    private void ShowMore()
+    {
+        currentPage++;
+    }
+}
+
