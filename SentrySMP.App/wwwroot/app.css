@@ -58,3 +58,33 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+/* Team role badges */
+.role-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.5rem;
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+/* Role colors - add more as needed */
+.role-OWNER { background: #db3444; }
+.role-COOWNER { background: #db4d34; }
+.role-MANAGER { background: #ff4500; }
+.role-DEV { background: #800080; }
+.role-WEBDEV { background: #663399; }
+.role-MOD { background: #51d3fd; }
+.role-MOD+ { background: #12b4e8; }
+.role-BUILDER { background: #5ce54c; }
+.role-BUILDER+ { background: #35d622; }
+
+/* Team avatar sizing */
+.team-avatar {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin: 0.5rem auto 0.5rem auto;
+    border-radius: 10px;
+}

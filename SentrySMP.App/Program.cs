@@ -63,6 +63,8 @@ services.AddScoped<IKeyService, KeyService>();
 services.AddScoped<IBundleService, BundleService>();
 services.AddScoped<IRankService, RankService>();
 services.AddScoped<IShardService, ShardService>();
+// Team service (file-backed)
+services.AddScoped<SentrySMP.Shared.Interfaces.ITeamService, SentrySMP.Api.Services.TeamService>();
 services.AddScoped<IBattlePassService, BattlePassService>();
 services.AddScoped<ICommandService, CommandService>();
 services.AddScoped<IStatusService, StatusService>();

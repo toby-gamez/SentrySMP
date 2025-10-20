@@ -62,6 +62,8 @@ services.AddSingleton<CredentialStore>();
 services.AddSingleton<SentrySMP.Admin.Services.AuthInitializationService>();
 services.AddTransient<AuthenticationHeaderHandler>();
 services.AddTransient<HttpLoggingHandler>();
+// Team service (file-backed) - used by Admin UI when talking to local file store
+services.AddScoped<SentrySMP.Shared.Interfaces.ITeamService, SentrySMP.Api.Services.TeamService>();
 
 services
     .AddRefitClient<ISentryApi>()

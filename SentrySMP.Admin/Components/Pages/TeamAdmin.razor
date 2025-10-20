@@ -1,0 +1,174 @@
+@page "/team-admin"
+@using SentrySMP.Shared.DTOs
+@using SentrySMP.Shared.Interfaces
+@inject SentrySMP.Shared.Interfaces.ISentryApi Api
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<h1>Team Admin</h1>
+<h2>Roles</h2>
+<style>
+    /* role colors */
+    .role-OWNER { background: #db3444; }
+    .role-COOWNER { background: #db4d34; }
+    .role-MANAGER { background: #ff4500; }
+    .role-DEV { background: #800080; }
+    .role-WEBDEV { background: #663399; }
+    .role-MOD { background: #51d3fd; }
+    .role-MOD\+ { background: #12b4e8; }
+    .role-BUILDER { background: #5ce54c; }
+    .role-BUILDER\+ { background: #35d622; }
+
+    /* legend styles */
+    .role-legend { list-style: none; padding: 0; margin: 0 0 1rem 0; display: flex; gap: 0.75rem; flex-wrap: wrap; text-align: center; }
+    .role-legend li { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
+    .role-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+    .role-legend .role-OWNER .role-dot { background: #db3444; }
+    .role-legend .role-COOWNER .role-dot { background: #db4d34; }
+    .role-legend .role-MANAGER .role-dot { background: #ff4500; }
+    .role-legend .role-DEV .role-dot { background: #800080; }
+    .role-legend .role-WEBDEV .role-dot { background: #663399; }
+    .role-legend .role-MOD .role-dot { background: #51d3fd; }
+    .role-legend .role-MOD\+ .role-dot { background: #12b4e8; }
+    .role-legend .role-BUILDER .role-dot { background: #5ce54c; }
+    .role-legend .role-BUILDER\+ .role-dot { background: #35d622; }
+</style>
+
+<ul class="role-legend" aria-label="Role legend">
+    <li class="role-OWNER"><span class="role-dot" aria-hidden="true"></span><span>Owner</span></li>
+    <li class="role-COOWNER"><span class="role-dot" aria-hidden="true"></span><span>Coowner</span></li>
+    <li class="role-MANAGER"><span class="role-dot" aria-hidden="true"></span><span>Manager</span></li>
+    <li class="role-DEV"><span class="role-dot" aria-hidden="true"></span><span>Dev</span></li>
+    <li class="role-WEBDEV"><span class="role-dot" aria-hidden="true"></span><span>Webdev</span></li>
+    <li class="role-MOD"><span class="role-dot" aria-hidden="true"></span><span>Mod</span></li>
+    <li class="role-MOD+"><span class="role-dot" aria-hidden="true"></span><span>Mod+</span></li>
+    <li class="role-BUILDER"><span class="role-dot" aria-hidden="true"></span><span>Builder</span></li>
+    <li class="role-BUILDER+"><span class="role-dot" aria-hidden="true"></span><span>Builder+</span></li>
+</ul>
+@if (team == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="mb-3">
+        <button class="btn btn-primary" @onclick="AddCategory">Add Category</button>
+        <button class="btn btn-success ms-2" @onclick="Save">Save Changes</button>
+    </div>
+
+    @foreach (var cat in team.Categories)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <input class="form-control me-2" style="max-width:400px" @bind="cat.Name" />
+                    <div>
+                        <button class="btn btn-danger ms-2" @onclick="() => RemoveCategory(cat.Id)">Delete Category</button>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    @foreach (var m in cat.Members)
+                    {
+                        <div class="col-md-4 mb-2">
+                            <div class="input-group">
+                                <img src="@GetSkinUrl(m)" style="width:48px;height:48px;object-fit:cover;" />
+                                <input class="form-control ms-2" placeholder="Minecraft name" @bind="m.MinecraftName" @bind:event="oninput" />
+                                <input class="form-control ms-2" placeholder="Role" style="max-width:140px" @bind="m.Role" />
+                                    <span class="ms-2 align-self-center">
+                                        @if (!string.IsNullOrWhiteSpace(m.Role))
+                                        {
+                                            var rc = GetRoleClass(m.Role);
+                                            <span class="role-badge @rc">@m.Role</span>
+                                        }
+                                    </span>
+                                <button class="btn btn-outline-danger" @onclick="() => RemoveMember(cat.Id, m.Id)">X</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="mt-2">
+                    <button class="btn btn-secondary" @onclick="() => AddMember(cat.Id)">Add Member</button>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    private TeamResponseDto? team;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Load();
+    }
+
+    private async Task Load()
+    {
+        try
+        {
+            team = await Api.GetTeamAsync();
+            team ??= new TeamResponseDto();
+        }
+        catch
+        {
+            team = new TeamResponseDto();
+        }
+    }
+
+    private void AddCategory()
+    {
+        team!.Categories.Add(new TeamCategoryDto { Name = "New Category" });
+    }
+
+    private void RemoveCategory(string id)
+    {
+        var cat = team!.Categories.FirstOrDefault(c => c.Id == id);
+        if (cat != null) team.Categories.Remove(cat);
+    }
+
+    private void AddMember(string categoryId)
+    {
+        var cat = team!.Categories.FirstOrDefault(c => c.Id == categoryId);
+        if (cat == null) return;
+        cat.Members.Add(new TeamMemberDto { MinecraftName = "", Role = "" });
+    }
+
+    private void RemoveMember(string categoryId, string memberId)
+    {
+        var cat = team!.Categories.FirstOrDefault(c => c.Id == categoryId);
+        if (cat == null) return;
+        var m = cat.Members.FirstOrDefault(x => x.Id == memberId);
+        if (m != null) cat.Members.Remove(m);
+    }
+
+    private string GetSkinUrl(TeamMemberDto m)
+    {
+        if (!string.IsNullOrEmpty(m.SkinUrl)) return m.SkinUrl!;
+        var name = string.IsNullOrWhiteSpace(m.MinecraftName) ? "steve" : m.MinecraftName;
+        return $"https://minotar.net/helm/{Uri.EscapeDataString(name)}/48";
+    }
+
+    private string GetRoleClass(string? role)
+    {
+        if (string.IsNullOrWhiteSpace(role)) return "role-DEFAULT";
+        var cleaned = new string(role.ToUpperInvariant().Where(c => char.IsLetterOrDigit(c)).ToArray());
+        if (string.IsNullOrEmpty(cleaned)) return "role-DEFAULT";
+        return $"role-{cleaned}";
+    }
+
+    private async Task Save()
+    {
+        if (team == null) return;
+        try
+        {
+            await Api.SaveTeamAsync(team);
+            await Load();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to save team: {ex.Message}");
+        }
+    }
+}

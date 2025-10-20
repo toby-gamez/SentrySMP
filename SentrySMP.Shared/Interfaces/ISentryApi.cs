@@ -132,4 +132,11 @@ public interface ISentryApi
     
     [Delete("/api/files/{fileName}")]
     Task DeleteImageAsync(string fileName);
+
+    // Team endpoints
+    [Get("/api/team")]
+    Task<TeamResponseDto> GetTeamAsync();
+
+    [Post("/api/team")]
+    Task<TeamResponseDto> SaveTeamAsync([Body] TeamResponseDto dto);
 }

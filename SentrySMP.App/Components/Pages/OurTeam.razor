@@ -1,0 +1,76 @@
+@page "/our-team"
+@attribute [StreamRendering]
+@using SentrySMP.Shared.DTOs
+@rendermode InteractiveServer
+@inject SentrySMP.Shared.Interfaces.ISentryApi Api
+
+<h1>Our Team</h1>
+
+@if (team == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (!team.Categories.Any())
+{
+    <p><em>No team members configured yet.</em></p>
+}
+else
+{
+    <div class="container">
+        @foreach (var cat in team.Categories)
+        {
+            <div class="text-center my-4">
+                <h3>@cat.Name</h3>
+            </div>
+            <div class="row">
+                @foreach (var m in cat.Members)
+                {
+                    <div class="col-md-3 col-sm-4 mb-4">
+                        <div class="card text-center p-3">
+                            <img src="@GetSkinUrl(m)" class="team-avatar" alt="@m.MinecraftName" />
+                            <div class="card-body">
+                                <h5 class="card-title">@m.MinecraftName</h5>
+                                <p class="card-text">
+                                    @if (!string.IsNullOrWhiteSpace(m.Role))
+                                    {
+                                        var roleClass = GetRoleClass(m.Role);
+                                        <span class="role-badge @roleClass">@m.Role</span>
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private TeamResponseDto? team;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            team = await Api.GetTeamAsync();
+        }
+        catch { team = new TeamResponseDto(); }
+    }
+
+    private string GetSkinUrl(TeamMemberDto member)
+    {
+        if (!string.IsNullOrEmpty(member.SkinUrl)) return member.SkinUrl!;
+        var name = string.IsNullOrWhiteSpace(member.MinecraftName) ? "steve" : member.MinecraftName;
+        return $"https://minotar.net/helm/{Uri.EscapeDataString(name)}/100";
+    }
+
+    private string GetRoleClass(string? role)
+    {
+        if (string.IsNullOrWhiteSpace(role)) return "role-DEFAULT";
+        // use uppercase, remove non-alphanum and trim
+        var cleaned = new string(role.ToUpperInvariant().Where(c => char.IsLetterOrDigit(c)).ToArray());
+        if (string.IsNullOrEmpty(cleaned)) return "role-DEFAULT";
+        return $"role-{cleaned}";
+    }
+}
