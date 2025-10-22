@@ -24,6 +24,8 @@ public class ServerService : IServerService
         var servers = await _context.Servers
             .Include(s => s.Keys)
             .Include(s => s.Shards)
+            .Include(s => s.Bundles)
+            .Include(s => s.BattlePasses)
             .ToListAsync();
         return servers.Select(MapToResponse);
     }
@@ -34,6 +36,8 @@ public class ServerService : IServerService
         var server = await _context.Servers
             .Include(s => s.Keys)
             .Include(s => s.Shards)
+            .Include(s => s.Bundles)
+            .Include(s => s.BattlePasses)
             .FirstOrDefaultAsync(s => s.Id == id);
         return server != null ? MapToResponse(server) : null;
     }
@@ -133,6 +137,26 @@ public class ServerService : IServerService
                 Price = s.Price,
                 Sale = s.Sale,
                 Image = s.Image
+            }).ToList(),
+            Bundles = server.Bundles?.Select(b => new BundleResponse
+            {
+                Id = b.Id,
+                Name = b.Name,
+                Description = b.Description,
+                Price = b.Price,
+                ServerId = b.ServerId,
+                Sale = b.Sale,
+                Image = b.Image
+            }).ToList(),
+            BattlePasses = server.BattlePasses?.Select(bp => new BattlePassResponse
+            {
+                Id = bp.Id,
+                Name = bp.Name,
+                Description = bp.Description,
+                Price = bp.Price,
+                ServerId = bp.ServerId,
+                Sale = bp.Sale,
+                Image = bp.Image
             }).ToList()
         };
     }

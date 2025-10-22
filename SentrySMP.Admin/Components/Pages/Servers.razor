@@ -43,7 +43,11 @@
                                 <th>Name</th>
                                 <th>RCON IP</th>
                                 <th>RCON Port</th>
-                                <th>Keys Count</th>
+                                <th>Keys</th>
+                                <th>Ranks</th>
+                                <th>Bundles</th>
+                                <th>Shards</th>
+                                <th>BattlePasses</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -67,7 +71,19 @@
                                         <span class="badge bg-info">@server.RCONPort</span>
                                     </td>
                                     <td>
-                                        <span class="badge bg-secondary">@(server.Keys?.Count ?? 0) keys</span>
+                                        <span class="badge bg-secondary">@(server.Keys?.Count ?? 0)</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">@totalRanks</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">@(server.Bundles?.Count ?? 0)</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">@(server.Shards?.Count ?? 0)</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">@(server.BattlePasses?.Count ?? 0)</span>
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group">
@@ -103,6 +119,7 @@
     private bool loading = true;
     private string? errorMessage;
     private bool isInitialized = false;
+    private int totalRanks = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -120,6 +137,18 @@
             loading = true;
             errorMessage = null;
             servers = (await Api.GetServersAsync()).ToList();
+            // Ranks are global (not per-server). Fetch total rank count to display.
+            try
+            {
+                var ranks = await Api.GetRanksAsync();
+                totalRanks = ranks?.Count() ?? 0;
+            }
+            catch (Exception rex)
+            {
+                // Non-fatal: log and continue
+                Logger.LogWarning(rex, "Unable to fetch ranks for servers view");
+                totalRanks = 0;
+            }
         }
         catch (Exception ex)
         {

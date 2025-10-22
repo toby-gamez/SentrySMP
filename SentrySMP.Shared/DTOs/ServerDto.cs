@@ -23,6 +23,8 @@ public class ServerResponse
     
     public List<KeyResponse>? Keys { get; set; }
     public List<ShardResponse>? Shards { get; set; }
+    public List<BundleResponse>? Bundles { get; set; }
+    public List<BattlePassResponse>? BattlePasses { get; set; }
 }
 
 public class CreateServerDto
