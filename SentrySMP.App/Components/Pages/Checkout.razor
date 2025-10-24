@@ -1,0 +1,272 @@
+@page "/checkout"
+@using SentrySMP.Shared.DTOs
+@using Microsoft.AspNetCore.WebUtilities
+@inject SentrySMP.App.Components.State.CartState CartState
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@inject NavigationManager NavigationManager
+@inject SentrySMP.Shared.Interfaces.ICheckoutApi CheckoutApi
+@rendermode InteractiveServer
+<PageTitle>Checkout - SentrySMP</PageTitle>
+
+<div class="container mt-4">
+    <h1><i class="bi bi-bag-check"></i> Checkout</h1>
+
+    @if (CartState.CartItems.Count == 0)
+    {
+        <div class="alert alert-info mt-4">
+            <i class="bi bi-info-circle"></i> Your cart is empty. <a href="/" class="ms-1">Go to store</a>
+        </div>
+    }
+    else
+    {
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">Order summary</h5>
+                <table class="table table-sm mt-3">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th class="text-center">Qty</th>
+                            <th class="text-end">Unit</th>
+                            <th class="text-end">Line</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in CartState.CartItems)
+                        {
+                            var p = item.Key;
+                            var qty = item.Quantity;
+                            double unitPrice = p.Sale > 0 ? Convert.ToDouble(p.Price) * (1 - p.Sale / 100.0) : Convert.ToDouble(p.Price);
+                            <tr>
+                                <td>@p.Name <small class="text-muted">@p.Server?.Name</small></td>
+                                <td class="text-center">@qty</td>
+                                <td class="text-end">€@unitPrice.ToString("F2")</td>
+                                <td class="text-end">€@((unitPrice * qty).ToString("F2"))</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <div class="d-flex justify-content-end mt-3">
+                    <div>
+                        <div><small class="text-muted">Subtotal</small></div>
+                        <div class="h5">€@CartState.CartItems.Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity).ToString("F2")</div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <h5 class="mt-3">Choose payment method</h5>
+                <div class="mt-2">
+                    <div class="btn-group" role="group">
+                        <button class="btn @(_selectedPayment=="stripe" ? "btn-primary" : "btn-outline-primary")" @onclick="SelectStripe">Stripe</button>
+                        <button class="btn @(_selectedPayment=="paypal" ? "btn-primary" : "btn-outline-primary")" @onclick="SelectPaypal">PayPal</button>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button class="btn btn-primary" @onclick="ProceedToPayment">Proceed to payment</button>
+                    <button class="btn btn-secondary" @onclick="BackToCart">Back to cart</button>
+                </div>
+
+                @if (_showPaymentCard)
+                {
+                    @if (_selectedPayment == "paypal")
+                    {
+                        <div class="mt-3">
+                            <div id="paypal-button-container"></div>
+                            <div class="mt-2">
+                                <button class="btn btn-outline-secondary" @onclick="CancelPayment">Cancel</button>
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(_payPalErrorMessage))
+                        {
+                            <div class="alert alert-danger mt-2">PayPal error: @_payPalErrorMessage</div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning mt-3">
+                            <h6>Payment flow placeholder</h6>
+                            <p>You selected <strong>@_selectedPayment</strong>. This is a simulated confirmation screen.</p>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-success" @onclick="ConfirmPayment">Mark as paid (simulate)</button>
+                                <button class="btn btn-outline-secondary" @onclick="CancelPayment">Cancel</button>
+                            </div>
+                        </div>
+                    }
+                }
+
+                @if (_paymentSucceeded)
+                {
+                    <div class="alert alert-success mt-3">
+                        <i class="bi bi-check-circle"></i> Payment simulated successfully. Your cart was cleared. <a href="/">Continue shopping</a>
+                    </div>
+                }
+
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private string _selectedPayment = "stripe";
+    private bool _showPaymentCard = false;
+    private bool _paymentSucceeded = false;
+    private string _amount = ""; // default amount (start empty; cart total will prefill if available)
+
+    protected override void OnInitialized()
+    {
+        CartState.OnChange += StateHasChanged;
+        // Prefill amount from cart total if we have items
+        var total = CartState.CartItems.Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity);
+        if (total > 0)
+        {
+            _amount = total.ToString("F2");
+        }
+    }
+
+    public void Dispose()
+    {
+        CartState.OnChange -= StateHasChanged;
+    }
+
+    private void SelectPayment(string method)
+    {
+        _selectedPayment = method;
+    }
+
+    private void SelectStripe()
+    {
+        _selectedPayment = "stripe";
+    }
+
+    private void SelectPaypal()
+    {
+        _selectedPayment = "paypal";
+    }
+
+    private void BackToCart()
+    {
+        NavigationManager.NavigateTo("/cart");
+    }
+
+    private async Task ProceedToPayment()
+    {
+        _paymentSucceeded = false;
+
+        // If Stripe is selected, create a Checkout Session and immediately redirect the user to Stripe (no simulated UI)
+        if (_selectedPayment == "stripe")
+        {
+            try
+            {
+                double parsedStripe = 0;
+                var formattedStripe = _amount;
+                if (!double.TryParse(_amount, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out parsedStripe) || parsedStripe <= 0)
+                {
+                    parsedStripe = CartState.CartItems.Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity);
+                    formattedStripe = parsedStripe.ToString("F2");
+                }
+
+                var stripeResp = await CheckoutApi.CreateStripeSessionAsync(new CreateStripeSessionRequest { Amount = formattedStripe, Description = "SentrySMP purchase" });
+                if (stripeResp == null || string.IsNullOrWhiteSpace(stripeResp.Url))
+                {
+                    _payPalErrorMessage = "Server did not return Stripe checkout URL.";
+                    _showPaymentCard = true; // show error area
+                }
+                else
+                {
+                    NavigationManager.NavigateTo(stripeResp.Url, true);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                _payPalErrorMessage = ex.Message;
+                _showPaymentCard = true;
+            }
+        }
+
+        // For PayPal and simulated flows show the payment card
+        _showPaymentCard = true;
+
+        if (_selectedPayment == "paypal")
+        {
+            // Server-side create-order + redirect flow (no frontend JS)
+            try
+            {
+                // Use the manually entered amount (fallback to cart total if parsing fails)
+                double parsed = 0;
+                var formatted = _amount;
+                if (!double.TryParse(_amount, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out parsed) || parsed <= 0)
+                {
+                    // try fallback to cart total
+                    parsed = CartState.CartItems.Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity);
+                    formatted = parsed.ToString("F2");
+                }
+
+                var resp = await CheckoutApi.CreateOrderAsync(new CreateOrderRequest { Amount = formatted });
+                if (resp == null || string.IsNullOrWhiteSpace(resp.ApproveUrl))
+                {
+                    _payPalErrorMessage = "Server did not return approval URL.";
+                }
+                else
+                {
+                    // Redirect browser to PayPal approval URL (full page load)
+                    NavigationManager.NavigateTo(resp.ApproveUrl, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                _payPalErrorMessage = ex.Message;
+            }
+        }
+    }
+
+    private async Task ConfirmPayment()
+    {
+        // Simulate successful payment and clear cart.
+        await CartState.ClearCartAsync();
+        _showPaymentCard = false;
+        _paymentSucceeded = true;
+        StateHasChanged();
+    }
+
+    
+
+    private string? _payPalErrorMessage;
+
+    private void CancelPayment()
+    {
+        _showPaymentCard = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Detect redirects from server-side PayPal return (e.g. ?status=success)
+            var uri = new Uri(NavigationManager.Uri);
+            var qs = QueryHelpers.ParseQuery(uri.Query);
+            if (qs.TryGetValue("status", out var status))
+            {
+                if (status == "success")
+                {
+                    await CartState.ClearCartAsync();
+                    _showPaymentCard = false;
+                    _paymentSucceeded = true;
+                    StateHasChanged();
+
+                    // remove query by navigating to clean url (replace history)
+                    NavigationManager.NavigateTo("/checkout", false, true);
+                }
+                else if (status == "cancelled")
+                {
+                    _payPalErrorMessage = "Payment was cancelled.";
+                    StateHasChanged();
+                    NavigationManager.NavigateTo("/checkout", false, true);
+                }
+            }
+        }
+    }
+}

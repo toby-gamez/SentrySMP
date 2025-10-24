@@ -16,6 +16,7 @@ public class SentryDbContext : DbContext
     public DbSet<Shard> Shards { get; set; }
     public DbSet<BattlePass> BattlePasses { get; set; }
     public DbSet<Command> Commands { get; set; }
+    public DbSet<SentrySMP.Domain.Entities.PaymentTransaction> PaymentTransactions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -179,6 +180,21 @@ public class SentryDbContext : DbContext
                 .WithMany(s => s.BattlePasses)
                 .HasForeignKey(e => e.ServerId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Configure PaymentTransaction
+        modelBuilder.Entity<SentrySMP.Domain.Entities.PaymentTransaction>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Provider).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.ProviderTransactionId).HasMaxLength(200);
+            entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.Currency).HasMaxLength(10).HasDefaultValue("EUR");
+            entity.Property(e => e.MinecraftUsername).HasMaxLength(100);
+            entity.Property(e => e.ItemsJson).HasColumnType("text");
+            entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.CreatedAt).IsRequired();
+            entity.Property(e => e.RawResponse).HasColumnType("text");
         });
     }
 }

@@ -105,6 +105,28 @@ services.AddRefitClient<ISentryApi>()
     })
     .AddHttpMessageHandler<HttpLoggingHandler>();
 
+// Refit client for checkout API (PayPal create-order)
+services.AddRefitClient<SentrySMP.Shared.Interfaces.ICheckoutApi>()
+    .ConfigureHttpClient(c =>
+    {
+        var baseAddress = builder.Configuration["Api:BaseAddress"];
+        if (string.IsNullOrEmpty(baseAddress))
+        {
+            throw new InvalidOperationException("API base address is not configured.");
+        }
+        c.BaseAddress = new Uri(baseAddress);
+    })
+    .ConfigurePrimaryHttpMessageHandler(() =>
+    {
+        var handler = new HttpClientHandler();
+        if (builder.Environment.IsDevelopment())
+        {
+            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+        }
+        return handler;
+    })
+    .AddHttpMessageHandler<HttpLoggingHandler>();
+
 services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo

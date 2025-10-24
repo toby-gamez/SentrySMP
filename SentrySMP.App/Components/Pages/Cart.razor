@@ -2,6 +2,7 @@
 @using SentrySMP.Shared.DTOs
 @inject SentrySMP.App.Components.State.CartState CartState
 @inject IJSRuntime JS
+@inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 <PageTitle>Cart - SentrySMP</PageTitle>
 
@@ -78,7 +79,10 @@
             <div>
                 <strong>Total:</strong> €@CartState.CartItems.Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity).ToString("F2")
             </div>
-            <button class="btn btn-outline-danger" @onclick="ClearCart"><i class="bi bi-x-circle"></i> Clear Cart</button>
+            <div>
+                <button class="btn btn-primary me-2" @onclick="GoToCheckout" disabled="@(CartState.CartItems.Count == 0)"><i class="bi bi-bag-check"></i> Checkout</button>
+                <button class="btn btn-outline-danger" @onclick="ClearCart" disabled="@(CartState.CartItems.Count == 0)"><i class="bi bi-x-circle"></i> Clear Cart</button>
+            </div>
         </div>
     }
 </div>
@@ -116,5 +120,10 @@
     private async Task ChangeQuantity(ProductResponse item, int delta)
     {
         await CartState.ChangeQuantityAsync(item, delta);
+    }
+
+    private void GoToCheckout()
+    {
+        NavigationManager.NavigateTo("/checkout");
     }
 }
