@@ -64,11 +64,12 @@ services.AddScoped<IBundleService, BundleService>();
 services.AddScoped<IRankService, RankService>();
 services.AddScoped<IShardService, ShardService>();
 // Team service (file-backed)
-services.AddScoped<SentrySMP.Shared.Interfaces.ITeamService, SentrySMP.Api.Services.TeamService>();
+services.AddScoped<ITeamService, TeamService>();
 services.AddScoped<IBattlePassService, BattlePassService>();
 services.AddScoped<ICommandService, CommandService>();
 services.AddScoped<IStatusService, StatusService>();
-services.AddScoped<SentrySMP.Shared.Interfaces.IAnnouncementsService, SentrySMP.Api.Services.AnnouncementsService>();
+services.AddScoped<IAnnouncementsService, AnnouncementsService>();
+services.AddScoped<ITransactionsService, TransactionsService>();
 services.AddScoped<CartState>(sp => new CartState(sp.GetRequiredService<Microsoft.JSInterop.IJSRuntime>()));
 services.AddControllers()
     .AddJsonOptions(options =>

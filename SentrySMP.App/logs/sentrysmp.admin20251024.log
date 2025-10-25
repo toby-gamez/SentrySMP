@@ -2102,3 +2102,4 @@ System.Threading.Tasks.TaskCanceledException: A task was canceled.
 2025-10-24 21:15:11.882 +02:00 [WRN] [BasicAuth] Missing Authorization header
 2025-10-24 21:15:11.882 +02:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
 2025-10-24 21:15:12.431 +02:00 [INF] Processed 20 announcements from Discord
+2025-10-24 21:20:41.366 +02:00 [INF] Application is shutting down...

@@ -1,10 +1,18 @@
 @page "/checkout"
 @using SentrySMP.Shared.DTOs
 @using Microsoft.AspNetCore.WebUtilities
+@using SentrySMP.App.Components.State
+@using System.Text.Json
+@using System.Net.Http.Json
 @inject SentrySMP.App.Components.State.CartState CartState
 @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Env
 @inject NavigationManager NavigationManager
+@inject Microsoft.JSInterop.IJSRuntime JS
 @inject SentrySMP.Shared.Interfaces.ICheckoutApi CheckoutApi
+@inject System.Net.Http.HttpClient Http
+@inject SentrySMP.Shared.Interfaces.ITransactionsService TransactionsService
+@inject SentrySMP.App.Authentication.UserService UserService
 @rendermode InteractiveServer
 <PageTitle>Checkout - SentrySMP</PageTitle>
 
@@ -13,9 +21,46 @@
 
     @if (CartState.CartItems.Count == 0)
     {
-        <div class="alert alert-info mt-4">
-            <i class="bi bi-info-circle"></i> Your cart is empty. <a href="/" class="ms-1">Go to store</a>
-        </div>
+        if (_paymentSucceeded)
+        {
+            <div class="alert alert-success mt-4">
+                <i class="bi bi-check-circle"></i> @(_successMessage ?? "Payment simulated successfully. Your cart was cleared.") <a href="/">Continue shopping</a>
+            </div>
+
+            @if (_lastOrderItems != null && _lastOrderItems.Count > 0)
+            {
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h6>Order details</h6>
+                        <table class="table table-sm mt-2">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Server</th>
+                                    <th class="text-center">Qty</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var it in _lastOrderItems)
+                                {
+                                    <tr>
+                                        <td>@it.Key.Name</td>
+                                        <td>@(it.Key.Server?.Name ?? "-")</td>
+                                        <td class="text-center">@it.Quantity</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-info mt-4">
+                <i class="bi bi-info-circle"></i> Your cart is empty. <a href="/" class="ms-1">Go to store</a>
+            </div>
+        }
     }
     else
     {
@@ -66,6 +111,10 @@
 
                 <div class="mt-4 d-flex gap-2">
                     <button class="btn btn-primary" @onclick="ProceedToPayment">Proceed to payment</button>
+                    @if (Env?.IsDevelopment() == true)
+                    {
+                        <button class="btn btn-outline-success" @onclick="DebugSimulatePayment">Debug: Mark as paid</button>
+                    }
                     <button class="btn btn-secondary" @onclick="BackToCart">Back to cart</button>
                 </div>
 
@@ -100,7 +149,45 @@
                 @if (_paymentSucceeded)
                 {
                     <div class="alert alert-success mt-3">
-                        <i class="bi bi-check-circle"></i> Payment simulated successfully. Your cart was cleared. <a href="/">Continue shopping</a>
+                        <i class="bi bi-check-circle"></i> @(_successMessage ?? "Payment simulated successfully. Your cart was cleared.") <a href="/">Continue shopping</a>
+                    </div>
+
+                    @if (_lastOrderItems != null && _lastOrderItems.Count > 0)
+                    {
+                        <div class="card mt-3">
+                            <div class="card-body">
+                                <h6>Order details</h6>
+                                <table class="table table-sm mt-2">
+                                    <thead>
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Server</th>
+                                            <th class="text-center">Qty</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var it in _lastOrderItems)
+                                        {
+                                            <tr>
+                                                <td>@it.Key.Name</td>
+                                                <td>@(it.Key.Server?.Name ?? "-")</td>
+                                                <td class="text-center">@it.Quantity</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                }
+
+                @if (!string.IsNullOrWhiteSpace(_failureMessage))
+                {
+                    <div class="alert alert-danger mt-3">
+                        <i class="bi bi-x-circle"></i> @_failureMessage
+                        <div class="mt-2">
+                            <a class="btn btn-sm btn-primary" href="/cart">Zkusit znovu</a>
+                        </div>
                     </div>
                 }
 
@@ -114,10 +201,19 @@
     private bool _showPaymentCard = false;
     private bool _paymentSucceeded = false;
     private string _amount = ""; // default amount (start empty; cart total will prefill if available)
+    private string? _successMessage;
+    private string? _failureMessage;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         CartState.OnChange += StateHasChanged;
+        // Load cart from browser storage (important when arriving via redirect)
+        try
+        {
+            await CartState.LoadFromStorageAsync(JS);
+        }
+        catch { }
+
         // Prefill amount from cart total if we have items
         var total = CartState.CartItems.Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity);
         if (total > 0)
@@ -172,6 +268,7 @@
                 if (stripeResp == null || string.IsNullOrWhiteSpace(stripeResp.Url))
                 {
                     _payPalErrorMessage = "Server did not return Stripe checkout URL.";
+                    _failureMessage = "Děkujeme — platba nevyšla. Server nevrátil Stripe URL.";
                     _showPaymentCard = true; // show error area
                 }
                 else
@@ -183,6 +280,7 @@
             catch (Exception ex)
             {
                 _payPalErrorMessage = ex.Message;
+                _failureMessage = "Děkujeme — platba nevyšla. " + ex.Message;
                 _showPaymentCard = true;
             }
         }
@@ -209,6 +307,7 @@
                 if (resp == null || string.IsNullOrWhiteSpace(resp.ApproveUrl))
                 {
                     _payPalErrorMessage = "Server did not return approval URL.";
+                    _failureMessage = "Děkujeme — platba nevyšla. Server nevrátil PayPal schvalovací URL.";
                 }
                 else
                 {
@@ -219,26 +318,136 @@
             catch (Exception ex)
             {
                 _payPalErrorMessage = ex.Message;
+                _failureMessage = "Děkujeme — platba nevyšla. " + ex.Message;
             }
         }
     }
 
     private async Task ConfirmPayment()
     {
+        // Capture snapshot of cart so we can display what was purchased after clearing it.
+        _lastOrderItems = CartState.CartItems.Select(ci => new CartItem(ci.Key, ci.Quantity)).ToList();
+
+        // Persist transaction to API (best-effort; failures are logged silently here)
+        try
+        {
+            await SaveTransactionAsync("Manual", "debug", _lastOrderItems, _amount, "EUR", "succeeded");
+        }
+        catch { }
+
         // Simulate successful payment and clear cart.
         await CartState.ClearCartAsync();
         _showPaymentCard = false;
         _paymentSucceeded = true;
+        _successMessage = "Zaplaceno — děkujeme! Vaše platba byla přijata.";
         StateHasChanged();
     }
 
+    // Development-only helper: simulate a real provider return by redirecting back to this
+    // page with ?status=success so the normal return handling runs (clears cart, shows message).
+    private Task DebugSimulatePayment()
+    {
+        if (Env?.IsDevelopment() != true)
+        {
+            return Task.CompletedTask;
+        }
+
+        // Force a full-page load (like a provider redirect) to trigger OnAfterRenderAsync firstRender
+        // and the existing ?status=success handling.
+        NavigationManager.NavigateTo("/checkout?status=success", true);
+        return Task.CompletedTask;
+    }
+
     
+
+    // Snapshot of last successfully purchased items (used to show order details after return)
+    private List<CartItem>? _lastOrderItems;
+
+    // Last transaction id returned from API when saving a transaction
+    private long? _lastTransactionId;
 
     private string? _payPalErrorMessage;
 
     private void CancelPayment()
     {
         _showPaymentCard = false;
+    }
+
+    // Persist a payment transaction to the API. This is best-effort and does not block the UI on failure.
+    private async Task SaveTransactionAsync(string provider, string providerTxId, List<CartItem>? items, string amount, string currency, string status)
+    {
+        try
+        {
+            // Ensure amount is filled from cart if missing
+            var computedAmount = amount;
+            if (string.IsNullOrWhiteSpace(computedAmount) || computedAmount == "0" || computedAmount == "0.00")
+            {
+                var total = (items ?? CartState.CartItems).Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity);
+                computedAmount = total.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            var itemsForJson = (items ?? new List<CartItem>()).Select(i => new
+            {
+                id = i.Key.Id,
+                name = i.Key.Name,
+                type = i.Key.Type,
+                server = i.Key.Server?.Name,
+                quantity = i.Quantity,
+                price = i.Key.Price,
+                sale = i.Key.Sale
+            }).ToList();
+
+            var username = string.Empty;
+            try
+            {
+                var u = await UserService.GetUsernameAsync();
+                username = u ?? string.Empty;
+            }
+            catch
+            {
+                username = string.Empty;
+            }
+
+            var req = new SentrySMP.Shared.DTOs.CreateTransactionRequest
+            {
+                Provider = provider,
+                ProviderTransactionId = providerTxId,
+                Amount = computedAmount,
+                Currency = currency ?? "EUR",
+                MinecraftUsername = username,
+                ItemsJson = JsonSerializer.Serialize(itemsForJson),
+                Status = status ?? string.Empty,
+                RawResponse = string.Empty
+            };
+
+            // Call server-side transactions service directly (runs on server; avoids HTTP roundtrip)
+            try
+            {
+                var tx = await TransactionsService.CreateTransactionAsync(req);
+                if (tx != null)
+                {
+                    _lastTransactionId = tx.Id;
+                    _successMessage = $"Zaplaceno — děkujeme! Vaše platba byla přijata. (ID: {tx.Id})";
+                }
+                else
+                {
+                    _successMessage = "Zaplaceno — děkujeme! Vaše platba byla přijata.";
+                }
+            }
+            catch (Exception ex)
+            {
+                _failureMessage = $"Platbu se nepodařilo uložit: {ex.Message}";
+            }
+        }
+        catch (Exception ex)
+        {
+            _failureMessage = $"Chyba při ukládání platby: {ex.Message}";
+            Console.WriteLine($"Failed to save transaction: {ex.Message}");
+        }
+        finally
+        {
+            StateHasChanged();
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -252,19 +461,52 @@
             {
                 if (status == "success")
                 {
+                    // Capture the items currently in the cart so we can render order details after clearing.
+                    _lastOrderItems = CartState.CartItems.Select(ci => new CartItem(ci.Key, ci.Quantity)).ToList();
+
+                    // Infer provider from querystring (Stripe returns session_id, PayPal returns orderId)
+                    string providerName = "Manual";
+                    string providerTxId = "return";
+                    if (qs.TryGetValue("session_id", out var sid) && !string.IsNullOrWhiteSpace(sid))
+                    {
+                        providerName = "Stripe";
+                        providerTxId = sid.ToString();
+                    }
+                    else if (qs.TryGetValue("orderId", out var oid) && !string.IsNullOrWhiteSpace(oid))
+                    {
+                        providerName = "PayPal";
+                        providerTxId = oid.ToString();
+                    }
+                    else if (qs.TryGetValue("provider", out var pv) && !string.IsNullOrWhiteSpace(pv))
+                    {
+                        // honor explicit provider if provided
+                        providerName = pv.ToString();
+                    }
+
+                    // Persist transaction to API (best-effort)
+                    try
+                    {
+                        await SaveTransactionAsync(providerName, providerTxId, _lastOrderItems, _amount, "EUR", "succeeded");
+                    }
+                    catch { }
+
                     await CartState.ClearCartAsync();
                     _showPaymentCard = false;
                     _paymentSucceeded = true;
+                    _successMessage = "Zaplaceno — děkujeme! Vaše platba byla přijata.";
                     StateHasChanged();
 
-                    // remove query by navigating to clean url (replace history)
-                    NavigationManager.NavigateTo("/checkout", false, true);
+                    // Note: we intentionally do not immediately remove the query string here so the success
+                    // message can be shown after redirect. If you prefer the query removed, we can
+                    // replace the history entry, but that will also re-initialize component state.
                 }
                 else if (status == "cancelled")
                 {
-                    _payPalErrorMessage = "Payment was cancelled.";
+                    // Show a user-friendly Czech failure message when the payment was cancelled.
+                    _failureMessage = "Děkujeme — platba nevyšla. Platba byla zrušena.";
                     StateHasChanged();
-                    NavigationManager.NavigateTo("/checkout", false, true);
+                    // Keep the query string for this render so the message is visible; we won't replace the
+                    // history entry here to remove it automatically.
                 }
             }
         }
