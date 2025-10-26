@@ -13,6 +13,7 @@
 @inject System.Net.Http.HttpClient Http
 @inject SentrySMP.Shared.Interfaces.ITransactionsService TransactionsService
 @inject SentrySMP.App.Authentication.UserService UserService
+@inject SentrySMP.Shared.Interfaces.IRconService RconService
 @rendermode InteractiveServer
 <PageTitle>Checkout - SentrySMP</PageTitle>
 
@@ -427,7 +428,26 @@
                 if (tx != null)
                 {
                     _lastTransactionId = tx.Id;
-                    _successMessage = $"Zaplaceno — děkujeme! Vaše platba byla přijata. (ID: {tx.Id})";
+                        _successMessage = $"Zaplaceno — děkujeme! Vaše platba byla přijata. (ID: {tx.Id})";
+
+                        // After the transaction is saved, attempt to execute RCON commands for the purchased items.
+                        try
+                        {
+                            var user = string.Empty;
+                            try
+                            {
+                                user = await UserService.GetUsernameAsync() ?? string.Empty;
+                            }
+                            catch { user = string.Empty; }
+
+                            var execProducts = (items ?? CartState.CartItems).Select(ci => ci.Key).ToList();
+                            await RconService.ExecuteCommandsForProductsAsync(execProducts, user);
+                        }
+                        catch (Exception ex)
+                        {
+                            // Best-effort: log and continue. UI should not fail the payment flow because of RCON problems.
+                            _failureMessage = _failureMessage ?? $"Warning: failed to execute server commands: {ex.Message}";
+                        }
                 }
                 else
                 {

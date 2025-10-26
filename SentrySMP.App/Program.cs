@@ -70,6 +70,8 @@ services.AddScoped<ICommandService, CommandService>();
 services.AddScoped<IStatusService, StatusService>();
 services.AddScoped<IAnnouncementsService, AnnouncementsService>();
 services.AddScoped<ITransactionsService, TransactionsService>();
+// IRconService is implemented in the API project (server-side service)
+services.AddScoped<SentrySMP.Shared.Interfaces.IRconService, SentrySMP.Api.Services.RconService>();
 services.AddScoped<CartState>(sp => new CartState(sp.GetRequiredService<Microsoft.JSInterop.IJSRuntime>()));
 services.AddControllers()
     .AddJsonOptions(options =>
