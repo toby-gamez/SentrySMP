@@ -87,7 +87,7 @@
                                         <label class="form-label">Port *</label>
                                         <InputNumber @bind-Value="serverModel.RCONPort" class="form-control" placeholder="25575" min="1" max="65535" />
                                         <ValidationMessage For="() => serverModel.RCONPort" class="text-danger" />
-                                        <div class="form-text">Default: 25575</div>
+                                        <div class="form-text">The port <b>is different</b> from the game one (default: 25575). The port must exist in Network tab in Admin and can't be primary.</div>
                                     </div>
                                 </div>
                             </div>

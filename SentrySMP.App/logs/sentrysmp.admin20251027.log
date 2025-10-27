@@ -6627,3 +6627,221 @@ System.Threading.Tasks.TaskCanceledException: A task was canceled.
    at Microsoft.JSInterop.JSRuntime.InvokeAsync[TValue](Int64 targetInstanceId, String identifier, Object[] args)
    at Microsoft.JSInterop.JSRuntimeExtensions.InvokeVoidAsync(IJSRuntime jsRuntime, String identifier, Object[] args)
    at Microsoft.AspNetCore.Components.Server.Circuits.RemoteNavigationManager.<>c__DisplayClass13_0.<<NavigateToCore>g__PerformNavigationAsync|0>d.MoveNext()
+2025-10-27 14:55:16.086 +01:00 [INF] Application is shutting down...
+2025-10-27 14:55:31.390 +01:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2025-10-27 14:55:31.619 +01:00 [INF] Now listening on: https://localhost:7271
+2025-10-27 14:55:31.632 +01:00 [INF] Now listening on: http://localhost:5230
+2025-10-27 14:55:31.658 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-27 14:55:31.660 +01:00 [INF] Hosting environment: Development
+2025-10-27 14:55:31.663 +01:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.App
+2025-10-27 14:55:32.736 +01:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-27 14:55:32.736 +01:00 [INF] [BasicAuth] Handling request for /
+2025-10-27 14:55:32.739 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:32.739 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:32.743 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:32.745 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:32.811 +01:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-27 14:55:32.812 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:32.813 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:32.958 +01:00 [INF] [BasicAuth] Handling request for /checkout
+2025-10-27 14:55:32.965 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:32.965 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:33.389 +01:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-27 14:55:33.390 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:33.390 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:33.576 +01:00 [INF] [BasicAuth] Handling request for /_blazor/initializers
+2025-10-27 14:55:33.578 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:33.578 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:33.635 +01:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-27 14:55:33.639 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:33.642 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:33.658 +01:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-27 14:55:33.660 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:33.664 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:33.890 +01:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-27 14:55:33.891 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:33.892 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:34.034 +01:00 [INF] [BasicAuth] Handling request for /api/status/mc
+2025-10-27 14:55:34.035 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:34.035 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:34.956 +01:00 [INF] [BasicAuth] Handling request for /_blazor/initializers
+2025-10-27 14:55:34.958 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:34.958 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:34.983 +01:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-27 14:55:34.984 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:34.984 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:34.992 +01:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-27 14:55:34.992 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:34.992 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:37.516 +01:00 [INF] Executed DbCommand (74ms) [Parameters=[@p0='?' (DbType = Decimal), @p1='?' (DbType = DateTime), @p2='?' (Size = 10), @p3='?' (Size = 4000), @p4='?' (Size = 100), @p5='?' (Size = 50), @p6='?' (Size = 200), @p7='?' (Size = 4000), @p8='?' (Size = 50)], CommandType='"Text"', CommandTimeout='30']
+SET AUTOCOMMIT = 1;
+INSERT INTO `PaymentTransactions` (`Amount`, `CreatedAt`, `Currency`, `ItemsJson`, `MinecraftUsername`, `Provider`, `ProviderTransactionId`, `RawResponse`, `Status`)
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8)
+RETURNING `Id`;
+2025-10-27 14:55:37.614 +01:00 [INF] Created transaction 77 provider=Manual amount=0.00
+2025-10-27 14:55:39.817 +01:00 [INF] [BasicAuth] Handling request for /api/status/discord
+2025-10-27 14:55:39.817 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:39.817 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:40.457 +01:00 [INF] Processed 20 announcements from Discord
+2025-10-27 14:55:56.889 +01:00 [INF] [BasicAuth] Handling request for /cart
+2025-10-27 14:55:56.889 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:56.891 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:58.498 +01:00 [INF] [BasicAuth] Handling request for /battlepasses
+2025-10-27 14:55:58.500 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:58.504 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:58.518 +01:00 [INF] [BasicAuth] Handling request for /api/battlepasses
+2025-10-27 14:55:58.519 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:58.519 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:59.222 +01:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `BattlePasses` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-27 14:55:59.403 +01:00 [INF] [BasicAuth] Handling request for /api/battlepasses
+2025-10-27 14:55:59.403 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:59.403 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:59.499 +01:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `BattlePasses` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-27 14:55:59.890 +01:00 [INF] [BasicAuth] Handling request for /
+2025-10-27 14:55:59.890 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:59.890 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:59.922 +01:00 [INF] [BasicAuth] Handling request for /api/status/mc
+2025-10-27 14:55:59.922 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:59.923 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:55:59.940 +01:00 [INF] [BasicAuth] Handling request for /api/status/discord
+2025-10-27 14:55:59.940 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:55:59.941 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:00.465 +01:00 [INF] Processed 20 announcements from Discord
+2025-10-27 14:56:01.617 +01:00 [INF] [BasicAuth] Handling request for /shards
+2025-10-27 14:56:01.617 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:01.617 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:01.635 +01:00 [INF] [BasicAuth] Handling request for /api/shards
+2025-10-27 14:56:01.636 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:01.637 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:01.738 +01:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Description`, `s`.`Image`, `s`.`Name`, `s`.`Price`, `s`.`Sale`, `s`.`ServerId`, `s0`.`Id`, `s0`.`Name`, `s0`.`RCONIP`, `s0`.`RCONPassword`, `s0`.`RCONPort`
+FROM `Shards` AS `s`
+INNER JOIN `Servers` AS `s0` ON `s`.`ServerId` = `s0`.`Id`
+2025-10-27 14:56:01.901 +01:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'SHARD') AND `c`.`TypeId` IN (1, 2)
+2025-10-27 14:56:01.958 +01:00 [INF] [BasicAuth] Handling request for /api/shards
+2025-10-27 14:56:01.959 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:01.959 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:02.034 +01:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Description`, `s`.`Image`, `s`.`Name`, `s`.`Price`, `s`.`Sale`, `s`.`ServerId`, `s0`.`Id`, `s0`.`Name`, `s0`.`RCONIP`, `s0`.`RCONPassword`, `s0`.`RCONPort`
+FROM `Shards` AS `s`
+INNER JOIN `Servers` AS `s0` ON `s`.`ServerId` = `s0`.`Id`
+2025-10-27 14:56:02.062 +01:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'SHARD') AND `c`.`TypeId` IN (1, 2)
+2025-10-27 14:56:08.274 +01:00 [INF] [BasicAuth] Handling request for /cart
+2025-10-27 14:56:08.275 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:08.276 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:13.386 +01:00 [INF] [BasicAuth] Handling request for /login
+2025-10-27 14:56:13.386 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:13.387 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:18.459 +01:00 [INF] [BasicAuth] Handling request for /
+2025-10-27 14:56:18.460 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:18.461 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:18.498 +01:00 [INF] [BasicAuth] Handling request for /api/status/mc
+2025-10-27 14:56:18.499 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:18.500 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:18.518 +01:00 [INF] [BasicAuth] Handling request for /api/status/discord
+2025-10-27 14:56:18.519 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:18.519 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:19.027 +01:00 [INF] Processed 20 announcements from Discord
+2025-10-27 14:56:19.488 +01:00 [INF] [BasicAuth] Handling request for /cart
+2025-10-27 14:56:19.489 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:19.489 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:20.712 +01:00 [INF] [BasicAuth] Handling request for /checkout
+2025-10-27 14:56:20.713 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:20.714 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:22.939 +01:00 [INF] [BasicAuth] Handling request for /checkout
+2025-10-27 14:56:22.939 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:22.939 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:22.953 +01:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-27 14:56:22.954 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:22.954 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:22.968 +01:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-27 14:56:22.970 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:22.970 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:23.106 +01:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-27 14:56:23.106 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:23.106 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:23.182 +01:00 [INF] [BasicAuth] Handling request for /_blazor/initializers
+2025-10-27 14:56:23.182 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:23.182 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:23.225 +01:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-27 14:56:23.225 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:23.226 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:23.253 +01:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-27 14:56:23.254 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:23.255 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:23.362 +01:00 [INF] Executed DbCommand (13ms) [Parameters=[@p0='?' (DbType = Decimal), @p1='?' (DbType = DateTime), @p2='?' (Size = 10), @p3='?' (Size = 4000), @p4='?' (Size = 100), @p5='?' (Size = 50), @p6='?' (Size = 200), @p7='?' (Size = 4000), @p8='?' (Size = 50)], CommandType='"Text"', CommandTimeout='30']
+SET AUTOCOMMIT = 1;
+INSERT INTO `PaymentTransactions` (`Amount`, `CreatedAt`, `Currency`, `ItemsJson`, `MinecraftUsername`, `Provider`, `ProviderTransactionId`, `RawResponse`, `Status`)
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8)
+RETURNING `Id`;
+2025-10-27 14:56:23.363 +01:00 [INF] Created transaction 78 provider=Manual amount=178.20
+2025-10-27 14:56:23.395 +01:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+2025-10-27 14:56:23.453 +01:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-10-27 14:56:23.518 +01:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`, `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `b0`.`Id`, `b0`.`Description`, `b0`.`Image`, `b0`.`Name`, `b0`.`Price`, `b0`.`Sale`, `b0`.`ServerId`
+FROM `Servers` AS `s`
+LEFT JOIN `Keys` AS `k` ON `s`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s`.`Id` = `s0`.`ServerId`
+LEFT JOIN `Bundles` AS `b` ON `s`.`Id` = `b`.`ServerId`
+LEFT JOIN `BattlePasses` AS `b0` ON `s`.`Id` = `b0`.`ServerId`
+ORDER BY `s`.`Id`, `k`.`Id`, `s0`.`Id`, `b`.`Id`
+2025-10-27 14:56:23.591 +01:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-10-27 14:56:23.662 +01:00 [INF] Executed DbCommand (15ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT `s1`.`Id`, `s1`.`Name`, `s1`.`RCONIP`, `s1`.`RCONPassword`, `s1`.`RCONPort`, `k`.`Id`, `k`.`Description`, `k`.`Image`, `k`.`Name`, `k`.`Price`, `k`.`Sale`, `k`.`ServerId`, `s0`.`Id`, `s0`.`Description`, `s0`.`Image`, `s0`.`Name`, `s0`.`Price`, `s0`.`Sale`, `s0`.`ServerId`, `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `b0`.`Id`, `b0`.`Description`, `b0`.`Image`, `b0`.`Name`, `b0`.`Price`, `b0`.`Sale`, `b0`.`ServerId`
+FROM (
+    SELECT `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+    FROM `Servers` AS `s`
+    WHERE `s`.`Id` = @__id_0
+    LIMIT 1
+) AS `s1`
+LEFT JOIN `Keys` AS `k` ON `s1`.`Id` = `k`.`ServerId`
+LEFT JOIN `Shards` AS `s0` ON `s1`.`Id` = `s0`.`ServerId`
+LEFT JOIN `Bundles` AS `b` ON `s1`.`Id` = `b`.`ServerId`
+LEFT JOIN `BattlePasses` AS `b0` ON `s1`.`Id` = `b0`.`ServerId`
+ORDER BY `s1`.`Id`, `k`.`Id`, `s0`.`Id`, `b`.`Id`
+2025-10-27 14:56:23.672 +01:00 [INF] Connecting to RCON 5.83.128.32:25571 (server: MaceBox)
+2025-10-27 14:56:23.718 +01:00 [INF] Sending RCON to MaceBox: tell Taneq "Hej"
+2025-10-27 14:56:23.750 +01:00 [INF] Connecting to RCON 5.83.128.32:25571 (server: MaceBox)
+2025-10-27 14:56:23.788 +01:00 [INF] Sending RCON to MaceBox: tell Taneq "Hej"
+2025-10-27 14:56:23.813 +01:00 [INF] Connecting to RCON 5.83.128.32:25571 (server: MaceBox)
+2025-10-27 14:56:23.851 +01:00 [INF] Sending RCON to MaceBox: tell Taneq "Hej"
+2025-10-27 14:56:23.872 +01:00 [INF] Connecting to RCON 5.83.128.32:25571 (server: MaceBox)
+2025-10-27 14:56:23.910 +01:00 [INF] Sending RCON to MaceBox: tell Taneq "Hej"
+2025-10-27 14:56:27.949 +01:00 [INF] [BasicAuth] Handling request for /checkout
+2025-10-27 14:56:27.950 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:27.950 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:27.971 +01:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-27 14:56:27.972 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:27.972 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:27.987 +01:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-27 14:56:27.987 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:27.987 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:28.088 +01:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-27 14:56:28.088 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:28.089 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:28.186 +01:00 [INF] [BasicAuth] Handling request for /_blazor/initializers
+2025-10-27 14:56:28.186 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:28.186 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:28.244 +01:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-27 14:56:28.246 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:28.246 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:28.274 +01:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-27 14:56:28.275 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:28.275 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 14:56:29.264 +01:00 [INF] [BasicAuth] Handling request for /cart
+2025-10-27 14:56:29.265 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 14:56:29.266 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header

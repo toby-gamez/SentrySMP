@@ -3,6 +3,7 @@
 @inject SentrySMP.App.Components.State.CartState CartState
 @inject IJSRuntime JS
 @inject NavigationManager NavigationManager
+@inject SentrySMP.App.Authentication.UserService UserService
 @rendermode InteractiveServer
 <PageTitle>Cart - SentrySMP</PageTitle>
 
@@ -80,18 +81,26 @@
                 <strong>Total:</strong> €@CartState.CartItems.Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity).ToString("F2")
             </div>
             <div>
-                <button class="btn btn-primary me-2" @onclick="GoToCheckout" disabled="@(CartState.CartItems.Count == 0)"><i class="bi bi-bag-check"></i> Checkout</button>
+                    <button class="btn btn-primary me-2" @onclick="GoToCheckout" disabled="@(CartState.CartItems.Count == 0 || !_isLoggedIn)"><i class="bi bi-bag-check"></i> Checkout</button>
                 <button class="btn btn-outline-danger" @onclick="ClearCart" disabled="@(CartState.CartItems.Count == 0)"><i class="bi bi-x-circle"></i> Clear Cart</button>
             </div>
         </div>
+            @if (!_isLoggedIn)
+            {
+                <div class="text-danger mt-2">Nejste přihlášen.</div>
+            }
     }
 </div>
 
 @code {
     private bool _cartLoaded = false;
+    private string? _username;
+    private bool _isLoggedIn = false;
+
     protected override void OnInitialized()
     {
         CartState.OnChange += StateHasChanged;
+        UserService.OnChange += OnUserChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -100,6 +109,7 @@
         {
             await CartState.LoadFromStorageAsync(JS);
             _cartLoaded = true;
+            await LoadUserAsync();
             StateHasChanged();
         }
     }
@@ -107,6 +117,7 @@
     public void Dispose()
     {
         CartState.OnChange -= StateHasChanged;
+        UserService.OnChange -= OnUserChanged;
     }
 
     private async Task RemoveFromCart(ProductResponse item)
@@ -125,5 +136,25 @@
     private void GoToCheckout()
     {
         NavigationManager.NavigateTo("/checkout");
+    }
+
+    private void OnUserChanged()
+    {
+        _ = LoadUserAsync();
+    }
+
+    private async Task LoadUserAsync()
+    {
+        try
+        {
+            _username = await UserService.GetUsernameAsync();
+            _isLoggedIn = !string.IsNullOrEmpty(_username);
+        }
+        catch
+        {
+            _username = null;
+            _isLoggedIn = false;
+        }
+        StateHasChanged();
     }
 }
