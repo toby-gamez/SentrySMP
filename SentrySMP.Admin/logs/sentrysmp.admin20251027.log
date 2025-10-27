@@ -516,3 +516,31 @@ System.Net.Http.HttpRequestException: Connection refused (localhost:7271)
 2025-10-27 19:56:05.215 +01:00 [INF] [BasicAuth] Handling request for /servers
 2025-10-27 19:56:05.217 +01:00 [WRN] [BasicAuth] Missing Authorization header
 2025-10-27 19:56:05.217 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 22:24:22.422 +01:00 [INF] [BasicAuth] Handling request for /
+2025-10-27 22:24:22.424 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 22:24:22.424 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 22:24:22.425 +01:00 [INF] Home: CredentialStore has credentials: true
+2025-10-27 22:24:22.425 +01:00 [INF] Home: Username: admin
+2025-10-27 22:24:22.425 +01:00 [INF] Home: User authenticated: true
+2025-10-27 22:24:22.425 +01:00 [INF] Home: User name: admin
+2025-10-27 22:24:22.426 +01:00 [INF] Home: User is authenticated, staying on page
+2025-10-27 22:24:22.631 +01:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-27 22:24:22.631 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 22:24:22.631 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 22:24:22.918 +01:00 [INF] [BasicAuth] Handling request for /_blazor/initializers
+2025-10-27 22:24:22.921 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 22:24:22.923 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 22:24:22.968 +01:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-27 22:24:22.969 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 22:24:22.972 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 22:24:23.040 +01:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-27 22:24:23.045 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 22:24:23.049 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 22:24:23.111 +01:00 [INF] Home: CredentialStore has credentials: true
+2025-10-27 22:24:23.116 +01:00 [INF] Home: Username: admin
+2025-10-27 22:24:23.119 +01:00 [INF] Home: User authenticated: true
+2025-10-27 22:24:23.121 +01:00 [INF] Home: User name: admin
+2025-10-27 22:24:23.122 +01:00 [INF] Home: User is authenticated, staying on page
+2025-10-27 22:24:24.095 +01:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-27 22:24:24.096 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 22:24:24.097 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header

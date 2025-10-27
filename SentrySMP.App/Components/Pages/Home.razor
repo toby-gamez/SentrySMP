@@ -4,23 +4,35 @@
 @rendermode InteractiveServer
 <PageTitle>Home - SentrySMP</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
-
-<a href="support">Support</a>
-<a href="vote-for-us">Vote for us</a>
-<a href="about">Vote for us</a>
-<a href="changelog">changelog</a>
-<a href="discord-server-rules">discord server rules</a>
-<a href="minecraft-server-rules">minecraft server rules</a>
-<a href="privacy-policy">privacy</a>
-<a href="terms-of-use">terms of use</a>
-<div class="home-news mt-4">
-	<h3>Latest announcements</h3>
+<div class="grid-div">
+	<ul class="thing-grid">
+		<!--
+                <a href="vip.html"
+                    ><li class="thing-grid-item item-blue">VIP</li></a
+                >
+                 -->
+		<a href="keys">
+			<li class="thing-grid-item item-green">KEYS</li>
+		</a>
+		<a href="shards">
+			<li class="thing-grid-item item-pink">SHARDS</li>
+		</a>
+		<a href="ranks">
+			<li class="thing-grid-item item-gold">RANKS</li>
+		</a>
+		<a href="battlepasses"
+		   ><li class="thing-grid-item item-red">BATTLE PASS</li></a>
+		<a href="bundles">
+			<li class="thing-grid-item item-turquoise">BUNDLES</li>
+		</a>	
+	</ul>
+</div>
+<section>
+	<div style="text-align: center">
+		<h2>Latest announcements</h2>
+	</div>
 	@if (homeLoading)
 	{
-		<div class="small text-muted">Loading announcements…</div>
 	}
 	else if (homeError != null)
 	{
@@ -31,26 +43,20 @@ Welcome to your new app.
 		<div class="list-group">
 			@foreach (var a in homeAnnouncements)
 			{
-				<div class="list-group-item">
-					<div class="d-flex w-100 justify-content-between">
-						<h5 class="mb-1">@a.Title</h5>
+				<div class="announcement">
+					<div class="info">
+						<h3 class="mb-1">@a.Title</h3>
+						<div class="small text-muted">By @a.Author</div>
 						<small>@a.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</small>
 					</div>
-					<div class="small text-muted">By @a.Author</div>
-					<div class="mt-2">@((MarkupString)a.HtmlContent)</div>
+					<div>@((MarkupString)a.HtmlContent)</div>
 				</div>
 			}
 		</div>
 	}
-	else
-	{
-		<div class="text-muted">No announcements</div>
-	}
-</div>
+</section>
 
 @code {
-	private int? McPlayers;
-	private int? DiscordMembers;
 
 	// consolidated lifecycle method below handles counts and home announcements
 
@@ -67,25 +73,6 @@ Welcome to your new app.
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (!firstRender) return;
-
-		// load counts (existing)
-		try
-		{
-			McPlayers = await StatusService.GetMcPlayersAsync();
-		}
-		catch
-		{
-			McPlayers = null;
-		}
-
-		try
-		{
-			DiscordMembers = await StatusService.GetDiscordMembersAsync();
-		}
-		catch
-		{
-			DiscordMembers = null;
-		}
 
 		// load top 3 announcements but don't block render
 		_ = LoadHomeAnnouncements();

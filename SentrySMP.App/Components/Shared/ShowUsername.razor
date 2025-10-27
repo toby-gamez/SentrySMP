@@ -2,32 +2,41 @@
 
 @inject NavigationManager Navigation
 @inject SentrySMP.App.Services.StatusService StatusService
+@using SentrySMP.App.Components.Pages
 @implements IDisposable
 @rendermode InteractiveServer
 
 @if (!string.IsNullOrEmpty(CurrentDisplay))
 {
-    <div class="mb-3 d-flex align-items-center gap-3">
-            <div class="d-flex align-items-center gap-2">
+            <div class="login-info">
             @if (!string.IsNullOrEmpty(SkinUrl) && string.Equals(Edition, "java", StringComparison.OrdinalIgnoreCase))
             {
-                <img src="@SkinUrl" alt="skin" style="width:32px;height:32px;border-radius:4px;" />
+                <img src="@SkinUrl" class="skin-img" alt="skin" />
             }
             <div>
-                <small class="text-muted">Signed in as</small>
                 <div><strong>@CurrentDisplay</strong></div>
             </div>
         </div>
-        <div>
+        <div class="actions">
             <button class="btn btn-sm btn-outline-secondary" @onclick="Logout">Log out</button>
         </div>
-    </div>
 }
 else
 {
-    <div class="mb-3">
-        <a class="btn btn-sm btn-primary" href="/login">Log in</a>
+    <div class="login-info">
+            <img src="https://minotar.net/helm/MHF_Steve/100" class="skin-img" alt="skin" />
+        <div>
+            <div><strong>Guest</strong></div>
+        </div>
     </div>
+    <div class="actions">
+        <button class="btn btn-sm btn-outline-secondary" onclick="LogIn()">Log in</button>
+    </div>
+    <script>
+        function LogIn() {
+            window.location.href = "/login";
+        }
+    </script>
 }
 
 @code {

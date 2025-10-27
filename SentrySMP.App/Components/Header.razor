@@ -18,8 +18,7 @@
             src="images/logo.png"
             class="logo"
             alt="logo"
-        /></div
-    ></a>
+        /></div></a>
     <i class="bi bi-play mobile-none" style="font-size: 3rem"></i>
     <div
         class="grid-item"
@@ -33,8 +32,7 @@
                 setTimeout(() => {
                     el.textContent = 'MC.SENTRYSMP.EU';
                 }, 2000);
-            })()"
-    >
+            })()">
         <span>
             <small>PLAYING <span>@(McPlayers.HasValue ? McPlayers.Value.ToString() : "—")</span></small>
             <a href="join" title="How can I join?" style="color:inherit;text-decoration:none;">
@@ -44,27 +42,26 @@
         <br />
         <span class="big">MC.SENTRYSMP.EU</span>
     </div>
-    <a href="https://discord.gg/gXrXMwpuH4" target="_blank"
-    ><div
-         style="padding-right: 5px; text-align: right"
-         class="grid-item"
-         title="Join our Discord"
-     >
-        <span><small><span id="discord-count">@(DiscordMembers.HasValue ? DiscordMembers.Value.ToString() : "—")</span> MEMBERS</small></span>
-        <br />
-        <span class="big"
-        >JOIN<span style="visibility: hidden">.</span
-        >DISCORD</span
-        >
-    </div></a
-    >
+    <a href="https://discord.gg/gXrXMwpuH4" target="_blank">
+        
+        <div
+            style="padding-right: 5px; text-align: right"
+            class="grid-item"
+            title="Join our Discord">
+            <span><small><span id="discord-count">@(DiscordMembers.HasValue ? DiscordMembers.Value.ToString() : "—")</span> MEMBERS</small></span>
+            <br/>
+            <span class="big">JOIN
+                <span style="visibility: hidden">.</span>DISCORD</span>
+        </div>
+    </a>
     <i
         style="font-size: 3rem"
         class="bi bi-discord mobile-none"
     ></i>
 </div>
 <div id="login-box-outer">
-    <div id="login-box" >
+    <div id="login-box">
+        <SentrySMP.App.Components.Shared.ShowUsername/>
     </div>
 </div>
 

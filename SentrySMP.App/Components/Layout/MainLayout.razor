@@ -1,46 +1,41 @@
 ﻿@inherits LayoutComponentBase
 
 <HeadContent>
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css">
     <script src="/analytics-consent.js"></script>
     <!-- SEO meta tagy pro Google -->
-        <meta
-            name="description"
-            content="SentrySMP is a Minecraft server focused on providing a safe and enjoyable experience for players of all ages. It is SMP with addons."
-        />
-        <meta
-            name="keywords"
-            content="Minecraft, SMP, English, Czech, server, safe, enjoyable, experience, players, vip, premium, exclusive"
-        />
-        <meta name="author" content="Sentry SMP" />
+    <meta
+        name="description"
+        content="SentrySMP is a Minecraft server focused on providing a safe and enjoyable experience for players of all ages. It is SMP with addons."/>
+    <meta
+        name="keywords"
+        content="Minecraft, SMP, English, Czech, server, safe, enjoyable, experience, players, vip, premium, exclusive"/>
+    <meta name="author" content="Sentry SMP"/>
 
-        <!-- Open Graph pro Facebook, Discord, aj. -->
-        <meta property="og:title" content="Sentry SMP" />
-        <meta
-            property="og:description"
-            content="Sentry SMP server is a Minecraft server focused on providing a safe and enjoyable experience for players of all ages. It is SMP with addons."
-        />
-        <meta
-            property="og:image"
-            content="https://sentrysmp.eu/images/logo.png"
-        />
-        <meta property="og:url" content="https://sentrysmp.eu/" />
-        <meta property="og:type" content="website" />
+    <!-- Open Graph pro Facebook, Discord, aj. -->
+    <meta property="og:title" content="Sentry SMP"/>
+    <meta
+        property="og:description"
+        content="Sentry SMP server is a Minecraft server focused on providing a safe and enjoyable experience for players of all ages. It is SMP with addons."/>
+    <meta
+        property="og:image"
+        content="https://sentrysmp.eu/images/logo.png"/>
+    <meta property="og:url" content="https://sentrysmp.eu/"/>
+    <meta property="og:type" content="website"/>
 
-        <!-- Twitter Cards (volitelné) -->
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Sentry SMP" />
-        <meta
-            name="twitter:description"
-            content="Sentry SMP server is a Minecraft server focused on providing a safe and enjoyable experience for players of all ages. It is SMP with addons."
-        />
-        <meta
-            name="twitter:image"
-            content="https://sentrysmp.eu/images/logo.png"
-        />
-        <!-- Language settings -->
-        <meta http-equiv="content-language" content="en" />
-        <meta name="language" content="English" />
+    <!-- Twitter Cards (volitelné) -->
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content="Sentry SMP"/>
+    <meta
+        name="twitter:description"
+        content="Sentry SMP server is a Minecraft server focused on providing a safe and enjoyable experience for players of all ages. It is SMP with addons."/>
+    <meta
+        name="twitter:image"
+        content="https://sentrysmp.eu/images/logo.png"/>
+    <!-- Language settings -->
+    <meta http-equiv="content-language" content="en"/>
+    <meta name="language" content="English"/>
 </HeadContent>
 
 <div class="page">
@@ -50,8 +45,9 @@
     <main>
         <article class="content px-4">
             <Header />
-            <SentrySMP.App.Components.Shared.ShowUsername/>
-            @Body
+            <div class="container">
+                @Body
+            </div>
             <Footer/>
         </article>
     </main>
