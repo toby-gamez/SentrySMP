@@ -85,6 +85,8 @@ services.AddTransient<HttpLoggingHandler>();
 services.AddScoped<UserService>();
 // App status service to fetch Discord and Minecraft counts
 services.AddScoped<SentrySMP.App.Services.StatusService>();
+// Cookie consent service to manage analytics consent and loading
+services.AddScoped<SentrySMP.App.Services.CookieConsentService>();
 
 services.AddRefitClient<ISentryApi>()
     .ConfigureHttpClient(c =>

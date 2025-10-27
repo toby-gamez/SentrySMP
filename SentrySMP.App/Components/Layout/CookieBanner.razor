@@ -1,0 +1,58 @@
+@rendermode InteractiveServer
+@inject SentrySMP.App.Services.CookieConsentService CookieConsent
+@inject Microsoft.JSInterop.IJSRuntime JSRuntime
+
+@if (CookieConsent.CurrentState == SentrySMP.App.Services.ConsentState.Unknown)
+{
+    <div id="cookie-banner" style="display:flex; gap:0.5rem; align-items:center;">
+        <span>We use cookies to analyze traffic and improve your experience. By continuing to browse, you agree to our use of cookies. <a href="/privacy-policy.html">Learn more</a></span>
+        <div>
+            <button class="accept btn btn-primary" @onclick="AcceptCookies">Accept</button>
+            <button class="decline btn btn-secondary" @onclick="DeclineCookies">Decline</button>
+        </div>
+    </div>
+}
+
+@code {
+    private bool _initialized = false;
+    private const string GtagId = "G-SGG2CLM06D"; // Replace or move to config if desired
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!_initialized)
+        {
+            CookieConsent.OnConsentChanged += StateHasChanged;
+            try
+            {
+                await CookieConsent.InitializeAsync(JSRuntime, GtagId);
+                _initialized = true;
+                StateHasChanged();
+            }
+            catch
+            {
+                // If JS interop isn't available yet (prerender), do not mark initialized
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        try
+        {
+            CookieConsent.OnConsentChanged -= StateHasChanged;
+        }
+        catch { }
+    }
+
+    private async Task AcceptCookies()
+    {
+        await CookieConsent.AcceptAsync(GtagId);
+        StateHasChanged();
+    }
+
+    private async Task DeclineCookies()
+    {
+        await CookieConsent.DeclineAsync();
+        StateHasChanged();
+    }
+}
