@@ -228,7 +228,7 @@
                     <div class="alert alert-danger mt-3">
                         <i class="bi bi-x-circle"></i> @_failureMessage
                         <div class="mt-2">
-                            <a class="btn btn-sm btn-primary" href="/cart">Zkusit znovu</a>
+                            <a class="btn btn-sm btn-primary" href="/cart">Try again</a>
                         </div>
                     </div>
                 }
@@ -321,7 +321,7 @@
                 if (stripeResp == null || string.IsNullOrWhiteSpace(stripeResp.Url))
                 {
                     _payPalErrorMessage = "Server did not return Stripe checkout URL.";
-                    _failureMessage = "Děkujeme — platba nevyšla. Server nevrátil Stripe URL.";
+                    _failureMessage = "Payment failed — server did not return Stripe checkout URL.";
                     _showPaymentCard = true; // show error area
                 }
                 else
@@ -333,7 +333,7 @@
             catch (Exception ex)
             {
                 _payPalErrorMessage = ex.Message;
-                _failureMessage = "Děkujeme — platba nevyšla. " + ex.Message;
+                _failureMessage = "Payment failed — " + ex.Message;
                 _showPaymentCard = true;
             }
         }
@@ -360,7 +360,7 @@
                 if (resp == null || string.IsNullOrWhiteSpace(resp.ApproveUrl))
                 {
                     _payPalErrorMessage = "Server did not return approval URL.";
-                    _failureMessage = "Děkujeme — platba nevyšla. Server nevrátil PayPal schvalovací URL.";
+                    _failureMessage = "Payment failed — server did not return PayPal approval URL.";
                 }
                 else
                 {
@@ -371,7 +371,7 @@
             catch (Exception ex)
             {
                 _payPalErrorMessage = ex.Message;
-                _failureMessage = "Děkujeme — platba nevyšla. " + ex.Message;
+                _failureMessage = "Payment failed — " + ex.Message;
             }
         }
     }
@@ -392,7 +392,7 @@
         await CartState.ClearCartAsync();
         _showPaymentCard = false;
         _paymentSucceeded = true;
-        _successMessage = "Zaplaceno — děkujeme! Vaše platba byla přijata.";
+        _successMessage = "Payment received — thank you! Your payment has been received.";
         StateHasChanged();
     }
 
@@ -495,10 +495,10 @@
             try
             {
                 var tx = await TransactionsService.CreateTransactionAsync(req);
-                if (tx != null)
-                {
-                    _lastTransactionId = tx.Id;
-                        _successMessage = $"Zaplaceno — děkujeme! Vaše platba byla přijata. (ID: {tx.Id})";
+                        if (tx != null)
+                    {
+                        _lastTransactionId = tx.Id;
+                            _successMessage = $"Payment received — thank you! (ID: {tx.Id})";
 
                         // After the transaction is saved, attempt to execute RCON commands for the purchased items.
                         try
@@ -514,16 +514,16 @@
                             var rres = await RconService.ExecuteCommandsForProductsAsync(execProducts, user);
                             _rconResult = rres;
                             if (rres != null)
-                            {
+                        {
                                 if (rres.AllSucceeded)
                                 {
-                                    _rconStatusMessage = "Příkazy na serveru byly úspěšně odeslány.";
+                                    _rconStatusMessage = "Server commands were successfully sent.";
                                 }
                                 else
                                 {
-                                    _rconStatusMessage = "Některé příkazy se nepodařilo odeslat:";
+                                    _rconStatusMessage = "Some commands failed to send:";
                                     // also set a visible failure message area
-                                    _failureMessage = _failureMessage ?? "Pozor: některé příkazy na serveru selhaly. Podrobnosti níže.";
+                                    _failureMessage = _failureMessage ?? "Warning: some server commands failed. Details below.";
                                 }
 
                                 // Append RCON status to the success message so it remains visible together with the paid message.
@@ -543,17 +543,17 @@
                 }
                 else
                 {
-                    _successMessage = "Zaplaceno — děkujeme! Vaše platba byla přijata.";
+                    _successMessage = "Payment received — thank you! Your payment has been received.";
                 }
             }
             catch (Exception ex)
             {
-                _failureMessage = $"Platbu se nepodařilo uložit: {ex.Message}";
+                _failureMessage = $"Failed to save the payment: {ex.Message}";
             }
         }
         catch (Exception ex)
         {
-            _failureMessage = $"Chyba při ukládání platby: {ex.Message}";
+            _failureMessage = $"Error saving the payment: {ex.Message}";
             Console.WriteLine($"Failed to save transaction: {ex.Message}");
         }
         finally
@@ -605,7 +605,7 @@
                     await CartState.ClearCartAsync();
                     _showPaymentCard = false;
                     _paymentSucceeded = true;
-                    _successMessage = "Zaplaceno — děkujeme! Vaše platba byla přijata.";
+                    _successMessage = "Payment received — thank you! Your payment has been received.";
                     StateHasChanged();
 
                     // Note: we intentionally do not immediately remove the query string here so the success
@@ -614,8 +614,8 @@
                 }
                 else if (status == "cancelled")
                 {
-                    // Show a user-friendly Czech failure message when the payment was cancelled.
-                    _failureMessage = "Děkujeme — platba nevyšla. Platba byla zrušena.";
+                    // Show a user-friendly failure message when the payment was cancelled.
+                    _failureMessage = "Payment cancelled.";
                     StateHasChanged();
                     // Keep the query string for this render so the message is visible; we won't replace the
                     // history entry here to remove it automatically.
