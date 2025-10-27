@@ -1,0 +1,388 @@
+2025-10-27 09:26:06.260 +01:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2025-10-27 09:26:06.360 +01:00 [INF] Now listening on: https://localhost:7272
+2025-10-27 09:26:06.364 +01:00 [INF] Now listening on: http://localhost:5092
+2025-10-27 09:26:06.370 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-27 09:26:06.371 +01:00 [INF] Hosting environment: Development
+2025-10-27 09:26:06.371 +01:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin
+2025-10-27 09:26:23.444 +01:00 [INF] [BasicAuth] Handling request for /
+2025-10-27 09:26:23.451 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:26:23.454 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:26:23.570 +01:00 [INF] Home: CredentialStore has credentials: false
+2025-10-27 09:26:23.574 +01:00 [INF] Home: User authenticated: false
+2025-10-27 09:26:23.576 +01:00 [INF] Home: User name: null
+2025-10-27 09:26:23.577 +01:00 [WRN] Home: User not authenticated, redirecting to login
+2025-10-27 09:26:23.675 +01:00 [INF] [BasicAuth] Handling request for /login
+2025-10-27 09:26:23.675 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:26:23.675 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:26:24.186 +01:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-27 09:26:24.189 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:26:24.192 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:26:24.564 +01:00 [INF] [BasicAuth] Handling request for /_blazor/initializers
+2025-10-27 09:26:24.564 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:26:24.565 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:26:24.622 +01:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-27 09:26:24.624 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:26:24.625 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:26:24.686 +01:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-27 09:26:24.686 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:26:24.687 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:26:26.406 +01:00 [INF] Attempting login for user: admin
+2025-10-27 09:26:26.417 +01:00 [INF] Attempting auth verification for admin against https://localhost:7271
+2025-10-27 09:26:27.277 +01:00 [INF] Auth verification for admin: "OK" from https://localhost:7271
+2025-10-27 09:26:27.420 +01:00 [INF] Login successful for user: admin
+2025-10-27 09:26:27.555 +01:00 [INF] [BasicAuth] Handling request for /
+2025-10-27 09:26:27.558 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:26:27.562 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:26:27.575 +01:00 [INF] Home: CredentialStore has credentials: true
+2025-10-27 09:26:27.576 +01:00 [INF] Home: Username: admin
+2025-10-27 09:26:27.577 +01:00 [INF] Home: User authenticated: true
+2025-10-27 09:26:27.578 +01:00 [INF] Home: User name: admin
+2025-10-27 09:26:27.578 +01:00 [INF] Home: User is authenticated, staying on page
+2025-10-27 09:26:27.688 +01:00 [INF] Home: CredentialStore has credentials: true
+2025-10-27 09:26:27.692 +01:00 [INF] Home: Username: admin
+2025-10-27 09:26:27.695 +01:00 [INF] Home: User authenticated: true
+2025-10-27 09:26:27.696 +01:00 [INF] Home: User name: admin
+2025-10-27 09:26:27.699 +01:00 [INF] Home: User is authenticated, staying on page
+2025-10-27 09:26:30.825 +01:00 [INF] [BasicAuth] Handling request for /servers
+2025-10-27 09:26:30.826 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:26:30.826 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:54:42.844 +01:00 [INF] Application is shutting down...
+2025-10-27 09:54:56.802 +01:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2025-10-27 09:54:56.885 +01:00 [INF] Now listening on: https://localhost:7272
+2025-10-27 09:54:56.894 +01:00 [INF] Now listening on: http://localhost:5092
+2025-10-27 09:54:56.903 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-27 09:54:56.909 +01:00 [INF] Hosting environment: Development
+2025-10-27 09:54:56.909 +01:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin
+2025-10-27 09:54:58.464 +01:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-27 09:54:58.470 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:54:58.476 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:54:58.567 +01:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-27 09:54:58.570 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:54:58.571 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:54:58.903 +01:00 [INF] [BasicAuth] Handling request for /servers
+2025-10-27 09:54:58.910 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:54:58.912 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:54:59.133 +01:00 [WRN] [AuthHandler] No credentials present
+2025-10-27 09:54:59.294 +01:00 [ERR] Error loading servers
+System.Net.Http.HttpRequestException: Connection refused (localhost:7271)
+ ---> System.Net.Sockets.SocketException (111): Connection refused
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.InjectNewHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at SentrySMP.Admin.Handlers.HttpLoggingHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/Handlers/HttpLoggingHandler.cs:line 49
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at Refit.RequestBuilderImplementation.<>c__DisplayClass15_0`2.<<BuildCancellableTaskFuncForMethod>b__0>d.MoveNext() in c:\temp\releaser\refit\Refit\RequestBuilderImplementation.cs:line 331
+--- End of stack trace from previous location ---
+   at Refit.Implementation.Generated.SentrySMPSharedInterfacesISentryApi.global::SentrySMP.Shared.Interfaces.ISentryApi.GetServersAsync() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Shared/obj/Debug/net9.0/InterfaceStubGeneratorV2/Refit.Generator.InterfaceStubGeneratorV2/ISentryApi.g.cs:line 468
+   at SentrySMP.Admin.Components.Pages.Servers.LoadServers() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/Components/Pages/Servers.razor:line 139
+2025-10-27 09:54:59.814 +01:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-27 09:54:59.820 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:54:59.823 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:55:00.043 +01:00 [INF] [BasicAuth] Handling request for /_blazor/initializers
+2025-10-27 09:55:00.044 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:55:00.044 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:55:00.079 +01:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-27 09:55:00.079 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:55:00.080 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:55:00.103 +01:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-27 09:55:00.105 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:55:00.106 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:55:00.300 +01:00 [WRN] [AuthHandler] No credentials present
+2025-10-27 09:55:00.317 +01:00 [ERR] Error loading servers
+System.Net.Http.HttpRequestException: Connection refused (localhost:7271)
+ ---> System.Net.Sockets.SocketException (111): Connection refused
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.CreateException(SocketError error, Boolean forAsyncThrow)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ConnectAsync(Socket socket, Boolean saeaCancelable)
+   at System.Net.Sockets.Socket.ConnectAsync(EndPoint remoteEP, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.InjectNewHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecuteFromThreadPool(Thread threadPoolThread)
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+   at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()
+--- End of stack trace from previous location ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.InjectNewHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at SentrySMP.Admin.Handlers.HttpLoggingHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/Handlers/HttpLoggingHandler.cs:line 49
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at Refit.RequestBuilderImplementation.<>c__DisplayClass15_0`2.<<BuildCancellableTaskFuncForMethod>b__0>d.MoveNext() in c:\temp\releaser\refit\Refit\RequestBuilderImplementation.cs:line 331
+--- End of stack trace from previous location ---
+   at Refit.Implementation.Generated.SentrySMPSharedInterfacesISentryApi.global::SentrySMP.Shared.Interfaces.ISentryApi.GetServersAsync() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Shared/obj/Debug/net9.0/InterfaceStubGeneratorV2/Refit.Generator.InterfaceStubGeneratorV2/ISentryApi.g.cs:line 468
+   at SentrySMP.Admin.Components.Pages.Servers.LoadServers() in /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin/Components/Pages/Servers.razor:line 139
+2025-10-27 09:55:31.631 +01:00 [INF] [BasicAuth] Handling request for /servers
+2025-10-27 09:55:31.632 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:55:31.633 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:55:31.661 +01:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-27 09:55:31.661 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:55:31.661 +01:00 [WRN] [AuthHandler] No credentials present
+2025-10-27 09:55:31.662 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:55:31.680 +01:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-27 09:55:31.680 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:55:31.680 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:55:36.253 +01:00 [WRN] [AuthHandler] No credentials present
+2025-10-27 09:55:37.527 +01:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-27 09:55:37.528 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:55:37.529 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:55:37.730 +01:00 [INF] [BasicAuth] Handling request for /_blazor/initializers
+2025-10-27 09:55:37.730 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:55:37.732 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:55:37.792 +01:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-27 09:55:37.792 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:55:37.792 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:55:37.839 +01:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-27 09:55:37.839 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:55:37.840 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:55:37.865 +01:00 [WRN] [AuthHandler] No credentials present
+2025-10-27 09:55:38.088 +01:00 [WRN] [AuthHandler] No credentials present
+2025-10-27 09:55:54.857 +01:00 [INF] Application is shutting down...
+2025-10-27 09:56:01.479 +01:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2025-10-27 09:56:01.567 +01:00 [INF] Now listening on: https://localhost:7272
+2025-10-27 09:56:01.570 +01:00 [INF] Now listening on: http://localhost:5092
+2025-10-27 09:56:01.576 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-27 09:56:01.578 +01:00 [INF] Hosting environment: Development
+2025-10-27 09:56:01.578 +01:00 [INF] Content root path: /home/tobias/RiderProjects/SentrySMP/SentrySMP.Admin
+2025-10-27 09:56:04.279 +01:00 [INF] [BasicAuth] Handling request for /
+2025-10-27 09:56:04.282 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:56:04.284 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:56:04.363 +01:00 [INF] Home: CredentialStore has credentials: false
+2025-10-27 09:56:04.366 +01:00 [INF] Home: User authenticated: false
+2025-10-27 09:56:04.366 +01:00 [INF] Home: User name: null
+2025-10-27 09:56:04.367 +01:00 [WRN] Home: User not authenticated, redirecting to login
+2025-10-27 09:56:04.424 +01:00 [INF] [BasicAuth] Handling request for /login
+2025-10-27 09:56:04.425 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:56:04.425 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:56:04.609 +01:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-27 09:56:04.610 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:56:04.610 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:56:04.793 +01:00 [INF] [BasicAuth] Handling request for /_blazor/initializers
+2025-10-27 09:56:04.794 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:56:04.796 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:56:04.823 +01:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-27 09:56:04.824 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:56:04.825 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:56:04.845 +01:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-27 09:56:04.845 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:56:04.845 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:56:06.355 +01:00 [INF] Attempting login for user: admin
+2025-10-27 09:56:06.360 +01:00 [INF] Attempting auth verification for admin against https://localhost:7271
+2025-10-27 09:56:09.539 +01:00 [INF] Auth verification for admin: "OK" from https://localhost:7271
+2025-10-27 09:56:09.659 +01:00 [INF] Login successful for user: admin
+2025-10-27 09:56:09.718 +01:00 [INF] [BasicAuth] Handling request for /
+2025-10-27 09:56:09.720 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:56:09.722 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:56:09.727 +01:00 [INF] Home: CredentialStore has credentials: true
+2025-10-27 09:56:09.727 +01:00 [INF] Home: Username: admin
+2025-10-27 09:56:09.727 +01:00 [INF] Home: User authenticated: true
+2025-10-27 09:56:09.727 +01:00 [INF] Home: User name: admin
+2025-10-27 09:56:09.727 +01:00 [INF] Home: User is authenticated, staying on page
+2025-10-27 09:56:09.780 +01:00 [INF] Home: CredentialStore has credentials: true
+2025-10-27 09:56:09.781 +01:00 [INF] Home: Username: admin
+2025-10-27 09:56:09.782 +01:00 [INF] Home: User authenticated: true
+2025-10-27 09:56:09.782 +01:00 [INF] Home: User name: admin
+2025-10-27 09:56:09.783 +01:00 [INF] Home: User is authenticated, staying on page
+2025-10-27 09:56:11.728 +01:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-27 09:56:11.728 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:56:11.729 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:56:23.834 +01:00 [INF] [BasicAuth] Handling request for /ranks
+2025-10-27 09:56:23.834 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:56:23.834 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:56:25.724 +01:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-27 09:56:25.725 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:56:25.726 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:56:26.509 +01:00 [INF] [BasicAuth] Handling request for /shards
+2025-10-27 09:56:26.510 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:56:26.511 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:56:28.118 +01:00 [INF] [BasicAuth] Handling request for /battlepasses
+2025-10-27 09:56:28.121 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:56:28.122 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:56:29.826 +01:00 [INF] [BasicAuth] Handling request for /ranks
+2025-10-27 09:56:29.826 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:56:29.826 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:56:32.205 +01:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-27 09:56:32.207 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:56:32.208 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:56:36.345 +01:00 [INF] [BasicAuth] Handling request for /servers
+2025-10-27 09:56:36.346 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:56:36.347 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:56:47.860 +01:00 [INF] [BasicAuth] Handling request for /team-admin
+2025-10-27 09:56:47.862 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:56:47.867 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:57:16.414 +01:00 [INF] [BasicAuth] Handling request for /battlepasses
+2025-10-27 09:57:16.414 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:57:16.418 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:57:34.387 +01:00 [INF] [BasicAuth] Handling request for /shards
+2025-10-27 09:57:34.389 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:57:34.389 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:57:35.628 +01:00 [INF] [BasicAuth] Handling request for /ranks
+2025-10-27 09:57:35.629 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:57:35.629 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:57:36.589 +01:00 [INF] [BasicAuth] Handling request for /shards
+2025-10-27 09:57:36.589 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:57:36.590 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:57:37.073 +01:00 [INF] [BasicAuth] Handling request for /battlepasses
+2025-10-27 09:57:37.073 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:57:37.073 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:57:40.122 +01:00 [INF] [BasicAuth] Handling request for /shards
+2025-10-27 09:57:40.123 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:57:40.123 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:57:54.401 +01:00 [INF] [BasicAuth] Handling request for /edit-shard/1
+2025-10-27 09:57:54.402 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:57:54.403 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:58:14.282 +01:00 [INF] [BasicAuth] Handling request for /shards
+2025-10-27 09:58:14.284 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:58:14.285 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:58:17.701 +01:00 [INF] [BasicAuth] Handling request for /edit-shard/1
+2025-10-27 09:58:17.702 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:58:17.702 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 09:58:25.257 +01:00 [INF] [BasicAuth] Handling request for /shards
+2025-10-27 09:58:25.257 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 09:58:25.257 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 10:25:27.978 +01:00 [INF] [BasicAuth] Handling request for /servers
+2025-10-27 10:25:27.978 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 10:25:27.980 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 10:25:31.130 +01:00 [INF] [BasicAuth] Handling request for /edit-server/10
+2025-10-27 10:25:31.130 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 10:25:31.131 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 10:34:25.565 +01:00 [INF] Updating server 10 with data: Name=MaceBox, RCONIP=5.83.128.32, RCONPort=25575
+2025-10-27 10:34:27.454 +01:00 [INF] [BasicAuth] Handling request for /servers
+2025-10-27 10:34:27.454 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 10:34:27.455 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:09:58.033 +01:00 [INF] [BasicAuth] Handling request for /edit-server/10
+2025-10-27 11:09:58.034 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:09:58.034 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:12:03.340 +01:00 [INF] Updating server 10 with data: Name=MaceBox, RCONIP=5.83.128.32, RCONPort=25575
+2025-10-27 11:12:05.088 +01:00 [INF] [BasicAuth] Handling request for /servers
+2025-10-27 11:12:05.090 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:12:05.091 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:13:09.140 +01:00 [INF] [BasicAuth] Handling request for /edit-server/10
+2025-10-27 11:13:09.143 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:13:09.143 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:16:17.196 +01:00 [INF] Updating server 10 with data: Name=MaceBox, RCONIP=5.83.128.32, RCONPort=25571
+2025-10-27 11:16:19.042 +01:00 [INF] [BasicAuth] Handling request for /servers
+2025-10-27 11:16:19.044 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:16:19.046 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:17:25.711 +01:00 [INF] [BasicAuth] Handling request for /edit-server/10
+2025-10-27 11:17:25.712 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:17:25.714 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:18:24.719 +01:00 [INF] Updating server 10 with data: Name=MaceBox, RCONIP=5.83.128.32, RCONPort=25571
+2025-10-27 11:18:26.421 +01:00 [INF] [BasicAuth] Handling request for /servers
+2025-10-27 11:18:26.424 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:18:26.425 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:24:39.816 +01:00 [INF] [BasicAuth] Handling request for /edit-server/10
+2025-10-27 11:24:39.817 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:24:39.819 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:25:14.239 +01:00 [INF] Updating server 10 with data: Name=MaceBox, RCONIP=5.83.128.32, RCONPort=25571
+2025-10-27 11:25:15.884 +01:00 [INF] [BasicAuth] Handling request for /servers
+2025-10-27 11:25:15.885 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:25:15.886 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:25:17.573 +01:00 [INF] [BasicAuth] Handling request for /team-admin
+2025-10-27 11:25:17.573 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:25:17.574 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:38:53.999 +01:00 [INF] [BasicAuth] Handling request for /
+2025-10-27 11:38:54.000 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:38:54.000 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:38:54.002 +01:00 [INF] Home: CredentialStore has credentials: true
+2025-10-27 11:38:54.002 +01:00 [INF] Home: Username: admin
+2025-10-27 11:38:54.002 +01:00 [INF] Home: User authenticated: true
+2025-10-27 11:38:54.002 +01:00 [INF] Home: User name: admin
+2025-10-27 11:38:54.002 +01:00 [INF] Home: User is authenticated, staying on page
+2025-10-27 11:38:54.234 +01:00 [INF] [BasicAuth] Handling request for /_framework/blazor.web.js
+2025-10-27 11:38:54.234 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:38:54.234 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:38:54.433 +01:00 [INF] [BasicAuth] Handling request for /_blazor/initializers
+2025-10-27 11:38:54.434 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:38:54.435 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:38:54.466 +01:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-27 11:38:54.467 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:38:54.468 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:38:54.485 +01:00 [INF] [BasicAuth] Handling request for /_blazor
+2025-10-27 11:38:54.486 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:38:54.486 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:38:54.501 +01:00 [INF] Home: CredentialStore has credentials: true
+2025-10-27 11:38:54.502 +01:00 [INF] Home: Username: admin
+2025-10-27 11:38:54.503 +01:00 [INF] Home: User authenticated: true
+2025-10-27 11:38:54.503 +01:00 [INF] Home: User name: admin
+2025-10-27 11:38:54.504 +01:00 [INF] Home: User is authenticated, staying on page
+2025-10-27 11:38:57.303 +01:00 [INF] [BasicAuth] Handling request for /keys
+2025-10-27 11:38:57.303 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:38:57.304 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:38:58.542 +01:00 [INF] [BasicAuth] Handling request for /
+2025-10-27 11:38:58.542 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:38:58.543 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:38:58.545 +01:00 [INF] Home: CredentialStore has credentials: true
+2025-10-27 11:38:58.545 +01:00 [INF] Home: Username: admin
+2025-10-27 11:38:58.545 +01:00 [INF] Home: User authenticated: true
+2025-10-27 11:38:58.545 +01:00 [INF] Home: User name: admin
+2025-10-27 11:38:58.545 +01:00 [INF] Home: User is authenticated, staying on page
+2025-10-27 11:38:58.588 +01:00 [INF] Home: CredentialStore has credentials: true
+2025-10-27 11:38:58.590 +01:00 [INF] Home: Username: admin
+2025-10-27 11:38:58.591 +01:00 [INF] Home: User authenticated: true
+2025-10-27 11:38:58.592 +01:00 [INF] Home: User name: admin
+2025-10-27 11:38:58.594 +01:00 [INF] Home: User is authenticated, staying on page
+2025-10-27 11:39:02.258 +01:00 [INF] [BasicAuth] Handling request for /shards
+2025-10-27 11:39:02.259 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:39:02.260 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:39:04.344 +01:00 [INF] [BasicAuth] Handling request for /edit-shard/1
+2025-10-27 11:39:04.346 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:39:04.347 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:39:12.646 +01:00 [INF] [BasicAuth] Handling request for /shards
+2025-10-27 11:39:12.647 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:39:12.647 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:39:15.402 +01:00 [INF] [BasicAuth] Handling request for /team-admin
+2025-10-27 11:39:15.403 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:39:15.405 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:39:15.958 +01:00 [INF] [BasicAuth] Handling request for /shards
+2025-10-27 11:39:15.959 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:39:15.959 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:39:30.288 +01:00 [INF] [BasicAuth] Handling request for /edit-shard/1
+2025-10-27 11:39:30.288 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:39:30.291 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:43:30.455 +01:00 [INF] [BasicAuth] Handling request for /shards
+2025-10-27 11:43:30.455 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:43:30.455 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:43:34.743 +01:00 [INF] [BasicAuth] Handling request for /edit-shard/1
+2025-10-27 11:43:34.743 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:43:34.743 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:43:39.980 +01:00 [INF] [BasicAuth] Handling request for /shards
+2025-10-27 11:43:39.981 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:43:39.981 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:43:41.801 +01:00 [INF] [BasicAuth] Handling request for /servers
+2025-10-27 11:43:41.803 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:43:41.803 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:43:45.010 +01:00 [INF] [BasicAuth] Handling request for /edit-server/10
+2025-10-27 11:43:45.010 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:43:45.011 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 11:46:13.290 +01:00 [INF] [BasicAuth] Handling request for /servers
+2025-10-27 11:46:13.292 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-27 11:46:13.292 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header

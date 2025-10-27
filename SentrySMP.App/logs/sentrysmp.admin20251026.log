@@ -286,3 +286,10 @@ WHERE (`c`.`Type` = 'SHARD') AND `c`.`TypeId` IN (1, 2)
 2025-10-26 21:27:01.852 +01:00 [WRN] [BasicAuth] Missing Authorization header
 2025-10-26 21:27:01.853 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
 2025-10-26 21:27:02.418 +01:00 [INF] Processed 20 announcements from Discord
+2025-10-26 21:53:51.701 +01:00 [INF] Application is shutting down...
+2025-10-26 21:53:51.721 +01:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-26 21:53:51.721 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-26 21:53:51.723 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-26 21:53:51.723 +01:00 [INF] [BasicAuth] Handling request for /_blazor/negotiate
+2025-10-26 21:53:51.727 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-26 21:53:51.727 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header

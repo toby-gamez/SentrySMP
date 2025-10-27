@@ -24,12 +24,12 @@ namespace SentrySMP.Api.Services
             _logger = logger;
         }
 
-        public async Task ExecuteCommandsForProductsAsync(List<ProductResponse> products, string? username)
+        public async Task<SentrySMP.Shared.DTOs.RconExecutionResult> ExecuteCommandsForProductsAsync(List<SentrySMP.Shared.DTOs.ProductQuantityDto> productsWithQuantity, string? username)
         {
-            if (products == null || products.Count == 0)
+            if (productsWithQuantity == null || productsWithQuantity.Count == 0)
             {
                 _logger.LogDebug("No products provided for RCON execution.");
-                return;
+                return new SentrySMP.Shared.DTOs.RconExecutionResult { AllSucceeded = true };
             }
 
             List<Domain.Entities.Command> allCommands;
@@ -40,7 +40,14 @@ namespace SentrySMP.Api.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to load commands for RCON execution");
-                return;
+                return new SentrySMP.Shared.DTOs.RconExecutionResult
+                {
+                    AllSucceeded = false,
+                    CommandResults = new System.Collections.Generic.List<SentrySMP.Shared.DTOs.RconCommandResult>
+                    {
+                        new SentrySMP.Shared.DTOs.RconCommandResult { CommandText = "<LOAD_COMMANDS_FAILURE>", Succeeded = false, ErrorMessage = ex.Message }
+                    }
+                };
             }
 
             // Preload all servers for fallback
@@ -55,10 +62,24 @@ namespace SentrySMP.Api.Services
                 _logger.LogError(ex, "Failed to load servers for RCON execution");
             }
 
-            foreach (var product in products)
+            // sanitize username: trim and remove CR/LF to avoid injecting newlines into commands
+            var sanitizedUsername = (username ?? string.Empty).Trim().Replace("\r", string.Empty).Replace("\n", string.Empty);
+
+            var result = new SentrySMP.Shared.DTOs.RconExecutionResult();
+
+            foreach (var pq in productsWithQuantity)
             {
+                // expose product variable to the catch block below
+                ProductResponse? product = pq.Product;
+                var repeat = pq.Quantity <= 0 ? 1 : pq.Quantity;
                 try
                 {
+                    if (product == null)
+                    {
+                        _logger.LogDebug("ProductQuantity entry had null Product, skipping");
+                        continue;
+                    }
+
                     var productType = product.Type ?? string.Empty;
                     var productId = product.Id;
 
@@ -88,61 +109,174 @@ namespace SentrySMP.Api.Services
                         targets.AddRange(allServers);
                     }
 
-                    foreach (var srv in targets)
+                    // repeat the set of commands for the product according to the quantity
+                    for (int r = 0; r < repeat; r++)
                     {
-                        if (srv == null) continue;
-                        if (string.IsNullOrWhiteSpace(srv.RCONIP) || srv.RCONPort == 0 || string.IsNullOrWhiteSpace(srv.RCONPassword))
+                        foreach (var srv in targets)
                         {
-                            _logger.LogWarning("Skipping server {ServerName} ({Id}) because RCON config is incomplete", srv.Name, srv.Id);
-                            continue;
-                        }
+                            if (srv == null) continue;
+                            if (string.IsNullOrWhiteSpace(srv.RCONIP) || srv.RCONPort == 0 || string.IsNullOrWhiteSpace(srv.RCONPassword))
+                            {
+                                _logger.LogWarning("Skipping server {ServerName} ({Id}) because RCON config is incomplete", srv.Name, srv.Id);
+                                continue;
+                            }
 
-                        try
-                        {
-                            IPAddress ip = null!;
                             try
                             {
-                                var addrs = await Dns.GetHostAddressesAsync(srv.RCONIP);
-                                ip = addrs.FirstOrDefault() ?? IPAddress.Parse(srv.RCONIP);
-                            }
-                            catch
-                            {
-                                ip = IPAddress.Parse(srv.RCONIP);
-                            }
-
-                            _logger.LogInformation("Connecting to RCON {Ip}:{Port} (server: {Name})", ip, srv.RCONPort, srv.Name);
-                            // Use a lightweight internal RCON implementation to avoid depending on package API changes
-                            using var rcon = await RconClient.ConnectAndAuthAsync(ip, srv.RCONPort, srv.RCONPassword, _logger);
-                            foreach (var cmd in commands)
-                            {
+                                IPAddress ip = null!;
                                 try
                                 {
-                                    var text = cmd.CommandText ?? string.Empty;
-                                    if (!string.IsNullOrEmpty(username))
-                                    {
-                                        text = text.Replace("%player%", username, StringComparison.OrdinalIgnoreCase);
-                                    }
-                                    _logger.LogInformation("Sending RCON to {Server}: {Cmd}", srv.Name, text);
-                                    var resp = await rcon.SendCommandAsync(text);
-                                    _logger.LogDebug("RCON response from {Server}: {Resp}", srv.Name, resp);
+                                    var addrs = await Dns.GetHostAddressesAsync(srv.RCONIP);
+                                    ip = addrs.FirstOrDefault() ?? IPAddress.Parse(srv.RCONIP);
                                 }
-                                catch (Exception exCmd)
+                                catch
                                 {
-                                    _logger.LogError(exCmd, "Failed to send RCON command to server {Server}", srv.Name);
+                                    ip = IPAddress.Parse(srv.RCONIP);
+                                }
+
+                                _logger.LogInformation("Connecting to RCON {Ip}:{Port} (server: {Name})", ip, srv.RCONPort, srv.Name);
+                                // Use a lightweight internal RCON implementation to avoid depending on package API changes
+                                using var rcon = await RconClient.ConnectAndAuthAsync(ip, srv.RCONPort, srv.RCONPassword, _logger);
+                                foreach (var cmd in commands)
+                                {
+                                    try
+                                    {
+                                        var text = cmd.CommandText ?? string.Empty;
+                                        // Always perform replacement with sanitized username (may be empty)
+                                        try
+                                        {
+                                            if (!string.IsNullOrEmpty(sanitizedUsername))
+                                            {
+                                                _logger.LogDebug("Replacing %player% with '{Username}' in command for server {Server}", sanitizedUsername, srv.Name);
+                                            }
+                                            text = text.Replace("%player%", sanitizedUsername, StringComparison.OrdinalIgnoreCase);
+                                        }
+                                        catch (Exception exReplace)
+                                        {
+                                            // Shouldn't normally happen, but log and continue with original text
+                                            _logger.LogWarning(exReplace, "Failed to replace %player% token in command text for server {Server}", srv.Name);
+                                        }
+                                        _logger.LogInformation("Sending RCON to {Server}: {Cmd}", srv.Name, text);
+                                        var resp = await rcon.SendCommandAsync(text);
+                                        _logger.LogDebug("RCON response from {Server}: {Resp}", srv.Name, resp);
+
+                                        // Mark this command as succeeded (at least for one target)
+                                        var cmdResult = result.CommandResults.FirstOrDefault(cr => cr.CommandText == text);
+                                        if (cmdResult == null)
+                                        {
+                                            result.CommandResults.Add(new SentrySMP.Shared.DTOs.RconCommandResult { CommandText = text, Succeeded = true });
+                                        }
+                                        else
+                                        {
+                                            cmdResult.Succeeded = true;
+                                            cmdResult.ErrorMessage = null;
+                                        }
+                                    }
+                                    catch (Exception exCmd)
+                                    {
+                                        _logger.LogError(exCmd, "Failed to send RCON command to server {Server}", srv.Name);
+
+                                        // record a failure for this attempt (will be reconciled later)
+                                        var text = cmd.CommandText ?? string.Empty;
+                                        var existing = result.CommandResults.FirstOrDefault(cr => cr.CommandText == text);
+                                        if (existing == null)
+                                        {
+                                            result.CommandResults.Add(new SentrySMP.Shared.DTOs.RconCommandResult { CommandText = text, Succeeded = false, ErrorMessage = exCmd.Message });
+                                        }
+                                        else
+                                        {
+                                            if (!existing.Succeeded)
+                                            {
+                                                existing.ErrorMessage = existing.ErrorMessage == null ? exCmd.Message : existing.ErrorMessage + "; " + exCmd.Message;
+                                            }
+                                        }
+                                    }
                                 }
                             }
-                        }
-                        catch (Exception exConn)
-                        {
-                            _logger.LogError(exConn, "Failed to connect to RCON on server {Server}", srv.Name);
+                            catch (Exception exConn)
+                            {
+                                _logger.LogError(exConn, "Failed to connect to RCON on server {Server}", srv.Name);
+                                // connection-level errors do not immediately mark commands as failed; we will record an error entry for each command
+                                foreach (var cmd in commands)
+                                {
+                                    var text = cmd.CommandText ?? string.Empty;
+                                    try
+                                    {
+                                        if (!string.IsNullOrEmpty(sanitizedUsername))
+                                        {
+                                            text = text.Replace("%player%", sanitizedUsername, StringComparison.OrdinalIgnoreCase);
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        // ignore replacement errors and use original text
+                                    }
+
+                                    var existing = result.CommandResults.FirstOrDefault(cr => cr.CommandText == text);
+                                    if (existing == null)
+                                    {
+                                        result.CommandResults.Add(new SentrySMP.Shared.DTOs.RconCommandResult { CommandText = text, Succeeded = false, ErrorMessage = exConn.Message });
+                                    }
+                                    else
+                                    {
+                                        if (!existing.Succeeded)
+                                        {
+                                            existing.ErrorMessage = existing.ErrorMessage == null ? exConn.Message : existing.ErrorMessage + "; " + exConn.Message;
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Error executing commands for product {Product}", product?.Name);
+                    // mark all commands for this product as failed
+                    var commands = allCommands.Where(c => string.Equals(c.Type, product?.Type ?? string.Empty, StringComparison.OrdinalIgnoreCase) && c.TypeId == (product?.Id ?? 0)).ToList();
+                    foreach (var cmd in commands)
+                    {
+                        var text = cmd.CommandText ?? string.Empty;
+                        try
+                        {
+                            if (!string.IsNullOrEmpty(sanitizedUsername))
+                            {
+                                text = text.Replace("%player%", sanitizedUsername, StringComparison.OrdinalIgnoreCase);
+                            }
+                        }
+                        catch
+                        {
+                            // ignore replacement errors and use original text
+                        }
+
+                        var existing = result.CommandResults.FirstOrDefault(r => r.CommandText == text);
+                        if (existing == null)
+                        {
+                            result.CommandResults.Add(new SentrySMP.Shared.DTOs.RconCommandResult { CommandText = text, Succeeded = false, ErrorMessage = ex.Message });
+                        }
+                        else
+                        {
+                            if (!existing.Succeeded)
+                            {
+                                existing.ErrorMessage = existing.ErrorMessage == null ? ex.Message : existing.ErrorMessage + "; " + ex.Message;
+                            }
+                        }
+                    }
                 }
             }
+
+            // Finalize AllSucceeded: true if every recorded command has Succeeded==true or there were no commands recorded as failures
+            if (result.CommandResults.Count == 0)
+            {
+                // no commands found across products -> consider success
+                result.AllSucceeded = true;
+            }
+            else
+            {
+                result.AllSucceeded = result.CommandResults.All(r => r.Succeeded);
+            }
+
+            return result;
         }
 
         // Minimal RCON client implementation (Source RCON protocol)
@@ -165,7 +299,8 @@ namespace SentrySMP.Api.Services
                 var client = new RconClient(tcp);
 
                 // Authenticate
-                var authResp = await client.SendPacketAsync(2, password); // 2 = SERVERDATA_AUTH
+                // Note: Minecraft/Source RCON uses SERVERDATA_AUTH = 3
+                var authResp = await client.SendPacketAsync(3, password); // 3 = SERVERDATA_AUTH
                 if (authResp.Item1 == -1)
                 {
                     tcp.Dispose();
@@ -176,7 +311,8 @@ namespace SentrySMP.Api.Services
 
             public async Task<string> SendCommandAsync(string command)
             {
-                var resp = await SendPacketAsync(2 + 1, command); // 2 = auth, 3 = exec; use 3 for exec (SERVERDATA_EXECCOMMAND)
+                // Use SERVERDATA_EXECCOMMAND = 2 for executing commands
+                var resp = await SendPacketAsync(2, command);
                 return resp.Item2 ?? string.Empty;
             }
 

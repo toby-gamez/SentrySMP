@@ -20,48 +20,67 @@
 <div class="container mt-4">
     <h1><i class="bi bi-bag-check"></i> Checkout</h1>
 
-    @if (CartState.CartItems.Count == 0)
+    @if (_paymentSucceeded)
     {
-        if (_paymentSucceeded)
-        {
-            <div class="alert alert-success mt-4">
-                <i class="bi bi-check-circle"></i> @(_successMessage ?? "Payment simulated successfully. Your cart was cleared.") <a href="/">Continue shopping</a>
-            </div>
+        <div class="alert alert-success mt-4">
+            <i class="bi bi-check-circle"></i> @(_successMessage ?? "Payment simulated successfully. Your cart was cleared.") <a href="/">Continue shopping</a>
+        </div>
 
-            @if (_lastOrderItems != null && _lastOrderItems.Count > 0)
+        @if (_rconResult != null)
+        {
+            if (_rconResult.AllSucceeded)
             {
-                <div class="card mt-3">
-                    <div class="card-body">
-                        <h6>Order details</h6>
-                        <table class="table table-sm mt-2">
-                            <thead>
-                                <tr>
-                                    <th>Item</th>
-                                    <th>Server</th>
-                                    <th class="text-center">Qty</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var it in _lastOrderItems)
-                                {
-                                    <tr>
-                                        <td>@it.Key.Name</td>
-                                        <td>@(it.Key.Server?.Name ?? "-")</td>
-                                        <td class="text-center">@it.Quantity</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="alert alert-success mt-2">
+                    <strong>Server commands:</strong> @_rconStatusMessage
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning mt-2">
+                    <strong>Server commands:</strong> @_rconStatusMessage
+                    <ul class="mt-2 mb-0">
+                        @foreach (var cr in _rconResult.CommandResults.Where(x => !x.Succeeded))
+                        {
+                            <li><code>@cr.CommandText</code>: @cr.ErrorMessage</li>
+                        }
+                    </ul>
                 </div>
             }
         }
-        else
+
+        @if (_lastOrderItems != null && _lastOrderItems.Count > 0)
         {
-            <div class="alert alert-info mt-4">
-                <i class="bi bi-info-circle"></i> Your cart is empty. <a href="/" class="ms-1">Go to store</a>
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6>Order details</h6>
+                    <table class="table table-sm mt-2">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Server</th>
+                                <th class="text-center">Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var it in _lastOrderItems)
+                            {
+                                <tr>
+                                    <td>@FormatPlayerToken(it.Key.Name)</td>
+                                    <td>@(it.Key.Server?.Name ?? "-")</td>
+                                    <td class="text-center">@it.Quantity</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         }
+    }
+    else if (CartState.CartItems.Count == 0)
+    {
+        <div class="alert alert-info mt-4">
+            <i class="bi bi-info-circle"></i> Your cart is empty. <a href="/" class="ms-1">Go to store</a>
+        </div>
     }
     else
     {
@@ -84,7 +103,7 @@
                             var qty = item.Quantity;
                             double unitPrice = p.Sale > 0 ? Convert.ToDouble(p.Price) * (1 - p.Sale / 100.0) : Convert.ToDouble(p.Price);
                             <tr>
-                                <td>@p.Name <small class="text-muted">@p.Server?.Name</small></td>
+                                <td>@FormatPlayerToken(p.Name) <small class="text-muted">@p.Server?.Name</small></td>
                                 <td class="text-center">@qty</td>
                                 <td class="text-end">€@unitPrice.ToString("F2")</td>
                                 <td class="text-end">€@((unitPrice * qty).ToString("F2"))</td>
@@ -153,6 +172,28 @@
                         <i class="bi bi-check-circle"></i> @(_successMessage ?? "Payment simulated successfully. Your cart was cleared.") <a href="/">Continue shopping</a>
                     </div>
 
+                    @if (_rconResult != null)
+                    {
+                        if (_rconResult.AllSucceeded)
+                        {
+                            <div class="alert alert-success mt-2">
+                                <strong>Server commands:</strong> @_rconStatusMessage
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning mt-2">
+                                <strong>Server commands:</strong> @_rconStatusMessage
+                                <ul class="mt-2 mb-0">
+                                    @foreach (var cr in _rconResult.CommandResults.Where(x => !x.Succeeded))
+                                    {
+                                        <li><code>@cr.CommandText</code>: @cr.ErrorMessage</li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+                    }
+
                     @if (_lastOrderItems != null && _lastOrderItems.Count > 0)
                     {
                         <div class="card mt-3">
@@ -170,7 +211,7 @@
                                         @foreach (var it in _lastOrderItems)
                                         {
                                             <tr>
-                                                <td>@it.Key.Name</td>
+                                                <td>@FormatPlayerToken(it.Key.Name)</td>
                                                 <td>@(it.Key.Server?.Name ?? "-")</td>
                                                 <td class="text-center">@it.Quantity</td>
                                             </tr>
@@ -220,6 +261,17 @@
         if (total > 0)
         {
             _amount = total.ToString("F2");
+        }
+
+        // Load username for UI token replacement
+        try
+        {
+            var u = await UserService.GetUsernameAsync();
+            _username = (u ?? string.Empty).Trim().Replace("\r", string.Empty).Replace("\n", string.Empty);
+        }
+        catch
+        {
+            _username = string.Empty;
         }
     }
 
@@ -368,10 +420,28 @@
     private long? _lastTransactionId;
 
     private string? _payPalErrorMessage;
+    private SentrySMP.Shared.DTOs.RconExecutionResult? _rconResult;
+    private string? _rconStatusMessage;
+    private string? _username;
 
     private void CancelPayment()
     {
         _showPaymentCard = false;
+    }
+
+    // Replace %player% tokens in UI strings with sanitized username
+    private string FormatPlayerToken(string? text)
+    {
+        var user = _username ?? string.Empty;
+        if (string.IsNullOrEmpty(text)) return string.Empty;
+        try
+        {
+            return text.Replace("%player%", user, StringComparison.OrdinalIgnoreCase);
+        }
+        catch
+        {
+            return text ?? string.Empty;
+        }
     }
 
     // Persist a payment transaction to the API. This is best-effort and does not block the UI on failure.
@@ -440,8 +510,30 @@
                             }
                             catch { user = string.Empty; }
 
-                            var execProducts = (items ?? CartState.CartItems).Select(ci => ci.Key).ToList();
-                            await RconService.ExecuteCommandsForProductsAsync(execProducts, user);
+                            var execProducts = (items ?? CartState.CartItems).Select(ci => new ProductQuantityDto { Product = ci.Key, Quantity = ci.Quantity }).ToList();
+                            var rres = await RconService.ExecuteCommandsForProductsAsync(execProducts, user);
+                            _rconResult = rres;
+                            if (rres != null)
+                            {
+                                if (rres.AllSucceeded)
+                                {
+                                    _rconStatusMessage = "Příkazy na serveru byly úspěšně odeslány.";
+                                }
+                                else
+                                {
+                                    _rconStatusMessage = "Některé příkazy se nepodařilo odeslat:";
+                                    // also set a visible failure message area
+                                    _failureMessage = _failureMessage ?? "Pozor: některé příkazy na serveru selhaly. Podrobnosti níže.";
+                                }
+
+                                // Append RCON status to the success message so it remains visible together with the paid message.
+                                if (!string.IsNullOrWhiteSpace(_rconStatusMessage))
+                                {
+                                    _successMessage = string.IsNullOrWhiteSpace(_successMessage)
+                                        ? _rconStatusMessage
+                                        : _successMessage + " — " + _rconStatusMessage;
+                                }
+                            }
                         }
                         catch (Exception ex)
                         {
