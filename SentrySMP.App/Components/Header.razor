@@ -1,0 +1,99 @@
+@rendermode InteractiveServer
+@inject SentrySMP.App.Services.StatusService StatusService
+
+<style>
+    body.dark .header-background {
+        background-image: url("images/background-image-dark.png");
+    }
+    body:not(.dark) .header-background {
+        background-image: url("images/background-image.png");
+    }
+</style>
+
+<div class="header-background"></div>
+<div class="grid">
+    <a href="/"
+    ><div class="logo grid-item">
+        <img
+            src="images/logo.png"
+            class="logo"
+            alt="logo"
+        /></div
+    ></a>
+    <i class="bi bi-play mobile-none" style="font-size: 3rem"></i>
+    <div
+        class="grid-item"
+        id="copy-ip"
+        title="Copy IP address"
+        style="padding-left: 5px; cursor: pointer; min-width: 210px"
+        onclick="(() => {
+                navigator.clipboard.writeText('mc.sentrysmp.eu');
+                const el = document.querySelector('#copy-ip .big');
+                el.textContent = 'IP COPIED';
+                setTimeout(() => {
+                    el.textContent = 'MC.SENTRYSMP.EU';
+                }, 2000);
+            })()"
+    >
+        <span>
+            <small>PLAYING <span>@(McPlayers.HasValue ? McPlayers.Value.ToString() : "—")</span></small>
+            <a href="join" title="How can I join?" style="color:inherit;text-decoration:none;">
+                <i class="bi bi-info-circle"></i>
+            </a>
+        </span>
+        <br />
+        <span class="big">MC.SENTRYSMP.EU</span>
+    </div>
+    <a href="https://discord.gg/gXrXMwpuH4" target="_blank"
+    ><div
+         style="padding-right: 5px; text-align: right"
+         class="grid-item"
+         title="Join our Discord"
+     >
+        <span><small><span id="discord-count">@(DiscordMembers.HasValue ? DiscordMembers.Value.ToString() : "—")</span> MEMBERS</small></span>
+        <br />
+        <span class="big"
+        >JOIN<span style="visibility: hidden">.</span
+        >DISCORD</span
+        >
+    </div></a
+    >
+    <i
+        style="font-size: 3rem"
+        class="bi bi-discord mobile-none"
+    ></i>
+</div>
+<div id="login-box-outer">
+    <div id="login-box" >
+    </div>
+</div>
+
+@code {
+    private int? McPlayers;
+    private int? DiscordMembers;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        // load counts (existing)
+        try
+        {
+            McPlayers = await StatusService.GetMcPlayersAsync();
+        }
+        catch
+        {
+            McPlayers = null;
+        }
+
+        try
+        {
+            DiscordMembers = await StatusService.GetDiscordMembersAsync();
+        }
+        catch
+        {
+            DiscordMembers = null;
+        }
+
+        StateHasChanged();
+    }
+}
