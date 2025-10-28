@@ -12033,3 +12033,38 @@ WHERE (`c`.`Type` = 'KEY') AND `c`.`TypeId` IN (6, 7, 8, 9)
 2025-10-28 22:22:04.071 +01:00 [INF] [BasicAuth] Handling request for /api/status/discord
 2025-10-28 22:22:04.071 +01:00 [WRN] [BasicAuth] Missing Authorization header
 2025-10-28 22:22:04.072 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-28 22:25:57.490 +01:00 [INF] [BasicAuth] Handling request for /vote-for-us
+2025-10-28 22:25:57.491 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-28 22:25:57.496 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-28 22:26:08.211 +01:00 [INF] [BasicAuth] Handling request for /
+2025-10-28 22:26:08.212 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-28 22:26:08.215 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-28 22:26:08.643 +01:00 [INF] Processed 20 announcements from Discord
+2025-10-28 22:26:09.569 +01:00 [INF] [BasicAuth] Handling request for /bundles
+2025-10-28 22:26:09.570 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-28 22:26:09.570 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-28 22:26:09.598 +01:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-28 22:26:09.600 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-28 22:26:09.601 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-28 22:26:09.831 +01:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-28 22:26:09.891 +01:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'BUNDLE') AND (`c`.`TypeId` = 2)
+2025-10-28 22:26:09.952 +01:00 [INF] [BasicAuth] Handling request for /api/bundles
+2025-10-28 22:26:09.952 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-28 22:26:09.953 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-28 22:26:10.029 +01:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `b`.`Id`, `b`.`Description`, `b`.`Image`, `b`.`Name`, `b`.`Price`, `b`.`Sale`, `b`.`ServerId`, `s`.`Id`, `s`.`Name`, `s`.`RCONIP`, `s`.`RCONPassword`, `s`.`RCONPort`
+FROM `Bundles` AS `b`
+INNER JOIN `Servers` AS `s` ON `b`.`ServerId` = `s`.`Id`
+2025-10-28 22:26:10.054 +01:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `c`.`Id`, `c`.`CommandText`, `c`.`Type`, `c`.`TypeId`
+FROM `Commands` AS `c`
+WHERE (`c`.`Type` = 'BUNDLE') AND (`c`.`TypeId` = 2)
+2025-10-28 22:26:16.353 +01:00 [INF] [BasicAuth] Handling request for /about
+2025-10-28 22:26:16.353 +01:00 [WRN] [BasicAuth] Missing Authorization header
+2025-10-28 22:26:16.354 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
