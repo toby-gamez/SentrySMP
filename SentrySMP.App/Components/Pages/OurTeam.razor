@@ -5,7 +5,15 @@
 @inject SentrySMP.Shared.Interfaces.ISentryApi Api
 <PageTitle>Our Team - SentrySMP</PageTitle>
 
-<h1>Our Team</h1>
+<style>
+    .container {
+        max-width: 1200px;
+    }
+</style>
+
+<div class="main-wrapper">
+    <h1 class="main">Our Team</h1>
+</div>
 
 @if (team == null)
 {
@@ -17,34 +25,28 @@ else if (!team.Categories.Any())
 }
 else
 {
-    <div class="container">
         @foreach (var cat in team.Categories)
         {
-            <div class="text-center my-4">
-                <h3>@cat.Name</h3>
-            </div>
-            <div class="row justify-content-center">
-                @foreach (var m in cat.Members)
-                {
-                    <div class="col-md-3 col-sm-4 mb-4 d-flex justify-content-center">
-                        <div class="card team-card text-center p-3">
-                            <img src="@GetSkinUrl(m)" class="team-avatar" alt="@m.MinecraftName" />
-                            <div class="card-body">
-                                <h5 class="card-title">@m.MinecraftName</h5>
-                                <p class="card-text">
-                                    @if (!string.IsNullOrWhiteSpace(m.Role))
-                                    {
-                                        var roleClass = GetRoleClass(m.Role);
-                                        <span class="role-badge @roleClass">@m.Role</span>
-                                    }
-                                </p>
+            <div class="section">
+                <h2 class="section-title">@cat.Name</h2>
+                    <div class="team-grid">
+                    @foreach (var m in cat.Members)
+                    {
+                            <div class="team-item">
+                                <div class="avatar">
+                                    <img src="@GetSkinUrl(m)" class="skin-preview" alt="@m.MinecraftName" width="75px" height="75px"/>
+                                </div>
+                                <h5 class="person">@m.MinecraftName</h5>
+                                @if (!string.IsNullOrWhiteSpace(m.Role))
+                                {
+                                    var roleClass = GetRoleClass(m.Role);
+                                    <span class="role-badge badge @roleClass">@m.Role</span>
+                                }
                             </div>
-                        </div>
+                    }
                     </div>
-                }
             </div>
         }
-    </div>
 }
 
 @code {

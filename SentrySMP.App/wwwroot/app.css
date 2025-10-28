@@ -65,3 +65,108 @@
 }
 .team-card { width: 230px; height: 230px; }
 .team-card .team-avatar { width: 110px; height: 110px; }
+
+/* --- Custom styles for Login component (no Bootstrap) --- */
+
+/* Field labels and helper text */
+.field-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+.field-hint {
+    color: #6b6b6b;
+    font-size: 0.9rem;
+    margin-top: 0.35rem;
+}
+
+/* Username input with optional dot prefix for Bedrock */
+.username-input {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.8rem;
+    height: 1.8rem;
+    font-weight: 700;
+    background: #f0f0f0;
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    color: #333;
+}
+
+/* Edition selector */
+.edition-selector {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+.edition-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+    position: relative; /* for internal positioning */
+}
+.edition-option:hover {
+    background: #fafafa;
+}
+
+/* Visually hide the native input but keep it accessible. The input is
+   directly followed by .radio-visual so the sibling selector below works. */
+.edition-option .edition-radio {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* The visible circle */
+.radio-visual {
+    width: 1rem;
+    height: 1rem;
+    border: 1px solid #777;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    background: #fff;
+    flex: 0 0 auto;
+}
+
+/* The inner dot centered by translate(-50%, -50%) */
+.radio-visual::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 0.54rem;
+    height: 0.54rem;
+    background: #222;
+    border-radius: 50%;
+    transition: transform 0.12s ease-in-out;
+}
+
+/* When the hidden input is checked, show the inner dot by scaling it up */
+.edition-option .edition-radio:checked + .radio-visual::after {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.edition-text {
+    font-weight: 600;
+}
+.actions { margin-top: 1rem; display:flex; gap:0.6rem; }
+
+/* Small responsive adjustments */
+@media (max-width: 420px) {
+    .edition-selector { gap: 0.4rem; }
+    .username-input-field { min-width: 120px; }
+}

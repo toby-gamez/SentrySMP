@@ -20,39 +20,40 @@
     </div>
     
 </div>
-<div class="mb-3">
-    <label for="username" class="form-label">Minecraft name</label>
+<div class="mb-3 username-field">
+    <label for="username" class="field-label">Minecraft name</label>
     @if (IsBedrock)
     {
-        <div class="input-group">
-            <span class="input-group-text">.</span>
-            <input id="username" class="form-control" @bind="UsernameEditable" @bind:event="oninput" />
-        </div>
+            <input id="username" class="username-input-field" @bind="UsernameEditable" @bind:event="oninput" />
     }
     else
     {
-        <input id="username" class="form-control" @bind="UsernameEditable" @bind:event="oninput" />
+        <input id="username" class="username-input-field" @bind="UsernameEditable" @bind:event="oninput" />
     }
-    <div class="form-text">Enter username only.</div>
+    <div class="field-hint">Enter username only.</div>
 </div>
 
 <div class="mb-3">
-    <label class="form-label">Account type</label>
-    <div>
-        <InputRadioGroup class="d-flex gap-3" @bind-Value="AccountType">
-            <div class="form-check form-check-inline">
-                <InputRadio class="form-check-input" id="javaRadio" Value='@("java")' />
-                <label class="form-check-label" for="javaRadio">Java</label>
-            </div>
-            <div class="form-check form-check-inline">
-                <InputRadio class="form-check-input" id="bedrockRadio" Value='@("bedrock")' />
-                <label class="form-check-label" for="bedrockRadio">Bedrock</label>
-            </div>
-        </InputRadioGroup>
-    </div>
+    <label class="field-label">Account type</label>
+    <InputRadioGroup class="" @bind-Value="AccountType">
+        <div class="edition-selector" role="tablist" aria-label="Account type">
+            <label class="edition-option">
+                <InputRadio class="edition-radio" Value='@("java")' />
+                <span class="radio-visual" aria-hidden="true"></span>
+                <span class="edition-text">Java</span>
+            </label>
+            <label class="edition-option">
+                <InputRadio class="edition-radio" Value='@("bedrock")' />
+                <span class="radio-visual" aria-hidden="true"></span>
+                <span class="edition-text">Bedrock</span>
+            </label>
+        </div>
+    </InputRadioGroup>
 </div>
-<button class="btn btn-primary me-2" @onclick="Save">Log in</button>
-<button class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+
+<div class="actions">
+    <button class="btn-primary" @onclick="Save">Log in</button>
+</div>
 
 @code {
     // The value the user types in the input (no leading dot)

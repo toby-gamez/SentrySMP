@@ -1,5 +1,34 @@
 @page "/vote-for-us"
 
+
+<style>
+    .vote-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    } 
+    .vote-item {
+        border: 2px solid black;
+        border-radius: 10px;
+        background-color: #dcdcdc;
+        text-align: center;
+        align-items: center;
+        transition: all ease 0.3s;
+    }
+    .vote-item:hover {
+        transform: scale(1.05);
+    }
+    .vote-item p {
+        text-align: center;
+    }
+    .vote-grid a {
+        color: black;
+        font-weight: bold;
+    }
+    .vote-grid a:hover {
+        color: black;
+    }
+</style>
 <PageTitle>Vote For Us - SentrySMP</PageTitle>
 
 <div class="main-wrapper">
@@ -12,11 +41,15 @@
     <b>a better place for everyone 😊</b>. Together we can build
     something amazing! 🥹
 </p>
-<p>
-    minecraftservers.org -
-    <a href="https://minecraftservers.org/vote/670535">here</a>
-</p>
-<p>
-    craftlist.org -
-    <a href="https://craftlist.org/sentrysmp-fqjod">here</a>
-</p>
+<div class="vote-grid">
+    <a href="https://minecraftservers.org/vote/670535" target="_blank">
+    <div class="vote-item">
+        <p>MINECRAFTSERVERS</p>
+    </div>
+    </a>
+    <a href="https://craftlist.org/sentrysmp-fqjod" target="_blank">
+        <div class="vote-item">
+            <p>CRAFTLIST</p>
+        </div>
+    </a>
+</div>

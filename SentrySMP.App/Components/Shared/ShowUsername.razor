@@ -8,19 +8,16 @@
 
 @if (!string.IsNullOrEmpty(CurrentDisplay))
 {
-            <div class="login-info">
-            @if (!string.IsNullOrEmpty(SkinUrl) && string.Equals(Edition, "java", StringComparison.OrdinalIgnoreCase))
-            {
-                <img src="@SkinUrl" class="skin-img" alt="skin" />
-            }
-            <div>
-                <div><strong>@CurrentDisplay</strong></div>
-            </div>
+    <div class="login-info">
+        <img src="@((!string.IsNullOrEmpty(CurrentDisplay) && CurrentDisplay.StartsWith(".")) ? "https://minotar.net/helm/MHF_Steve/100" : ((!string.IsNullOrEmpty(SkinUrl) && string.Equals(Edition, "java", StringComparison.OrdinalIgnoreCase)) ? SkinUrl : "https://minotar.net/helm/MHF_Steve/100"))" class="skin-img" alt="skin" />
+        <div>
+            <div><strong>@CurrentDisplay</strong></div>
         </div>
-        <div class="actions">
-            <button class="secondary" onclick="Cart()"><i class="bi bi-cart"></i> Cart</button>
-            <button class="btn btn-sm btn-outline-secondary" @onclick="Logout">Log out</button>
-        </div>
+    </div>
+    <div>
+        <button class="secondary" onclick="Cart()"><i class="bi bi-cart"></i> Cart</button>
+        <button class="btn btn-sm btn-outline-secondary" @onclick="Logout">Log out</button>
+    </div>
 }
 else
 {
@@ -30,7 +27,7 @@ else
             <div><strong>Guest</strong></div>
         </div>
     </div>
-    <div class="actions">
+    <div>
         <button class="btn btn-sm btn-outline-secondary" onclick="LogIn()">Log in</button>
     </div>
     <script>
