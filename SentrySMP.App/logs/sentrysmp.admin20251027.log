@@ -13898,3 +13898,4 @@ WHERE (`c`.`Type` = 'KEY') AND `c`.`TypeId` IN (6, 7, 8, 9)
 2025-10-27 22:28:05.323 +01:00 [INF] [BasicAuth] Handling request for /changelog
 2025-10-27 22:28:05.323 +01:00 [WRN] [BasicAuth] Missing Authorization header
 2025-10-27 22:28:05.324 +01:00 [INF] BasicAuth was not authenticated. Failure message: Missing Authorization Header
+2025-10-27 22:30:11.581 +01:00 [INF] Application is shutting down...

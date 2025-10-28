@@ -18,6 +18,7 @@
             </div>
         </div>
         <div class="actions">
+            <button class="secondary" onclick="Cart()"><i class="bi bi-cart"></i> Cart</button>
             <button class="btn btn-sm btn-outline-secondary" @onclick="Logout">Log out</button>
         </div>
 }
@@ -35,6 +36,9 @@ else
     <script>
         function LogIn() {
             window.location.href = "/login";
+        }
+        function Cart() {
+            window.location.href = "/cart";
         }
     </script>
 }

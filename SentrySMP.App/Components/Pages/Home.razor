@@ -4,6 +4,26 @@
 @rendermode InteractiveServer
 <PageTitle>Home - SentrySMP</PageTitle>
 
+<style>
+	.container {
+		max-width: 1200px;
+	}
+	.latest-announcements {
+		max-width: 1200px;
+		margin: 40px auto;
+		padding: 0 20px;
+	}
+	.announcements-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+		gap: 20px;
+	}
+	.latest-announcements h2 {
+		text-align: center;
+		margin-bottom: 30px;
+		color: #333;
+	}
+</style>
 <div class="grid-div">
 	<ul class="thing-grid">
 		<!--
@@ -21,16 +41,14 @@
 			<li class="thing-grid-item item-gold">RANKS</li>
 		</a>
 		<a href="battlepasses"
-		   ><li class="thing-grid-item item-red">BATTLE PASS</li></a>
+		><li class="thing-grid-item item-red">BATTLE PASS</li></a>
 		<a href="bundles">
 			<li class="thing-grid-item item-turquoise">BUNDLES</li>
 		</a>	
 	</ul>
 </div>
-<section>
-	<div style="text-align: center">
-		<h2>Latest announcements</h2>
-	</div>
+<div class="latest-announcements">
+	<h2>Latest announcements</h2>
 	@if (homeLoading)
 	{
 	}
@@ -40,7 +58,7 @@
 	}
 	else if (homeAnnouncements?.Any() == true)
 	{
-		<div class="list-group">
+		<div class="announcements-grid">
 			@foreach (var a in homeAnnouncements)
 			{
 				<div class="announcement">
@@ -54,7 +72,10 @@
 			}
 		</div>
 	}
-</section>
+	<div style="margin-left: auto; margin-right: auto; width: min-content;">
+		<button onclick="window.location.href='news'" style="height: 40px; width: 100px">Show more</button>
+	</div>
+</div>
 
 @code {
 
