@@ -273,7 +273,6 @@ a:has(li) {
     padding-left: 2.6%;
 }
 .thing-grid-item {
-    align-self: center;
     border-radius: 10px;
     transition: 0.3s ease all;
     padding: 20px;
@@ -283,14 +282,11 @@ a:has(li) {
     list-style: none;
     text-align: center;
     align-content: center;
-    color: #dcdcdc;
-    font-size: 5rem;
-    text-shadow:
-            -1px -1px 0 black,
-            1px -1px 0 black,
-            -1px 1px 0 black,
-            1px 1px 0 black;
+    color: black;
+    font-size: 2rem;
     font-weight: bold;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 .thing-grid-item:hover {
     transform: scale(1.05);
@@ -299,39 +295,6 @@ a:has(li) {
 .thing-grid-item:active {
     transform: scale(0.95);
 }
-.item-gold {
-    background: linear-gradient(to right, orange, yellow);
-}
-.item-green {
-    background: linear-gradient(to right, green, lime);
-}
-.item-blue {
-    background: linear-gradient(to right, blue, indigo);
-}
-.item-red {
-    background: linear-gradient(to right, red, orange);
-    font-size: 4rem;
-}
-.item-pink {
-    background: linear-gradient(to right, #c200bf, #dba7da);
-}
-.item-turquoise {
-    background: linear-gradient(to right, turquoise, #a0f0ee);
-}
-.item-gold,
-.item-green,
-.item-blue,
-.item-red,
-.item-pink,
-.item-turquoise {
-    color: #fff;
-    text-shadow:
-            -1px -1px 0 white,
-            1px -1px 0 white,
-            -1px 1px 0 white,
-            1px 1px 0 white;
-}
-/*      background: linear-gradient(to right, red, orange);*/
 @media (max-width: 1019px) {
     .thing-grid {
         max-width: 400px;
@@ -2185,4 +2148,7 @@ body.dark .payment-option {
 body.dark .payment-option.selected {
     background: #242424;
     border-color: white;
+}
+body.dark .thing-grid-item {
+    background-color: #242424;
 }

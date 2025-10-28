@@ -10,10 +10,9 @@
 
 <PageTitle>News - SentrySMP</PageTitle>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <h1 class="mb-4">Latest announcements</h1>
+<div class="main-wrapper">
+    <h1 class="main">News</h1>
+</div>
 
     @if (loading)
     {
@@ -46,9 +45,6 @@
     {
         <div class="alert alert-info">No announcements available at the moment.</div>
     }
-</div>
-</div>
-</div>
 
 @code {
     // private List<AnnouncementDto>? announcements; // not used anymore
