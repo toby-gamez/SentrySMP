@@ -6,9 +6,25 @@
 @inject SentrySMP.App.Authentication.UserService UserService
 @rendermode InteractiveServer
 <PageTitle>Cart - SentrySMP</PageTitle>
-
-<div class="container mt-4">
-    <h1><i class="bi bi-cart"></i> Cart</h1>
+<style>
+    .container {
+        max-width: 1200px    
+    }
+</style>
+<div class="main-wrapper">
+    <h1 class="main">Cart</h1>
+</div>
+<div class="cart-total">
+    <strong>Total:</strong> €@CartState.CartItems.Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity).ToString("F2")
+</div>
+<div class="cart-buttons">
+    <button class="danger" @onclick="ClearCart" disabled="@(CartState.CartItems.Count == 0)"><i class="bi bi-x-circle"></i> Clear Cart</button>
+    <button @onclick="GoToCheckout" disabled="@(CartState.CartItems.Count == 0 || !_isLoggedIn)"><i class="bi bi-bag-check"></i> Checkout</button>
+</div>
+@if (!_isLoggedIn)
+{
+    <p style="color:red;">You are not logged in.</p>
+}
     @if (CartState.CartItems.Count == 0)
     {
         <div class="alert alert-info mt-4">
@@ -24,7 +40,7 @@
                     <th>Name</th>
                     <th>Server</th>
                     <th>Price</th>
-                    <th></th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -47,13 +63,6 @@
                         <td>@item.Name</td>
                         <td>@item.Server?.Name</td>
                         <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(item, -1)" disabled="@(qty <= 1)">-</button>
-                                <span>@qty</span>
-                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(item, 1)" disabled="@(qty >= 10)">+</button>
-                            </div>
-                        </td>
-                        <td>
                             @if (item.Sale > 0)
                             {
                                 <span class="text-muted text-decoration-line-through me-2">€@item.Price.ToString("F2")</span>
@@ -65,33 +74,26 @@
                             }
                         </td>
                         <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(item, -1)" disabled="@(qty <= 1)">-</button>
+                            <div style="display:flex; align-items: center; justify-content: space-between; flex-direction: row">
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" @onclick="() => ChangeQuantity(item, -1)" disabled="@(qty <= 1)">-</button>
                                 <span>@qty</span>
-                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(item, 1)" disabled="@(qty >= 10)">+</button>
-                                <button class="btn btn-sm btn-danger ms-2" @onclick="() => RemoveFromCart(item)"><i class="bi bi-trash"></i></button>
+                                <button class="quantity-btn" @onclick="() => ChangeQuantity(item, 1)" disabled="@(qty >= 10)">+</button>
+                            </div>
+                            <button class="danger" @onclick="() => RemoveFromCart(item)"><i class="bi bi-trash"></i> Remove</button>
                             </div>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
-        <div class="d-flex justify-content-between align-items-center mt-3">
-            <div>
-                <strong>Total:</strong> €@CartState.CartItems.Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity).ToString("F2")
-            </div>
-            <div>
-                    <button class="btn btn-primary me-2" @onclick="GoToCheckout" disabled="@(CartState.CartItems.Count == 0 || !_isLoggedIn)"><i class="bi bi-bag-check"></i> Checkout</button>
-                <button class="btn btn-outline-danger" @onclick="ClearCart" disabled="@(CartState.CartItems.Count == 0)"><i class="bi bi-x-circle"></i> Clear Cart</button>
-            </div>
-        </div>
-            @if (!_isLoggedIn)
-            {
-                <div class="text-danger mt-2">You are not logged in.</div>
-            }
     }
+<div class="info">
+    <p>
+        To receive your purchase, you must be connected to the
+        server where you bought items from. <b>Lobby is also a dedicated server.</b>
+    </p>
 </div>
-
 @code {
     private bool _cartLoaded = false;
     private string? _username;

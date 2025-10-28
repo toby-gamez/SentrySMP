@@ -11,10 +11,9 @@
 
 <PageTitle>Battle passes - SentrySMP</PageTitle>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <h1 class="mb-4">Available Battle passes</h1>
+<div class="main-wrapper">
+    <h1 class="main">Battle passes</h1>
+</div>
             <!-- Server filter dropdown -->
             @if (items?.Any() == true)
             {
@@ -43,60 +42,60 @@
             }
             else if (filteredItems?.Any() == true)
             {
-                <div class="row">
+                <div class="product-grid">
                     @foreach (var it in filteredItems)
                     {
                         var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == it.Id && i.Key.Type == it.Type);
-                        <div class="col-md-4 col-lg-3 mb-4">
+                        <div class="product">
                             <div class="card h-100">
                                 @if (!string.IsNullOrEmpty(it.Image))
                                 {
-                                    <img src="@it.Image" class="card-img-top" alt="@it.Name" style="height: 200px; object-fit: cover;">
+                                    <img src="@it.Image" class="product-image" alt="@it.Name">
                                 }
                                 else
                                 {
-                                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <div class="" style="height: 200px;">
                                         <i class="bi bi-ticket-fill text-white" style="font-size: 3rem;"></i>
                                     </div>
                                 }
-                                <div class="card-body d-flex flex-column">
-                                    <h5 class="card-title">@it.Name</h5>
+                                <div class="">
+                                    <h2 class="">@it.Name</h2>
                                     @if (!string.IsNullOrEmpty(it.Description))
                                     {
-                                        <p class="card-text flex-grow-1">@it.Description</p>
+                                        <p style="font-weight: normal; font-size: 18px">@it.Description</p>
                                     }
+                                    <small class="text-muted">Server: @it.Server?.Name</small>
                                     <div class="mt-auto">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <div>
+                                            <div class="price-container">
                                                 @if (it.Sale > 0)
                                                 {
-                                                    <div class="mb-1"><span class="badge bg-danger me-2">@it.Sale% OFF</span></div>
-                                                    <div>
-                                                        <span class="text-muted text-decoration-line-through me-2">€@it.Price.ToString("F2")</span>
-                                                        <strong class="text-success fs-5">€@(CalculateSalePrice(it.Price, it.Sale).ToString("F2"))</strong>
-                                                    </div>
+                                                    <p class="original-price" title="Original price">€@it.Price.ToString("F2")</p>
+                                                    <p class="discounted-price" title="Sale price">€@(CalculateSalePrice(it.Price, it.Sale).ToString("F2"))</p>
+                                                    <span class="discount-badge">@it.Sale% OFF</span>
                                                 }
                                                 else
                                                 {
                                                     <strong class="text-primary fs-5">€@it.Price.ToString("F2")</strong>
                                                 }
                                             </div>
-                                            <small class="text-muted">Server: @it.Server?.Name</small>
                                         </div>
-                                        <button class="btn btn-primary btn-sm w-100" @onclick="() => ShowDetails(it)"> <i class="bi bi-info-circle"></i> View Details</button>
-                                        @if (cartItem == null)
-                                        {
-                                            <button class="btn btn-outline-success btn-sm w-100 mt-2" @onclick="async () => await AddToCart(it)"><i class="bi bi-cart-plus"></i> Add to Cart</button>
-                                            @if (addedId == it.Id) { <div class="alert alert-success py-1 px-2 mt-2 mb-0 text-center" style="font-size:0.95em;">Added!</div> }
-                                        }
-                                        else
-                                        {
-                                            <div class="d-flex align-items-center gap-2 mt-2 justify-content-center">
-                                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(it, -1)" disabled="@(cartItem.Quantity <= 1)">-</button>
-                                                <span>@cartItem.Quantity</span>
-                                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(it, 1)" disabled="@(cartItem.Quantity >= 10)">+</button>
-                                            </div>
-                                        }
+                                        <div style="display: flex; align-items: center; justify-content: space-between">
+                                            <button class="" @onclick="() => ShowDetails(it)"><i class="bi bi-info-circle"></i> Details</button>
+                                            @if (cartItem == null)
+                                            {
+                                                <button class="btn btn-outline-success btn-sm w-100 mt-2" @onclick="async () => await AddToCart(it)"><i class="bi bi-cart-plus"></i> Add</button>
+                                                @if (addedId == it.Id) { <div class="alert alert-success py-1 px-2 mt-2 mb-0 text-center" style="font-size:0.95em;">Added!</div> }
+                                            }
+                                            else
+                                            {
+                                                <div class="quantity-controls">
+                                                    <button class="quantity-btn" @onclick="() => ChangeQuantity(it, -1)" disabled="@(cartItem.Quantity <= 1)">-</button>
+                                                    <span class="item-quantity">@cartItem.Quantity</span>
+                                                    <button class="quantity-btn" @onclick="() => ChangeQuantity(it, 1)" disabled="@(cartItem.Quantity >= 10)">+</button>
+                                                </div>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -108,9 +107,6 @@
             {
                 <div class="alert alert-info">No battle passes available at the moment.</div>
             }
-        </div>
-    </div>
-</div>
 
 @code {
     private List<BattlePassResponse>? items;
@@ -227,17 +223,17 @@
     private async Task ChangeQuantity(BattlePassResponse bp, int delta) => await CartState.ChangeQuantityAsync(bp, delta);
 }
 
-@* Battle pass details modal *@
+@* Battle pass details modal (Keys-style) *@
 @if (selectedBattlePass != null)
 {
     <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">
+                    <h2 class="modal-title">
                         <i class="bi bi-ticket-fill"></i>
                         @selectedBattlePass.Name
-                    </h5>
+                    </h2>
                     <button type="button" class="btn-close" @onclick="CloseBattlePassDetails"></button>
                 </div>
                 <div class="modal-body">
@@ -249,46 +245,30 @@
                             </div>
                         }
                         <div class="col-md-@(string.IsNullOrEmpty(selectedBattlePass.Image) ? "12" : "6")">
-                            <dl class="row">
-                                <dt class="col-sm-4">Name:</dt>
-                                <dd class="col-sm-8">@selectedBattlePass.Name</dd>
-
-                                <dt class="col-sm-4">Price:</dt>
-                                <dd class="col-sm-8">
-                                    @if (selectedBattlePass.Sale > 0)
-                                    {
-                                        <div class="mb-1">
-                                            <span class="badge bg-danger">@selectedBattlePass.Sale% OFF</span>
-                                        </div>
-                                        <div>
-                                            <span class="text-muted text-decoration-line-through me-2" title="Original price">
-                                                €@selectedBattlePass.Price.ToString("F2")
-                                            </span>
-                                            <strong class="text-success fs-5" title="Sale price">
-                                                €@(CalculateSalePrice(selectedBattlePass.Price, selectedBattlePass.Sale).ToString("F2"))
-                                            </strong>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <strong class="text-primary fs-5">€@selectedBattlePass.Price.ToString("F2")</strong>
-                                    }
-                                </dd>
-
-                                <dt class="col-sm-4">Server:</dt>
-                                <dd class="col-sm-8">@selectedBattlePass.Server?.Name</dd>
-
+                            <div class="row" style="padding: 20px">
+                                <h2 class="col-sm-8">@selectedBattlePass.Name</h2>
                                 @if (!string.IsNullOrEmpty(selectedBattlePass.Description))
                                 {
-                                    <dt class="col-sm-4">Description:</dt>
-                                    <dd class="col-sm-8">@selectedBattlePass.Description</dd>
+                                    <p class="col-sm-8">@selectedBattlePass.Description</p>
                                 }
-                            </dl>
+                                <small class="text-muted">Server: @selectedBattlePass.Server?.Name</small>
+                                    <div class="price-container">
+                                        @if (selectedBattlePass.Sale > 0)
+                                        {
+                                            <p class="original-price" title="Original price">€@selectedBattlePass.Price.ToString("F2")</p>
+                                            <p class="discounted-price" title="Sale price">€@(CalculateSalePrice(selectedBattlePass.Price, selectedBattlePass.Sale).ToString("F2"))</p>
+                                            <span class="discount-badge">@selectedBattlePass.Sale% OFF</span>
+                                        }
+                                        else
+                                        {
+                                            <strong class="text-primary fs-5">€@selectedBattlePass.Price.ToString("F2")</strong>
+                                        }
+                                    </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @onclick="CloseBattlePassDetails">Close</button>
                     @{
                         var cartItemModal = CartState.CartItems.FirstOrDefault(i => i.Key.Id == selectedBattlePass!.Id && i.Key.Type == selectedBattlePass.Type);
                     }
@@ -304,10 +284,10 @@
                     }
                     else
                     {
-                        <div class="d-flex align-items-center gap-2">
-                            <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(selectedBattlePass!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
+                        <div class="quantity-controls">
+                            <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedBattlePass!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
                             <span>@cartItemModal.Quantity</span>
-                            <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(selectedBattlePass!, 1)" disabled="@(cartItemModal.Quantity >= 10)">+</button>
+                            <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedBattlePass!, 1)" disabled="@(cartItemModal.Quantity >= 10)">+</button>
                         </div>
                     }
                 </div>

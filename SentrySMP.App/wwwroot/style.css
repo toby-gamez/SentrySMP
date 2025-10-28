@@ -937,6 +937,44 @@ body.dark .notification {
     overflow: hidden;
 }
 
+/* Payment selection styles used on Checkout page */
+.payment-options {
+    gap: 0.75rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+.payment-option {
+    background: #f9f9f9;
+    border: 2px solid #dcdcdc;
+    padding: 10px 14px;
+    border-radius: 10px;
+    min-width: 180px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    display: flex;
+    align-items: center;
+}
+.payment-option i {
+    color: #000;
+}
+.payment-option .small {
+    color: #6c757d;
+}
+.payment-option.selected {
+    background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+    border-color: black; /* highlight color */
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+}
+.payment-option.selected i {
+    color: #dc3545;
+}
+
+@media (max-width: 576px) {
+    .payment-option {
+        min-width: 100%;
+    }
+}
+
 .notification.error {
     border-left-color: #dc3545;
 }
@@ -1562,6 +1600,60 @@ body.dark .vip-package .view-cart-link {
 @media (max-width: 586px) {
     .header-background {
         background-size: cover;
+
+/* RCON result styles */
+.rcon-result {
+    background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+    border: 1px solid #e6e6e6;
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin-top: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+.rcon-result.rcon-success {
+    border-left: 4px solid #28a745;
+}
+.rcon-result.rcon-warning {
+    border-left: 4px solid #ffc107;
+}
+.rcon-header {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+.rcon-status-icon {
+    font-size: 1.4rem;
+    color: #6c757d;
+}
+.rcon-summary {
+    color: #495057;
+    font-size: 0.95rem;
+}
+.rcon-commands {
+    margin: 10px 0 0 0;
+    padding-left: 0;
+    list-style: none;
+    max-height: 240px;
+    overflow: auto;
+}
+.rcon-command {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    background: rgba(0,0,0,0.02);
+}
+.rcon-command.success { border-left: 4px solid #28a745; }
+.rcon-command.failed { border-left: 4px solid #dc3545; background: rgba(220,53,69,0.03); }
+.rcon-command .command-text { font-family: monospace; color: #212529; flex: 1 1 auto; }
+.rcon-command .command-error { color: #6c757d; font-size: 0.9rem; margin-left: 8px; }
+.rcon-command .badge { margin-left: 8px; }
+
+@media (max-width: 576px) {
+    .rcon-commands { max-height: 180px; }
+}
     }
 }
 div .spaw {
@@ -1940,7 +2032,7 @@ body.dark .secondary:hover {
 .modal-body img,
 .modal .product-image,
 .modal .item-image {
-    width: 100%;
+    max-width: 250px;
     height: auto;
     border-radius: 10px;
     display: block;
@@ -1964,6 +2056,36 @@ body.dark .secondary:hover {
 /* Make modal body content slightly larger/spaced like product */
 .modal-body {
     padding: 1.25rem;
+}
+
+/* Layout: show info to the right of the image inside modal (desktop).
+   Target only the top-level .row that is a direct child of .modal-body so
+   inner .row/.col use (e.g., inside <dl>) are not affected. */
+.modal .modal-body > .row {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+.modal .modal-body > .row > .col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+}
+.modal .modal-body > .row > .col-md-12 {
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+.modal .modal-body > .row > .col-md-6 img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+@media (max-width: 767px) {
+    /* stack on small screens */
+    .modal .modal-body > .row > .col-md-6 {
+        flex-basis: 100%;
+        max-width: 100%;
+    }
 }
 
 .modal-header,
@@ -1997,10 +2119,7 @@ body.dark .secondary:hover {
     -webkit-appearance: none;
     width: 1.25rem;
     height: 1.25rem;
-    border: none;
-    background: transparent;
     position: relative;
-    cursor: pointer;
 }
 .btn-close::before,
 .btn-close::after {
@@ -2010,7 +2129,7 @@ body.dark .secondary:hover {
     top: 50%;
     width: 1rem;
     height: 2px;
-    background: #333;
+    background-color: white;
     transform-origin: center;
 }
 .btn-close::before { transform: translate(-50%, -50%) rotate(45deg); }

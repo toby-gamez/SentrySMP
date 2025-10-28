@@ -10,8 +10,8 @@
 <PageTitle>Keys - SentrySMP</PageTitle>
 
 <div class="main-wrapper">
-                <h1 class="main">Keys</h1>
-            </div>
+    <h1 class="main">Keys</h1>
+</div>
 
             <!-- Server filter dropdown -->
             @if (keys?.Any() == true)
@@ -64,7 +64,7 @@
                                     <h2 class="">@key.Name</h2>
                                     @if (!string.IsNullOrEmpty(key.Description))
                                     {
-                                        <p class="">@key.Description</p>
+                                        <p style="font-weight: normal; font-size: 18px">@key.Description</p>
                                     }
                                     <small class="text-muted">Server: @key.Server?.Name</small>
                                     <div class="mt-auto">
@@ -72,13 +72,13 @@
                                             <div class="price-container">
                                                 @if (key.Sale > 0)
                                                 {
-                                                        <p class="original-price" title="Original price">
-                                                            €@key.Price.ToString("F2")
-                                                        </p>
-                                                        <p class="discounted-price" title="Sale price">
-                                                            €@(CalculateSalePrice(key.Price, key.Sale).ToString("F2"))
-                                                        </p>
-                                                        <span class="discount-badge">@key.Sale% OFF</span>
+                                                    <p class="original-price" title="Original price">
+                                                        €@key.Price.ToString("F2")
+                                                    </p>
+                                                    <p class="discounted-price" title="Sale price">
+                                                        €@(CalculateSalePrice(key.Price, key.Sale).ToString("F2"))
+                                                    </p>
+                                                    <span class="discount-badge">@key.Sale% OFF</span>
                                                 }
                                                 else
                                                 {
@@ -86,27 +86,29 @@
                                                 }
                                             </div>
                                         </div>
-                                        <button class="btn btn-primary btn-sm w-100" @onclick="() => ShowKeyDetails(key)">
-                                            <i class="bi bi-info-circle"></i> View Details
-                                        </button>
-                                        @if (cartItem == null)
-                                        {
-                                            <button class="btn btn-outline-success btn-sm w-100 mt-2" @onclick="async () => await AddToCart(key)">
-                                                <i class="bi bi-cart-plus"></i> Add to Cart
+                                        <div style="display: flex; align-items: center; justify-content: space-between">
+                                            <button class="" @onclick="() => ShowKeyDetails(key)">
+                                                <i class="bi bi-info-circle"></i> Details
                                             </button>
-                                            @if (addedKeyId == key.Id)
+                                            @if (cartItem == null)
                                             {
-                                                <div class="alert alert-success py-1 px-2 mt-2 mb-0 text-center" style="font-size:0.95em;">Přidáno!</div>
+                                                <button class="btn btn-outline-success btn-sm w-100 mt-2" @onclick="async () => await AddToCart(key)">
+                                                    <i class="bi bi-plus"></i> Cart
+                                                </button>
+                                                @if (addedKeyId == key.Id)
+                                                {
+                                                    <div class="alert alert-success py-1 px-2 mt-2 mb-0 text-center" style="font-size:0.95em;">Přidáno!</div>
+                                                }
                                             }
-                                        }
-                                        else
-                                        {
-                                            <div class="quantity-controls">
-                                                <button class="quantity-btn" @onclick="() => ChangeQuantity(key, -1)" disabled="@(cartItem.Quantity <= 1)">-</button>
-                                                <span class="item-quantity">@cartItem.Quantity</span>
-                                                <button class="quantity-btn" @onclick="() => ChangeQuantity(key, 1)" disabled="@(cartItem.Quantity >= 10)">+</button>
-                                            </div>
-                                        }
+                                            else
+                                            {
+                                                <div class="quantity-controls">
+                                                    <button class="quantity-btn" @onclick="() => ChangeQuantity(key, -1)" disabled="@(cartItem.Quantity <= 1)">-</button>
+                                                    <span class="item-quantity">@cartItem.Quantity</span>
+                                                    <button class="quantity-btn" @onclick="() => ChangeQuantity(key, 1)" disabled="@(cartItem.Quantity >= 10)">+</button>
+                                                </div>
+                                            }    
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -129,10 +131,10 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">
+                    <h2 class="modal-title">
                         <i class="bi bi-key-fill"></i>
                         @selectedKey.Name
-                    </h5>
+                    </h2>
                     <button type="button" class="btn-close" @onclick="CloseKeyDetails"></button>
                 </div>
                 <div class="modal-body">
@@ -144,46 +146,34 @@
                             </div>
                         }
                         <div class="col-md-@(string.IsNullOrEmpty(selectedKey.Image) ? "12" : "6")">
-                            <dl class="row">
-                                <dt class="col-sm-4">Name:</dt>
-                                <dd class="col-sm-8">@selectedKey.Name</dd>
-                                
-                                <dt class="col-sm-4">Price:</dt>
-                                <dd class="col-sm-8">
-                                    @if (selectedKey.Sale > 0)
-                                    {
-                                        <div class="mb-1">
-                                            <span class="badge bg-danger">@selectedKey.Sale% OFF</span>
-                                        </div>
-                                        <div>
-                                            <span class="text-muted text-decoration-line-through me-2" title="Original price">
-                                                €@selectedKey.Price.ToString("F2")
-                                            </span>
-                                            <strong class="text-success fs-5" title="Sale price">
-                                                €@(CalculateSalePrice(selectedKey.Price, selectedKey.Sale).ToString("F2"))
-                                            </strong>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <strong class="text-primary fs-5">€@selectedKey.Price.ToString("F2")</strong>
-                                    }
-                                </dd>
-                                
-                                <dt class="col-sm-4">Server:</dt>
-                                <dd class="col-sm-8">@selectedKey.Server?.Name</dd>
-                                
+                            <div class="row" style="padding: 20px">
+                                <h2 class="col-sm-8">@selectedKey.Name</h2>
                                 @if (!string.IsNullOrEmpty(selectedKey.Description))
                                 {
-                                    <dt class="col-sm-4">Description:</dt>
-                                    <dd class="col-sm-8">@selectedKey.Description</dd>
+                                    <p class="col-sm-8">@selectedKey.Description</p>
                                 }
-                            </dl>
+                                <small class="text-muted">Server: @selectedKey.Server?.Name</small>
+                                    <div class="price-container">
+                                        @if (selectedKey.Sale > 0)
+                                        {
+                                            <p class="original-price" title="Original price">
+                                                €@selectedKey.Price.ToString("F2")
+                                            </p>
+                                            <p class="discounted-price" title="Sale price">
+                                                €@(CalculateSalePrice(selectedKey.Price, selectedKey.Sale).ToString("F2"))
+                                            </p>
+                                            <span class="discount-badge">@selectedKey.Sale% OFF</span>
+                                        }
+                                        else
+                                        {
+                                            <strong class="text-primary fs-5">€@selectedKey.Price.ToString("F2")</strong>
+                                        }
+                                    </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @onclick="CloseKeyDetails">Close</button>
                     @{
                         var cartItemModal = CartState.CartItems.FirstOrDefault(i => i.Key.Id == selectedKey!.Id);
                     }
@@ -199,10 +189,10 @@
                     }
                     else
                     {
-                        <div class="d-flex align-items-center gap-2">
-                            <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(selectedKey!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
+                        <div class="quantity-controls">
+                            <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedKey!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
                             <span>@cartItemModal.Quantity</span>
-                            <button class="btn btn-sm btn-outline-secondary" @onclick="() => ChangeQuantity(selectedKey!, 1)" disabled="@(cartItemModal.Quantity >= 10)">+</button>
+                            <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedKey!, 1)" disabled="@(cartItemModal.Quantity >= 10)">+</button>
                         </div>
                     }
                 </div>
