@@ -87,6 +87,8 @@ services.AddScoped<UserService>();
 services.AddScoped<SentrySMP.App.Services.StatusService>();
 // Cookie consent service to manage analytics consent and loading
 services.AddScoped<SentrySMP.App.Services.CookieConsentService>();
+// Theme service to manage dark/light mode and persist preference
+services.AddScoped<SentrySMP.App.Services.ThemeService>();
 
 services.AddRefitClient<ISentryApi>()
     .ConfigureHttpClient(c =>

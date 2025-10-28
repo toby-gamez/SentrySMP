@@ -1,4 +1,6 @@
-﻿<nav class="navbar">
+﻿@rendermode InteractiveServer
+
+<nav class="navbar">
     <div class="navbar-container">
         <a href="/" class="logonav">
             <img src="images/logo.png" class="logoimage" width="150px" alt="" />
@@ -10,9 +12,64 @@
             <li><a href="our-team"><i class="bi bi-people"></i> Our Team</a></li>
             <li><a href="vote-for-us"><i class="bi bi-heart"></i> Vote For Us</a></li>
             <label class="switch">
-                <input type="checkbox" id="modeToggle" />
+                <input type="checkbox" id="modeToggle" @bind="IsDarkBindable" />
                 <span class="slider"></span>
             </label>
         </ul>
     </div>
 </nav>
+
+@implements IDisposable
+
+@code {
+    [Microsoft.AspNetCore.Components.Inject]
+    public SentrySMP.App.Services.ThemeService ThemeService { get; set; } = default!;
+
+    [Microsoft.AspNetCore.Components.Inject]
+    public Microsoft.JSInterop.IJSRuntime JSRuntime { get; set; } = default!;
+
+    private bool isDark;
+    private bool initialized = false;
+
+    protected override async System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!initialized && firstRender)
+        {
+            initialized = true;
+            // Initialize theme from saved preference (do JS interop after first render)
+            await ThemeService.InitializeAsync(JSRuntime);
+            isDark = ThemeService.IsDark;
+            ThemeService.OnThemeChanged += ThemeChanged;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void ThemeChanged(bool dark)
+    {
+        isDark = dark;
+        InvokeAsync(StateHasChanged);
+    }
+
+    // Two-way bind target that forwards changes to ThemeService
+    public bool IsDarkBindable
+    {
+        get => isDark;
+        set
+        {
+            if (isDark == value) return;
+            isDark = value;
+            // fire-and-forget is fine here; ThemeService will update localStorage and apply theme
+            _ = ThemeService.SetThemeAsync(value);
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Dispose()
+    {
+        try
+        {
+            ThemeService.OnThemeChanged -= ThemeChanged;
+        }
+        catch { }
+    }
+}
