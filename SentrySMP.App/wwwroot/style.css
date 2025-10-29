@@ -322,6 +322,7 @@ a:has(li) {
         margin-left: calc((100vw - 350px) / 2);
         margin-right: calc((100vw - 350px) / 2);
         height: 200px;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     }
     .item-red {
         line-height: 1;

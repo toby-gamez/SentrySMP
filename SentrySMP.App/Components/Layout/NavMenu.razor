@@ -5,7 +5,7 @@
         <a href="/" class="logonav">
             <img src="images/logo.png" class="logoimage" width="150px" alt="" />
         </a>
-        <button class="toggle-btn" id="toggleBtn" style="text-align: center; margin-top: auto">&#9776;</button>
+    <button class="toggle-btn" id="toggleBtn" style="text-align: center; margin-top: auto" @onclick="ToggleNav">&#9776;</button>
         <ul class="nav-links" id="navLinks">
             <li><a href="/"><i class="bi bi-house"></i> Home</a></li>
             <li><a href="about"><i class="bi bi-info-circle"></i> About Server</a></li>
@@ -28,6 +28,9 @@
     [Microsoft.AspNetCore.Components.Inject]
     public Microsoft.JSInterop.IJSRuntime JSRuntime { get; set; } = default!;
 
+    [Microsoft.AspNetCore.Components.Inject]
+    public SentrySMP.App.Services.MenuToggleService MenuToggleService { get; set; } = default!;
+
     private bool isDark;
     private bool initialized = false;
 
@@ -38,10 +41,21 @@
             initialized = true;
             // Initialize theme from saved preference (do JS interop after first render)
             await ThemeService.InitializeAsync(JSRuntime);
+            // initialize menu toggle service so it can call JS
+            try { await MenuToggleService.InitializeAsync(JSRuntime); } catch { }
             isDark = ThemeService.IsDark;
             ThemeService.OnThemeChanged += ThemeChanged;
             await InvokeAsync(StateHasChanged);
         }
+    }
+
+    private async System.Threading.Tasks.Task ToggleNav()
+    {
+        try
+        {
+            await MenuToggleService.ToggleAsync();
+        }
+        catch { }
     }
 
     private void ThemeChanged(bool dark)

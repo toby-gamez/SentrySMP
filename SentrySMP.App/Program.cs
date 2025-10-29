@@ -89,6 +89,8 @@ services.AddScoped<SentrySMP.App.Services.StatusService>();
 services.AddScoped<SentrySMP.App.Services.CookieConsentService>();
 // Theme service to manage dark/light mode and persist preference
 services.AddScoped<SentrySMP.App.Services.ThemeService>();
+// Service to toggle navigation menu (used by NavMenu component)
+services.AddScoped<SentrySMP.App.Services.MenuToggleService>();
 
 services.AddRefitClient<ISentryApi>()
     .ConfigureHttpClient(c =>
