@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SentrySMP.Shared.DTOs;
+using System.Linq;
 
 namespace SentrySMP.App.Controllers
 {
@@ -55,6 +58,7 @@ namespace SentrySMP.App.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(AuthenticationSchemes = SentrySMP.App.Authentication.BasicAuthConstants.Scheme)]
         public async Task<IActionResult> Get(long id)
         {
             var tx = await _db.PaymentTransactions.FindAsync(id);
@@ -74,6 +78,31 @@ namespace SentrySMP.App.Controllers
             };
 
             return Ok(resp);
+        }
+
+        // GET /api/transactions
+        // Returns all payment transactions. This endpoint requires Basic auth (same scheme used for other non-GET endpoints).
+        [HttpGet]
+        [Authorize(AuthenticationSchemes = SentrySMP.App.Authentication.BasicAuthConstants.Scheme)]
+        public async Task<IActionResult> GetAll()
+        {
+            var txs = await _db.PaymentTransactions
+                .OrderByDescending(t => t.CreatedAt)
+                .Select(tx => new TransactionResponse
+                {
+                    Id = tx.Id,
+                    Provider = tx.Provider,
+                    ProviderTransactionId = tx.ProviderTransactionId,
+                    Amount = tx.Amount,
+                    Currency = tx.Currency,
+                    MinecraftUsername = tx.MinecraftUsername,
+                    ItemsJson = tx.ItemsJson,
+                    Status = tx.Status,
+                    CreatedAt = tx.CreatedAt
+                })
+                .ToListAsync();
+
+            return Ok(txs);
         }
     }
 }

@@ -139,4 +139,8 @@ public interface ISentryApi
 
     [Post("/api/team")]
     Task<TeamResponseDto> SaveTeamAsync([Body] TeamResponseDto dto);
+
+    // Transaction endpoints
+    [Get("/api/transactions")]
+    Task<IEnumerable<SentrySMP.Shared.DTOs.TransactionResponse>> GetTransactionsAsync();
 }

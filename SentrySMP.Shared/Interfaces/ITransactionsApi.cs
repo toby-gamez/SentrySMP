@@ -10,5 +10,8 @@ namespace SentrySMP.Shared.Interfaces
 
         [Get("/api/transactions/{id}")]
         Task<TransactionResponse> GetTransactionAsync(long id);
+
+    [Get("/api/transactions")]
+    Task<IEnumerable<TransactionResponse>> GetTransactionsAsync();
     }
 }
