@@ -63,25 +63,27 @@
             <div class="card mt-3">
                 <div class="card-body">
                     <h2>Order details</h2>
-                    <table class="table table-sm mt-2">
-                        <thead>
-                            <tr>
-                                <th>Item</th>
-                                <th>Server</th>
-                                <th class="text-center">Qty</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var it in _lastOrderItems)
-                            {
+                    <div class="table-wrapper">
+                        <table class="table table-sm mt-2">
+                            <thead>
                                 <tr>
-                                    <td>@FormatPlayerToken(it.Key.Name)</td>
-                                    <td>@(it.Key.Server?.Name ?? "-")</td>
-                                    <td class="text-center">@it.Quantity</td>
+                                    <th>Item</th>
+                                    <th>Server</th>
+                                    <th class="text-center">Qty</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach (var it in _lastOrderItems)
+                                {
+                                    <tr>
+                                        <td class="table-cell-wrap">@FormatPlayerToken(it.Key.Name)</td>
+                                        <td class="table-cell-nowrap">@(it.Key.Server?.Name ?? "-")</td>
+                                        <td class="text-center table-cell-nowrap">@it.Quantity</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         }
@@ -98,30 +100,32 @@
         <div class="card mt-4">
             <div class="card-body">
                 <h2 class="card-title">Order summary</h2>
-                <table class="table table-sm mt-3">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th class="text-center">Qty</th>
-                            <th class="text-end">Unit</th>
-                            <th class="text-end">Line</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in CartState.CartItems)
-                        {
-                            var p = item.Key;
-                            var qty = item.Quantity;
-                            double unitPrice = p.Sale > 0 ? Convert.ToDouble(p.Price) * (1 - p.Sale / 100.0) : Convert.ToDouble(p.Price);
+                <div class="table-wrapper">
+                    <table class="table table-sm mt-3">
+                        <thead>
                             <tr>
-                                <td>@FormatPlayerToken(p.Name) <small class="text-muted">@p.Server?.Name</small></td>
-                                <td class="text-center">@qty</td>
-                                <td class="text-end">€@unitPrice.ToString("F2")</td>
-                                <td class="text-end">€@((unitPrice * qty).ToString("F2"))</td>
+                                <th>Name</th>
+                                <th class="text-center">Qty</th>
+                                <th class="text-end">Unit</th>
+                                <th class="text-end">Line</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in CartState.CartItems)
+                            {
+                                var p = item.Key;
+                                var qty = item.Quantity;
+                                double unitPrice = p.Sale > 0 ? Convert.ToDouble(p.Price) * (1 - p.Sale / 100.0) : Convert.ToDouble(p.Price);
+                                <tr>
+                                    <td class="table-cell-wrap">@FormatPlayerToken(p.Name) <small class="text-muted">@p.Server?.Name</small></td>
+                                    <td class="text-center table-cell-nowrap">@qty</td>
+                                    <td class="text-end table-cell-nowrap">€@unitPrice.ToString("F2")</td>
+                                    <td class="text-end table-cell-nowrap">€@((unitPrice * qty).ToString("F2"))</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
                 <h2 class="mt-3">Choose payment method</h2>
                 <div class="mt-2">
                     <div class="payment-options d-flex flex-wrap gap-2">
@@ -219,25 +223,27 @@
                         <div class="card mt-3">
                             <div class="card-body">
                                 <h6>Order details</h6>
-                                <table class="table table-sm mt-2">
-                                    <thead>
-                                        <tr>
-                                            <th>Item</th>
-                                            <th>Server</th>
-                                            <th class="text-center">Qty</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var it in _lastOrderItems)
-                                        {
+                                <div class="table-wrapper">
+                                    <table class="table table-sm mt-2">
+                                        <thead>
                                             <tr>
-                                                <td>@FormatPlayerToken(it.Key.Name)</td>
-                                                <td>@(it.Key.Server?.Name ?? "-")</td>
-                                                <td class="text-center">@it.Quantity</td>
+                                                <th>Item</th>
+                                                <th>Server</th>
+                                                <th class="text-center">Qty</th>
                                             </tr>
-                                        }
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var it in _lastOrderItems)
+                                            {
+                                                <tr>
+                                                    <td class="table-cell-wrap">@FormatPlayerToken(it.Key.Name)</td>
+                                                    <td class="table-cell-nowrap">@(it.Key.Server?.Name ?? "-")</td>
+                                                    <td class="text-center table-cell-nowrap">@it.Quantity</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     }

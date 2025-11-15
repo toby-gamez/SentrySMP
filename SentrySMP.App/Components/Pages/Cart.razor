@@ -33,60 +33,62 @@
     }
     else
     {
-        <table class="table table-striped mt-4">
-            <thead>
-                <tr>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th>Server</th>
-                    <th>Price</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var cartItem in CartState.CartItems)
-                {
-                    var item = cartItem.Key;
-                    var qty = cartItem.Quantity;
-                    double unitPrice = item.Sale > 0 ? Convert.ToDouble(item.Price) * (1 - item.Sale / 100.0) : Convert.ToDouble(item.Price);
+        <div class="table-wrapper">
+            <table class="table table-striped mt-4">
+                <thead>
                     <tr>
-                        <td style="width:80px">
-                            @if (!string.IsNullOrEmpty(item.Image))
-                            {
-                                <img src="@item.Image" alt="@item.Name" style="height:48px;width:48px;object-fit:cover;" class="rounded" />
-                            }
-                            else
-                            {
-                                <i class="bi bi-key-fill text-secondary" style="font-size:2rem;"></i>
-                            }
-                        </td>
-                        <td>@item.Name</td>
-                        <td>@item.Server?.Name</td>
-                        <td>
-                            @if (item.Sale > 0)
-                            {
-                                <span class="text-muted text-decoration-line-through me-2">€@item.Price.ToString("F2")</span>
-                                <span class="text-success">€@(unitPrice.ToString("F2")) × @qty = <b>€@( (unitPrice * qty).ToString("F2") )</b></span>
-                            }
-                            else
-                            {
-                                <span class="text-primary">€@item.Price.ToString("F2") × @qty = <b>€@( (unitPrice * qty).ToString("F2") )</b></span>
-                            }
-                        </td>
-                        <td>
-                            <div style="display:flex; align-items: center; justify-content: space-between; flex-direction: row">
-                            <div class="quantity-controls">
-                                <button class="quantity-btn" @onclick="() => ChangeQuantity(item, -1)" disabled="@(qty <= 1)">-</button>
-                                <span>@qty</span>
-                                <button class="quantity-btn" @onclick="() => ChangeQuantity(item, 1)" disabled="@(qty >= 10)">+</button>
-                            </div>
-                            <button class="danger" @onclick="() => RemoveFromCart(item)"><i class="bi bi-trash"></i> Remove</button>
-                            </div>
-                        </td>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Server</th>
+                        <th>Price</th>
+                        <th>Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var cartItem in CartState.CartItems)
+                    {
+                        var item = cartItem.Key;
+                        var qty = cartItem.Quantity;
+                        double unitPrice = item.Sale > 0 ? Convert.ToDouble(item.Price) * (1 - item.Sale / 100.0) : Convert.ToDouble(item.Price);
+                        <tr>
+                            <td style="width:80px">
+                                @if (!string.IsNullOrEmpty(item.Image))
+                                {
+                                    <img src="@item.Image" alt="@item.Name" style="height:48px;width:48px;object-fit:cover;" class="rounded" />
+                                }
+                                else
+                                {
+                                    <i class="bi bi-key-fill text-secondary" style="font-size:2rem;"></i>
+                                }
+                            </td>
+                            <td class="table-cell-wrap">@item.Name</td>
+                            <td class="table-cell-nowrap">@item.Server?.Name</td>
+                            <td class="table-cell-nowrap">
+                                @if (item.Sale > 0)
+                                {
+                                    <span class="text-muted text-decoration-line-through me-2">€@item.Price.ToString("F2")</span>
+                                    <span class="text-success">€@(unitPrice.ToString("F2")) × @qty = <b>€@( (unitPrice * qty).ToString("F2") )</b></span>
+                                }
+                                else
+                                {
+                                    <span class="text-primary">€@item.Price.ToString("F2") × @qty = <b>€@( (unitPrice * qty).ToString("F2") )</b></span>
+                                }
+                            </td>
+                            <td>
+                                <div style="display:flex; align-items: center; justify-content: space-between; flex-direction: row">
+                                <div class="quantity-controls">
+                                    <button class="quantity-btn" @onclick="() => ChangeQuantity(item, -1)" disabled="@(qty <= 1)">-</button>
+                                    <span>@qty</span>
+                                    <button class="quantity-btn" @onclick="() => ChangeQuantity(item, 1)" disabled="@(qty >= 10)">+</button>
+                                </div>
+                                <button class="danger" @onclick="() => RemoveFromCart(item)"><i class="bi bi-trash"></i> Remove</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
 <div class="info">
     <p>
