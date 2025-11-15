@@ -67,7 +67,7 @@ services.AddScoped<IShardService, ShardService>();
 services.AddScoped<ITeamService, TeamService>();
 services.AddScoped<IBattlePassService, BattlePassService>();
 services.AddScoped<ICommandService, CommandService>();
-services.AddScoped<IStatusService, StatusService>();
+services.AddScoped<IStatusService, SentrySMP.Api.Services.StatusService>();
 services.AddScoped<IAnnouncementsService, AnnouncementsService>();
 services.AddScoped<ITransactionsService, TransactionsService>();
 // IRconService is implemented in the API project (server-side service)
@@ -83,8 +83,6 @@ services.AddEndpointsApiExplorer();
 services.AddSingleton<CredentialStore>();
 services.AddTransient<HttpLoggingHandler>();
 services.AddScoped<UserService>();
-// App status service to fetch Discord and Minecraft counts
-services.AddScoped<SentrySMP.App.Services.StatusService>();
 // Cookie consent service to manage analytics consent and loading
 services.AddScoped<SentrySMP.App.Services.CookieConsentService>();
 // Theme service to manage dark/light mode and persist preference

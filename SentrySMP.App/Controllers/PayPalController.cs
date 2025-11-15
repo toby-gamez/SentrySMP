@@ -21,6 +21,14 @@ namespace SentrySMP.App.Controllers
             _db = db;
         }
 
+        private string GetPayPalBaseUrl()
+        {
+            var useSandbox = _config.GetValue<bool>("PayPal:Sandbox");
+            return useSandbox 
+                ? "https://api-m.sandbox.paypal.com" 
+                : "https://api-m.paypal.com";
+        }
+
         [HttpPost("create-order")]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest request)
         {
@@ -34,7 +42,7 @@ namespace SentrySMP.App.Controllers
             var http = _httpFactory.CreateClient();
 
             // Get OAuth token
-            var tokenRequest = new HttpRequestMessage(HttpMethod.Post, "https://api-m.sandbox.paypal.com/v1/oauth2/token");
+            var tokenRequest = new HttpRequestMessage(HttpMethod.Post, $"{GetPayPalBaseUrl()}/v1/oauth2/token");
             var basic = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{secret}"));
             tokenRequest.Headers.Authorization = new AuthenticationHeaderValue("Basic", basic);
             tokenRequest.Content = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("grant_type", "client_credentials") });
@@ -69,7 +77,7 @@ namespace SentrySMP.App.Controllers
                 }
             };
 
-            var createReq = new HttpRequestMessage(HttpMethod.Post, "https://api-m.sandbox.paypal.com/v2/checkout/orders");
+            var createReq = new HttpRequestMessage(HttpMethod.Post, $"{GetPayPalBaseUrl()}/v2/checkout/orders");
             createReq.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             createReq.Content = new StringContent(JsonSerializer.Serialize(createPayload), Encoding.UTF8, "application/json");
 
@@ -118,7 +126,7 @@ namespace SentrySMP.App.Controllers
             var http = _httpFactory.CreateClient();
 
             // Get access token again
-            var tokenRequest = new HttpRequestMessage(HttpMethod.Post, "https://api-m.sandbox.paypal.com/v1/oauth2/token");
+            var tokenRequest = new HttpRequestMessage(HttpMethod.Post, $"{GetPayPalBaseUrl()}/v1/oauth2/token");
             var basic = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{secret}"));
             tokenRequest.Headers.Authorization = new AuthenticationHeaderValue("Basic", basic);
             tokenRequest.Content = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("grant_type", "client_credentials") });
@@ -129,7 +137,7 @@ namespace SentrySMP.App.Controllers
             var accessToken = tokenJson.RootElement.GetProperty("access_token").GetString();
 
             // Capture order
-            var captureReq = new HttpRequestMessage(HttpMethod.Post, $"https://api-m.sandbox.paypal.com/v2/checkout/orders/{Uri.EscapeDataString(token)}/capture");
+            var captureReq = new HttpRequestMessage(HttpMethod.Post, $"{GetPayPalBaseUrl()}/v2/checkout/orders/{Uri.EscapeDataString(token)}/capture");
             captureReq.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             captureReq.Content = new StringContent("{}", Encoding.UTF8, "application/json");
 

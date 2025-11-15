@@ -1,6 +1,6 @@
 @inject SentrySMP.App.Authentication.UserService UserService
 @inject NavigationManager Navigation
-@inject SentrySMP.App.Services.StatusService StatusService
+@inject SentrySMP.Shared.Interfaces.IStatusService StatusService
 @implements IDisposable
 
 @if (!string.IsNullOrEmpty(Username))

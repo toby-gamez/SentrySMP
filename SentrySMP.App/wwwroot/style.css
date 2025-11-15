@@ -906,6 +906,7 @@ body.dark .notification {
     gap: 0.75rem;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    padding: 10px;
 }
 .payment-option {
     background: #f9f9f9;
@@ -952,6 +953,9 @@ body.dark .notification {
 }
 
 .notification .message {
+
+
+
     margin-right: 25px;
     margin-bottom: 5px;
     font-size: 14px;
@@ -2152,4 +2156,7 @@ body.dark .payment-option.selected {
 }
 body.dark .thing-grid-item {
     background-color: #242424;
+}
+body.dark .payment-option i {
+    color: white;
 }

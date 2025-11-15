@@ -5,7 +5,7 @@ using SentrySMP.Shared.DTOs;
 
 namespace SentrySMP.App.Services
 {
-    public class StatusService
+    public class StatusService : IStatusService
     {
         private readonly ISentryApi _api;
         private readonly ILogger<StatusService> _logger;

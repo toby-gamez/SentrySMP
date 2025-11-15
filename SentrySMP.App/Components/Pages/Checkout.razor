@@ -148,10 +148,6 @@
 
                 <div class="mt-4 d-flex gap-2">
                     <button class="btn btn-primary" @onclick="ProceedToPayment">Proceed to payment</button>
-                    @if (Env?.IsDevelopment() == true)
-                    {
-                        <button class="success" @onclick="DebugSimulatePayment">Debug: Mark as paid</button>
-                    }
                     <button class="secondary" @onclick="BackToCart">Back to cart</button>
                 </div>
 
@@ -252,7 +248,14 @@
                     <div class="alert alert-danger mt-3">
                         <i class="bi bi-x-circle"></i> @_failureMessage
                         <div class="mt-2">
-                            <a class="btn btn-sm btn-primary" href="/cart">Try again</a>
+                            @if (_failureMessage.Contains("cancelled"))
+                            {
+                                <a class="btn btn-sm btn-primary" href="/checkout">Try payment again</a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-sm btn-primary" href="/cart">Try again</a>
+                            }
                         </div>
                     </div>
                 }
@@ -638,7 +641,7 @@
                 else if (status == "cancelled")
                 {
                     // Show a user-friendly failure message when the payment was cancelled.
-                    _failureMessage = "Payment cancelled.";
+                    _failureMessage = "Payment cancelled. You can try the payment again.";
                     StateHasChanged();
                     // Keep the query string for this render so the message is visible; we won't replace the
                     // history entry here to remove it automatically.

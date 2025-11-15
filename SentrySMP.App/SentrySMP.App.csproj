@@ -33,4 +33,8 @@
         <Folder Include="Controllers\" />
     </ItemGroup>
 
+    <ItemGroup>
+        <None Include=".env" CopyToOutputDirectory="Always" />
+    </ItemGroup>
+
 </Project>
