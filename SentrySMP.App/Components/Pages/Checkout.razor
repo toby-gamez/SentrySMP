@@ -163,7 +163,7 @@
                         </div>
                         @if (!string.IsNullOrWhiteSpace(_payPalErrorMessage))
                         {
-                            <div class="alert alert-danger mt-2">PayPal error: @_payPalErrorMessage</div>
+                            <div class="alert alert-danger mt-2">PejPol error: @_payPalErrorMessage</div>
                         }
                     }
                     else
@@ -382,16 +382,25 @@
                     formatted = parsed.ToString("F2");
                 }
 
-                var resp = await CheckoutApi.CreateOrderAsync(new CreateOrderRequest { Amount = formatted });
-                if (resp == null || string.IsNullOrWhiteSpace(resp.ApproveUrl))
+                try
                 {
-                    _payPalErrorMessage = "Server did not return approval URL.";
-                    _failureMessage = "Payment failed — server did not return PayPal approval URL.";
+                    var resp = await CheckoutApi.CreateOrderAsync(new CreateOrderRequest { Amount = formatted });
+                    if (resp == null || string.IsNullOrWhiteSpace(resp.ApproveUrl))
+                    {
+                        _payPalErrorMessage = "Server did not return approval URL.";
+                        _failureMessage = "Payment failed — server did not return PayPal approval URL.";
+                    }
+                    else
+                    {
+                        // Redirect browser to PayPal approval URL (full page load)
+                        NavigationManager.NavigateTo(resp.ApproveUrl, true);
+                        return;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    // Redirect browser to PayPal approval URL (full page load)
-                    NavigationManager.NavigateTo(resp.ApproveUrl, true);
+                    _payPalErrorMessage = $"PayPal error: {ex.Message}";
+                    _failureMessage = $"Payment failed — {ex.Message}";
                 }
             }
             catch (Exception ex)

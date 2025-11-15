@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace SentrySMP.Shared.DTOs
 {
     public class CreateOrderRequest
@@ -7,7 +9,10 @@ namespace SentrySMP.Shared.DTOs
 
     public class CreateOrderResponse
     {
+        [JsonPropertyName("approveUrl")]
         public string ApproveUrl { get; set; } = string.Empty;
+        
+        [JsonPropertyName("orderId")]
         public string OrderId { get; set; } = string.Empty;
     }
 }

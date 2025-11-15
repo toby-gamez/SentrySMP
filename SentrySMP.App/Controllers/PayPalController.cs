@@ -63,12 +63,15 @@ namespace SentrySMP.App.Controllers
             var returnUrl = baseUrl + "/api/paypal/return";
             var cancelUrl = baseUrl + "/checkout?status=cancelled";
 
+            // Ensure amount uses dot as decimal separator for PayPal API
+            var paypalAmount = request.Amount?.Replace(",", ".") ?? "0.00";
+            
             var createPayload = new
             {
                 intent = "CAPTURE",
                 purchase_units = new[] {
                     new {
-                        amount = new { currency_code = "EUR", value = request.Amount }
+                        amount = new { currency_code = "EUR", value = paypalAmount }
                     }
                 },
                 application_context = new {
@@ -85,6 +88,12 @@ namespace SentrySMP.App.Controllers
             if (!createResp.IsSuccessStatusCode)
             {
                 var txt = await createResp.Content.ReadAsStringAsync();
+                // Log detailed error for debugging
+                var logger = HttpContext.RequestServices.GetRequiredService<ILogger<PayPalController>>();
+                logger.LogError("PayPal create-order failed: {StatusCode}", createResp.StatusCode);
+                logger.LogError("PayPal create-order error: {Response}", txt);
+                logger.LogError("PayPal URL: {Url}", $"{GetPayPalBaseUrl()}/v2/checkout/orders");
+                logger.LogError("PayPal sandbox setting: {Sandbox}", _config.GetValue<bool>("PayPal:Sandbox"));
                 return StatusCode((int)createResp.StatusCode, txt);
             }
 

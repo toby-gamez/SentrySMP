@@ -28,7 +28,9 @@ namespace SentrySMP.App.Controllers
                 return BadRequest("Stripe secret (STRIPE_SECRET_KEY) is not configured on the server.");
             }
 
-            if (string.IsNullOrWhiteSpace(request.Amount) || !decimal.TryParse(request.Amount, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var amountDecimal) || amountDecimal <= 0)
+            // Normalize decimal separator before parsing (handle both comma and dot)
+            var normalizedAmount = request.Amount?.Replace(",", ".");
+            if (string.IsNullOrWhiteSpace(normalizedAmount) || !decimal.TryParse(normalizedAmount, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var amountDecimal) || amountDecimal <= 0)
             {
                 return BadRequest("Invalid amount");
             }
