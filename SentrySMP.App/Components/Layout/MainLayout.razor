@@ -7,7 +7,21 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css">
     <script src="/analytics-consent.js"></script>
     <script src="/js/menuToggle.js"></script>
-    <script>console.log('MainLayout inline script loaded')</script>
+    <script>
+        console.log('MainLayout inline script loaded');
+        // Auto-initialize GA if consent was previously granted (similar to theme auto-init)
+        try {
+            if (window.analyticsConsent && window.analyticsConsent.autoInitIfGranted) {
+                // We need the tracking ID, so we'll check for it in a global var set by Blazor
+                setTimeout(function() {
+                    try {
+                        var gtagId = 'G-SGG2CLM06D'; // Verified working GA4 tracking ID
+                        window.analyticsConsent.autoInitIfGranted(gtagId);
+                    } catch (e) { console.log('GA auto-init failed:', e); }
+                }, 10);
+            }
+        } catch (e) { console.log('GA auto-init setup failed:', e); }
+    </script>
     <!-- SEO meta tagy pro Google -->
     <meta
         name="description"

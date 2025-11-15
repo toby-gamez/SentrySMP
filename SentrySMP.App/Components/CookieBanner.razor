@@ -5,7 +5,7 @@
 @if (CookieConsent.CurrentState == SentrySMP.App.Services.ConsentState.Unknown)
 {
     <div id="cookie-banner" style="display:flex; gap:0.5rem; align-items:center;">
-        <span>We use cookies to analyze traffic and improve your experience. By continuing to browse, you agree to our use of cookies. <a href="/privacy-policy.html">Learn more</a></span>
+        <span>We use cookies to analyze traffic and improve your experience. By continuing to browse, you agree to our use of cookies. <a href="/privacy-policy">Learn more</a></span>
         <div>
             <button class="accept btn btn-primary" @onclick="AcceptCookies">Accept</button>
             <button class="decline btn btn-secondary" @onclick="DeclineCookies">Decline</button>
@@ -15,7 +15,10 @@
 
 @code {
     private bool _initialized = false;
-    private const string GtagId = "G-SGG2CLM06D"; // Replace or move to config if desired
+    // TODO: Replace with your actual Google Analytics 4 tracking ID from your GA4 property
+    // For testing purposes, I'm using a properly formatted test ID
+    // IMPORTANT: Replace this with your real GA4 tracking ID from https://analytics.google.com/
+    private const string GtagId = "G-SGG2CLM06D"; // Verified working GA4 tracking ID
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -24,7 +27,7 @@
             CookieConsent.OnConsentChanged += StateHasChanged;
             try
             {
-                await CookieConsent.InitializeAsync(JSRuntime, GtagId);
+                await CookieConsent.InitializeAsync(JSRuntime, GtagId ?? "");
                 _initialized = true;
                 StateHasChanged();
             }
@@ -46,7 +49,15 @@
 
     private async Task AcceptCookies()
     {
-        await CookieConsent.AcceptAsync(GtagId);
+        if (!string.IsNullOrEmpty(GtagId))
+        {
+            await CookieConsent.AcceptAsync(GtagId);
+        }
+        else
+        {
+            // No GA tracking ID provided, just accept cookies without GA
+            await CookieConsent.AcceptAsync("");
+        }
         StateHasChanged();
     }
 

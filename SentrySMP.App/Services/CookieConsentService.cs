@@ -56,8 +56,22 @@ namespace SentrySMP.App.Services
                 CurrentState = ConsentState.Granted;
                 try
                 {
-                    await _js.InvokeVoidAsync("analyticsConsent.updateConsent", "granted");
-                    await _js.InvokeVoidAsync("analyticsConsent.loadAnalytics", gtagId);
+                    // Check if GA was already auto-initialized
+                    var debugInfo = await _js.InvokeAsync<object>("analyticsConsent.getDebugInfo");
+                    // If not already loaded, initialize it now
+                    if (!string.IsNullOrWhiteSpace(gtagId))
+                    {
+                        var alreadyInitialized = await _js.InvokeAsync<bool>("analyticsConsent.autoInitIfGranted", gtagId);
+                        if (!alreadyInitialized)
+                        {
+                            await _js.InvokeVoidAsync("analyticsConsent.updateConsent", "granted");
+                            await _js.InvokeVoidAsync("analyticsConsent.loadAnalytics", gtagId);
+                        }
+                    }
+                    else
+                    {
+                        await _js.InvokeVoidAsync("analyticsConsent.updateConsent", "granted");
+                    }
                 }
                 catch { }
             }
@@ -84,7 +98,11 @@ namespace SentrySMP.App.Services
             try
             {
                 await _js.InvokeVoidAsync("analyticsConsent.updateConsent", "granted");
-                await _js.InvokeVoidAsync("analyticsConsent.loadAnalytics", gtagId);
+                // Only load analytics if a valid tracking ID is provided
+                if (!string.IsNullOrWhiteSpace(gtagId))
+                {
+                    await _js.InvokeVoidAsync("analyticsConsent.loadAnalytics", gtagId);
+                }
             }
             catch { }
 
