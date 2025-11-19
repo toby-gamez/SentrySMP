@@ -6,3 +6,5 @@ obj
 */.env
 */logs/*
 .build/*
+SentrySMP.App/appsettings.json
+SentrySMP.Admin/appsettings.json
