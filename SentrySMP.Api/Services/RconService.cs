@@ -66,6 +66,8 @@ namespace SentrySMP.Api.Services
             var sanitizedUsername = (username ?? string.Empty).Trim().Replace("\r", string.Empty).Replace("\n", string.Empty);
 
             var result = new SentrySMP.Shared.DTOs.RconExecutionResult();
+            // track whether we actually found any commands for the requested products
+            var anyCommandsDefined = false;
 
             foreach (var pq in productsWithQuantity)
             {
@@ -89,6 +91,9 @@ namespace SentrySMP.Api.Services
                         _logger.LogDebug("No commands defined for product {Type}/{Id}", productType, productId);
                         continue;
                     }
+
+                    // mark that at least one product had commands defined
+                    anyCommandsDefined = true;
 
                     List<ServerResponse> targets = new();
                     if (product.Server != null && product.Server.Id != 0)
@@ -139,57 +144,134 @@ namespace SentrySMP.Api.Services
                                 using var rcon = await RconClient.ConnectAndAuthAsync(ip, srv.RCONPort, srv.RCONPassword, _logger);
                                 foreach (var cmd in commands)
                                 {
+                                    // Prepare template and replaced command text
+                                    var template = cmd.CommandText ?? string.Empty;
+                                    var text = template;
                                     try
                                     {
-                                        var text = cmd.CommandText ?? string.Empty;
-                                        // Always perform replacement with sanitized username (may be empty)
+                                        if (!string.IsNullOrEmpty(sanitizedUsername))
+                                        {
+                                            _logger.LogDebug("Replacing %player% with '{Username}' in command for server {Server}", sanitizedUsername, srv.Name);
+                                        }
+                                        text = template.Replace("%player%", sanitizedUsername, StringComparison.OrdinalIgnoreCase);
+                                    }
+                                    catch (Exception exReplace)
+                                    {
+                                        _logger.LogWarning(exReplace, "Failed to replace %player% token in command text for server {Server}", srv.Name);
+                                        text = template;
+                                    }
+
+                                    // Retry loop: attempt up to 3 times when response is empty or not accepted
+                                    const int maxAttempts = 3;
+                                    string? lastResp = null;
+                                    Exception? lastException = null;
+                                    bool accepted = false;
+
+                                    for (int attempt = 1; attempt <= maxAttempts; attempt++)
+                                    {
                                         try
                                         {
-                                            if (!string.IsNullOrEmpty(sanitizedUsername))
-                                            {
-                                                _logger.LogDebug("Replacing %player% with '{Username}' in command for server {Server}", sanitizedUsername, srv.Name);
-                                            }
-                                            text = text.Replace("%player%", sanitizedUsername, StringComparison.OrdinalIgnoreCase);
-                                        }
-                                        catch (Exception exReplace)
-                                        {
-                                            // Shouldn't normally happen, but log and continue with original text
-                                            _logger.LogWarning(exReplace, "Failed to replace %player% token in command text for server {Server}", srv.Name);
-                                        }
-                                        _logger.LogInformation("Sending RCON to {Server}: {Cmd}", srv.Name, text);
-                                        var resp = await rcon.SendCommandAsync(text);
-                                        _logger.LogDebug("RCON response from {Server}: {Resp}", srv.Name, resp);
+                                            _logger.LogInformation("Sending RCON to {Server} (attempt {Attempt}): {Cmd}", srv.Name, attempt, text);
+                                            var resp = await rcon.SendCommandAsync(text);
+                                            lastResp = resp;
+                                            _logger.LogDebug("RCON response from {Server} (attempt {Attempt}): {Resp}", srv.Name, attempt, resp);
 
-                                        // Mark this command as succeeded (at least for one target)
-                                        var cmdResult = result.CommandResults.FirstOrDefault(cr => cr.CommandText == text);
-                                        if (cmdResult == null)
-                                        {
-                                            result.CommandResults.Add(new SentrySMP.Shared.DTOs.RconCommandResult { CommandText = text, Succeeded = true });
+                                            // Acceptance checks
+                                            var respLower = (resp ?? string.Empty).ToLowerInvariant();
+                                            var replacedLower = (text ?? string.Empty).ToLowerInvariant();
+                                            var sanitizedLower = (sanitizedUsername ?? string.Empty).ToLowerInvariant();
+
+                                            if (!string.IsNullOrEmpty(respLower))
+                                            {
+                                                if (!string.IsNullOrEmpty(replacedLower) && respLower.Contains(replacedLower))
+                                                {
+                                                    accepted = true;
+                                                }
+                                                else
+                                                {
+                                                    var withoutName = replacedLower;
+                                                    if (!string.IsNullOrEmpty(sanitizedLower))
+                                                    {
+                                                        withoutName = withoutName.Replace(sanitizedLower, string.Empty).Replace("  ", " ").Trim();
+                                                    }
+
+                                                    if (!string.IsNullOrEmpty(withoutName) && respLower.Contains(withoutName))
+                                                    {
+                                                        accepted = true;
+                                                    }
+                                                    else
+                                                    {
+                                                        var keywords = new[] { "given", "gave", "added", "ok", "success", "granted", "received" };
+                                                        if (keywords.Any(k => respLower.Contains(k)))
+                                                        {
+                                                            accepted = true;
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            // Record response/debug
+                                            var existing = result.CommandResults.FirstOrDefault(cr => cr.CommandText == text);
+                                            if (existing == null)
+                                            {
+                                                var newRes = new SentrySMP.Shared.DTOs.RconCommandResult
+                                                {
+                                                    CommandText = text,
+                                                    Succeeded = accepted,
+                                                    Response = resp
+                                                };
+                                                newRes.Debug.Add($"Server:{srv.Name}; Addr:{srv.RCONIP}:{srv.RCONPort}; Attempt:{attempt}; Response:{resp}");
+                                                result.CommandResults.Add(newRes);
+                                            }
+                                            else
+                                            {
+                                                existing.Succeeded = existing.Succeeded || accepted;
+                                                if (string.IsNullOrEmpty(existing.Response)) existing.Response = resp;
+                                                else if (!string.IsNullOrEmpty(resp)) existing.Response += "\n" + resp;
+                                                existing.Debug.Add($"Server:{srv.Name}; Addr:{srv.RCONIP}:{srv.RCONPort}; Attempt:{attempt}; Response:{resp}");
+                                                if (accepted) existing.ErrorMessage = null;
+                                            }
+
+                                            if (accepted) break;
+                                            _logger.LogWarning("RCON response did not meet acceptance criteria for server {Server} (attempt {Attempt}). Retrying...", srv.Name, attempt);
                                         }
-                                        else
+                                        catch (Exception exCmd)
                                         {
-                                            cmdResult.Succeeded = true;
-                                            cmdResult.ErrorMessage = null;
+                                            lastException = exCmd;
+                                            _logger.LogError(exCmd, "Failed to send RCON command to server {Server} (attempt {Attempt})", srv.Name, attempt);
+
+                                            var existing = result.CommandResults.FirstOrDefault(cr => cr.CommandText == text);
+                                            if (existing == null)
+                                            {
+                                                var newFail = new SentrySMP.Shared.DTOs.RconCommandResult { CommandText = text, Succeeded = false, ErrorMessage = exCmd.Message };
+                                                newFail.Debug.Add($"Server:{srv.Name}; Addr:{srv.RCONIP}:{srv.RCONPort}; Attempt:{attempt}; Exception:{exCmd}");
+                                                result.CommandResults.Add(newFail);
+                                            }
+                                            else
+                                            {
+                                                if (!existing.Succeeded)
+                                                {
+                                                    existing.ErrorMessage = existing.ErrorMessage == null ? exCmd.Message : existing.ErrorMessage + "; " + exCmd.Message;
+                                                    existing.Debug.Add($"Server:{srv.Name}; Addr:{srv.RCONIP}:{srv.RCONPort}; Attempt:{attempt}; Exception:{exCmd}");
+                                                }
+                                            }
+                                            // continue to next attempt
                                         }
                                     }
-                                    catch (Exception exCmd)
-                                    {
-                                        _logger.LogError(exCmd, "Failed to send RCON command to server {Server}", srv.Name);
 
-                                        // record a failure for this attempt (will be reconciled later)
-                                        var text = cmd.CommandText ?? string.Empty;
-                                        var existing = result.CommandResults.FirstOrDefault(cr => cr.CommandText == text);
-                                        if (existing == null)
-                                        {
-                                            result.CommandResults.Add(new SentrySMP.Shared.DTOs.RconCommandResult { CommandText = text, Succeeded = false, ErrorMessage = exCmd.Message });
-                                        }
-                                        else
-                                        {
-                                            if (!existing.Succeeded)
-                                            {
-                                                existing.ErrorMessage = existing.ErrorMessage == null ? exCmd.Message : existing.ErrorMessage + "; " + exCmd.Message;
-                                            }
-                                        }
+                                    // Finalize per-command result after attempts
+                                    var final = result.CommandResults.FirstOrDefault(cr => cr.CommandText == text);
+                                    if (final == null)
+                                    {
+                                        var errMsg = lastException?.Message ?? "No response from server";
+                                        var newFail = new SentrySMP.Shared.DTOs.RconCommandResult { CommandText = text, Succeeded = false, ErrorMessage = errMsg };
+                                        newFail.Debug.Add($"Final result after {maxAttempts} attempts; LastException:{lastException}; LastResponse:{lastResp}");
+                                        result.CommandResults.Add(newFail);
+                                    }
+                                    else if (!final.Succeeded)
+                                    {
+                                        final.ErrorMessage = final.ErrorMessage ?? (lastException?.Message ?? "No response from server");
+                                        final.Debug.Add($"Final result after {maxAttempts} attempts; LastException:{lastException}; LastResponse:{lastResp}");
                                     }
                                 }
                             }
@@ -265,11 +347,31 @@ namespace SentrySMP.Api.Services
                 }
             }
 
-            // Finalize AllSucceeded: true if every recorded command has Succeeded==true or there were no commands recorded as failures
-            if (result.CommandResults.Count == 0)
+            // Finalize AllSucceeded:
+            // - If caller provided no products, we returned early above with AllSucceeded=true.
+            // - If none of the provided products had any commands defined, consider this a non-successful RCON run
+            //   (we don't want to claim "commands were successfully sent" when nothing was attempted).
+            // - Otherwise, require all recorded command results to be successful.
+            if (!anyCommandsDefined)
             {
-                // no commands found across products -> consider success
-                result.AllSucceeded = true;
+                result.AllSucceeded = false;
+                // Add a helpful entry so UI can show why nothing happened.
+                try
+                {
+                    if (result.CommandResults == null) result.CommandResults = new System.Collections.Generic.List<SentrySMP.Shared.DTOs.RconCommandResult>();
+                    result.CommandResults.Add(new SentrySMP.Shared.DTOs.RconCommandResult
+                    {
+                        CommandText = "<NO_RCON_COMMANDS_FOUND>",
+                        Succeeded = false,
+                        ErrorMessage = "No RCON commands were defined for the purchased products."
+                    });
+                }
+                catch { }
+            }
+            else if (result.CommandResults.Count == 0)
+            {
+                // We expected commands but none were recorded (treat as failure)
+                result.AllSucceeded = false;
             }
             else
             {

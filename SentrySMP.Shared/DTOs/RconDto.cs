@@ -14,5 +14,10 @@ namespace SentrySMP.Shared.DTOs
         public string CommandText { get; set; } = string.Empty;
         public bool Succeeded { get; set; }
         public string? ErrorMessage { get; set; }
+        // Raw response returned by the RCON server (if any)
+        public string? Response { get; set; }
+
+        // Optional debug entries (one per server/attempt) with extra info like server name, exceptions, etc.
+        public System.Collections.Generic.List<string> Debug { get; set; } = new();
     }
 }

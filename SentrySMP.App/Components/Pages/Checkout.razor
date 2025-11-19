@@ -39,22 +39,43 @@
                         <div class="rcon-summary">@_rconStatusMessage</div>
                     </div>
                 </div>
-                @if (!_rconResult.AllSucceeded)
-                {
-                    <ul class="rcon-commands">
-                        @foreach (var cr in _rconResult.CommandResults)
-                        {
-                            <li class="rcon-command @(cr.Succeeded ? "success" : "failed")">
-                                <span class="command-text">@cr.CommandText</span>
-                                @if (!cr.Succeeded && !string.IsNullOrEmpty(cr.ErrorMessage))
-                                {
-                                    <span class="command-error">@cr.ErrorMessage</span>
-                                }
-                                <span class="badge @(cr.Succeeded ? "bg-success" : "bg-danger")">@(cr.Succeeded ? "OK" : "FAILED")</span>
-                            </li>
-                        }
-                    </ul>
-                }
+                <ul class="rcon-commands">
+                    @foreach (var cr in _rconResult.CommandResults)
+                    {
+                        <li class="rcon-command @(cr.Succeeded ? "success" : "failed")">
+                            <div class="d-flex align-items-start justify-content-between">
+                                <div>
+                                    <div class="command-text">@cr.CommandText</div>
+                                    @if (!string.IsNullOrEmpty(cr.ErrorMessage))
+                                    {
+                                        <div class="command-error text-danger">@cr.ErrorMessage</div>
+                                    }
+                                </div>
+                                <div class="ms-3 text-end">
+                                    <span class="badge @(cr.Succeeded ? "bg-success" : "bg-danger")">@(cr.Succeeded ? "OK" : "FAILED")</span>
+                                </div>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(cr.Response))
+                            {
+                                <pre class="rcon-response mt-2">@cr.Response</pre>
+                            }
+
+                            @if (cr.Debug != null && cr.Debug.Count > 0)
+                            {
+                                <details class="mt-2">
+                                    <summary class="small text-muted">Show debug details (@cr.Debug.Count)</summary>
+                                    <ul class="mt-2">
+                                        @foreach (var d in cr.Debug)
+                                        {
+                                            <li><code>@d</code></li>
+                                        }
+                                    </ul>
+                                </details>
+                            }
+                        </li>
+                    }
+                </ul>
             </div>
         }
 
@@ -199,22 +220,43 @@
                                     <div class="rcon-summary">@_rconStatusMessage</div>
                                 </div>
                             </div>
-                            @if (!_rconResult.AllSucceeded)
-                            {
-                                <ul class="rcon-commands">
-                                    @foreach (var cr in _rconResult.CommandResults)
-                                    {
-                                        <li class="rcon-command @(cr.Succeeded ? "success" : "failed")">
-                                            <span class="command-text">@cr.CommandText</span>
-                                            @if (!cr.Succeeded && !string.IsNullOrEmpty(cr.ErrorMessage))
-                                            {
-                                                <span class="command-error">@cr.ErrorMessage</span>
-                                            }
-                                            <span class="badge @(cr.Succeeded ? "bg-success" : "bg-danger")">@(cr.Succeeded ? "OK" : "FAILED")</span>
-                                        </li>
-                                    }
-                                </ul>
-                            }
+                            <ul class="rcon-commands">
+                                @foreach (var cr in _rconResult.CommandResults)
+                                {
+                                    <li class="rcon-command @(cr.Succeeded ? "success" : "failed")">
+                                        <div class="d-flex align-items-start justify-content-between">
+                                            <div>
+                                                <div class="command-text">@cr.CommandText</div>
+                                                @if (!string.IsNullOrEmpty(cr.ErrorMessage))
+                                                {
+                                                    <div class="command-error text-danger">@cr.ErrorMessage</div>
+                                                }
+                                            </div>
+                                            <div class="ms-3 text-end">
+                                                <span class="badge @(cr.Succeeded ? "bg-success" : "bg-danger")">@(cr.Succeeded ? "OK" : "FAILED")</span>
+                                            </div>
+                                        </div>
+
+                                        @if (!string.IsNullOrEmpty(cr.Response))
+                                        {
+                                            <pre class="rcon-response mt-2">@cr.Response</pre>
+                                        }
+
+                                        @if (cr.Debug != null && cr.Debug.Count > 0)
+                                        {
+                                            <details class="mt-2">
+                                                <summary class="small text-muted">Show debug details (@cr.Debug.Count)</summary>
+                                                <ul class="mt-2">
+                                                    @foreach (var d in cr.Debug)
+                                                    {
+                                                        <li><code>@d</code></li>
+                                                    }
+                                                </ul>
+                                            </details>
+                                        }
+                                    </li>
+                                }
+                            </ul>
                         </div>
                     }
 
@@ -268,7 +310,7 @@
 
             </div>
         </div>
-    }
+
 
 @code {
     private string _selectedPayment = "stripe";
@@ -464,6 +506,11 @@
     private SentrySMP.Shared.DTOs.RconExecutionResult? _rconResult;
     private string? _rconStatusMessage;
     private string? _username;
+    // Tracks whether the component has finished its first render on the server
+    private bool _hasRendered = false;
+    // If a transaction is saved before first render completes, defer RCON execution until after render
+    private List<ProductQuantityDto>? _pendingRconExecProducts;
+    private string? _pendingRconUsername;
 
     private void CancelPayment()
     {
@@ -552,27 +599,20 @@
                             catch { user = string.Empty; }
 
                             var execProducts = (items ?? CartState.CartItems).Select(ci => new ProductQuantityDto { Product = ci.Key, Quantity = ci.Quantity }).ToList();
-                            var rres = await RconService.ExecuteCommandsForProductsAsync(execProducts, user);
-                            _rconResult = rres;
-                            if (rres != null)
-                        {
-                                if (rres.AllSucceeded)
+                            if (!_hasRendered)
+                            {
+                                // Defer RCON execution until after the first render completes to ensure the component
+                                // and related services (e.g. UserService, JS interop) are fully ready.
+                                _pendingRconExecProducts = execProducts;
+                                _pendingRconUsername = user;
+                            }
+                            else
+                            {
+                                var rres = await RconService.ExecuteCommandsForProductsAsync(execProducts, user);
+                                _rconResult = rres;
+                                if (rres != null)
                                 {
-                                    _rconStatusMessage = "Server commands were successfully sent.";
-                                }
-                                else
-                                {
-                                    _rconStatusMessage = "Some commands failed to send:";
-                                    // also set a visible failure message area
-                                    _failureMessage = _failureMessage ?? "Warning: some server commands failed. Details below.";
-                                }
-
-                                // Append RCON status to the success message so it remains visible together with the paid message.
-                                if (!string.IsNullOrWhiteSpace(_rconStatusMessage))
-                                {
-                                    _successMessage = string.IsNullOrWhiteSpace(_successMessage)
-                                        ? _rconStatusMessage
-                                        : _successMessage + " — " + _rconStatusMessage;
+                                    ProcessRconResult(rres);
                                 }
                             }
                         }
@@ -662,6 +702,120 @@
                     // history entry here to remove it automatically.
                 }
             }
+            
+            // Mark that first render completed and execute any deferred RCON requests.
+            _hasRendered = true;
+            if (_pendingRconExecProducts != null)
+            {
+                try
+                {
+                    var rres = await ExecuteRconWithRetries(_pendingRconExecProducts, _pendingRconUsername ?? string.Empty);
+                    _rconResult = rres;
+                    if (rres != null)
+                    {
+                        ProcessRconResult(rres);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _failureMessage = _failureMessage ?? $"Warning: failed to execute server commands after render: {ex.Message}";
+                }
+                finally
+                {
+                    _pendingRconExecProducts = null;
+                    _pendingRconUsername = null;
+                    StateHasChanged();
+                }
+            }
+            }
         }
+
+    // Helper to centralize the RCON result processing so we can reuse it when executing immediately
+    // or when executing a deferred request after OnAfterRenderAsync.
+    private void ProcessRconResult(SentrySMP.Shared.DTOs.RconExecutionResult rres)
+    {
+        // More robust evaluation: don't trust AllSucceeded alone.
+        var hasNoCommandsMarker = rres.CommandResults != null && rres.CommandResults.Any(cr => cr.CommandText == "<NO_RCON_COMMANDS_FOUND>");
+        var anyResults = rres.CommandResults != null && rres.CommandResults.Count > 0;
+    var allSucceeded = anyResults && rres.CommandResults != null && rres.CommandResults.All(cr => cr.Succeeded) && !hasNoCommandsMarker;
+
+        if (hasNoCommandsMarker)
+        {
+            _rconStatusMessage = "No server commands were defined for the purchased products.";
+            _failureMessage = _failureMessage ?? "Warning: no server commands were configured for your purchase.";
+        }
+        else if (allSucceeded)
+        {
+            _rconStatusMessage = "Server commands were successfully sent.";
+        }
+        else
+        {
+            _rconStatusMessage = "Some commands failed to send:";
+            // also set a visible failure message area
+            _failureMessage = _failureMessage ?? "Warning: some server commands failed. Details below.";
+        }
+
+        // Append RCON status to the success message so it remains visible together with the paid message.
+        if (!string.IsNullOrWhiteSpace(_rconStatusMessage))
+        {
+            _successMessage = string.IsNullOrWhiteSpace(_successMessage)
+                ? _rconStatusMessage
+                : _successMessage + " — " + _rconStatusMessage;
+        }
+    }
+
+    // Execute RCON commands with a small retry/backoff strategy to tolerate transient network/server issues.
+    // Returns the final RconExecutionResult (may contain failed commands) or null if execution could not be attempted.
+    private async Task<SentrySMP.Shared.DTOs.RconExecutionResult?> ExecuteRconWithRetries(List<ProductQuantityDto> products, string user)
+    {
+        if (products == null || products.Count == 0) return null;
+
+        const int maxAttempts = 3;
+        var delays = new[] { 500, 1000, 2000 }; // ms
+
+        for (int attempt = 1; attempt <= maxAttempts; attempt++)
+        {
+            try
+            {
+                var rres = await RconService.ExecuteCommandsForProductsAsync(products, user);
+
+                // If the service returned null, treat as transient and retry
+                if (rres == null)
+                {
+                    if (attempt < maxAttempts)
+                        await Task.Delay(delays[Math.Min(attempt - 1, delays.Length - 1)]);
+                    else
+                        return null;
+                }
+                else
+                {
+                    // If there are failures but also a marker indicating no commands, return immediately.
+                    var hasNoCommandsMarker = rres.CommandResults != null && rres.CommandResults.Any(cr => cr.CommandText == "<NO_RCON_COMMANDS_FOUND>");
+                    var anyFailed = rres.CommandResults != null && rres.CommandResults.Any(cr => !cr.Succeeded);
+
+                    // If there were transient failures (some commands failed) try again a few times, unless it was "no commands" marker.
+                    if (anyFailed && !hasNoCommandsMarker && attempt < maxAttempts)
+                    {
+                        await Task.Delay(delays[Math.Min(attempt - 1, delays.Length - 1)]);
+                        continue;
+                    }
+
+                    return rres;
+                }
+            }
+            catch
+            {
+                // Transient exception – retry a few times
+                if (attempt < maxAttempts)
+                {
+                    await Task.Delay(delays[Math.Min(attempt - 1, delays.Length - 1)]);
+                    continue;
+                }
+                throw;
+            }
+        }
+
+        return null;
+    }
     }
 }

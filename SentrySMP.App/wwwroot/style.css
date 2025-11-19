@@ -1980,6 +1980,13 @@ tr:nth-child(even) {
     border-radius: 3px;
 }
 
+.rcon-result {
+    background-color: #dcdcdc;
+
+}
+.rcon-response {
+    text-wrap: auto;
+}
 /* dark */
 /* Dark mode table wrapper */
 
