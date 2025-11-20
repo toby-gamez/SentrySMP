@@ -1,0 +1,204 @@
+@page "/images"
+@rendermode InteractiveServer
+@using SentrySMP.Shared.DTOs
+@inject ISentryApi Api
+@inject ILogger<Images> Logger
+
+<h3>Images</h3>
+
+<div class="mb-3">
+    <button class="btn btn-sm btn-primary me-2" @onclick="Refresh">Refresh</button>
+    <button class="btn btn-sm btn-outline-secondary me-2" @onclick="SelectAll">Select all</button>
+    <button class="btn btn-sm btn-outline-secondary me-2" @onclick="DeselectAll">Deselect all</button>
+    <button class="btn btn-sm btn-success" @onclick="SyncSelected" disabled="@(!HasSelection)">Download selected missing</button>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Remote file names (one per line)</label>
+    <textarea class="form-control mb-2" rows="5" @bind="remoteNamesText"></textarea>
+    <div>
+        <button class="btn btn-sm btn-secondary me-2" @onclick="CheckRemote">Check remote</button>
+        <button class="btn btn-sm btn-outline-primary" @onclick="() => { remoteNamesText = string.Empty; remoteFound = Array.Empty<string>(); }">Clear</button>
+    </div>
+</div>
+
+@if (isLoading)
+{
+    <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+}
+else if (items == null || !items.Any())
+{
+    <div class="alert alert-info">No images found in uploads/keys</div>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Local files</h5>
+            <table class="table table-sm table-striped">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Preview</th>
+                        <th>File</th>
+                        <th>Size</th>
+                        <th>Last modified</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var it in items)
+                    {
+                        <tr>
+                            <td>
+                                <input type="checkbox" checked="@IsSelected(it.FileName)" @onchange="(ChangeEventArgs e) => OnSelectionChanged(it.FileName, e.Value as bool? ?? false)" />
+                            </td>
+                            <td style="width:120px;">
+                                <img src="@it.Url" alt="@it.FileName" style="max-height:80px; max-width:100px;" />
+                            </td>
+                            <td>@it.FileName</td>
+                            <td>@(it.Size / 1024) KB</td>
+                            <td>@(it.LastModified?.ToString("yyyy-MM-dd HH:mm"))</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-6">
+            <h5>Remote files (from input)</h5>
+            <table class="table table-sm table-striped">
+                <thead>
+                    <tr>
+                        <th>Exists Remote</th>
+                        <th>File</th>
+                        <th>Exists Locally</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var name in (remoteNamesText ?? string.Empty).Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)))
+                    {
+                        var existsRemote = remoteFound.Contains(name);
+                        var existsLocal = items.Any(i => i.FileName == name);
+                        <tr>
+                            <td>@(existsRemote ? "✔" : "—")</td>
+                            <td>@name</td>
+                            <td>@(existsLocal ? "✔" : "—")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@if (syncResult != null)
+{
+    <div class="mt-3">
+        <h5>Sync result</h5>
+        <div><strong>Downloaded:</strong> @string.Join(", ", syncResult.Downloaded)</div>
+        <div><strong>Skipped:</strong> @string.Join(", ", syncResult.Skipped)</div>
+        <div><strong>Failed:</strong>
+            <ul>
+                @foreach (var f in syncResult.Failed)
+                {
+                    <li>@f.FileName (@(f.StatusCode?.ToString() ?? f.Error ?? "error"))</li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+
+@code {
+    private IEnumerable<ImageInfoDto>? items;
+    private Dictionary<string, bool> selection = new();
+    private bool isLoading = false;
+    private ImageSyncResultDto? syncResult;
+    private string remoteNamesText = string.Empty;
+    private IEnumerable<string> remoteFound = Array.Empty<string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Refresh();
+    }
+
+    private bool HasSelection => selection.Values.Any(v => v);
+
+    private bool IsSelected(string fileName) => selection.TryGetValue(fileName, out var v) && v;
+
+    private void OnSelectionChanged(string fileName, bool value)
+    {
+        if (selection.ContainsKey(fileName)) selection[fileName] = value;
+        else selection[fileName] = value;
+        StateHasChanged();
+    }
+
+    private async Task Refresh()
+    {
+        isLoading = true;
+        try
+        {
+            items = (await Api.GetImagesAsync()).ToList();
+            selection = items.ToDictionary(i => i.FileName, i => false);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error fetching images");
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void SelectAll()
+    {
+        var keys = selection.Keys.ToList();
+        foreach (var k in keys) selection[k] = true;
+    }
+
+    private void DeselectAll()
+    {
+        var keys = selection.Keys.ToList();
+        foreach (var k in keys) selection[k] = false;
+    }
+
+    private async Task SyncSelected()
+    {
+        var toSync = selection.Where(kv => kv.Value).Select(kv => kv.Key).ToList();
+        if (!toSync.Any()) return;
+
+        try
+        {
+            syncResult = await Api.SyncImagesAsync(toSync);
+            // after sync, refresh list to show newly downloaded files
+            await Refresh();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error syncing images");
+        }
+    }
+
+    private async Task CheckRemote()
+    {
+        var lines = (remoteNamesText ?? string.Empty).Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList();
+        if (!lines.Any()) return;
+        try
+        {
+            var found = await Api.CheckRemoteAsync(lines);
+            remoteFound = found.ToList();
+            // ensure selection dictionary contains remote-only entries too
+            foreach (var n in lines)
+            {
+                if (!selection.ContainsKey(n)) selection[n] = false;
+            }
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error checking remote images");
+        }
+    }
+}

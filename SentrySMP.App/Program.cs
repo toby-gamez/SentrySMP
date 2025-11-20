@@ -38,6 +38,8 @@ var services = builder.Services;
 
 // Add services
 services.Configure<BasicAuthOptions>(builder.Configuration.GetSection("Auth:Basic"));
+// Ensure IHttpClientFactory is available for services that need to create HttpClient instances
+services.AddHttpClient();
 services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration["Api:BaseAddress"] ?? "https://localhost:7270") });
 services.AddHttpContextAccessor();
 
@@ -72,6 +74,8 @@ services.AddScoped<IAnnouncementsService, AnnouncementsService>();
 services.AddScoped<ITransactionsService, TransactionsService>();
 // IRconService is implemented in the API project (server-side service)
 services.AddScoped<SentrySMP.Shared.Interfaces.IRconService, SentrySMP.Api.Services.RconService>();
+// Image sync service (downloads missing images into wwwroot/uploads/keys)
+services.AddScoped<IImageService, ImageService>();
 services.AddScoped<CartState>(sp => new CartState(sp.GetRequiredService<Microsoft.JSInterop.IJSRuntime>()));
 services.AddControllers()
     .AddJsonOptions(options =>

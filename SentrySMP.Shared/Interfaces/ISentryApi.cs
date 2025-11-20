@@ -133,6 +133,16 @@ public interface ISentryApi
     [Delete("/api/files/{fileName}")]
     Task DeleteImageAsync(string fileName);
 
+    // Images endpoints (listing and sync)
+    [Get("/api/images")]
+    Task<IEnumerable<SentrySMP.Shared.DTOs.ImageInfoDto>> GetImagesAsync();
+
+    [Post("/api/images/sync")]
+    Task<SentrySMP.Shared.DTOs.ImageSyncResultDto> SyncImagesAsync([Body] IEnumerable<string> fileNames);
+
+    [Post("/api/images/check-remote")]
+    Task<IEnumerable<string>> CheckRemoteAsync([Body] IEnumerable<string> fileNames);
+
     // Team endpoints
     [Get("/api/team")]
     Task<TeamResponseDto> GetTeamAsync();
