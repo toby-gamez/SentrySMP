@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SentrySMP.Shared.DTOs;
-using System.Text.Json;
 using SentrySMP.Shared.Interfaces;
 
 namespace SentrySMP.App.Controllers;

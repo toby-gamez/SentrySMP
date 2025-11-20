@@ -14,6 +14,8 @@ public class SentryDbContext : DbContext
     public DbSet<Rank> Ranks { get; set; }
     public DbSet<Bundle> Bundles { get; set; }
     public DbSet<Shard> Shards { get; set; }
+    public DbSet<Domain.Entities.TeamCategory> TeamCategories { get; set; }
+    public DbSet<Domain.Entities.TeamMember> TeamMembers { get; set; }
     public DbSet<BattlePass> BattlePasses { get; set; }
     public DbSet<Command> Commands { get; set; }
     public DbSet<SentrySMP.Domain.Entities.PaymentTransaction> PaymentTransactions { get; set; }
@@ -195,6 +197,28 @@ public class SentryDbContext : DbContext
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.CreatedAt).IsRequired();
             entity.Property(e => e.RawResponse).HasColumnType("text");
+        });
+
+        // Team category / member entities
+        modelBuilder.Entity<Domain.Entities.TeamCategory>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasMaxLength(36);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.HasMany(e => e.Members)
+                  .WithOne(m => m.Category)
+                  .HasForeignKey(m => m.TeamCategoryId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Domain.Entities.TeamMember>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasMaxLength(36);
+            entity.Property(e => e.MinecraftName).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Role).HasMaxLength(100);
+            entity.Property(e => e.SkinUrl).HasMaxLength(500);
+            entity.Property(e => e.TeamCategoryId).HasMaxLength(36);
         });
     }
 }

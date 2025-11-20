@@ -2,67 +2,103 @@ using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using SentrySMP.Shared.DTOs;
 using SentrySMP.Shared.Interfaces;
+using SentrySMP.Api.Infrastructure.Data;
+using SentrySMP.Domain.Entities;
 
 namespace SentrySMP.Api.Services;
 
 public class TeamService : ITeamService
 {
     private readonly ILogger<TeamService> _logger;
-    private readonly string _dataPath;
+    private readonly SentryDbContext _db;
 
-    public TeamService(IHostEnvironment env, IConfiguration configuration, ILogger<TeamService> logger)
+    public TeamService(IHostEnvironment env, IConfiguration configuration, ILogger<TeamService> logger, SentryDbContext db)
     {
         _logger = logger;
-        var webRoot = configuration["WebRootPath"];
-        if (string.IsNullOrEmpty(webRoot))
-        {
-            // default to content root + wwwroot
-            webRoot = Path.Combine(env.ContentRootPath, "wwwroot");
-        }
+        _db = db;
 
-        _dataPath = Path.Combine(webRoot, "data");
-        if (!Directory.Exists(_dataPath)) Directory.CreateDirectory(_dataPath);
+        // Persistence is DB-only. We intentionally do not read or write a local team.json file here.
+        _logger.LogDebug("TeamService initialized using DB-only persistence (no team.json import).");
     }
 
-    private string TeamFile => Path.Combine(_dataPath, "team.json");
-
-    public Task<TeamResponseDto> GetTeamAsync()
+    public async Task<TeamResponseDto> GetTeamAsync()
     {
         try
         {
-            if (!System.IO.File.Exists(TeamFile))
+            var categories = await _db.TeamCategories
+                .Include(c => c.Members)
+                .AsNoTracking()
+                .ToListAsync();
+
+            var dto = new TeamResponseDto
             {
-                var empty = new TeamResponseDto();
-                System.IO.File.WriteAllText(TeamFile, JsonSerializer.Serialize(empty, new JsonSerializerOptions { WriteIndented = true }));
-                return Task.FromResult(empty);
+                Categories = categories.Select(c => new TeamCategoryDto
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Members = c.Members.Select(m => new TeamMemberDto
+                    {
+                        Id = m.Id,
+                        MinecraftName = m.MinecraftName,
+                        Role = m.Role,
+                        SkinUrl = m.SkinUrl
+                    }).ToList()
+                }).ToList()
+            };
+
+            return dto;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error reading team data from DB");
+            return new TeamResponseDto();
+        }
+    }
+
+    public async Task SaveTeamAsync(TeamResponseDto dto)
+    {
+        try
+        {
+            // Simple approach: replace everything with the DTO contents
+            using var tx = await _db.Database.BeginTransactionAsync();
+
+            // Remove existing data
+            var existingMembers = _db.TeamMembers.AsQueryable();
+            var existingCats = _db.TeamCategories.Include(c => c.Members).ToList();
+            if (existingMembers.Any()) _db.TeamMembers.RemoveRange(existingMembers);
+            if (existingCats.Any()) _db.TeamCategories.RemoveRange(existingCats);
+            await _db.SaveChangesAsync();
+
+            // Insert new
+            foreach (var cat in dto.Categories)
+            {
+                var entityCat = new TeamCategory { Id = cat.Id ?? Guid.NewGuid().ToString(), Name = cat.Name };
+                foreach (var mem in cat.Members)
+                {
+                    entityCat.Members.Add(new TeamMember
+                    {
+                        Id = mem.Id ?? Guid.NewGuid().ToString(),
+                        MinecraftName = mem.MinecraftName,
+                        Role = mem.Role,
+                        SkinUrl = mem.SkinUrl,
+                        TeamCategoryId = entityCat.Id
+                    });
+                }
+                _db.TeamCategories.Add(entityCat);
             }
 
-            var json = System.IO.File.ReadAllText(TeamFile);
-            var data = JsonSerializer.Deserialize<TeamResponseDto>(json) ?? new TeamResponseDto();
-            return Task.FromResult(data);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error reading team data");
-            return Task.FromResult(new TeamResponseDto());
-        }
-    }
+            await _db.SaveChangesAsync();
+            await tx.CommitAsync();
 
-    public Task SaveTeamAsync(TeamResponseDto dto)
-    {
-        try
-        {
-            var json = JsonSerializer.Serialize(dto, new JsonSerializerOptions { WriteIndented = true });
-            System.IO.File.WriteAllText(TeamFile, json);
+            // NOTE: we intentionally do NOT write back to team.json; persistence is DB-only now.
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error saving team data");
+            _logger.LogError(ex, "Error saving team data to DB");
             throw;
         }
-
-        return Task.CompletedTask;
     }
 }
