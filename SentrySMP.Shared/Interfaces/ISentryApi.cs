@@ -137,11 +137,9 @@ public interface ISentryApi
     [Get("/api/images")]
     Task<IEnumerable<SentrySMP.Shared.DTOs.ImageInfoDto>> GetImagesAsync();
 
-    [Post("/api/images/sync")]
-    Task<SentrySMP.Shared.DTOs.ImageSyncResultDto> SyncImagesAsync([Body] IEnumerable<string> fileNames);
-
-    [Post("/api/images/check-remote")]
-    Task<IEnumerable<string>> CheckRemoteAsync([Body] IEnumerable<string> fileNames);
+    // Download a single remote image into the server's uploads/keys folder
+    [Post("/api/images/download/{fileName}")]
+    Task<SentrySMP.Shared.DTOs.ImageSyncResultDto> DownloadImageAsync(string fileName, [Query] string? remoteBase = null);
 
     // Team endpoints
     [Get("/api/team")]

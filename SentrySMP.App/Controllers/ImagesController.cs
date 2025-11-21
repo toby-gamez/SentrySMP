@@ -31,35 +31,28 @@ public class ImagesController : ControllerBase
         return Ok(items);
     }
 
-    [HttpGet("{fileName}")]
-    public IActionResult GetImage(string fileName)
+    [HttpPost("download/{fileName}")]
+    public async Task<IActionResult> DownloadImage(string fileName, [FromQuery] string? remoteBase)
     {
         if (string.IsNullOrWhiteSpace(fileName)) return BadRequest("fileName required");
         var safeName = Path.GetFileName(fileName);
-        var webRoot = _env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-        var uploads = Path.Combine(webRoot, "uploads", "keys");
-        var path = Path.Combine(uploads, safeName);
-        if (!System.IO.File.Exists(path)) return NotFound();
-        var contentType = GetContentTypeByExtension(Path.GetExtension(safeName));
-        var bytes = System.IO.File.ReadAllBytes(path);
-        return File(bytes, contentType);
-    }
-
-    [HttpPost("sync")]
-    public async Task<IActionResult> SyncImages([FromBody] List<string>? fileNames, [FromQuery] string? remoteBase)
-    {
-        if (fileNames == null || fileNames.Count == 0) return BadRequest("Provide a JSON array of file names in the request body.");
-        var dto = await _imageService.SyncImagesAsync(fileNames, remoteBase);
+        var dto = await _imageService.SyncImagesAsync(new[] { safeName }, remoteBase);
         return Ok(dto);
     }
-    
-    [HttpPost("check-remote")]
-    public async Task<IActionResult> CheckRemote([FromBody] List<string>? fileNames, [FromQuery] string? remoteBase)
+
+    public class DownloadUrlRequest
     {
-        if (fileNames == null || fileNames.Count == 0) return BadRequest("Provide a JSON array of file names in the request body.");
-        var found = await _imageService.CheckRemoteExistsAsync(fileNames, remoteBase);
-        return Ok(found);
+        public string Url { get; set; } = string.Empty;
     }
+
+    [HttpPost("download-by-url")]
+    public async Task<IActionResult> DownloadByUrl([FromBody] DownloadUrlRequest req)
+    {
+        if (req == null || string.IsNullOrWhiteSpace(req.Url)) return BadRequest("url required");
+        var dto = await _imageService.DownloadByUrlAsync(req.Url);
+        return Ok(dto);
+    }
+
 
     private static string GetContentTypeByExtension(string ext)
     {

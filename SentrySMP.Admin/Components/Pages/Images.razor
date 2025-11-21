@@ -1,204 +1,295 @@
 @page "/images"
 @rendermode InteractiveServer
 @using SentrySMP.Shared.DTOs
+@using System.Net.Http.Json
 @inject ISentryApi Api
+@inject HttpClient Http
 @inject ILogger<Images> Logger
 
-<h3>Images</h3>
+<PageTitle>Images - SentrySMP Admin</PageTitle>
 
-<div class="mb-3">
-    <button class="btn btn-sm btn-primary me-2" @onclick="Refresh">Refresh</button>
-    <button class="btn btn-sm btn-outline-secondary me-2" @onclick="SelectAll">Select all</button>
-    <button class="btn btn-sm btn-outline-secondary me-2" @onclick="DeselectAll">Deselect all</button>
-    <button class="btn btn-sm btn-success" @onclick="SyncSelected" disabled="@(!HasSelection)">Download selected missing</button>
-</div>
-
-<div class="mb-3">
-    <label class="form-label">Remote file names (one per line)</label>
-    <textarea class="form-control mb-2" rows="5" @bind="remoteNamesText"></textarea>
-    <div>
-        <button class="btn btn-sm btn-secondary me-2" @onclick="CheckRemote">Check remote</button>
-        <button class="btn btn-sm btn-outline-primary" @onclick="() => { remoteNamesText = string.Empty; remoteFound = Array.Empty<string>(); }">Clear</button>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Images</h3>
+        <div>
+            <button class="btn btn-sm btn-primary me-2" @onclick="Refresh">Refresh</button>
+        </div>
     </div>
-</div>
 
-@if (isLoading)
-{
-    <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
-}
-else if (items == null || !items.Any())
-{
-    <div class="alert alert-info">No images found in uploads/keys</div>
-}
-else
-{
-    <div class="row">
-        <div class="col-md-6">
-            <h5>Local files</h5>
-            <table class="table table-sm table-striped">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Preview</th>
-                        <th>File</th>
-                        <th>Size</th>
-                        <th>Last modified</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var it in items)
+    <div class="mb-3">
+        <p class="text-muted">This page lists local images and attempts to fetch the remote image list from <code>https://www.sentrysmp.eu/api/Images</code>. Thumbnails are loaded directly from <code>https://www.sentrysmp.eu/uploads/keys/...</code> when available (normal GET), otherwise the local file under <code>/uploads/keys/</code> is used.</p>
+    </div>
+
+    @if (loading)
+    {
+        <div class="d-flex justify-content-center py-5">
+            <div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                <h5>Remote vs Local images</h5>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-sm">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width:80px">Preview</th>
+                                <th style="width:120px">Exists Remote</th>
+                                <th style="width:120px">Exists Local</th>
+                                <th>File name</th>
+                                <th style="width:260px">Info</th>
+                                <th style="width:120px">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (allNames != null && allNames.Any())
+                            {
+                                @foreach (var name in allNames)
+                                {
+                                    var local = localDict.TryGetValue(name, out var l) ? l : null;
+                                    var remote = remoteDict.TryGetValue(name, out var r) ? r : null;
+                                    <tr>
+                                        @* Preview: show remote GET image when available, otherwise local *@
+                                        <td class="align-middle">
+                                            @{
+                                                string? src = null;
+                                                if (remote != null && !string.IsNullOrWhiteSpace(remote.Url))
+                                                {
+                                                    src = remote.Url.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? remote.Url : $"https://www.sentrysmp.eu{remote.Url}";
+                                                }
+                                                else if (local != null && !string.IsNullOrWhiteSpace(local.Url))
+                                                {
+                                                    src = local.Url;
+                                                }
+                                            }
+                                            @if (!string.IsNullOrEmpty(src))
+                                            {
+                                                <img src="@src" style="max-width:72px;max-height:48px;object-fit:contain;border:1px solid #eee;padding:2px;background:#fff;" alt="@name" />
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">—</span>
+                                            }
+                                        </td>
+                                        <td class="align-middle">@((remote != null) ? (MarkupString)"<span class=\"badge bg-success\">✔</span>" : (MarkupString)"<span class=\"text-muted\">—</span>")</td>
+                                        <td class="align-middle">@((local != null) ? (MarkupString)"<span class=\"badge bg-info\">✔</span>" : (MarkupString)"<span class=\"text-muted\">—</span>")</td>
+                                        <td class="text-break align-middle">@name</td>
+                                        <td class="align-middle small text-muted">
+                                            <div>
+                                                @* Compact info: Remote and Local combined into single small block *@
+                                                <span class="d-block"><strong>R:</strong> @(remote != null ? (remote.Size > 0 ? FormatBytes(remote.Size) : "-") : "-") <span class="text-muted">•</span> @(remote != null ? (remote.LastModified?.UtcDateTime.ToString("yyyy-MM-dd") ?? "-") : "-")</span>
+                                                <span class="d-block"><strong>L:</strong> @(local != null ? (local.Size > 0 ? FormatBytes(local.Size) : "-") : "-") <span class="text-muted">•</span> @(local != null ? (local.LastModified?.UtcDateTime.ToString("yyyy-MM-dd") ?? "-") : "-")</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            @if (remote != null && local == null && !string.IsNullOrEmpty(remote.Url))
+                                            {
+                                                string downloadUrl = remote.Url.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? remote.Url : $"https://www.sentrysmp.eu{remote.Url}";
+                                                <button class="btn btn-sm btn-primary" @onclick="() => DownloadByUrl(downloadUrl)" disabled="@loading">Download</button>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">-</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">No images found</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @if (lastSyncResult != null)
+        {
+            <div class="mt-3">
+                <h6>Last download result</h6>
+                <div>
+                    <strong>Downloaded:</strong>
+                    @if (lastSyncResult.DownloadedWithLocalPath.Any())
                     {
-                        <tr>
-                            <td>
-                                <input type="checkbox" checked="@IsSelected(it.FileName)" @onchange="(ChangeEventArgs e) => OnSelectionChanged(it.FileName, e.Value as bool? ?? false)" />
-                            </td>
-                            <td style="width:120px;">
-                                <img src="@it.Url" alt="@it.FileName" style="max-height:80px; max-width:100px;" />
-                            </td>
-                            <td>@it.FileName</td>
-                            <td>@(it.Size / 1024) KB</td>
-                            <td>@(it.LastModified?.ToString("yyyy-MM-dd HH:mm"))</td>
-                        </tr>
+                        <ul>
+                            @foreach (var d in lastSyncResult.DownloadedWithLocalPath)
+                            {
+                                <li>@d.FileName — <span class="text-break">@d.LocalPath</span></li>
+                            }
+                        </ul>
                     }
-                </tbody>
-            </table>
-        </div>
-
-        <div class="col-md-6">
-            <h5>Remote files (from input)</h5>
-            <table class="table table-sm table-striped">
-                <thead>
-                    <tr>
-                        <th>Exists Remote</th>
-                        <th>File</th>
-                        <th>Exists Locally</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var name in (remoteNamesText ?? string.Empty).Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)))
+                    else
                     {
-                        var existsRemote = remoteFound.Contains(name);
-                        var existsLocal = items.Any(i => i.FileName == name);
-                        <tr>
-                            <td>@(existsRemote ? "✔" : "—")</td>
-                            <td>@name</td>
-                            <td>@(existsLocal ? "✔" : "—")</td>
-                        </tr>
+                        <span>@string.Join(", ", lastSyncResult.Downloaded)</span>
                     }
-                </tbody>
-            </table>
-        </div>
-    </div>
-}
+                </div>
 
-@if (syncResult != null)
-{
-    <div class="mt-3">
-        <h5>Sync result</h5>
-        <div><strong>Downloaded:</strong> @string.Join(", ", syncResult.Downloaded)</div>
-        <div><strong>Skipped:</strong> @string.Join(", ", syncResult.Skipped)</div>
-        <div><strong>Failed:</strong>
-            <ul>
-                @foreach (var f in syncResult.Failed)
-                {
-                    <li>@f.FileName (@(f.StatusCode?.ToString() ?? f.Error ?? "error"))</li>
-                }
-            </ul>
-        </div>
-    </div>
-}
+                <div>
+                    <strong>Skipped (already existed):</strong>
+                    @if (lastSyncResult.SkippedWithLocalPath.Any())
+                    {
+                        <ul>
+                            @foreach (var s in lastSyncResult.SkippedWithLocalPath)
+                            {
+                                <li>@s.FileName — <span class="text-break">@s.LocalPath</span></li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span>@string.Join(", ", lastSyncResult.Skipped)</span>
+                    }
+                </div>
 
+                <div><strong>Failed:</strong>
+                    @if (lastSyncResult.Failed.Any())
+                    {
+                        <ul>
+                            @foreach (var f in lastSyncResult.Failed)
+                            {
+                                <li>@f.FileName (@(f.StatusCode?.ToString() ?? f.Error ?? "error"))</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span>-</span>
+                    }
+                </div>
+            </div>
+        }
+}
+</div>
 @code {
-    private IEnumerable<ImageInfoDto>? items;
-    private Dictionary<string, bool> selection = new();
-    private bool isLoading = false;
-    private ImageSyncResultDto? syncResult;
-    private string remoteNamesText = string.Empty;
-    private IEnumerable<string> remoteFound = Array.Empty<string>();
+    private IEnumerable<ImageInfoDto>? localItems;
+    private IEnumerable<ImageInfoDto>? remoteItems;
+    private List<string> allNames = new();
+    private Dictionary<string, ImageInfoDto> localDict = new(StringComparer.OrdinalIgnoreCase);
+    private Dictionary<string, ImageInfoDto> remoteDict = new(StringComparer.OrdinalIgnoreCase);
+    private bool loading = false;
+    private string? errorMessage;
+    private bool isInitialized = false;
+    private SentrySMP.Shared.DTOs.ImageSyncResultDto? lastSyncResult;
 
     protected override async Task OnInitializedAsync()
     {
-        await Refresh();
-    }
-
-    private bool HasSelection => selection.Values.Any(v => v);
-
-    private bool IsSelected(string fileName) => selection.TryGetValue(fileName, out var v) && v;
-
-    private void OnSelectionChanged(string fileName, bool value)
-    {
-        if (selection.ContainsKey(fileName)) selection[fileName] = value;
-        else selection[fileName] = value;
-        StateHasChanged();
+        if (!isInitialized)
+        {
+            isInitialized = true;
+            await Refresh();
+        }
     }
 
     private async Task Refresh()
     {
-        isLoading = true;
+        loading = true;
+        errorMessage = null;
         try
         {
-            items = (await Api.GetImagesAsync()).ToList();
-            selection = items.ToDictionary(i => i.FileName, i => false);
+            localItems = (await Api.GetImagesAsync()).ToList();
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Error fetching images");
+            errorMessage = "Error fetching local images: " + ex.Message;
+            Logger.LogError(ex, "Error fetching local images");
+            localItems = Enumerable.Empty<ImageInfoDto>();
+        }
+
+        try
+        {
+            // fetch remote list from the external site
+            remoteItems = await Http.GetFromJsonAsync<IEnumerable<ImageInfoDto>>("https://www.sentrysmp.eu/api/Images");
+            remoteItems ??= Enumerable.Empty<ImageInfoDto>();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogWarning(ex, "Unable to fetch remote image list from https://www.sentrysmp.eu/api/Images");
+            remoteItems = Enumerable.Empty<ImageInfoDto>();
+        }
+
+        localDict = localItems.ToDictionary(i => i.FileName, StringComparer.OrdinalIgnoreCase);
+        remoteDict = remoteItems.ToDictionary(i => i.FileName, StringComparer.OrdinalIgnoreCase);
+
+        var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var n in localDict.Keys) set.Add(n);
+        foreach (var n in remoteDict.Keys) set.Add(n);
+        allNames = set.OrderBy(n => n, StringComparer.OrdinalIgnoreCase).ToList();
+
+        loading = false;
+    }
+
+    private async Task Download(string name)
+    {
+        loading = true;
+        errorMessage = null;
+            try
+            {
+                // Ensure we pass a full remote base so the server downloads from the correct host.
+                // The remote ImageInfo.Url from the production site is relative (e.g. "/uploads/keys/x.png"),
+                // so we provide the absolute remote base here.
+                var remoteBase = "https://www.sentrysmp.eu/uploads/keys/";
+            var result = await Api.DownloadImageAsync(name, remoteBase);
+            lastSyncResult = result;
+            // Refresh lists after download
+            await Refresh();
+            }
+        catch (Exception ex)
+        {
+            errorMessage = "Error downloading image: " + ex.Message;
+            Logger.LogError(ex, "Error downloading image {Name}", name);
         }
         finally
         {
-            isLoading = false;
-            StateHasChanged();
+            loading = false;
         }
     }
 
-    private void SelectAll()
-    {
-        var keys = selection.Keys.ToList();
-        foreach (var k in keys) selection[k] = true;
-    }
-
-    private void DeselectAll()
-    {
-        var keys = selection.Keys.ToList();
-        foreach (var k in keys) selection[k] = false;
-    }
-
-    private async Task SyncSelected()
-    {
-        var toSync = selection.Where(kv => kv.Value).Select(kv => kv.Key).ToList();
-        if (!toSync.Any()) return;
-
-        try
+        private async Task DownloadByUrl(string url)
         {
-            syncResult = await Api.SyncImagesAsync(toSync);
-            // after sync, refresh list to show newly downloaded files
-            await Refresh();
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Error syncing images");
-        }
-    }
-
-    private async Task CheckRemote()
-    {
-        var lines = (remoteNamesText ?? string.Empty).Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
-            .Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList();
-        if (!lines.Any()) return;
-        try
-        {
-            var found = await Api.CheckRemoteAsync(lines);
-            remoteFound = found.ToList();
-            // ensure selection dictionary contains remote-only entries too
-            foreach (var n in lines)
+            loading = true;
+            errorMessage = null;
+            try
             {
-                if (!selection.ContainsKey(n)) selection[n] = false;
+                var resp = await Http.PostAsJsonAsync("/api/images/download-by-url", new { Url = url });
+                if (resp.IsSuccessStatusCode)
+                {
+                    lastSyncResult = await resp.Content.ReadFromJsonAsync<SentrySMP.Shared.DTOs.ImageSyncResultDto>();
+                    await Refresh();
+                }
+                else
+                {
+                    errorMessage = $"Download failed: {resp.StatusCode}";
+                }
             }
-            StateHasChanged();
+            catch (Exception ex)
+            {
+                errorMessage = "Error downloading image: " + ex.Message;
+                Logger.LogError(ex, "Error downloading image by url {Url}", url);
+            }
+            finally
+            {
+                loading = false;
+            }
         }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Error checking remote images");
-        }
+
+
+    private static string FormatBytes(long bytes)
+    {
+        if (bytes < 1024) return bytes + " B";
+        double kb = bytes / 1024d;
+        if (kb < 1024) return kb.ToString("0.#") + " KB";
+        double mb = kb / 1024d;
+        if (mb < 1024) return mb.ToString("0.#") + " MB";
+        double gb = mb / 1024d;
+        return gb.ToString("0.#") + " GB";
     }
 }
