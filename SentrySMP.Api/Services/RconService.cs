@@ -8,6 +8,7 @@ using SentrySMP.Shared.DTOs;
 using SentrySMP.Shared.Interfaces;
 using System.Buffers.Binary;
 using System.Net.Sockets;
+using CoreRCON;
 
 namespace SentrySMP.Api.Services
 {
@@ -31,6 +32,17 @@ namespace SentrySMP.Api.Services
                 _logger.LogDebug("No products provided for RCON execution.");
                 return new SentrySMP.Shared.DTOs.RconExecutionResult { AllSucceeded = true };
             }
+
+            try
+            {
+                _logger.LogInformation("Executing RCON for {Count} product(s) for user '{User}'", productsWithQuantity.Count, username ?? string.Empty);
+                foreach (var p in productsWithQuantity)
+                {
+                    var prod = p.Product;
+                    _logger.LogInformation(" - Product: Id={Id}, Name={Name}, Type={Type}, Qty={Qty}, ServerId={ServerId}", prod?.Id, prod?.Name, prod?.Type, p.Quantity, prod?.Server?.Id);
+                }
+            }
+            catch { }
 
             List<Domain.Entities.Command> allCommands;
             try
@@ -86,11 +98,15 @@ namespace SentrySMP.Api.Services
                     var productId = product.Id;
 
                     var commands = allCommands.Where(c => string.Equals(c.Type, productType, StringComparison.OrdinalIgnoreCase) && c.TypeId == productId).ToList();
-                    if (commands == null || commands.Count == 0)
-                    {
-                        _logger.LogDebug("No commands defined for product {Type}/{Id}", productType, productId);
-                        continue;
-                    }
+                        if (commands == null || commands.Count == 0)
+                        {
+                            _logger.LogWarning("No commands defined for product {Type}/{Id}", productType, productId);
+                            continue;
+                        }
+                        else
+                        {
+                            _logger.LogInformation("Found {Count} RCON command(s) for product {Type}/{Id}", commands.Count, productType, productId);
+                        }
 
                     // mark that at least one product had commands defined
                     anyCommandsDefined = true;
@@ -140,10 +156,33 @@ namespace SentrySMP.Api.Services
                                 }
 
                                 _logger.LogInformation("Connecting to RCON {Ip}:{Port} (server: {Name})", ip, srv.RCONPort, srv.Name);
-                                // Use a lightweight internal RCON implementation to avoid depending on package API changes
-                                using var rcon = await RconClient.ConnectAndAuthAsync(ip, srv.RCONPort, srv.RCONPassword, _logger);
-                                foreach (var cmd in commands)
+                                // Use CoreRCON library for robust RCON communication
+                                var rcon = new RCON(ip, (ushort)srv.RCONPort, srv.RCONPassword);
+                                try
                                 {
+                                    var connectTask = rcon.ConnectAsync();
+                                    var connectTimeoutMs = 5000;
+                                    var completedConnect = await Task.WhenAny(connectTask, Task.Delay(connectTimeoutMs));
+                                    if (completedConnect != connectTask)
+                                    {
+                                        _logger.LogWarning("RCON connect to {Server} timed out after {Timeout}ms, disposing client", srv.Name, connectTimeoutMs);
+                                        try { rcon.Dispose(); } catch { }
+                                        throw new TimeoutException($"RCON connect timed out after {connectTimeoutMs}ms");
+                                    }
+                                    // propagate any exception
+                                    await connectTask;
+                                    _logger.LogInformation("Connected to RCON server {Server}", srv.Name);
+                                }
+                                catch (Exception exConnInner)
+                                {
+                                    _logger.LogWarning(exConnInner, "RCON connect failed for server {Server}: {Message}", srv.Name, exConnInner.Message);
+                                    // rethrow to be handled by outer catch which records per-command failures
+                                    throw;
+                                }
+                                try
+                                {
+                                    foreach (var cmd in commands)
+                                    {
                                     // Prepare template and replaced command text
                                     var template = cmd.CommandText ?? string.Empty;
                                     var text = template;
@@ -172,42 +211,42 @@ namespace SentrySMP.Api.Services
                                         try
                                         {
                                             _logger.LogInformation("Sending RCON to {Server} (attempt {Attempt}): {Cmd}", srv.Name, attempt, text);
-                                            var resp = await rcon.SendCommandAsync(text);
-                                            lastResp = resp;
-                                            _logger.LogDebug("RCON response from {Server} (attempt {Attempt}): {Resp}", srv.Name, attempt, resp);
-
-                                            // Acceptance checks
-                                            var respLower = (resp ?? string.Empty).ToLowerInvariant();
-                                            var replacedLower = (text ?? string.Empty).ToLowerInvariant();
-                                            var sanitizedLower = (sanitizedUsername ?? string.Empty).ToLowerInvariant();
-
-                                            if (!string.IsNullOrEmpty(respLower))
+                                            string? resp = null;
+                                            try
                                             {
-                                                if (!string.IsNullOrEmpty(replacedLower) && respLower.Contains(replacedLower))
+                                                var sendTask = rcon.SendCommandAsync(text);
+                                                var timeoutMs = 5000;
+                                                var completed = await Task.WhenAny(sendTask, Task.Delay(timeoutMs));
+                                                if (completed == sendTask)
                                                 {
-                                                    accepted = true;
+                                                    resp = await sendTask;
                                                 }
                                                 else
                                                 {
-                                                    var withoutName = replacedLower;
-                                                    if (!string.IsNullOrEmpty(sanitizedLower))
-                                                    {
-                                                        withoutName = withoutName.Replace(sanitizedLower, string.Empty).Replace("  ", " ").Trim();
-                                                    }
-
-                                                    if (!string.IsNullOrEmpty(withoutName) && respLower.Contains(withoutName))
-                                                    {
-                                                        accepted = true;
-                                                    }
-                                                    else
-                                                    {
-                                                        var keywords = new[] { "given", "gave", "added", "ok", "success", "granted", "received" };
-                                                        if (keywords.Any(k => respLower.Contains(k)))
-                                                        {
-                                                            accepted = true;
-                                                        }
-                                                    }
+                                                    lastException = new TimeoutException($"RCON command timed out after {timeoutMs}ms");
+                                                    _logger.LogWarning("RCON command to {Server} timed out after {Timeout}ms", srv.Name, timeoutMs);
                                                 }
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                lastException = ex;
+                                                _logger.LogError(ex, "Exception while sending RCON command to {Server}", srv.Name);
+                                            }
+                                            lastResp = resp;
+                                            _logger.LogDebug("RCON response from {Server} (attempt {Attempt}): {Resp}", srv.Name, attempt, resp);
+
+                                            // Simpler acceptance logic:
+                                            // - If response contains known error keywords -> treat as failure
+                                            // - Otherwise treat as success (many servers return empty body on success)
+                                            var respLower = (resp ?? string.Empty).ToLowerInvariant();
+                                            var errorKeywords = new[] { "unknown command", "error", "failed", "not found", "no such", "denied", "forbidden", "not permitted", "bad", "no player", "player not found", "not online" };
+                                            if (errorKeywords.Any(k => respLower.Contains(k)))
+                                            {
+                                                accepted = false;
+                                            }
+                                            else
+                                            {
+                                                accepted = true;
                                             }
 
                                             // Record response/debug
@@ -273,6 +312,11 @@ namespace SentrySMP.Api.Services
                                         final.ErrorMessage = final.ErrorMessage ?? (lastException?.Message ?? "No response from server");
                                         final.Debug.Add($"Final result after {maxAttempts} attempts; LastException:{lastException}; LastResponse:{lastResp}");
                                     }
+                                    }
+                                }
+                                finally
+                                {
+                                    try { rcon.Dispose(); } catch { }
                                 }
                             }
                             catch (Exception exConn)
@@ -378,6 +422,11 @@ namespace SentrySMP.Api.Services
                 result.AllSucceeded = result.CommandResults.All(r => r.Succeeded);
             }
 
+            try
+            {
+                _logger.LogInformation("Finished RCON execution. AnyCommandsDefined={AnyCommands}, CommandResults={Count}", anyCommandsDefined, result.CommandResults?.Count ?? 0);
+            }
+            catch { }
             return result;
         }
 

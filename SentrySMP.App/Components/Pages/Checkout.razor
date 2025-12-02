@@ -14,6 +14,8 @@
 @inject SentrySMP.Shared.Interfaces.ITransactionsService TransactionsService
 @inject SentrySMP.App.Authentication.UserService UserService
 @inject SentrySMP.Shared.Interfaces.IRconService RconService
+@inject Microsoft.Extensions.Logging.ILoggerFactory LoggerFactory
+@inject SentrySMP.App.Services.IBackgroundTaskQueue BackgroundQueue
 @rendermode InteractiveServer
 <PageTitle>Checkout - SentrySMP</PageTitle>
 
@@ -22,61 +24,52 @@
 </div>
     @if (_paymentSucceeded)
     {
-        <div style="font-size: 5rem; text-align:center;">
+        <div style="font-size: 5rem; text-align:center; color:#44ae44;">
             <i class="bi bi-check-circle"></i> 
         </div>
         <div class="alert alert-success mt-4">
-            @(_successMessage ?? "Payment happened successfully. Your cart was cleared.") <a href="/">Continue shopping</a>
+
+            <div class="info">
+                @(_successMessage ?? "Payment successful.")
+            </div>
+            @if (_wasRedirectStatusSuccess && string.IsNullOrWhiteSpace(_rconStatusMessage) && string.IsNullOrWhiteSpace(_failureMessage))
+            {
+                <p><em>If the webpage keeps reloading, <u>it wants to send you your purchased items</u>.</em>If the problem persists, please contact us.</p>
+            }
+            <button @onclick="ContinueShopping">Continue shopping</button>
         </div>
 
         @if (_rconResult != null)
         {
-            <div class="rcon-result @( _rconResult.AllSucceeded ? "rcon-success" : "rcon-warning")">
-                <div class="rcon-header">
-                    <i class="bi bi-hdd-network rcon-status-icon"></i>
-                    <div>
-                        <strong>Server commands</strong>
-                        <div class="rcon-summary">@_rconStatusMessage</div>
-                    </div>
-                </div>
-                <ul class="rcon-commands">
-                    @foreach (var cr in _rconResult.CommandResults)
-                    {
-                        <li class="rcon-command @(cr.Succeeded ? "success" : "failed")">
-                            <div class="d-flex align-items-start justify-content-between">
-                                <div>
-                                    <div class="command-text">@cr.CommandText</div>
-                                    @if (!string.IsNullOrEmpty(cr.ErrorMessage))
-                                    {
-                                        <div class="command-error text-danger">@cr.ErrorMessage</div>
-                                    }
-                                </div>
-                                <div class="ms-3 text-end">
-                                    <span class="badge @(cr.Succeeded ? "bg-success" : "bg-danger")">@(cr.Succeeded ? "OK" : "FAILED")</span>
-                                </div>
-                            </div>
-
-                            @if (!string.IsNullOrEmpty(cr.Response))
+                <h2>Status</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Command</th>
+                                <th class="text-center">Status</th>
+                                <th>Response</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cr in _rconResult.CommandResults)
                             {
-                                <pre class="rcon-response mt-2">@cr.Response</pre>
-                            }
-
-                            @if (cr.Debug != null && cr.Debug.Count > 0)
-                            {
-                                <details class="mt-2">
-                                    <summary class="small text-muted">Show debug details (@cr.Debug.Count)</summary>
-                                    <ul class="mt-2">
-                                        @foreach (var d in cr.Debug)
+                                <tr class="@(cr.Succeeded ? "table-success" : "table-danger")">
+                                    <td style="min-width:240px;">@cr.CommandText</td>
+                                    <td class="text-center" style="color: @(cr.Succeeded ? "#44ae44" : "#dc3545")">@(cr.Succeeded ? "OK" : "FAILED")</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(cr.Response))
                                         {
-                                            <li><code>@d</code></li>
+                                            <div>
+                                                <span title="@CleanSingleLine(cr.Response)" style="display:inline-block; max-width:420px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@TruncateCompact(cr.Response, 80)</span>
+                                            </div>
                                         }
-                                    </ul>
-                                </details>
+                                    </td>
+                                </tr>
                             }
-                        </li>
-                    }
-                </ul>
-            </div>
+                        </tbody>
+                    </table>
+                </div>
         }
 
         @if (_lastOrderItems != null && _lastOrderItems.Count > 0)
@@ -112,7 +105,7 @@
     else if (CartState.CartItems.Count == 0)
     {
         <div class="alert alert-info mt-4">
-            <i class="bi bi-info-circle"></i> Your cart is empty. <a href="/" class="ms-1">Go to store</a>
+            <i class="bi bi-info-circle"></i> Your cart is empty. <button @onclick="ContinueShopping">Continue shopping</button>
         </div>
     }
     else
@@ -207,57 +200,48 @@
                 @if (_paymentSucceeded)
                 {
                     <div class="alert alert-success mt-3">
-                        <i class="bi bi-check-circle"></i> @(_successMessage ?? "Payment simulated successfully. Your cart was cleared.") <a href="/">Continue shopping</a>
+                        <div style="font-size: 5rem; text-align:center; color:#44ae44;">
+                            <i class="bi bi-check-circle"></i> 
+                        </div>
+                        <div class="info">
+                            <p><em>If the webpage keeps reloading, <u>it wants to send you your purchased items</u>.</em>If the problem persists, please contact us.</p>
+                            @(_successMessage ?? "Payment successful.")
+                        </div>
+                        <button @onclick="ContinueShopping">Continue shopping</button>
                     </div>
+
 
                     @if (_rconResult != null)
                     {
-                        <div class="rcon-result @( _rconResult.AllSucceeded ? "rcon-success" : "rcon-warning")">
-                            <div class="rcon-header">
-                                <i class="bi bi-hdd-network rcon-status-icon"></i>
-                                <div>
-                                    <strong>Server commands</strong>
-                                    <div class="rcon-summary">@_rconStatusMessage</div>
-                                </div>
-                            </div>
-                            <ul class="rcon-commands">
-                                @foreach (var cr in _rconResult.CommandResults)
-                                {
-                                    <li class="rcon-command @(cr.Succeeded ? "success" : "failed")">
-                                        <div class="d-flex align-items-start justify-content-between">
-                                            <div>
-                                                <div class="command-text">@cr.CommandText</div>
-                                                @if (!string.IsNullOrEmpty(cr.ErrorMessage))
-                                                {
-                                                    <div class="command-error text-danger">@cr.ErrorMessage</div>
-                                                }
-                                            </div>
-                                            <div class="ms-3 text-end">
-                                                <span class="badge @(cr.Succeeded ? "bg-success" : "bg-danger")">@(cr.Succeeded ? "OK" : "FAILED")</span>
-                                            </div>
-                                        </div>
-
-                                        @if (!string.IsNullOrEmpty(cr.Response))
+                            <h2>Status</h2>
+                            <div class="table-wrapper">
+                                <table class="">
+                                    <thead>
+                                        <tr>
+                                            <th>Command</th>
+                                            <th class="text-center">Status</th>
+                                            <th>Response</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var cr in _rconResult.CommandResults)
                                         {
-                                            <pre class="rcon-response mt-2">@cr.Response</pre>
-                                        }
-
-                                        @if (cr.Debug != null && cr.Debug.Count > 0)
-                                        {
-                                            <details class="mt-2">
-                                                <summary class="small text-muted">Show debug details (@cr.Debug.Count)</summary>
-                                                <ul class="mt-2">
-                                                    @foreach (var d in cr.Debug)
+                                            <tr class="@(cr.Succeeded ? "table-success" : "table-danger")">
+                                                <td style="min-width:240px;">@cr.CommandText</td>
+                                                <td class="text-center" style="color: @(cr.Succeeded ? "#44ae44" : "#dc3545")">@(cr.Succeeded ? "OK" : "FAILED")</td>
+                                                <td>
+                                                    @if (!string.IsNullOrEmpty(cr.Response))
                                                     {
-                                                        <li><code>@d</code></li>
+                                                        <div>
+                                                            <span title="@CleanSingleLine(cr.Response)" style="display:inline-block; max-width:420px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@TruncateCompact(cr.Response, 80)</span>
+                                                        </div>
                                                     }
-                                                </ul>
-                                            </details>
+                                                </td>
+                                            </tr>
                                         }
-                                    </li>
-                                }
-                            </ul>
-                        </div>
+                                    </tbody>
+                                </table>
+                                </div>
                     }
 
                     @if (_lastOrderItems != null && _lastOrderItems.Count > 0)
@@ -298,11 +282,11 @@
                         <div class="mt-2">
                             @if (_failureMessage.Contains("cancelled"))
                             {
-                                <a class="btn btn-sm btn-primary" href="/checkout">Try payment again</a>
+                                <button class="btn btn-sm btn-primary" @onclick="ProceedToPayment">Try payment again</button>
                             }
                             else
                             {
-                                <a class="btn btn-sm btn-primary" href="/cart">Try again</a>
+                                <button @onclick="ContinueShopping">Continue shopping</button>
                             }
                         </div>
                     </div>
@@ -347,6 +331,12 @@
         {
             _username = string.Empty;
         }
+        // create a logger instance for this component
+        try
+        {
+            _logger = LoggerFactory?.CreateLogger("Checkout");
+        }
+        catch { }
     }
 
     public void Dispose()
@@ -372,6 +362,10 @@
     private void BackToCart()
     {
         NavigationManager.NavigateTo("/cart");
+    }
+    private void ContinueShopping()
+    {
+        NavigationManager.NavigateTo("/");
     }
 
     private async Task ProceedToPayment()
@@ -471,8 +465,8 @@
         }
         catch { }
 
-        // Simulate successful payment and clear cart.
-        await CartState.ClearCartAsync();
+        // Simulate successful payment. Defer clearing the cart until RCON succeeds.
+        _clearCartOnRconSuccess = true;
         _showPaymentCard = false;
         _paymentSucceeded = true;
         _successMessage = "Payment received — thank you! Your payment has been received.";
@@ -506,11 +500,17 @@
     private SentrySMP.Shared.DTOs.RconExecutionResult? _rconResult;
     private string? _rconStatusMessage;
     private string? _username;
+    private Microsoft.Extensions.Logging.ILogger? _logger;
     // Tracks whether the component has finished its first render on the server
     private bool _hasRendered = false;
     // If a transaction is saved before first render completes, defer RCON execution until after render
     private List<ProductQuantityDto>? _pendingRconExecProducts;
     private string? _pendingRconUsername;
+    private bool _clearCartOnRconSuccess = false;
+    // Tracks whether the last persisted transaction had amount == 0.00
+    private bool _lastTransactionAmountIsZero = false;
+    // Set when the page was loaded with ?status=success so we can show a special note
+    private bool _wasRedirectStatusSuccess = false;
 
     private void CancelPayment()
     {
@@ -537,15 +537,18 @@
     {
         try
         {
+            // Snapshot the items immediately to avoid races with clearing the cart later
+            var itemsSnapshot = (items ?? CartState.CartItems).Select(ci => new CartItem(ci.Key, ci.Quantity)).ToList();
+            try { if (_logger != null) _logger.LogInformation("SaveTransactionAsync START provider={Provider} providerTxId={Tx} amountParam={Amount} itemsSnapshotCount={Count} hasRendered={HasRendered}", provider, providerTxId, amount, itemsSnapshot.Count, _hasRendered); } catch { }
             // Ensure amount is filled from cart if missing
             var computedAmount = amount;
             if (string.IsNullOrWhiteSpace(computedAmount) || computedAmount == "0" || computedAmount == "0.00")
             {
-                var total = (items ?? CartState.CartItems).Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity);
+                var total = itemsSnapshot.Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity);
                 computedAmount = total.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+                try { if (_logger != null) _logger.LogInformation("SaveTransactionAsync computedAmount from itemsSnapshot = {ComputedAmount} (itemsCount={Count})", computedAmount, itemsSnapshot.Count); } catch { }
             }
-
-            var itemsForJson = (items ?? new List<CartItem>()).Select(i => new
+            var itemsForJson = itemsSnapshot.Select(i => new
             {
                 id = i.Key.Id,
                 name = i.Key.Name,
@@ -585,6 +588,19 @@
                 var tx = await TransactionsService.CreateTransactionAsync(req);
                         if (tx != null)
                     {
+                        // Remember whether the amount we saved was zero — used to avoid clearing cart
+                        try
+                        {
+                            if (decimal.TryParse(req.Amount, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var a))
+                            {
+                                _lastTransactionAmountIsZero = a == 0m;
+                            }
+                            else
+                            {
+                                _lastTransactionAmountIsZero = false;
+                            }
+                        }
+                        catch { _lastTransactionAmountIsZero = false; }
                         _lastTransactionId = tx.Id;
                             _successMessage = $"Payment received — thank you! (ID: {tx.Id})";
 
@@ -598,7 +614,7 @@
                             }
                             catch { user = string.Empty; }
 
-                            var execProducts = (items ?? CartState.CartItems).Select(ci => new ProductQuantityDto { Product = ci.Key, Quantity = ci.Quantity }).ToList();
+                            var execProducts = itemsSnapshot.Select(ci => new ProductQuantityDto { Product = ci.Key, Quantity = ci.Quantity }).ToList();
                             if (!_hasRendered)
                             {
                                 // Defer RCON execution until after the first render completes to ensure the component
@@ -608,11 +624,67 @@
                             }
                             else
                             {
-                                var rres = await RconService.ExecuteCommandsForProductsAsync(execProducts, user);
-                                _rconResult = rres;
-                                if (rres != null)
+                                try
                                 {
-                                    ProcessRconResult(rres);
+                                    _logger?.LogInformation("Enqueuing RCON job for tx {TxId} (products={Count})", _lastTransactionId, execProducts?.Count ?? 0);
+                                    BackgroundQueue.QueueBackgroundWorkItem(async token =>
+                                    {
+                                        try
+                                        {
+                                            _logger?.LogInformation("Background RCON job starting for tx {TxId}", _lastTransactionId);
+                                            var rres = await RconService.ExecuteCommandsForProductsAsync(execProducts, user);
+                                            await InvokeAsync(async () =>
+                                            {
+                                                _rconResult = rres;
+                                                if (rres != null) ProcessRconResult(rres);
+                                                StateHasChanged();
+                                                // If we were deferring cart clear until RCON succeeded, clear now on success
+                                                try
+                                                {
+                                                                                if (_clearCartOnRconSuccess && rres != null && rres.AllSucceeded)
+                                                                                {
+                                                                                    var isZero = await LastTransactionAmountIsZeroAsync();
+                                                                                    if (isZero)
+                                                                                    {
+                                                                                        _logger?.LogWarning("Not clearing cart for tx {TxId} because saved amount was zero; triggering full reload", _lastTransactionId);
+                                                                                        try
+                                                                                        {
+                                                                                            await JS.InvokeVoidAsync("location.reload", true);
+                                                                                        }
+                                                                                        catch (Exception exReload)
+                                                                                        {
+                                                                                            _logger?.LogWarning(exReload, "Failed to reload page after zero-amount tx {TxId}", _lastTransactionId);
+                                                                                        }
+                                                                                        _clearCartOnRconSuccess = false;
+                                                                                        StateHasChanged();
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        _logger?.LogInformation("RCON succeeded for tx {TxId}, clearing cart", _lastTransactionId);
+                                                                                        await CartState.ClearCartAsync();
+                                                                                        _clearCartOnRconSuccess = false;
+                                                                                        StateHasChanged();
+                                                                                    }
+                                                                                }
+                                                }
+                                                catch (Exception exClear)
+                                                {
+                                                    _logger?.LogWarning(exClear, "Failed to clear cart after successful RCON for tx {TxId}", _lastTransactionId);
+                                                }
+                                            });
+                                            _logger?.LogInformation("Background RCON job finished for tx {TxId}", _lastTransactionId);
+                                        }
+                                        catch (Exception exBackground)
+                                        {
+                                            _logger?.LogError(exBackground, "Background RCON job failed for tx {TxId}", _lastTransactionId);
+                                            try { await InvokeAsync(() => { _failureMessage = _failureMessage ?? $"Warning: failed to execute server commands: {exBackground.Message}"; StateHasChanged(); }); } catch { }
+                                        }
+                                    });
+                                }
+                                catch (Exception exQueue)
+                                {
+                                    _logger?.LogError(exQueue, "Failed to enqueue RCON job for tx {TxId}", _lastTransactionId);
+                                    _failureMessage = _failureMessage ?? $"Warning: failed to execute server commands: {exQueue.Message}";
                                 }
                             }
                         }
@@ -654,6 +726,7 @@
             {
                 if (status == "success")
                 {
+                    _wasRedirectStatusSuccess = true;
                     // Capture the items currently in the cart so we can render order details after clearing.
                     _lastOrderItems = CartState.CartItems.Select(ci => new CartItem(ci.Key, ci.Quantity)).ToList();
 
@@ -683,7 +756,27 @@
                     }
                     catch { }
 
-                    await CartState.ClearCartAsync();
+                    try { _logger?.LogInformation("Clearing cart after provider return provider={Provider} tx={TxId} itemsCount={Count}", providerName, _lastTransactionId, CartState.CartItems.Count); } catch { }
+                    {
+                        var isZero = await LastTransactionAmountIsZeroAsync();
+                        if (isZero)
+                        {
+                            try { _logger?.LogWarning("Not clearing cart after provider return for tx {TxId} because saved amount was zero; triggering full reload", _lastTransactionId); } catch { }
+                            try
+                            {
+                                await JS.InvokeVoidAsync("location.reload", true);
+                            }
+                            catch (Exception exReload)
+                            {
+                                try { _logger?.LogWarning(exReload, "Failed to reload page after zero-amount tx {TxId}", _lastTransactionId); } catch { }
+                            }
+                        }
+                        else
+                        {
+                            await CartState.ClearCartAsync();
+                            try { _logger?.LogInformation("Cart cleared after provider return tx={TxId}", _lastTransactionId); } catch { }
+                        }
+                    }
                     _showPaymentCard = false;
                     _paymentSucceeded = true;
                     _successMessage = "Payment received — thank you! Your payment has been received.";
@@ -714,6 +807,36 @@
                     if (rres != null)
                     {
                         ProcessRconResult(rres);
+                    }
+                    // If we were deferring cart clear until RCON succeeded, clear now on success
+                    try
+                    {
+                        if (_clearCartOnRconSuccess && rres != null && rres.AllSucceeded)
+                        {
+                            if (_lastTransactionAmountIsZero)
+                            {
+                                _logger?.LogWarning("Not clearing cart for tx {TxId} after deferred RCON because saved amount was zero; triggering full reload", _lastTransactionId);
+                                try
+                                {
+                                    await JS.InvokeVoidAsync("location.reload", true);
+                                }
+                                catch (Exception exReload)
+                                {
+                                    _logger?.LogWarning(exReload, "Failed to reload page after zero-amount tx {TxId}", _lastTransactionId);
+                                }
+                                _clearCartOnRconSuccess = false;
+                            }
+                            else
+                            {
+                                _logger?.LogInformation("Deferred RCON succeeded for tx {TxId}, clearing cart", _lastTransactionId);
+                                await CartState.ClearCartAsync();
+                                _clearCartOnRconSuccess = false;
+                            }
+                        }
+                    }
+                    catch (Exception exClear)
+                    {
+                        _logger?.LogWarning(exClear, "Failed to clear cart after deferred successful RCON for tx {TxId}", _lastTransactionId);
                     }
                 }
                 catch (Exception ex)
@@ -816,6 +939,65 @@
         }
 
         return null;
+    }
+
+    // Truncate long strings for compact UI rendering (compact version that strips color/control codes)
+    private string TruncateCompact(string? s, int maxLen = 60)
+    {
+        if (string.IsNullOrEmpty(s)) return string.Empty;
+        try
+        {
+            // Remove Minecraft-style formatting codes like '§a' and long sequences like '§x§f§f§e...'
+            var withoutCodes = System.Text.RegularExpressions.Regex.Replace(s, "§.", string.Empty);
+            // Collapse whitespace/newlines so the text fits in a single table cell
+            var singleLine = System.Text.RegularExpressions.Regex.Replace(withoutCodes, "\r\n|\n|\r", " ");
+            singleLine = System.Text.RegularExpressions.Regex.Replace(singleLine, "\t| {2,}|\\s+", " ").Trim();
+            if (singleLine.Length <= maxLen) return singleLine;
+            return singleLine.Substring(0, maxLen) + "...";
+        }
+        catch
+        {
+            return s ?? string.Empty;
+        }
+    }
+
+    // Clean a response into a single-line string without truncation (keeps full length but collapses formatting)
+    private string CleanSingleLine(string? s)
+    {
+        if (string.IsNullOrEmpty(s)) return string.Empty;
+        try
+        {
+            // remove Minecraft-style formatting codes like '§a'
+            var withoutCodes = System.Text.RegularExpressions.Regex.Replace(s, "§.", string.Empty);
+            // keep only Unicode letters (remove digits, punctuation, whitespace, etc.)
+            var lettersOnly = System.Text.RegularExpressions.Regex.Replace(withoutCodes, @"[^\p{L}]", string.Empty);
+            const int maxChars = 9; // length before adding ellipsis
+            if (lettersOnly.Length <= maxChars) return lettersOnly;
+            return lettersOnly.Substring(0, maxChars) + "...";
+        }
+        catch
+        {
+            return s ?? string.Empty;
+        }
+    }
+
+    // Backwards-compatible simple Truncate wrapper (keeps original behavior if used elsewhere)
+    private string Truncate(string? s, int maxLen = 120) => TruncateCompact(s, maxLen);
+
+    // Read the persisted transaction to determine whether the saved amount was zero.
+    private async Task<bool> LastTransactionAmountIsZeroAsync()
+    {
+        try
+        {
+            if (!_lastTransactionId.HasValue) return false;
+            var tx = await TransactionsService.GetTransactionAsync(_lastTransactionId.Value);
+            if (tx == null) return false;
+            return tx.Amount == 0m;
+        }
+        catch
+        {
+            return false;
+        }
     }
     }
 }

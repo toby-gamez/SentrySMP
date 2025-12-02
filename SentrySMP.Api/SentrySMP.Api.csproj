@@ -31,7 +31,7 @@
         <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />
         <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
         <PackageReference Include="Refit" Version="8.0.0" />
-        <PackageReference Include="CoreRCON" Version="3.0.0" />
+        <PackageReference Include="CoreRCON" Version="5.4.2" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
         <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
     </ItemGroup>

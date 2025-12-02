@@ -85,6 +85,10 @@ services.AddControllers()
 services.AddEndpointsApiExplorer();
 
 services.AddSingleton<CredentialStore>();
+// Background task queue for reliable fire-and-forget work (RCON jobs, etc.)
+services.AddSingleton<SentrySMP.App.Services.BackgroundTaskQueue>();
+services.AddSingleton<SentrySMP.App.Services.IBackgroundTaskQueue>(sp => sp.GetRequiredService<SentrySMP.App.Services.BackgroundTaskQueue>());
+services.AddHostedService<SentrySMP.App.Services.BackgroundTaskQueueHostedService>();
 services.AddTransient<HttpLoggingHandler>();
 services.AddScoped<UserService>();
 // Cookie consent service to manage analytics consent and loading

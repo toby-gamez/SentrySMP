@@ -20,7 +20,7 @@
         <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.2" />
         <PackageReference Include="DotNetEnv" Version="3.1.0" />
-        <PackageReference Include="CoreRCON" Version="3.0.0" />
+        <PackageReference Include="CoreRCON" Version="5.4.2" />
     </ItemGroup>
 
     <ItemGroup>

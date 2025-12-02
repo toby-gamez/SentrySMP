@@ -4,6 +4,7 @@
 @inject IJSRuntime JS
 @inject NavigationManager NavigationManager
 @inject SentrySMP.App.Authentication.UserService UserService
+@inject Microsoft.Extensions.Logging.ILoggerFactory LoggerFactory
 @rendermode InteractiveServer
 <PageTitle>Cart - SentrySMP</PageTitle>
 <style>
@@ -100,11 +101,17 @@
     private bool _cartLoaded = false;
     private string? _username;
     private bool _isLoggedIn = false;
+    private Microsoft.Extensions.Logging.ILogger? _logger;
 
     protected override void OnInitialized()
     {
         CartState.OnChange += StateHasChanged;
         UserService.OnChange += OnUserChanged;
+        try
+        {
+            _logger = LoggerFactory?.CreateLogger("Cart");
+        }
+        catch { }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -130,7 +137,9 @@
     }
     private async Task ClearCart()
     {
+        try { _logger?.LogInformation("ClearCart invoked by UI user={User} itemsCount={Count}", _username ?? string.Empty, CartState.CartItems.Count); } catch { }
         await CartState.ClearCartAsync();
+        try { _logger?.LogInformation("Cart cleared by UI user={User}", _username ?? string.Empty); } catch { }
     }
     private async Task ChangeQuantity(ProductResponse item, int delta)
     {
