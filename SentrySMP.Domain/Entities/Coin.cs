@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SentrySMP.Domain.Entities
 {
-    public class Shard
+    public class Coin
     {
         [Key]
         public int Id { get; set; }
@@ -26,6 +26,6 @@ namespace SentrySMP.Domain.Entities
         [ForeignKey(nameof(ServerId))]
         public virtual Server? Server { get; set; }
 
-        // TODO: Add composition/ingredients if needed (e.g. List<ShardComponent> Components)
+        // TODO: Add composition/ingredients if needed (e.g. List<CoinComponent> Components)
     }
 }

@@ -13,7 +13,7 @@ public class SentryDbContext : DbContext
     public DbSet<Key> Keys { get; set; }
     public DbSet<Rank> Ranks { get; set; }
     public DbSet<Bundle> Bundles { get; set; }
-    public DbSet<Shard> Shards { get; set; }
+    public DbSet<Coin> Coins { get; set; }
     public DbSet<Domain.Entities.TeamCategory> TeamCategories { get; set; }
     public DbSet<Domain.Entities.TeamMember> TeamMembers { get; set; }
     public DbSet<BattlePass> BattlePasses { get; set; }
@@ -33,14 +33,14 @@ public class SentryDbContext : DbContext
             entity.Property(e => e.TypeId).IsRequired();
         });
 
-        // Shard entity config (if needed)
-        modelBuilder.Entity<Shard>(entity =>
+        // Coin entity config (if needed)
+        modelBuilder.Entity<Coin>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Description).HasMaxLength(500);
             entity.HasOne(e => e.Server)
-                  .WithMany(s => s.Shards)
+                  .WithMany(s => s.Coins)
                   .HasForeignKey(e => e.ServerId)
                   .OnDelete(DeleteBehavior.Cascade);
         });

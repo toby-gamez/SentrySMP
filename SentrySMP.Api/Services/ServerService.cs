@@ -23,7 +23,7 @@ public class ServerService : IServerService
     {
         var servers = await _context.Servers
             .Include(s => s.Keys)
-            .Include(s => s.Shards)
+            .Include(s => s.Coins)
             .Include(s => s.Bundles)
             .Include(s => s.BattlePasses)
             .ToListAsync();
@@ -35,7 +35,7 @@ public class ServerService : IServerService
     {
         var server = await _context.Servers
             .Include(s => s.Keys)
-            .Include(s => s.Shards)
+            .Include(s => s.Coins)
             .Include(s => s.Bundles)
             .Include(s => s.BattlePasses)
             .FirstOrDefaultAsync(s => s.Id == id);
@@ -129,7 +129,7 @@ public class ServerService : IServerService
                 Sale = k.Sale,
                 Image = k.Image
             }).ToList(),
-            Shards = server.Shards?.Select(s => new ShardResponse
+            Coins = server.Coins?.Select(s => new CoinResponse
             {
                 Id = s.Id,
                 Name = s.Name,

@@ -1,13 +1,13 @@
 @using Microsoft.AspNetCore.Components.Forms
-@page "/add-shard"
+@page "/add-coins"
 @rendermode InteractiveServer
 @using System.ComponentModel.DataAnnotations
 @using SentrySMP.Shared.DTOs
 @inject ISentryApi Api
-@inject ILogger<AddShard> Logger
+@inject ILogger<AddCoin> Logger
 @inject NavigationManager Navigation
 
-<PageTitle>Add Shard - SentrySMP Admin</PageTitle>
+<PageTitle>Add Coin - SentrySMP Admin</PageTitle>
 
 <div class="container-fluid">
     <div class="row">
@@ -16,12 +16,12 @@
                 <div>
                     <h1>
                         <i class="bi bi-plus-circle me-2"></i>
-                        Add Shard
+                        Add Coins
                     </h1>
-                    <p class="text-muted">Create shard configuration</p>
+                    <p class="text-muted">Create coins configuration</p>
                 </div>
                 <button class="btn btn-outline-secondary" @onclick="GoBack">
-                    <i class="bi bi-arrow-left"></i> Back to Shards
+                    <i class="bi bi-arrow-left"></i> Back to Coins
                 </button>
             </div>
         </div>
@@ -42,69 +42,69 @@
         </div>
     }
 
-    <EditForm Model="shardModel" OnValidSubmit="HandleValidSubmit">
+    <EditForm Model="coinModel" OnValidSubmit="HandleValidSubmit">
         <DataAnnotationsValidator />
         <div class="row">
             <div class="col-md-6">
                 <div class="mb-3">
                     <label class="form-label">Name</label>
-                    <InputText class="form-control" @bind-Value="shardModel.Name" />
-                    <ValidationMessage For="() => shardModel.Name" />
+                    <InputText class="form-control" @bind-Value="coinModel.Name" />
+                    <ValidationMessage For="() => coinModel.Name" />
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Description</label>
-                    <InputTextArea class="form-control" @bind-Value="shardModel.Description" />
-                    <ValidationMessage For="() => shardModel.Description" />
+                    <InputTextArea class="form-control" @bind-Value="coinModel.Description" />
+                    <ValidationMessage For="() => coinModel.Description" />
                 </div>
                 <div class="mb-3">
-                    <ImageUploader Label="Shard Image"
-                                   ImageUrl="@shardModel.Image"
-                                   ImageUrlChanged="@((string? url) => shardModel.Image = url)" />
+                    <ImageUploader Label="Coin Image"
+                                   ImageUrl="@coinModel.Image"
+                                   ImageUrlChanged="@((string? url) => coinModel.Image = url)" />
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
                     <label class="form-label">Price</label>
-                    <InputNumber class="form-control" @bind-Value="shardModel.Price" />
-                    <ValidationMessage For="() => shardModel.Price" />
+                    <InputNumber class="form-control" @bind-Value="coinModel.Price" />
+                    <ValidationMessage For="() => coinModel.Price" />
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Sale (%)</label>
-                    <InputNumber class="form-control" @bind-Value="shardModel.Sale" />
-                    <ValidationMessage For="() => shardModel.Sale" />
+                    <InputNumber class="form-control" @bind-Value="coinModel.Sale" />
+                    <ValidationMessage For="() => coinModel.Sale" />
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Server</label>
-                    <InputSelect class="form-select" @bind-Value="shardModel.ServerId">
+                    <InputSelect class="form-select" @bind-Value="coinModel.ServerId">
                         <option value="">Select server</option>
                         @foreach (var server in servers)
                         {
                             <option value="@server.Id">@server.Name</option>
                         }
                     </InputSelect>
-                    <ValidationMessage For="() => shardModel.ServerId" />
+                    <ValidationMessage For="() => coinModel.ServerId" />
                 </div>
             </div>
         </div>
         <div class="mb-3 mt-3">
             <label class="form-label">Commands</label>
             <div class="form-text text-muted mb-2">For replacing string with name use %player%.</div>
-            @if (shardCommands == null || !shardCommands.Any())
+            @if (coinCommands == null || !coinCommands.Any())
             {
                 <div class="text-muted">No commands attached.</div>
             }
-            @for (int i = 0; i < (shardCommands?.Count ?? 0); i++)
+            @for (int i = 0; i < (coinCommands?.Count ?? 0); i++)
             {
                 var idx = i;
-                var cmd = shardCommands![idx];
+                var cmd = coinCommands![idx];
                 <div class="input-group mb-2">
                     <InputText @bind-Value="cmd.CommandText" class="form-control" />
-                    <button type="button" class="btn btn-outline-danger" @onclick="() => RemoveShardCommand(idx)">
+                    <button type="button" class="btn btn-outline-danger" @onclick="() => RemoveCoinCommand(idx)">
                         <i class="bi bi-trash"></i>
                     </button>
                 </div>
             }
-            <button type="button" class="btn btn-sm btn-outline-primary" @onclick="AddShardCommand">
+            <button type="button" class="btn btn-sm btn-outline-primary" @onclick="AddCoinCommand">
                 <i class="bi bi-plus"></i> Add Command
             </button>
         </div>
@@ -115,7 +115,7 @@
                         <i class="bi bi-x-circle me-1"></i> Cancel
                     </button>
                     <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
-                        <i class="bi bi-plus-circle"></i> Create Shard
+                        <i class="bi bi-plus-circle"></i> Create Coin
                     </button>
                 </div>
             </div>
@@ -124,11 +124,11 @@
 </div>
 
 @code {
-    private CreateShardDto shardModel = new();
+    private CreateCoinDto coinModel = new();
     private List<ServerResponse> servers = new();
     private string? errorMessage;
     private string? successMessage;
-    private List<CommandInputModel>? shardCommands = new();
+    private List<CommandInputModel>? coinCommands = new();
     private bool isSaving = false;
 
     protected override async Task OnInitializedAsync()
@@ -143,18 +143,18 @@
             isSaving = true;
             errorMessage = null;
             successMessage = null;
-            if (shardCommands != null && shardCommands.Any())
+            if (coinCommands != null && coinCommands.Any())
             {
-                shardModel.Commands = shardCommands.Select(c => new CreateCommandDto { CommandText = c.CommandText }).ToList();
+                coinModel.Commands = coinCommands.Select(c => new CreateCommandDto { CommandText = c.CommandText }).ToList();
             }
-            await Api.CreateShardAsync(shardModel);
-            successMessage = "Shard created successfully!";
-            Navigation.NavigateTo("/shards");
+            await Api.CreateCoinAsync(coinModel);
+            successMessage = "Coin created successfully!";
+            Navigation.NavigateTo("/coins");
         }
         catch (Exception ex)
         {
-            errorMessage = $"Error creating shard: {ex.Message}";
-            Logger.LogError(ex, "Error creating shard");
+            errorMessage = $"Error creating coin: {ex.Message}";
+            Logger.LogError(ex, "Error creating coin");
         }
         finally
         {
@@ -167,21 +167,21 @@
         public string CommandText { get; set; } = string.Empty;
     }
 
-    private void AddShardCommand()
+    private void AddCoinCommand()
     {
-        if (shardCommands == null) shardCommands = new List<CommandInputModel>();
-        shardCommands.Add(new CommandInputModel());
+        if (coinCommands == null) coinCommands = new List<CommandInputModel>();
+        coinCommands.Add(new CommandInputModel());
     }
 
-    private void RemoveShardCommand(int index)
+    private void RemoveCoinCommand(int index)
     {
-        if (shardCommands == null) return;
-        if (index < 0 || index >= shardCommands.Count) return;
-        shardCommands.RemoveAt(index);
+        if (coinCommands == null) return;
+        if (index < 0 || index >= coinCommands.Count) return;
+        coinCommands.RemoveAt(index);
     }
 
     private void GoBack()
     {
-        Navigation.NavigateTo("/shards");
+        Navigation.NavigateTo("/coins");
     }
 }

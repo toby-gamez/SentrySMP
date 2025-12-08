@@ -1,19 +1,19 @@
 using SentrySMP.Shared.DTOs;
 namespace SentrySMP.Shared.DTOs
 {
-    public class ShardResponse : ProductResponse
+    public class CoinResponse : ProductResponse
     {
-        // Shard-specific fields
-        // Commands attached to this shard
+        // Coin-specific fields
+        // Commands attached to this coin
         public List<CommandDto>? Commands { get; set; }
 
-        public ShardResponse()
+        public CoinResponse()
         {
-            Type = "Shard";
+            Type = "Coin";
         }
     }
 
-    public class CreateShardDto
+    public class CreateCoinDto
     {
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
@@ -21,11 +21,11 @@ namespace SentrySMP.Shared.DTOs
         public int Sale { get; set; }
         public string? Image { get; set; }
         public int ServerId { get; set; }
-        // Optional commands to attach to this shard
+        // Optional commands to attach to this coin
         public List<CreateCommandDto>? Commands { get; set; }
     }
 
-    public class UpdateShardDto
+    public class UpdateCoinDto
     {
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
@@ -33,7 +33,7 @@ namespace SentrySMP.Shared.DTOs
         public int Sale { get; set; }
         public string? Image { get; set; }
         public int ServerId { get; set; }
-        // Optional commands to attach to this shard (replaces existing when provided)
+        // Optional commands to attach to this coin (replaces existing when provided)
         public List<CreateCommandDto>? Commands { get; set; }
     }
 }

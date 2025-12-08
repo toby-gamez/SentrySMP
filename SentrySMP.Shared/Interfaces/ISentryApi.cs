@@ -106,24 +106,24 @@ public interface ISentryApi
     [Get("/api/announcements")]
     Task<IEnumerable<SentrySMP.Shared.DTOs.AnnouncementDto>> GetAnnouncementsAsync();
     
-    // Shard endpoints
-    [Get("/api/shards")]
-    Task<IEnumerable<ShardResponse>> GetShardsAsync();
+    // Coin endpoints
+    [Get("/api/coins")]
+    Task<IEnumerable<CoinResponse>> GetCoinsAsync();
 
-    [Get("/api/shards/by-server/{serverId}")]
-    Task<IEnumerable<ShardResponse>> GetShardsByServerAsync(int serverId);
+    [Get("/api/coins/by-server/{serverId}")]
+    Task<IEnumerable<CoinResponse>> GetCoinsByServerAsync(int serverId);
 
-    [Get("/api/shards/{id}")]
-    Task<ShardResponse> GetShardAsync(int id);
+    [Get("/api/coins/{id}")]
+    Task<CoinResponse> GetCoinAsync(int id);
 
-    [Post("/api/shards")]
-    Task<ShardResponse> CreateShardAsync([Body] CreateShardDto shard);
+    [Post("/api/coins")]
+    Task<CoinResponse> CreateCoinAsync([Body] CreateCoinDto coin);
 
-    [Put("/api/shards/{id}")]
-    Task<ShardResponse> UpdateShardAsync(int id, [Body] UpdateShardDto shard);
+    [Put("/api/coins/{id}")]
+    Task<CoinResponse> UpdateCoinAsync(int id, [Body] UpdateCoinDto coin);
 
-    [Delete("/api/shards/{id}")]
-    Task DeleteShardAsync(int id);
+    [Delete("/api/coins/{id}")]
+    Task DeleteCoinAsync(int id);
 
     // File upload endpoints
     [Multipart]

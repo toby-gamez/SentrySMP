@@ -9,7 +9,7 @@ namespace SentrySMP.Shared.DTOs
         public int Sale { get; set; }
         public string? Image { get; set; }
         public ServerResponse? Server { get; set; }
-        // Distinguish between product kinds stored in the cart (e.g. "Key", "Shard")
+        // Distinguish between product kinds stored in the cart (e.g. "Key", "Coin")
         public string Type { get; set; } = "Product";
     }
 }

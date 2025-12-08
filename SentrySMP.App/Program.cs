@@ -60,11 +60,10 @@ services.AddRazorComponents().AddInteractiveServerComponents();
 
 // Register our services
 services.AddScoped<IServerService, ServerService>();
-services.AddScoped<IShardService, ShardService>();
+services.AddScoped<ICoinService, CoinService>();
 services.AddScoped<IKeyService, KeyService>();
 services.AddScoped<IBundleService, BundleService>();
 services.AddScoped<IRankService, RankService>();
-services.AddScoped<IShardService, ShardService>();
 // Team service (file-backed)
 services.AddScoped<ITeamService, TeamService>();
 services.AddScoped<IBattlePassService, BattlePassService>();

@@ -1,18 +1,18 @@
-@page "/shards"
+@page "/coins"
 @using SentrySMP.Shared.DTOs
 @using SentrySMP.Shared.Interfaces
 @inject ISentryApi Api
-@inject ILogger<Shards> Logger
+@inject ILogger<Coins> Logger
 @inject SentrySMP.App.Components.State.CartState CartState
 @inject IJSRuntime JS
 @rendermode InteractiveServer
-<PageTitle>Shards - SentrySMP</PageTitle>
+<PageTitle>Coins - SentrySMP</PageTitle>
 
 <div class="main-wrapper">
-    <h1 class="main">Shards</h1>
+    <h1 class="main">Coins</h1>
 </div>
             <!-- Server filter dropdown -->
-            @if (shards?.Any() == true)
+            @if (coins?.Any() == true)
             {
                 <div class="mb-3 d-flex align-items-center gap-2">
                     <label for="serverFilter" class="form-label mb-0">Filter by server:</label>
@@ -40,17 +40,17 @@
                     @errorMessage
                 </div>
             }
-            else if (filteredShards?.Any() == true)
+            else if (filteredCoins?.Any() == true)
             {
                 <div class="product-grid">
-                    @foreach (var shard in filteredShards)
+                    @foreach (var coin in filteredCoins)
                     {
-                        var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == shard.Id && i.Key.Type == "Shard");
+                        var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == coin.Id && i.Key.Type == "Coin");
                         <div class="product">
                             <div class="card h-100">
-                                @if (!string.IsNullOrEmpty(shard.Image))
+                                @if (!string.IsNullOrEmpty(coin.Image))
                                 {
-                                    <img src="@shard.Image" class="product-image" alt="@shard.Name">
+                                    <img src="@coin.Image" class="product-image" alt="@coin.Name">
                                 }
                                 else
                                 {
@@ -59,41 +59,41 @@
                                     </div>
                                 }
                                 <div class="">
-                                    <h2 class="">@shard.Name</h2>
-                                    @if (!string.IsNullOrEmpty(shard.Description))
+                                    <h2 class="">@coin.Name</h2>
+                                    @if (!string.IsNullOrEmpty(coin.Description))
                                     {
-                                        <p style="font-weight: normal; font-size: 18px">@shard.Description</p>
+                                        <p style="font-weight: normal; font-size: 18px">@coin.Description</p>
                                     }
-                                    <small class="text-muted">Server: @shard.Server?.Name</small>
+                                    <small class="text-muted">Server: @coin.Server?.Name</small>
                                     <div class="mt-auto">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <div class="price-container">
-                                                @if (shard.Sale > 0)
+                                                @if (coin.Sale > 0)
                                                 {
                                                     <p class="original-price" title="Original price">
-                                                        €@shard.Price.ToString("F2")
+                                                        €@coin.Price.ToString("F2")
                                                     </p>
                                                     <p class="discounted-price" title="Sale price">
-                                                        €@(CalculateSalePrice(shard.Price, shard.Sale).ToString("F2"))
+                                                        €@(CalculateSalePrice(coin.Price, coin.Sale).ToString("F2"))
                                                     </p>
-                                                    <span class="discount-badge">@shard.Sale% OFF</span>
+                                                    <span class="discount-badge">@coin.Sale% OFF</span>
                                                 }
                                                 else
                                                 {
-                                                    <strong class="text-primary fs-5">€@shard.Price.ToString("F2")</strong>
+                                                    <strong class="text-primary fs-5">€@coin.Price.ToString("F2")</strong>
                                                 }
                                             </div>
                                         </div>
                                         <div style="display: flex; align-items: center; justify-content: space-between">
-                                            <button class="" @onclick="() => ShowShardDetails(shard)">
+                                            <button class="" @onclick="() => ShowCoinDetails(coin)">
                                                 <i class="bi bi-info-circle"></i> Details
                                             </button>
                                             @if (cartItem == null)
                                             {
-                                                <button class="btn btn-outline-success btn-sm w-100 mt-2" @onclick="async () => await AddToCart(shard)">
+                                                <button class="btn btn-outline-success btn-sm w-100 mt-2" @onclick="async () => await AddToCart(coin)">
                                                     <i class="bi bi-cart-plus"></i> Add
                                                 </button>
-                                                @if (addedShardId == shard.Id)
+                                                @if (addedCoinId == coin.Id)
                                                 {
                                                     <div class="alert alert-success py-1 px-2 mt-2 mb-0 text-center" style="font-size:0.95em;">Přidáno!</div>
                                                 }
@@ -101,9 +101,9 @@
                                             else
                                             {
                                                 <div class="quantity-controls">
-                                                    <button class="quantity-btn" @onclick="() => ChangeQuantity(shard, -1)" disabled="@(cartItem.Quantity <= 1)">-</button>
+                                                    <button class="quantity-btn" @onclick="() => ChangeQuantity(coin, -1)" disabled="@(cartItem.Quantity <= 1)">-</button>
                                                     <span class="item-quantity">@cartItem.Quantity</span>
-                                                    <button class="quantity-btn" @onclick="() => ChangeQuantity(shard, 1)" disabled="@(cartItem.Quantity >= 10)">+</button>
+                                                    <button class="quantity-btn" @onclick="() => ChangeQuantity(coin, 1)" disabled="@(cartItem.Quantity >= 10)">+</button>
                                                 </div>
                                             }
                                         </div>
@@ -118,12 +118,12 @@
             {
                 <div class="alert alert-info" role="alert">
                     <i class="bi bi-info-circle-fill"></i>
-                    No shards available at the moment.
+                    No coins available at the moment.
                 </div>
             }
 
-<!-- Shard Details Modal (mirrors Keys modal layout) -->
-@if (selectedShard != null)
+<!-- Coin Details Modal (mirrors Keys modal layout) -->
+@if (selectedCoin != null)
 {
     <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
         <div class="modal-dialog modal-lg">
@@ -131,40 +131,40 @@
                 <div class="modal-header">
                     <h2 class="modal-title">
                         <i class="bi bi-box-fill"></i>
-                        @selectedShard.Name
+                        @selectedCoin.Name
                     </h2>
-                    <button type="button" class="btn-close" @onclick="CloseShardDetails"></button>
+                    <button type="button" class="btn-close" @onclick="CloseCoinDetails"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        @if (!string.IsNullOrEmpty(selectedShard.Image))
+                        @if (!string.IsNullOrEmpty(selectedCoin.Image))
                         {
                             <div class="col-md-6">
-                                <img src="@selectedShard.Image" class="img-fluid rounded" alt="@selectedShard.Name">
+                                <img src="@selectedCoin.Image" class="img-fluid rounded" alt="@selectedCoin.Name">
                             </div>
                         }
-                        <div class="col-md-@(string.IsNullOrEmpty(selectedShard.Image) ? "12" : "6")">
+                        <div class="col-md-@(string.IsNullOrEmpty(selectedCoin.Image) ? "12" : "6")">
                             <div class="row" style="padding: 20px">
-                                <h2 class="col-sm-8">@selectedShard.Name</h2>
-                                @if (!string.IsNullOrEmpty(selectedShard.Description))
+                                <h2 class="col-sm-8">@selectedCoin.Name</h2>
+                                @if (!string.IsNullOrEmpty(selectedCoin.Description))
                                 {
-                                    <p class="col-sm-8">@selectedShard.Description</p>
+                                    <p class="col-sm-8">@selectedCoin.Description</p>
                                 }
-                                <small class="text-muted">Server: @selectedShard.Server?.Name</small>
+                                <small class="text-muted">Server: @selectedCoin.Server?.Name</small>
                                     <div class="price-container">
-                                        @if (selectedShard.Sale > 0)
+                                        @if (selectedCoin.Sale > 0)
                                         {
                                             <p class="original-price" title="Original price">
-                                                €@selectedShard.Price.ToString("F2")
+                                                €@selectedCoin.Price.ToString("F2")
                                             </p>
                                             <p class="discounted-price" title="Sale price">
-                                                €@(CalculateSalePrice(selectedShard.Price, selectedShard.Sale).ToString("F2"))
+                                                €@(CalculateSalePrice(selectedCoin.Price, selectedCoin.Sale).ToString("F2"))
                                             </p>
-                                            <span class="discount-badge">@selectedShard.Sale% OFF</span>
+                                            <span class="discount-badge">@selectedCoin.Sale% OFF</span>
                                         }
                                         else
                                         {
-                                            <strong class="text-primary fs-5">€@selectedShard.Price.ToString("F2")</strong>
+                                            <strong class="text-primary fs-5">€@selectedCoin.Price.ToString("F2")</strong>
                                         }
                                     </div>
                             </div>
@@ -173,14 +173,14 @@
                 </div>
                 <div class="modal-footer">
                     @{
-                        var cartItemModal = CartState.CartItems.FirstOrDefault(i => i.Key.Id == selectedShard!.Id && i.Key.Type == "Shard");
+                        var cartItemModal = CartState.CartItems.FirstOrDefault(i => i.Key.Id == selectedCoin!.Id && i.Key.Type == "Coin");
                     }
                     @if (cartItemModal == null)
                     {
-                        <button type="button" class="btn btn-outline-success" @onclick="async () => await AddToCart(selectedShard!)">
+                        <button type="button" class="btn btn-outline-success" @onclick="async () => await AddToCart(selectedCoin!)">
                             <i class="bi bi-cart-plus"></i> Add to Cart
                         </button>
-                        @if (addedShardId == selectedShard!.Id)
+                        @if (addedCoinId == selectedCoin!.Id)
                         {
                             <div class="alert alert-success py-1 px-2 ms-2 mb-0" style="font-size:0.95em;">Přidáno!</div>
                         }
@@ -188,9 +188,9 @@
                     else
                     {
                         <div class="quantity-controls">
-                            <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedShard!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
+                            <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedCoin!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
                             <span>@cartItemModal.Quantity</span>
-                            <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedShard!, 1)" disabled="@(cartItemModal.Quantity >= 10)">+</button>
+                            <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedCoin!, 1)" disabled="@(cartItemModal.Quantity >= 10)">+</button>
                         </div>
                     }
                 </div>
@@ -200,20 +200,20 @@
 }
 
 @code {
-    private List<ShardResponse>? shards;
-    private List<ShardResponse>? filteredShards;
+    private List<CoinResponse>? coins;
+    private List<CoinResponse>? filteredCoins;
     private List<ServerResponse> servers = new();
     private int? selectedServerId;
     private bool loading = true;
     private string? errorMessage;
-    private ShardResponse? selectedShard;
+    private CoinResponse? selectedCoin;
 
     private bool _cartLoaded = false;
-    private int? addedShardId;
+    private int? addedCoinId;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadShards();
+        await LoadCoins();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -226,15 +226,15 @@
         }
     }
 
-    private async Task LoadShards()
+    private async Task LoadCoins()
     {
         try
         {
             loading = true;
             errorMessage = null;
-            shards = (await Api.GetShardsAsync()).ToList();
-            // build server list from shards and apply filter
-            servers = shards
+            coins = (await Api.GetCoinsAsync()).ToList();
+            // build server list from coins and apply filter
+            servers = coins
                 .Where(s => s.Server != null)
                 .Select(s => s.Server!)
                 .GroupBy(s => s.Id)
@@ -245,8 +245,8 @@
         }
         catch (Exception ex)
         {
-            errorMessage = $"Error loading shards: {ex.Message}";
-            Logger.LogError(ex, "Error loading shards");
+            errorMessage = $"Error loading coins: {ex.Message}";
+            Logger.LogError(ex, "Error loading coins");
         }
         finally
         {
@@ -258,11 +258,11 @@
     {
         if (selectedServerId.HasValue)
         {
-            filteredShards = shards?.Where(s => s.Server?.Id == selectedServerId.Value).ToList();
+            filteredCoins = coins?.Where(s => s.Server?.Id == selectedServerId.Value).ToList();
         }
         else
         {
-            filteredShards = shards;
+            filteredCoins = coins;
         }
     }
 
@@ -281,14 +281,14 @@
         StateHasChanged();
     }
 
-    private void ShowShardDetails(ShardResponse shard)
+    private void ShowCoinDetails(CoinResponse coin)
     {
-        selectedShard = shard;
+        selectedCoin = coin;
     }
 
-    private void CloseShardDetails()
+    private void CloseCoinDetails()
     {
-        selectedShard = null;
+        selectedCoin = null;
     }
 
     private double CalculateSalePrice(double originalPrice, int salePercentage)
@@ -296,26 +296,26 @@
         return originalPrice * (1 - salePercentage / 100.0);
     }
 
-    private async Task AddToCart(ShardResponse shard)
+    private async Task AddToCart(CoinResponse coin)
     {
-        await JS.InvokeVoidAsync("console.log", $"AddToCart: {shard.Name} (ID: {shard.Id})");
-        await CartState.AddToCartAsync(shard);
-        addedShardId = shard.Id;
+        await JS.InvokeVoidAsync("console.log", $"AddToCart: {coin.Name} (ID: {coin.Id})");
+        await CartState.AddToCartAsync(coin);
+        addedCoinId = coin.Id;
         StateHasChanged();
         await Task.Delay(1200);
-        if (addedShardId == shard.Id) { addedShardId = null; StateHasChanged(); }
+        if (addedCoinId == coin.Id) { addedCoinId = null; StateHasChanged(); }
     }
 
-    private async Task ChangeQuantity(ShardResponse shard, int delta)
+    private async Task ChangeQuantity(CoinResponse coin, int delta)
     {
-        await CartState.ChangeQuantityAsync(shard, delta);
+        await CartState.ChangeQuantityAsync(coin, delta);
     }
 
     private async Task AddSelectedToCart()
     {
-        if (selectedShard != null)
+        if (selectedCoin != null)
         {
-            await AddToCart(selectedShard);
+            await AddToCart(selectedCoin);
         }
     }
 }
