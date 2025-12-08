@@ -1288,6 +1288,21 @@ body.dark .item-subtotal.discounted-price {
     transform: rotate(5deg);
 }
 
+.a-badge {
+    background-color: #dc3545;
+    color: white;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
+    transform: rotate(5deg);
+    position:absolute
+}
+
+.a-badge-div {
+    float: right;
+}
+
 .cart-actions {
     margin-top: 10px;
     display: flex;
