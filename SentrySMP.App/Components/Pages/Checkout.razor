@@ -14,6 +14,7 @@
 @inject SentrySMP.Shared.Interfaces.ITransactionsService TransactionsService
 @inject SentrySMP.App.Authentication.UserService UserService
 @inject SentrySMP.Shared.Interfaces.IRconService RconService
+@inject SentrySMP.Shared.Interfaces.IServerService ServerService
 @inject Microsoft.Extensions.Logging.ILoggerFactory LoggerFactory
 @inject SentrySMP.App.Services.IBackgroundTaskQueue BackgroundQueue
 @rendermode InteractiveServer
@@ -140,6 +141,30 @@
                         </tbody>
                     </table>
                 </div>
+                <h2 class="mt-3">Server status</h2>
+                @if (_serverHealth.Count > 0)
+                {
+                    <ul class="list-unstyled mt-2" style="list-style-type: none;">
+                        @foreach (var sh in _serverHealth.GroupBy(h => h.Server.Id).Select(g => g.First()))
+                        {
+                            <li class="d-flex align-items-center gap-2 py-1">
+                                <i class="bi bi-circle-fill" style="color: #@(sh.Ok ? "44ae44" : "dc3545")"></i>
+                                <span class="me-2">@sh.Server.Name</span>
+                                @if (!sh.Ok && !string.IsNullOrWhiteSpace(sh.Error))
+                                {
+                                    <small style="margin-left: 5px;" class="text-muted">@TruncateCompact(sh.Error, 80)</small>
+                                }
+                                else {
+                                    <small style="margin-left: 5px;" class="text-muted">Server is ready.</small>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <div class="small text-muted">No servers associated with items in your cart.</div>
+                }
                 <h2 class="mt-3">Choose payment method</h2>
                 <div class="mt-2">
                     <div class="payment-options d-flex flex-wrap gap-2">
@@ -165,9 +190,20 @@
                 </div>
 
                 <div class="mt-4 d-flex gap-2">
-                    <button class="btn btn-primary" @onclick="ProceedToPayment">Proceed to payment</button>
+                    <button class="btn btn-primary" @onclick="ProceedToPayment" disabled="@(!_canProceedToPayment)">Proceed to payment</button>
                     <button class="secondary" @onclick="BackToCart">Back to cart</button>
                 </div>
+
+                @if (_hasUnavailableServers)
+                {
+                    <div class="alert alert-warning mt-2">
+                        The server is unavailable, so you won't receive the items you purchased. Would you like to remove them from your cart?
+                        <div class="mt-2">
+                            <button class="danger" @onclick="RemoveUnavailableServerItems">Remove unavailable items</button>
+                            <button class="secondary" @onclick="BackToCart">Back to cart</button>
+                        </div>
+                    </div>
+                }
 
                 @if (_showPaymentCard)
                 {
@@ -297,22 +333,36 @@
 
 
 @code {
+    private class ServerHealth
+    {
+        public SentrySMP.Shared.DTOs.ServerResponse Server { get; set; } = new();
+        public bool Ok { get; set; }
+        public string? Error { get; set; }
+        public string? HostUsed { get; set; }
+        public int PortUsed { get; set; }
+    }
+
     private string _selectedPayment = "stripe";
     private bool _showPaymentCard = false;
     private bool _paymentSucceeded = false;
     private string _amount = ""; // default amount (start empty; cart total will prefill if available)
     private string? _successMessage;
     private string? _failureMessage;
+    private readonly List<ServerHealth> _serverHealth = new();
+    private bool _hasUnavailableServers = false;
+    private bool _canProceedToPayment = false; // enabled only when all relevant servers are OK
 
     protected override async Task OnInitializedAsync()
     {
-        CartState.OnChange += StateHasChanged;
+        CartState.OnChange += HandleCartChanged;
         // Load cart from browser storage (important when arriving via redirect)
         try
         {
             await CartState.LoadFromStorageAsync(JS);
         }
         catch { }
+        // Initial server availability check
+        try { await CheckServersAsync(); } catch { }
 
         // Prefill amount from cart total if we have items
         var total = CartState.CartItems.Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity);
@@ -341,7 +391,13 @@
 
     public void Dispose()
     {
-        CartState.OnChange -= StateHasChanged;
+        CartState.OnChange -= HandleCartChanged;
+    }
+
+    private async void HandleCartChanged()
+    {
+        try { await CheckServersAsync(); } catch { }
+        try { await InvokeAsync(StateHasChanged); } catch { }
     }
 
     private void SelectPayment(string method)
@@ -450,6 +506,159 @@
                 _payPalErrorMessage = ex.Message;
                 _failureMessage = "Payment failed — " + ex.Message;
             }
+        }
+    }
+
+    private async Task CheckServersAsync()
+    {
+        _serverHealth.Clear();
+        try
+        {
+            var servers = CartState.CartItems
+                .Select(ci => ci.Key.Server)
+                .Where(s => s != null)
+                .GroupBy(s => s!.Id)
+                .Select(g => g.First()!)
+                .ToList();
+
+            foreach (var srv in servers)
+            {
+                var entry = new ServerHealth { Server = srv };
+                try
+                {
+                    // ICMP ping check to the server IP/host (normalize DB value; ignore port portion if included)
+                    var rawHost = srv.RCONIP;
+                    var host = NormalizeHost(rawHost);
+                    entry.HostUsed = host;
+                    entry.PortUsed = srv.RCONPort;
+                    if (string.IsNullOrWhiteSpace(host))
+                    {
+                        entry.Ok = false;
+                        entry.Error = "Invalid host";
+                        _logger?.LogWarning("Server health: invalid host. Raw='{RawHost}', Normalized='{Host}'", rawHost, host);
+                        _serverHealth.Add(entry);
+                        continue;
+                    }
+
+                    _logger?.LogInformation("Server health: pinging host '{Host}' (raw='{Raw}', port={Port})", host, rawHost, srv.RCONPort);
+
+                    using var ping = new System.Net.NetworkInformation.Ping();
+                    System.Net.NetworkInformation.PingReply? reply = null;
+                    try
+                    {
+                        reply = await ping.SendPingAsync(host, 4000);
+                    }
+                    catch (Exception pex)
+                    {
+                        entry.Ok = false;
+                        entry.Error = pex.Message;
+                    }
+
+                    if (reply != null)
+                    {
+                        if (reply.Status == System.Net.NetworkInformation.IPStatus.Success)
+                        {
+                            entry.Ok = true;
+                        }
+                        else
+                        {
+                            entry.Ok = false;
+                            entry.Error = reply.Status == System.Net.NetworkInformation.IPStatus.TimedOut
+                                ? "Ping timeout"
+                                : $"Ping failed: {reply.Status}";
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    entry.Ok = false;
+                    entry.Error = ex.Message;
+                }
+                _serverHealth.Add(entry);
+            }
+        }
+        catch (Exception ex)
+        {
+            try { _logger?.LogWarning(ex, "Server availability check failed"); } catch { }
+        }
+        _hasUnavailableServers = _serverHealth.Any(h => !h.Ok);
+        // Proceed button should be enabled only when there is at least one relevant server
+        // and all of them are OK. If there are no servers associated, keep disabled.
+        var hasServers = _serverHealth.Count > 0;
+        _canProceedToPayment = hasServers && !_hasUnavailableServers;
+    }
+
+    // Normalize a DB-provided host value: trim, drop control chars, remove surrounding quotes, and strip optional ":port" suffix (safely for IPv6).
+    private string NormalizeHost(string? input)
+    {
+        var h = input ?? string.Empty;
+        try
+        {
+            // Remove control characters (including zero-width)
+            h = System.Text.RegularExpressions.Regex.Replace(h, @"\p{C}", string.Empty);
+        }
+        catch { }
+        h = h.Trim();
+        if (h.Length >= 2 && h.StartsWith("\"") && h.EndsWith("\""))
+        {
+            h = h.Substring(1, h.Length - 2);
+        }
+        return StripPortIfPresent(h);
+    }
+
+    // If host is like "1.2.3.4:25565" or "[2001:db8::1]:25565", strip the port and keep only the address.
+    private string StripPortIfPresent(string host)
+    {
+        if (string.IsNullOrWhiteSpace(host)) return host;
+        try
+        {
+            if (host.StartsWith("["))
+            {
+                var rb = host.IndexOf(']');
+                if (rb > 0)
+                {
+                    return host.Substring(1, rb - 1);
+                }
+                return host;
+            }
+            var idx = host.LastIndexOf(':');
+            if (idx > -1)
+            {
+                var after = host.Substring(idx + 1);
+                var allDigits = true;
+                for (int i = 0; i < after.Length; i++)
+                {
+                    if (!char.IsDigit(after[i])) { allDigits = false; break; }
+                }
+                if (allDigits && after.Length > 0)
+                {
+                    return host.Substring(0, idx);
+                }
+            }
+        }
+        catch { }
+        return host;
+    }
+
+    private async Task RemoveUnavailableServerItems()
+    {
+        try
+        {
+            var unavailableIds = _serverHealth.Where(h => !h.Ok).Select(h => h.Server.Id).ToHashSet();
+            var toRemove = CartState.CartItems
+                .Where(ci => ci.Key.Server != null && unavailableIds.Contains(ci.Key.Server.Id))
+                .Select(ci => ci.Key)
+                .ToList();
+            foreach (var key in toRemove)
+            {
+                await CartState.RemoveFromCartAsync(key);
+            }
+            await CheckServersAsync();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            try { _logger?.LogWarning(ex, "Failed to remove unavailable server items from cart"); } catch { }
         }
     }
 

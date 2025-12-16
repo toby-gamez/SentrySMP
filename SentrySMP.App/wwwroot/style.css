@@ -2324,3 +2324,12 @@ body.dark .payment-option i {
         opacity: 0;
     }
 }
+
+@media only screen and (max-width: 600px) {
+    .snowflake:nth-child(2n), .snowflake:nth-child(4n), .snowflake:nth-child(6n), .snowflake:nth-child(8n), .snowflake:nth-child(10n), .snowflake:nth-child(12n), .snowflake:nth-child(14n), .snowflake:nth-child(16n), .snowflake:nth-child(18n), .snowflake:nth-child(20n) {
+        display: none;
+    }
+    .snowflake {
+        font-size: 1em;
+    }
+}
