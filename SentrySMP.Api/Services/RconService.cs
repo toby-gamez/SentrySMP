@@ -125,6 +125,22 @@ namespace SentrySMP.Api.Services
                         }
                     }
 
+                    // Special routing: if this product represents a "rank", prefer the SMP server
+                    // so rank purchases are always executed on the SMP server (health checks apply).
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(product.Type) && string.Equals(product.Type, "rank", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var smpServer = allServers.FirstOrDefault(s => !string.IsNullOrEmpty(s.Name) && s.Name.IndexOf("smp", StringComparison.OrdinalIgnoreCase) >= 0);
+                            if (smpServer != null)
+                            {
+                                targets.Clear();
+                                targets.Add(smpServer);
+                            }
+                        }
+                    }
+                    catch { }
+
                     if (targets.Count == 0)
                     {
                         targets.AddRange(allServers);

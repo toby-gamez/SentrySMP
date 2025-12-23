@@ -521,6 +521,26 @@
                 .Select(g => g.First()!)
                 .ToList();
 
+            // If the cart contains any rank products, ensure the SMP server is included
+            try
+            {
+                var hasRank = CartState.CartItems.Any(ci => string.Equals(ci.Key.Type ?? string.Empty, "rank", StringComparison.OrdinalIgnoreCase));
+                if (hasRank)
+                {
+                    try
+                    {
+                        var all = await ServerService.GetAllServersAsync();
+                        var smp = all?.FirstOrDefault(s => !string.IsNullOrEmpty(s.Name) && s.Name.IndexOf("smp", StringComparison.OrdinalIgnoreCase) >= 0);
+                        if (smp != null && !servers.Any(s => s.Id == smp.Id))
+                        {
+                            servers.Add(smp);
+                        }
+                    }
+                    catch { }
+                }
+            }
+            catch { }
+
             foreach (var srv in servers)
             {
                 var entry = new ServerHealth { Server = srv };
