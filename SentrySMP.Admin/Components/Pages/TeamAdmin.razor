@@ -20,7 +20,7 @@
     .role-BUILDER { background: #5ce54c; }
     .role-BUILDER\+ { background: #35d622; }
     .role-MEDIA { background: #DB0B54; }
-
+    .role-ADMIN { background: #CCBB08; }
     /* legend styles */
     .role-legend { list-style: none; padding: 0; margin: 0 0 1rem 0; display: flex; gap: 0.75rem; flex-wrap: wrap; text-align: center; }
     .role-legend li { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
@@ -36,6 +36,7 @@
     .role-legend .role-BUILDER .role-dot { background: #5ce54c; }
     .role-legend .role-BUILDER\+ .role-dot { background: #35d622; }
     .role-legend .role-MEDIA .role-dot { background: #DB0B54; }
+    .role-legend .role-ADMIN .role-dot { background: #CCBB08; }
 </style>
 
 <ul class="role-legend" aria-label="Role legend">
@@ -50,6 +51,7 @@
     <li class="role-BUILDER"><span class="role-dot" aria-hidden="true"></span><span>Builder</span></li>
     <li class="role-BUILDER+"><span class="role-dot" aria-hidden="true"></span><span>Builder+</span></li>
     <li class="role-MEDIA"><span class="role-dot" aria-hidden="true"></span><span>Media</span></li>
+    <li class="role-ADMIN"><span class="role-dot" aria-hidden="true"></span><span>Admin</span></li>
 </ul>
 @if (team == null)
 {

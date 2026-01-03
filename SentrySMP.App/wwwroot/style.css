@@ -1516,7 +1516,7 @@ body.dark .item-subtotal.discounted-price {
     color: white;
 }
 
-.badge-builder-plus {
+.badge-builder\+ {
     background: #35d622;
     color: white;
 }
@@ -1524,6 +1524,11 @@ body.dark .item-subtotal.discounted-price {
 .badge-builder {
     background: #5ce54c;
     color: white;
+}
+
+.badge-admin {
+    background: #CCBB08;
+    color: black;
 }
 
 .section {

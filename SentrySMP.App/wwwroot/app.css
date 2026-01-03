@@ -30,6 +30,7 @@
 .role-BUILDER { background: #5ce54c; }
 .role-BUILDER+ { background: #35d622; }
 .role-MEDIA { background: #DB0B54; }
+.role-ADMIN { background: #CCBB08; }
 
 /* Team avatar sizing */
 .team-avatar {
