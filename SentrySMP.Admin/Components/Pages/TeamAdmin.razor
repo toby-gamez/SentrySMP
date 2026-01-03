@@ -64,6 +64,10 @@ else
         <button class="btn btn-success ms-2" @onclick="Save">Save Changes</button>
     </div>
 
+    @if (!string.IsNullOrEmpty(statusMessage))
+    {
+        <div class="@statusClass mt-2" role="alert">@statusMessage</div>
+    }
     @foreach (var cat in team.Categories)
     {
         <div class="card mb-3">
@@ -106,6 +110,8 @@ else
 
 @code {
     private TeamResponseDto? team;
+    private string? statusMessage;
+    private string statusClass = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -169,13 +175,18 @@ else
     private async Task Save()
     {
         if (team == null) return;
+        statusMessage = null;
         try
         {
             await Api.SaveTeamAsync(team);
             await Load();
+            statusMessage = "Saved successfully.";
+            statusClass = "alert alert-success";
         }
         catch (Exception ex)
         {
+            statusMessage = $"Error saving: {ex.Message}";
+            statusClass = "alert alert-danger";
             Console.WriteLine($"Failed to save team: {ex.Message}");
         }
     }
