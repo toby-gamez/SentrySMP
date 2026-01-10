@@ -103,6 +103,31 @@
                         </div>
                     </div>
 
+                    <div class="mb-3">
+                        <label class="form-label">Commands</label>
+                        <div class="form-text text-muted mb-2">For replacing string with name use %player%.</div>
+                        <div>
+                            @if (commandInputs == null || !commandInputs.Any())
+                            {
+                                <div class="text-muted mb-2">No commands attached.</div>
+                            }
+                            @for (int i = 0; i < (commandInputs?.Count ?? 0); i++)
+                            {
+                                var idx = i;
+                                var cmd = commandInputs![idx];
+                                <div class="input-group mb-2">
+                                    <InputText @bind-Value="cmd.CommandText" class="form-control" placeholder="Enter command text" />
+                                    <button type="button" class="btn btn-outline-danger" @onclick="() => RemoveCommand(idx)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            }
+                            <button type="button" class="btn btn-sm btn-outline-primary" @onclick="AddCommand">
+                                <i class="bi bi-plus"></i> Add Command
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="col-12 d-flex justify-content-end gap-2">
                             <button type="button" class="btn btn-outline-secondary" @onclick="GoBack">Cancel</button>
@@ -123,6 +148,7 @@
     private bool notFound = false;
     private string? errorMessage;
     private string? successMessage;
+    private List<CommandInputModel>? commandInputs = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -148,6 +174,10 @@
                 Sale = bp.Sale,
                 Image = bp.Image
             };
+            if (bp.Commands != null && bp.Commands.Any())
+            {
+                commandInputs = bp.Commands.Select(c => new CommandInputModel { CommandText = c.CommandText }).ToList();
+            }
         }
         catch (Exception ex)
         {
@@ -161,6 +191,11 @@
     {
         try
         {
+            // include commands if provided
+            if (commandInputs != null && commandInputs.Any())
+            {
+                model.Commands = commandInputs.Select(c => new CreateCommandDto { CommandText = c.CommandText }).ToList();
+            }
             await Api.UpdateBattlePassAsync(Id, model);
             successMessage = "Updated successfully";
             await Task.Delay(1000);
@@ -170,6 +205,24 @@
         {
             errorMessage = $"Error updating: {ex.Message}";
         }
+    }
+
+    private void AddCommand()
+    {
+        if (commandInputs == null) commandInputs = new List<CommandInputModel>();
+        commandInputs.Add(new CommandInputModel());
+    }
+
+    private void RemoveCommand(int index)
+    {
+        if (commandInputs == null) return;
+        if (index < 0 || index >= commandInputs.Count) return;
+        commandInputs.RemoveAt(index);
+    }
+
+    private class CommandInputModel
+    {
+        public string CommandText { get; set; } = string.Empty;
     }
 
     private void GoBack() => Navigation.NavigateTo("/battlepasses");

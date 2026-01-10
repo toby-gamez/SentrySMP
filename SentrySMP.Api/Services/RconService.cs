@@ -131,11 +131,31 @@ namespace SentrySMP.Api.Services
                     {
                         if (!string.IsNullOrEmpty(product.Type) && string.Equals(product.Type, "rank", StringComparison.OrdinalIgnoreCase))
                         {
-                            var smpServer = allServers.FirstOrDefault(s => !string.IsNullOrEmpty(s.Name) && s.Name.IndexOf("smp", StringComparison.OrdinalIgnoreCase) >= 0);
-                            if (smpServer != null)
+                            var smpCandidate = allServers.FirstOrDefault(s => !string.IsNullOrEmpty(s.Name) && s.Name.IndexOf("smp", StringComparison.OrdinalIgnoreCase) >= 0);
+                            if (smpCandidate != null)
                             {
-                                targets.Clear();
-                                targets.Add(smpServer);
+                                // Try to fetch fresh/full server details (may contain RCON credentials/details)
+                                try
+                                {
+                                    var full = await _serverService.GetServerByIdAsync(smpCandidate.Id);
+                                    if (full != null)
+                                    {
+                                        targets.Clear();
+                                        targets.Add(full);
+                                    }
+                                    else
+                                    {
+                                        // fallback to candidate from allServers if detail-load failed
+                                        targets.Clear();
+                                        targets.Add(smpCandidate);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.LogWarning(ex, "Failed to load full SMP server details (id={Id}), falling back to cached server object.", smpCandidate.Id);
+                                    targets.Clear();
+                                    targets.Add(smpCandidate);
+                                }
                             }
                         }
                     }
