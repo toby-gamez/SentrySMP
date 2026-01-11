@@ -68,22 +68,37 @@ else
     {
         <div class="@statusClass mt-2" role="alert">@statusMessage</div>
     }
-    @foreach (var cat in team.Categories)
+    @for (int i = 0; i < team.Categories.Count; i++)
     {
+        var cat = team.Categories[i];
+        var index = i;
         <div class="card mb-3">
             <div class="card-body">
                 <div class="d-flex justify-content-between">
-                    <input class="form-control me-2" style="max-width:400px" @bind="cat.Name" />
+                    <div class="d-flex align-items-center flex-grow-1">
+                        <div class="btn-group me-2">
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="() => MoveCategoryUp(index)" disabled="@(index == 0)">▲</button>
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="() => MoveCategoryDown(index)" disabled="@(index == team.Categories.Count - 1)">▼</button>
+                        </div>
+                        <input class="form-control me-2" style="max-width:400px" @bind="cat.Name" />
+                    </div>
                     <div>
                         <button class="btn btn-danger ms-2" @onclick="() => RemoveCategory(cat.Id)">Delete Category</button>
                     </div>
                 </div>
 
                 <div class="row mt-3">
-                    @foreach (var m in cat.Members)
+                    @for (int j = 0; j < cat.Members.Count; j++)
                     {
+                        var m = cat.Members[j];
+                        var memberIndex = j;
+                        var categoryId = cat.Id;
                         <div class="col-md-4 mb-2">
                             <div class="input-group">
+                                <div class="btn-group-vertical me-1">
+                                    <button class="btn btn-sm btn-outline-secondary" style="padding:0 4px;font-size:0.7rem;line-height:1;" @onclick="() => MoveMemberUp(categoryId, memberIndex)" disabled="@(memberIndex == 0)">▲</button>
+                                    <button class="btn btn-sm btn-outline-secondary" style="padding:0 4px;font-size:0.7rem;line-height:1;" @onclick="() => MoveMemberDown(categoryId, memberIndex)" disabled="@(memberIndex == cat.Members.Count - 1)">▼</button>
+                                </div>
                                 <img src="@GetSkinUrl(m)" style="width:48px;height:48px;object-fit:cover;" />
                                 <input class="form-control ms-2" placeholder="Minecraft name" @bind="m.MinecraftName" @bind:event="oninput" />
                                 <input class="form-control ms-2" placeholder="Role" style="max-width:140px" @bind="m.Role" />
@@ -170,6 +185,40 @@ else
         var cleaned = new string(role.ToUpperInvariant().Where(c => char.IsLetterOrDigit(c)).ToArray());
         if (string.IsNullOrEmpty(cleaned)) return "role-DEFAULT";
         return $"role-{cleaned}";
+    }
+
+    private void MoveCategoryUp(int index)
+    {
+        if (index <= 0 || team == null) return;
+        var temp = team.Categories[index];
+        team.Categories[index] = team.Categories[index - 1];
+        team.Categories[index - 1] = temp;
+    }
+
+    private void MoveCategoryDown(int index)
+    {
+        if (team == null || index >= team.Categories.Count - 1) return;
+        var temp = team.Categories[index];
+        team.Categories[index] = team.Categories[index + 1];
+        team.Categories[index + 1] = temp;
+    }
+
+    private void MoveMemberUp(string categoryId, int memberIndex)
+    {
+        var cat = team!.Categories.FirstOrDefault(c => c.Id == categoryId);
+        if (cat == null || memberIndex <= 0) return;
+        var temp = cat.Members[memberIndex];
+        cat.Members[memberIndex] = cat.Members[memberIndex - 1];
+        cat.Members[memberIndex - 1] = temp;
+    }
+
+    private void MoveMemberDown(string categoryId, int memberIndex)
+    {
+        var cat = team!.Categories.FirstOrDefault(c => c.Id == categoryId);
+        if (cat == null || memberIndex >= cat.Members.Count - 1) return;
+        var temp = cat.Members[memberIndex];
+        cat.Members[memberIndex] = cat.Members[memberIndex + 1];
+        cat.Members[memberIndex + 1] = temp;
     }
 
     private async Task Save()

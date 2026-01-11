@@ -30,6 +30,7 @@ public class TeamService : ITeamService
         {
             var categories = await _db.TeamCategories
                 .Include(c => c.Members)
+                .OrderBy(c => c.SortOrder)
                 .AsNoTracking()
                 .ToListAsync();
 
@@ -39,7 +40,7 @@ public class TeamService : ITeamService
                 {
                     Id = c.Id,
                     Name = c.Name,
-                    Members = c.Members.Select(m => new TeamMemberDto
+                    Members = c.Members.OrderBy(m => m.SortOrder).Select(m => new TeamMemberDto
                     {
                         Id = m.Id,
                         MinecraftName = m.MinecraftName,
@@ -73,18 +74,26 @@ public class TeamService : ITeamService
             await _db.SaveChangesAsync();
 
             // Insert new
-            foreach (var cat in dto.Categories)
+            for (int i = 0; i < dto.Categories.Count; i++)
             {
-                var entityCat = new TeamCategory { Id = cat.Id ?? Guid.NewGuid().ToString(), Name = cat.Name };
-                foreach (var mem in cat.Members)
+                var cat = dto.Categories[i];
+                var entityCat = new TeamCategory 
+                { 
+                    Id = cat.Id ?? Guid.NewGuid().ToString(), 
+                    Name = cat.Name,
+                    SortOrder = i
+                };
+                for (int j = 0; j < cat.Members.Count; j++)
                 {
+                    var mem = cat.Members[j];
                     entityCat.Members.Add(new TeamMember
                     {
                         Id = mem.Id ?? Guid.NewGuid().ToString(),
                         MinecraftName = mem.MinecraftName,
                         Role = mem.Role,
                         SkinUrl = mem.SkinUrl,
-                        TeamCategoryId = entityCat.Id
+                        TeamCategoryId = entityCat.Id,
+                        SortOrder = j
                     });
                 }
                 _db.TeamCategories.Add(entityCat);

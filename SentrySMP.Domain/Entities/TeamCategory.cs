@@ -11,5 +11,7 @@ public class TeamCategory
     [MaxLength(100)]
     public string Name { get; set; } = string.Empty;
 
+    public int SortOrder { get; set; }
+
     public List<TeamMember> Members { get; set; } = new List<TeamMember>();
 }

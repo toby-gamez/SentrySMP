@@ -205,6 +205,7 @@ public class SentryDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).HasMaxLength(36);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.SortOrder).IsRequired();
             entity.HasMany(e => e.Members)
                   .WithOne(m => m.Category)
                   .HasForeignKey(m => m.TeamCategoryId)
@@ -219,6 +220,7 @@ public class SentryDbContext : DbContext
             entity.Property(e => e.Role).HasMaxLength(100);
             entity.Property(e => e.SkinUrl).HasMaxLength(500);
             entity.Property(e => e.TeamCategoryId).HasMaxLength(36);
+            entity.Property(e => e.SortOrder).IsRequired();
         });
     }
 }

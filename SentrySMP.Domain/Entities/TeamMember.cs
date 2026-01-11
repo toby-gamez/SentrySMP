@@ -19,6 +19,8 @@ public class TeamMember
     [MaxLength(500)]
     public string? SkinUrl { get; set; }
 
+    public int SortOrder { get; set; }
+
     // FK back to category
     [MaxLength(36)]
     public string TeamCategoryId { get; set; } = string.Empty;
