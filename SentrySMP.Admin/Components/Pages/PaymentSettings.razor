@@ -1,0 +1,203 @@
+@page "/payment-settings"
+@rendermode InteractiveServer
+@using SentrySMP.Shared.DTOs
+@using SentrySMP.Shared.Interfaces
+@inject ISentryApi Api
+@inject ILogger<PaymentSettings> Logger
+
+<PageTitle>Payment Settings - SentrySMP Admin</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1>
+                        <i class="bi bi-credit-card-2-front me-2"></i>
+                        Payment Settings
+                    </h1>
+                    <p class="text-muted">Configure global payment method availability</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (loading)
+    {
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                @errorMessage
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(successMessage))
+        {
+            <div class="alert alert-success" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                @successMessage
+            </div>
+        }
+
+        <div class="card">
+            <div class="card-body">
+                <EditForm Model="settings" OnValidSubmit="HandleSubmit">
+                    <div class="mb-4">
+                        <h5 class="text-primary mb-3">
+                            <i class="bi bi-toggle-on me-2"></i>
+                            Global Payment Control
+                        </h5>
+                        
+                        <div class="form-check form-switch mb-3">
+                            <InputCheckbox @bind-Value="settings.EnablePayments" class="form-check-input" id="enablePayments" />
+                            <label class="form-check-label" for="enablePayments">
+                                <strong>Enable Payments</strong>
+                                <div class="form-text">When disabled, all payment methods will be unavailable for customers</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="mb-4">
+                        <h5 class="text-primary mb-3">
+                            <i class="bi bi-credit-card me-2"></i>
+                            Individual Payment Methods
+                        </h5>
+                        
+                        <div class="alert alert-info mb-3">
+                            <i class="bi bi-info-circle me-2"></i>
+                            These settings only apply when "Enable Payments" is turned on
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <InputCheckbox @bind-Value="settings.DisableStripe" class="form-check-input" id="disableStripe" disabled="@(!settings.EnablePayments)" />
+                            <label class="form-check-label" for="disableStripe">
+                                <strong>Disable Stripe</strong>
+                                <div class="form-text">When enabled, Stripe payment method will be hidden from checkout</div>
+                            </label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <InputCheckbox @bind-Value="settings.DisablePayPal" class="form-check-input" id="disablePayPal" disabled="@(!settings.EnablePayments)" />
+                            <label class="form-check-label" for="disablePayPal">
+                                <strong>Disable PayPal</strong>
+                                <div class="form-text">When enabled, PayPal payment method will be hidden from checkout</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 justify-content-end mt-4">
+                        <button type="submit" class="btn btn-primary" disabled="@saving">
+                            @if (saving)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                <text>Saving...</text>
+                            }
+                            else
+                            {
+                                <i class="bi bi-save me-1"></i>
+                                <text>Save Settings</text>
+                            }
+                        </button>
+                    </div>
+                </EditForm>
+
+                @if (settingsUpdatedAt != default)
+                {
+                    <div class="mt-3 text-muted small">
+                        Last updated: @settingsUpdatedAt.ToString("yyyy-MM-dd HH:mm:ss") UTC
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private UpdatePaymentSettingsRequest settings = new();
+    private DateTime settingsUpdatedAt = default;
+    private bool loading = true;
+    private bool saving = false;
+    private string? errorMessage;
+    private string? successMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSettings();
+    }
+
+    private async Task LoadSettings()
+    {
+        try
+        {
+            loading = true;
+            errorMessage = null;
+            var response = await Api.GetPaymentSettingsAsync();
+            if (response != null)
+            {
+                settings = new UpdatePaymentSettingsRequest
+                {
+                    EnablePayments = response.EnablePayments,
+                    DisableStripe = response.DisableStripe,
+                    DisablePayPal = response.DisablePayPal
+                };
+                settingsUpdatedAt = response.UpdatedAt;
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading settings: {ex.Message}";
+            Logger.LogError(ex, "Error loading payment settings");
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            saving = true;
+            errorMessage = null;
+            successMessage = null;
+
+            var response = await Api.UpdatePaymentSettingsAsync(settings);
+            
+            if (response != null)
+            {
+                successMessage = "Settings updated successfully!";
+                settings = new UpdatePaymentSettingsRequest
+                {
+                    EnablePayments = response.EnablePayments,
+                    DisableStripe = response.DisableStripe,
+                    DisablePayPal = response.DisablePayPal
+                };
+                settingsUpdatedAt = response.UpdatedAt;
+            }
+            else
+            {
+                errorMessage = "Failed to update settings";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error updating settings: {ex.Message}";
+            Logger.LogError(ex, "Error updating payment settings");
+        }
+        finally
+        {
+            saving = false;
+        }
+    }
+}

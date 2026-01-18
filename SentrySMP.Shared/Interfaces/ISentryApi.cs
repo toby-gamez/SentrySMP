@@ -151,4 +151,11 @@ public interface ISentryApi
     // Transaction endpoints
     [Get("/api/transactions")]
     Task<IEnumerable<SentrySMP.Shared.DTOs.TransactionResponse>> GetTransactionsAsync();
+
+    // Payment settings endpoints
+    [Get("/api/settings/payments")]
+    Task<PaymentSettingsResponse?> GetPaymentSettingsAsync();
+
+    [Put("/api/settings/payments")]
+    Task<PaymentSettingsResponse?> UpdatePaymentSettingsAsync([Body] UpdatePaymentSettingsRequest request);
 }

@@ -19,6 +19,7 @@ public class SentryDbContext : DbContext
     public DbSet<BattlePass> BattlePasses { get; set; }
     public DbSet<Command> Commands { get; set; }
     public DbSet<SentrySMP.Domain.Entities.PaymentTransaction> PaymentTransactions { get; set; }
+    public DbSet<PaymentSettings> PaymentSettings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -221,6 +222,16 @@ public class SentryDbContext : DbContext
             entity.Property(e => e.SkinUrl).HasMaxLength(500);
             entity.Property(e => e.TeamCategoryId).HasMaxLength(36);
             entity.Property(e => e.SortOrder).IsRequired();
+        });
+
+        // Configure PaymentSettings
+        modelBuilder.Entity<PaymentSettings>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.EnablePayments).IsRequired().HasDefaultValue(true);
+            entity.Property(e => e.DisableStripe).IsRequired().HasDefaultValue(false);
+            entity.Property(e => e.DisablePayPal).IsRequired().HasDefaultValue(false);
+            entity.Property(e => e.UpdatedAt).IsRequired();
         });
     }
 }
