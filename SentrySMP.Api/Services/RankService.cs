@@ -50,7 +50,8 @@ public class RankService : IRankService
             Description = createRankDto.Description,
             Price = createRankDto.Price,
             Sale = createRankDto.Sale,
-            Image = createRankDto.Image
+            Image = createRankDto.Image,
+            GlobalMaxOrder = createRankDto.GlobalMaxOrder
         };
 
         _context.Set<Rank>().Add(rank);
@@ -87,6 +88,7 @@ public class RankService : IRankService
         rank.Price = updateRankDto.Price;
         rank.Sale = updateRankDto.Sale;
         rank.Image = updateRankDto.Image;
+        rank.GlobalMaxOrder = updateRankDto.GlobalMaxOrder;
 
         await _context.SaveChangesAsync();
 
@@ -148,6 +150,7 @@ public class RankService : IRankService
             Price = rank.Price,
             Sale = rank.Sale,
             Image = rank.Image,
+            GlobalMaxOrder = rank.GlobalMaxOrder,
             // Attach mapped commands
             Commands = commandDtos
         };

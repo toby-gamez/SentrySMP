@@ -96,6 +96,11 @@
                                     <InputNumber @bind-Value="model.Sale" class="form-control" />
                                 </div>
                                 <div class="mb-3">
+                                    <label class="form-label">Global Max Order (Optional)</label>
+                                    <InputNumber @bind-Value="model.GlobalMaxOrder" class="form-control" placeholder="Leave empty for unlimited" />
+                                    <div class="form-text">Maximum total quantity per user across all orders (leave empty for unlimited)</div>
+                                </div>
+                                <div class="mb-3">
                                     <label class="form-label">Description</label>
                                     <InputTextArea @bind-Value="model.Description" class="form-control" rows="4" />
                                 </div>
@@ -172,7 +177,8 @@
                 Price = bp.Price,
                 ServerId = bp.ServerId,
                 Sale = bp.Sale,
-                Image = bp.Image
+                Image = bp.Image,
+                GlobalMaxOrder = bp.GlobalMaxOrder
             };
             if (bp.Commands != null && bp.Commands.Any())
             {

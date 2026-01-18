@@ -32,6 +32,8 @@ public class CreateRankDto
     public int Sale { get; set; } = 0;
 
     public string? Image { get; set; }
+    
+    public int? GlobalMaxOrder { get; set; }
     public List<CreateCommandDto>? Commands { get; set; }
 }
 
@@ -52,5 +54,7 @@ public class UpdateRankDto
     public int Sale { get; set; }
 
     public string? Image { get; set; }
+    
+    public int? GlobalMaxOrder { get; set; }
     public List<CreateCommandDto>? Commands { get; set; }
 }

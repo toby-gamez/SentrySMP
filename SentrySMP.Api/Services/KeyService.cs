@@ -75,7 +75,8 @@ public class KeyService : IKeyService
             Price = createKeyDto.Price,
             ServerId = createKeyDto.ServerId,
             Sale = createKeyDto.Sale,
-            Image = createKeyDto.Image
+            Image = createKeyDto.Image,
+            GlobalMaxOrder = createKeyDto.GlobalMaxOrder
         };
 
         _context.Keys.Add(key);
@@ -127,6 +128,7 @@ public class KeyService : IKeyService
         key.ServerId = updateKeyDto.ServerId;
         key.Sale = updateKeyDto.Sale;
         key.Image = updateKeyDto.Image;
+        key.GlobalMaxOrder = updateKeyDto.GlobalMaxOrder;
         // If commands are provided in the update, replace existing commands for this key
         if (updateKeyDto.Commands != null)
         {
@@ -193,6 +195,7 @@ public class KeyService : IKeyService
             ServerId = key.ServerId,
             Sale = key.Sale,
             Image = key.Image,
+            GlobalMaxOrder = key.GlobalMaxOrder,
             Server = key.Server != null ? new ServerResponse
             {
                 Id = key.Server.Id,

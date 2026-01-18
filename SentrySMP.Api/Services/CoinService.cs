@@ -70,7 +70,8 @@ public class CoinService : ICoinService
             Price = createCoinDto.Price,
             ServerId = createCoinDto.ServerId,
             Sale = createCoinDto.Sale,
-            Image = createCoinDto.Image
+            Image = createCoinDto.Image,
+            GlobalMaxOrder = createCoinDto.GlobalMaxOrder
         };
         _context.Coins.Add(coin);
         await _context.SaveChangesAsync();
@@ -101,6 +102,7 @@ public class CoinService : ICoinService
         coin.ServerId = updateCoinDto.ServerId;
         coin.Sale = updateCoinDto.Sale;
         coin.Image = updateCoinDto.Image;
+        coin.GlobalMaxOrder = updateCoinDto.GlobalMaxOrder;
         // If commands provided, replace existing
         if (updateCoinDto.Commands != null)
         {
@@ -171,6 +173,7 @@ public class CoinService : ICoinService
             Price = coin.Price,
             Sale = coin.Sale,
             Image = coin.Image,
+            GlobalMaxOrder = coin.GlobalMaxOrder,
             Server = coin.Server != null ? new ServerResponse
             {
                 Id = coin.Server.Id,

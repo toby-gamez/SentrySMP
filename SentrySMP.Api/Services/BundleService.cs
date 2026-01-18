@@ -72,7 +72,8 @@ public class BundleService : IBundleService
             Price = createBundleDto.Price,
             ServerId = createBundleDto.ServerId,
             Sale = createBundleDto.Sale,
-            Image = createBundleDto.Image
+            Image = createBundleDto.Image,
+            GlobalMaxOrder = createBundleDto.GlobalMaxOrder
         };
 
         _context.Set<Bundle>().Add(bundle);
@@ -120,6 +121,7 @@ public class BundleService : IBundleService
         bundle.ServerId = updateBundleDto.ServerId;
         bundle.Sale = updateBundleDto.Sale;
         bundle.Image = updateBundleDto.Image;
+        bundle.GlobalMaxOrder = updateBundleDto.GlobalMaxOrder;
         // If commands are provided in the update, replace existing commands for this bundle
         if (updateBundleDto.Commands != null)
         {
@@ -184,6 +186,7 @@ public class BundleService : IBundleService
             ServerId = b.ServerId,
             Sale = b.Sale,
             Image = b.Image,
+            GlobalMaxOrder = b.GlobalMaxOrder,
             Server = b.Server != null ? new ServerResponse
             {
                 Id = b.Server.Id,

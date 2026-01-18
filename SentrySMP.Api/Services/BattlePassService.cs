@@ -70,7 +70,8 @@ public class BattlePassService : IBattlePassService
             Price = createDto.Price,
             ServerId = createDto.ServerId,
             Sale = createDto.Sale,
-            Image = createDto.Image
+            Image = createDto.Image,
+            GlobalMaxOrder = createDto.GlobalMaxOrder
         };
 
         _context.Set<BattlePass>().Add(bp);
@@ -116,6 +117,7 @@ public class BattlePassService : IBattlePassService
         bp.ServerId = updateDto.ServerId;
         bp.Sale = updateDto.Sale;
         bp.Image = updateDto.Image;
+        bp.GlobalMaxOrder = updateDto.GlobalMaxOrder;
         // If commands are provided in the update, replace existing commands for this battlepass
         if (updateDto.Commands != null)
         {
@@ -174,6 +176,7 @@ public class BattlePassService : IBattlePassService
             Sale = bp.Sale,
             Image = bp.Image,
             ServerId = bp.ServerId,
+            GlobalMaxOrder = bp.GlobalMaxOrder,
             Server = bp.Server != null ? new ServerResponse
             {
                 Id = bp.Server.Id,

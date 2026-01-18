@@ -5,6 +5,8 @@
 @inject ILogger<Bundles> Logger
 @inject SentrySMP.App.Components.State.CartState CartState
 @inject IJSRuntime JS
+@inject IPurchaseTrackingService PurchaseTrackingService
+@inject SentrySMP.App.Authentication.UserService UserService
 @rendermode InteractiveServer
 
 <PageTitle>Bundles - SentrySMP</PageTitle>
@@ -81,6 +83,18 @@
                                                 }
                                             </div>
                                         </div>
+                                        @if (bundle.GlobalMaxOrder.HasValue)
+                                        {
+                                            <div class="mb-2">
+                                                <small class="text-info">
+                                                    <i class="bi bi-info-circle"></i> Limited availability
+                                                    @if (_purchasedCounts.TryGetValue($"Bundle_{bundle.Id}", out var purchased))
+                                                    {
+                                                        <br /><span class="text-warning">Sold: @purchased/@bundle.GlobalMaxOrder</span>
+                                                    }
+                                                </small>
+                                            </div>
+                                        }
                                         <div style="display: flex; align-items: center; justify-content: space-between">
                                             <button class="" @onclick="() => ShowBundleDetails(bundle)"><i class="bi bi-info-circle"></i> Details</button>
                                             @if (cartItem == null)
@@ -197,9 +211,14 @@
     private BundleResponse? selectedBundle;
 
     private bool _cartLoaded = false;
+    
+    private Dictionary<string, int> _purchasedCounts = new();
+    private string? _username;
+    
     protected override async Task OnInitializedAsync()
     {
         await LoadBundles();
+        await LoadPurchasedCounts();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -329,6 +348,17 @@
         if (selectedBundle != null)
         {
             await AddToCart(selectedBundle);
+        }
+    }
+
+    private async Task LoadPurchasedCounts()
+    {
+        if (bundles == null) return;
+        
+        foreach (var bundle in bundles.Where(b => b.GlobalMaxOrder.HasValue))
+        {
+            var count = await PurchaseTrackingService.GetGlobalPurchasedAsync("Bundle", bundle.Id);
+            _purchasedCounts[$"Bundle_{bundle.Id}"] = count;
         }
     }
 }

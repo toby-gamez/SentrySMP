@@ -107,6 +107,12 @@
                             </div>
 
                             <div class="mb-3">
+                                <label class="form-label">Global Max Order (Optional)</label>
+                                <InputNumber @bind-Value="model.GlobalMaxOrder" class="form-control" placeholder="Leave empty for unlimited" min="1" />
+                                <div class="form-text">Maximum total quantity per user across all orders (leave empty for unlimited)</div>
+                            </div>
+
+                            <div class="mb-3">
                                 <label class="form-label">Description</label>
                                 <InputTextArea @bind-Value="model.Description" class="form-control" rows="4" placeholder="Enter description..." />
                             </div>

@@ -20,6 +20,7 @@ public class SentryDbContext : DbContext
     public DbSet<Command> Commands { get; set; }
     public DbSet<SentrySMP.Domain.Entities.PaymentTransaction> PaymentTransactions { get; set; }
     public DbSet<PaymentSettings> PaymentSettings { get; set; }
+    public DbSet<UserPurchaseRecord> UserPurchaseRecords { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

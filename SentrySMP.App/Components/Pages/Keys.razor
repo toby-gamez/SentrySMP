@@ -5,6 +5,8 @@
 @inject ILogger<Keys> Logger
 @inject SentrySMP.App.Components.State.CartState CartState
 @inject IJSRuntime JS
+@inject IPurchaseTrackingService PurchaseTrackingService
+@inject SentrySMP.App.Authentication.UserService UserService
 @rendermode InteractiveServer
 
 <PageTitle>Keys - SentrySMP</PageTitle>
@@ -86,6 +88,21 @@
                                                 }
                                             </div>
                                         </div>
+                                        @if (key.GlobalMaxOrder.HasValue)
+                                        {
+                                            <div class="mb-2">
+                                                <small class="text-info">
+                                                    <i class="bi bi-info-circle"></i> Limited availability
+                                                </small>
+                                                @if (_purchasedCounts.TryGetValue($"Key_{key.Id}", out var purchased))
+                                                {
+                                                    <br/>
+                                                    <small class="text-warning">
+                                                        Sold: @purchased/@key.GlobalMaxOrder
+                                                    </small>
+                                                }
+                                            </div>
+                                        }
                                         <div style="display: flex; align-items: center; justify-content: space-between">
                                             <button class="" @onclick="() => ShowKeyDetails(key)">
                                                 <i class="bi bi-info-circle"></i> Details
@@ -211,9 +228,32 @@
     private KeyResponse? selectedKey;
 
     private bool _cartLoaded = false;
+    private Dictionary<string, int> _purchasedCounts = new();
+    private string? _username;
+    
     protected override async Task OnInitializedAsync()
     {
         await LoadKeys();
+        await LoadPurchasedCounts();
+    }
+    
+    private async Task LoadPurchasedCounts()
+    {
+        try
+        {
+            foreach (var key in keys ?? new List<KeyResponse>())
+            {
+                if (key.GlobalMaxOrder.HasValue)
+                {
+                    var count = await PurchaseTrackingService.GetGlobalPurchasedAsync("Key", key.Id);
+                    _purchasedCounts[$"Key_{key.Id}"] = count;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error loading purchased counts");
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

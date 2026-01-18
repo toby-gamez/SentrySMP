@@ -116,6 +116,12 @@
                                 </div>
                                 
                                 <div class="mb-3">
+                                    <label class="form-label">Global Max Order (Optional)</label>
+                                    <InputNumber @bind-Value="rankModel.GlobalMaxOrder" class="form-control" placeholder="Leave empty for unlimited" min="1" />
+                                    <div class="form-text">Maximum total quantity per user across all orders (leave empty for unlimited)</div>
+                                </div>
+                                
+                                <div class="mb-3">
                                     <label class="form-label">Description</label>
                                     <InputTextArea @bind-Value="rankModel.Description" class="form-control" rows="4" placeholder="Enter rank description..." />
                                 </div>
@@ -203,7 +209,8 @@
                 Description = rank.Description,
                 Price = rank.Price,
                 Sale = rank.Sale,
-                Image = rank.Image
+                Image = rank.Image,
+                GlobalMaxOrder = rank.GlobalMaxOrder
             };
             // populate command inputs from rank response if present
             if (rank.Commands != null && rank.Commands.Any())
@@ -252,7 +259,8 @@
                 Description = rankModel.Description ?? "",
                 Price = rankModel.Price,
                 Sale = rankModel.Sale,
-                Image = rankModel.Image
+                Image = rankModel.Image,
+                GlobalMaxOrder = rankModel.GlobalMaxOrder
             };
 
             if (commandInputs != null && commandInputs.Any())
@@ -304,6 +312,8 @@
         
         [Range(0, 100)]
         public int Sale { get; set; }
+        
+        public int? GlobalMaxOrder { get; set; }
         
         [MaxLength(500)]
         public string? Image { get; set; }

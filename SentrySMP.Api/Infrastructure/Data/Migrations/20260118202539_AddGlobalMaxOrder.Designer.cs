@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SentrySMP.Api.Infrastructure.Data;
 
 #nullable disable
 
-namespace SentrySMP.Api.Migrations
+namespace SentrySMP.Api.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(SentryDbContext))]
-    partial class SentryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260118202539_AddGlobalMaxOrder")]
+    partial class AddGlobalMaxOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -420,41 +423,6 @@ namespace SentrySMP.Api.Migrations
                     b.HasIndex("TeamCategoryId");
 
                     b.ToTable("TeamMembers");
-                });
-
-            modelBuilder.Entity("SentrySMP.Domain.Entities.UserPurchaseRecord", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("LastPurchaseDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("MinecraftUsername")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ProductType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<int>("TotalQuantityPurchased")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserPurchaseRecords");
                 });
 
             modelBuilder.Entity("SentrySMP.Domain.Entities.BattlePass", b =>

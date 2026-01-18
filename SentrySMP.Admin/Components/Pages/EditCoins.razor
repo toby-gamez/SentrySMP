@@ -91,6 +91,11 @@
                                 <ValidationMessage For="() => shardModel.Sale" />
                             </div>
                             <div class="mb-3">
+                                <label class="form-label">Global Max Order (Optional)</label>
+                                <InputNumber class="form-control" @bind-Value="shardModel.GlobalMaxOrder" placeholder="Leave empty for unlimited" />
+                                <div class="form-text">Maximum total quantity per user across all orders (leave empty for unlimited)</div>
+                            </div>
+                            <div class="mb-3">
                                 <label class="form-label">Server</label>
                                 <InputSelect class="form-select" @bind-Value="shardModel.ServerId">
                                     <option value="">Select server</option>
@@ -163,6 +168,7 @@
                 Price = shard.Price,
                 Sale = shard.Sale,
                 Image = shard.Image,
+                GlobalMaxOrder = shard.GlobalMaxOrder,
                 ServerId = shard.Server?.Id ?? 0
             };
                 if (shard.Commands != null && shard.Commands.Any())

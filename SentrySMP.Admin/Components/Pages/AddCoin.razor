@@ -74,6 +74,11 @@
                     <ValidationMessage For="() => coinModel.Sale" />
                 </div>
                 <div class="mb-3">
+                    <label class="form-label">Global Max Order (Optional)</label>
+                    <InputNumber class="form-control" @bind-Value="coinModel.GlobalMaxOrder" placeholder="Leave empty for unlimited" />
+                    <div class="form-text">Maximum total quantity per user across all orders (leave empty for unlimited)</div>
+                </div>
+                <div class="mb-3">
                     <label class="form-label">Server</label>
                     <InputSelect class="form-select" @bind-Value="coinModel.ServerId">
                         <option value="">Select server</option>

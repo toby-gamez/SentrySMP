@@ -71,6 +71,7 @@ services.AddScoped<ICommandService, CommandService>();
 services.AddScoped<IStatusService, SentrySMP.Api.Services.StatusService>();
 services.AddScoped<IAnnouncementsService, AnnouncementsService>();
 services.AddScoped<ITransactionsService, TransactionsService>();
+services.AddScoped<IPurchaseTrackingService, SentrySMP.Api.Services.PurchaseTrackingService>();
 // IRconService is implemented in the API project (server-side service)
 services.AddScoped<SentrySMP.Shared.Interfaces.IRconService, SentrySMP.Api.Services.RconService>();
 // Image sync service (downloads missing images into wwwroot/uploads/keys)

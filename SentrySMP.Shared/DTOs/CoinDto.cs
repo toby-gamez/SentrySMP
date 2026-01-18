@@ -20,6 +20,7 @@ namespace SentrySMP.Shared.DTOs
         public double Price { get; set; }
         public int Sale { get; set; }
         public string? Image { get; set; }
+        public int? GlobalMaxOrder { get; set; }
         public int ServerId { get; set; }
         // Optional commands to attach to this coin
         public List<CreateCommandDto>? Commands { get; set; }
@@ -32,6 +33,7 @@ namespace SentrySMP.Shared.DTOs
         public double Price { get; set; }
         public int Sale { get; set; }
         public string? Image { get; set; }
+        public int? GlobalMaxOrder { get; set; }
         public int ServerId { get; set; }
         // Optional commands to attach to this coin (replaces existing when provided)
         public List<CreateCommandDto>? Commands { get; set; }

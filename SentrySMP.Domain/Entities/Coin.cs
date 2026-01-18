@@ -21,6 +21,8 @@ namespace SentrySMP.Domain.Entities
 
         public string? Image { get; set; }
 
+        public int? GlobalMaxOrder { get; set; } // Maximum total quantity per user across all orders
+
         public int ServerId { get; set; }
 
         [ForeignKey(nameof(ServerId))]

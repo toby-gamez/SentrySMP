@@ -33,6 +33,8 @@ public class CreateBundleDto
     public int Sale { get; set; } = 0;
 
     public string? Image { get; set; }
+    
+    public int? GlobalMaxOrder { get; set; }
     // Optional commands to attach to the bundle during creation
     public List<CreateCommandDto>? Commands { get; set; }
 }
@@ -55,6 +57,8 @@ public class UpdateBundleDto
     public int Sale { get; set; }
 
     public string? Image { get; set; }
+    
+    public int? GlobalMaxOrder { get; set; }
     // Update commands: the client can supply full list to replace existing commands
     public List<CreateCommandDto>? Commands { get; set; }
 }

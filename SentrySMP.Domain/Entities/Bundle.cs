@@ -24,6 +24,8 @@ public class Bundle
     [MaxLength(255)]
     public string? Image { get; set; }
 
+    public int? GlobalMaxOrder { get; set; } // Maximum total quantity per user across all orders
+
     // Navigation property
     public virtual Server? Server { get; set; }
 }
