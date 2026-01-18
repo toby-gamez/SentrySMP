@@ -220,17 +220,6 @@
                             <div class="alert alert-danger mt-2">PejPol error: @_payPalErrorMessage</div>
                         }
                     }
-                    else
-                    {
-                        <div class="alert alert-warning mt-3">
-                            <h6>Payment flow placeholder</h6>
-                            <p>You selected <strong>@_selectedPayment</strong>. This is a simulated confirmation screen.</p>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-success" @onclick="ConfirmPayment">Mark as paid (simulate)</button>
-                                <button class="btn btn-outline-secondary" @onclick="CancelPayment">Cancel</button>
-                            </div>
-                        </div>
-                    }
                 }
 
                 @if (_paymentSucceeded)
@@ -682,40 +671,7 @@
         }
     }
 
-    private async Task ConfirmPayment()
-    {
-        // Capture snapshot of cart so we can display what was purchased after clearing it.
-        _lastOrderItems = CartState.CartItems.Select(ci => new CartItem(ci.Key, ci.Quantity)).ToList();
 
-        // Persist transaction to API (best-effort; failures are logged silently here)
-        try
-        {
-            await SaveTransactionAsync("Manual", "debug", _lastOrderItems, _amount, "EUR", "succeeded");
-        }
-        catch { }
-
-        // Simulate successful payment. Defer clearing the cart until RCON succeeds.
-        _clearCartOnRconSuccess = true;
-        _showPaymentCard = false;
-        _paymentSucceeded = true;
-        _successMessage = "Payment received — thank you! Your payment has been received.";
-        StateHasChanged();
-    }
-
-    // Development-only helper: simulate a real provider return by redirecting back to this
-    // page with ?status=success so the normal return handling runs (clears cart, shows message).
-    private Task DebugSimulatePayment()
-    {
-        if (Env?.IsDevelopment() != true)
-        {
-            return Task.CompletedTask;
-        }
-
-        // Force a full-page load (like a provider redirect) to trigger OnAfterRenderAsync firstRender
-        // and the existing ?status=success handling.
-        NavigationManager.NavigateTo("/checkout?status=success", true);
-        return Task.CompletedTask;
-    }
 
     
 
