@@ -107,17 +107,19 @@
                                                 <button class="btn btn-outline-success btn-sm w-100 mt-2" @onclick="async () => await AddToCart(coin)">
                                                     <i class="bi bi-cart-plus"></i> Add
                                                 </button>
-                                                @if (addedCoinId == coin.Id)
-                                                {
-                                                    <div class="alert alert-success py-1 px-2 mt-2 mb-0 text-center" style="font-size:0.95em;">Přidáno!</div>
-                                                }
+
                                             }
                                             else
                                             {
-                                                <div class="quantity-controls">
-                                                    <button class="quantity-btn" @onclick="() => ChangeQuantity(coin, -1)" disabled="@(cartItem.Quantity <= 1)">-</button>
-                                                    <span class="item-quantity">@cartItem.Quantity</span>
-                                                    <button class="quantity-btn" @onclick="() => ChangeQuantity(coin, 1)" disabled="@(cartItem.Quantity >= 10)">+</button>
+                                                <div style="display: block ruby;">
+                                                    <div class="quantity-controls">
+                                                        <button class="quantity-btn" @onclick="() => ChangeQuantity(coin, -1)" disabled="@(cartItem.Quantity <= 1)">-</button>
+                                                        <span class="item-quantity">@cartItem.Quantity</span>
+                                                        <button class="quantity-btn" @onclick="() => ChangeQuantity(coin, 1)" disabled="@(cartItem.Quantity >= 10)">+</button>
+                                                    </div>
+                                                    <button class="danger" @onclick="async () => await RemoveFromCart(coin)" title="Remove from cart">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
                                                 </div>
                                             }
                                         </div>
@@ -194,17 +196,18 @@
                         <button type="button" class="btn btn-outline-success" @onclick="async () => await AddToCart(selectedCoin!)">
                             <i class="bi bi-cart-plus"></i> Add to Cart
                         </button>
-                        @if (addedCoinId == selectedCoin!.Id)
-                        {
-                            <div class="alert alert-success py-1 px-2 ms-2 mb-0" style="font-size:0.95em;">Přidáno!</div>
-                        }
                     }
                     else
                     {
-                        <div class="quantity-controls">
-                            <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedCoin!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
-                            <span>@cartItemModal.Quantity</span>
-                            <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedCoin!, 1)" disabled="@(cartItemModal.Quantity >= 10)">+</button>
+                        <div style="display: block ruby;">
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedCoin!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
+                                <span>@cartItemModal.Quantity</span>
+                                <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedCoin!, 1)" disabled="@(cartItemModal.Quantity >= 10)">+</button>
+                            </div>
+                            <button class="danger" @onclick="async () => await RemoveFromCart(selectedCoin!)" title="Remove from cart">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </div>
                     }
                 </div>
@@ -327,6 +330,12 @@
     private async Task ChangeQuantity(CoinResponse coin, int delta)
     {
         await CartState.ChangeQuantityAsync(coin, delta);
+    }
+
+    private async Task RemoveFromCart(CoinResponse coin)
+    {
+        await CartState.RemoveFromCartAsync(coin);
+        StateHasChanged();
     }
 
     private async Task AddSelectedToCart()

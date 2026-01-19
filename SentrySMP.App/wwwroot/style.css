@@ -2574,6 +2574,7 @@ body.dark .menu-item {
     pointer-events: none;
     z-index: 9999;
     overflow: hidden;
+    display: none; /* only disable in winter */
 }
 
 .snowflake {

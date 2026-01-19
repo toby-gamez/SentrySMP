@@ -107,10 +107,15 @@
                                             }
                                             else
                                             {
-                                                <div class="quantity-controls">
-                                                    <button class="quantity-btn" @onclick="() => ChangeQuantity(bundle, -1)" disabled="@(cartItem.Quantity <= 1)">-</button>
-                                                    <span class="item-quantity">@cartItem.Quantity</span>
-                                                    <button class="quantity-btn" @onclick="() => ChangeQuantity(bundle, 1)" disabled="@(cartItem.Quantity >= 10)">+</button>
+                                                <div style="display: block ruby;">
+                                                    <div class="quantity-controls">
+                                                        <button class="quantity-btn" @onclick="() => ChangeQuantity(bundle, -1)" disabled="@(cartItem.Quantity <= 1)">-</button>
+                                                        <span class="item-quantity">@cartItem.Quantity</span>
+                                                        <button class="quantity-btn" @onclick="() => ChangeQuantity(bundle, 1)" disabled="@(cartItem.Quantity >= 10)">+</button>
+                                                    </div>
+                                                    <button class="danger" @onclick="async () => await RemoveFromCart(bundle)" title="Remove from cart">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
                                                 </div>
                                             }
                                         </div>
@@ -182,17 +187,18 @@
                         <button type="button" class="btn btn-outline-success" @onclick="async () => await AddToCart(selectedBundle!)">
                             <i class="bi bi-cart-plus"></i> Add to Cart
                         </button>
-                        @if (addedBundleId == selectedBundle!.Id)
-                        {
-                            <div class="alert alert-success py-1 px-2 ms-2 mb-0" style="font-size:0.95em;">Přidáno!</div>
-                        }
                     }
                     else
                     {
-                        <div class="quantity-controls">
-                            <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedBundle!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
-                            <span>@cartItemModal.Quantity</span>
-                            <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedBundle!, 1)" disabled="@(cartItemModal.Quantity >= 10)">+</button>
+                        <div style="display: block ruby;">
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedBundle!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
+                                <span>@cartItemModal.Quantity</span>
+                                <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedBundle!, 1)" disabled="@(cartItemModal.Quantity >= 10)">+</button>
+                            </div>
+                            <button class="danger" @onclick="async () => await RemoveFromCart(selectedBundle!)" title="Remove from cart">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </div>
                     }
                 </div>
@@ -341,6 +347,23 @@
             Server = bundle.Server
         };
         await CartState.ChangeQuantityAsync(keyLike, delta);
+    }
+
+    private async Task RemoveFromCart(BundleResponse bundle)
+    {
+        var keyLike = new KeyResponse
+        {
+            Id = bundle.Id,
+            Name = bundle.Name,
+            Description = bundle.Description,
+            Price = bundle.Price,
+            ServerId = bundle.ServerId,
+            Sale = bundle.Sale,
+            Image = bundle.Image,
+            Server = bundle.Server
+        };
+        await CartState.RemoveFromCartAsync(keyLike);
+        StateHasChanged();
     }
 
     private async Task AddSelectedToCart()
