@@ -103,14 +103,18 @@
                                                 }
                                             </div>
                                         }
+                                        @{
+                                            var remainingQty = GetRemainingQuantity("Key", key.Id, key.GlobalMaxOrder);
+                                            var isSoldOut = remainingQty == 0;
+                                        }
                                         <div style="display: flex; align-items: center; justify-content: space-between">
                                             <button class="" @onclick="() => ShowKeyDetails(key)">
                                                 <i class="bi bi-info-circle"></i> Details
                                             </button>
                                             @if (cartItem == null)
                                             {
-                                                <button class="btn btn-outline-success btn-sm w-100 mt-2" @onclick="async () => await AddToCart(key)">
-                                                    <i class="bi bi-plus"></i> Cart
+                                                <button class="btn btn-outline-success btn-sm w-100 mt-2" @onclick="async () => await AddToCart(key)" disabled="@isSoldOut">
+                                                    <i class="bi bi-@(isSoldOut ? "x-circle" : "plus")"></i> @(isSoldOut ? "Sold Out" : "Cart")
                                                 </button>
 
                                             }
@@ -120,7 +124,7 @@
                                                     <div class="quantity-controls">
                                                         <button class="quantity-btn" @onclick="() => ChangeQuantity(key, -1)" disabled="@(cartItem.Quantity <= 1)">-</button>
                                                         <span class="item-quantity">@cartItem.Quantity</span>
-                                                        <button class="quantity-btn" @onclick="() => ChangeQuantity(key, 1)" disabled="@(cartItem.Quantity >= 10)">+</button>
+                                                        <button class="quantity-btn" @onclick="() => ChangeQuantity(key, 1)" disabled="@(cartItem.Quantity >= Math.Min(10, remainingQty))">+</button>
                                                     </div>
                                                     <button class="danger" @onclick="async () => await RemoveFromCart(key)" title="Remove from cart">
                                                         <i class="bi bi-trash"></i>
@@ -195,11 +199,13 @@
                 <div class="modal-footer">
                     @{
                         var cartItemModal = CartState.CartItems.FirstOrDefault(i => i.Key.Id == selectedKey!.Id);
+                        var remainingQtyModal = GetRemainingQuantity("Key", selectedKey!.Id, selectedKey.GlobalMaxOrder);
+                        var isSoldOutModal = remainingQtyModal == 0;
                     }
                     @if (cartItemModal == null)
                     {
-                        <button type="button" class="btn btn-outline-success" @onclick="async () => await AddToCart(selectedKey!)">
-                            <i class="bi bi-cart-plus"></i> Add to Cart
+                        <button type="button" class="btn btn-outline-success" @onclick="async () => await AddToCart(selectedKey!)" disabled="@isSoldOutModal">
+                            <i class="bi bi-cart-plus"></i> @(isSoldOutModal ? "Sold Out" : "Add to Cart")
                         </button>
                     }
                     else
@@ -208,7 +214,7 @@
                             <div class="quantity-controls">
                                 <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedKey!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
                                 <span>@cartItemModal.Quantity</span>
-                                <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedKey!, 1)" disabled="@(cartItemModal.Quantity >= 10)">+</button>
+                                <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedKey!, 1)" disabled="@(cartItemModal.Quantity >= Math.Min(10, remainingQtyModal))">+</button>
                             </div>
                             <button class="danger" @onclick="async () => await RemoveFromCart(selectedKey!)" title="Remove from cart">
                                 <i class="bi bi-trash"></i>
@@ -257,6 +263,18 @@
         {
             Logger.LogError(ex, "Error loading purchased counts");
         }
+    }
+
+    private int GetRemainingQuantity(string type, int id, int? globalMaxOrder)
+    {
+        if (!globalMaxOrder.HasValue) return int.MaxValue;
+        
+        if (_purchasedCounts.TryGetValue($"{type}_{id}", out var purchased))
+        {
+            return Math.Max(0, globalMaxOrder.Value - purchased);
+        }
+        
+        return globalMaxOrder.Value;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
