@@ -122,9 +122,10 @@
                         <thead>
                             <tr>
                                 <th>Name</th>
+                                <th>Server</th>
                                 <th class="text-center">Qty</th>
                                 <th class="text-end">Unit</th>
-                                <th class="text-end">Line</th>
+                                <th class="text-end">In Total</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -134,7 +135,8 @@
                                 var qty = item.Quantity;
                                 double unitPrice = p.Sale > 0 ? Convert.ToDouble(p.Price) * (1 - p.Sale / 100.0) : Convert.ToDouble(p.Price);
                                 <tr>
-                                    <td class="table-cell-wrap">@FormatPlayerToken(p.Name) <small class="text-muted">@p.Server?.Name</small></td>
+                                    <td class="table-cell-wrap">@FormatPlayerToken(p.Name)</td>
+                                    <td class="table-cell-nowrap">@(p.Server?.Name ?? "-")</td>
                                     <td class="text-center table-cell-nowrap">@qty</td>
                                     <td class="text-end table-cell-nowrap">€@unitPrice.ToString("F2")</td>
                                     <td class="text-end table-cell-nowrap">€@((unitPrice * qty).ToString("F2"))</td>

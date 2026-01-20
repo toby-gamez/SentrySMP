@@ -46,22 +46,13 @@ namespace SentrySMP.App.Controllers
             var successUrl = baseUrl + "/api/stripe/return?session_id={CHECKOUT_SESSION_ID}";
             var cancelUrl = baseUrl + "/checkout?status=cancelled";
 
-            // Include multiple payment method types as in the PHP example
+            // Let Stripe dynamically select payment methods based on your dashboard settings
+            // This avoids 400 errors from unsupported payment method types
             var form = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string,string>("mode","payment"),
                 new KeyValuePair<string,string>("success_url", successUrl),
                 new KeyValuePair<string,string>("cancel_url", cancelUrl),
-                // Supported payment method types
-                new KeyValuePair<string,string>("payment_method_types[]","card"),
-                new KeyValuePair<string,string>("payment_method_types[]","bancontact"),
-                new KeyValuePair<string,string>("payment_method_types[]","eps"),
-                new KeyValuePair<string,string>("payment_method_types[]","klarna"),
-                new KeyValuePair<string,string>("payment_method_types[]","link"),
-                new KeyValuePair<string,string>("payment_method_types[]","mobilepay"),
-                new KeyValuePair<string,string>("payment_method_types[]","multibanco"),
-                new KeyValuePair<string,string>("payment_method_types[]","revolut_pay"),
-                new KeyValuePair<string,string>("payment_method_types[]","twint"),
                 // line_items[0][price_data][currency]=eur
                 new KeyValuePair<string,string>("line_items[0][price_data][currency]","eur"),
                 new KeyValuePair<string,string>("line_items[0][price_data][product_data][name]", string.IsNullOrWhiteSpace(request.Description) ? "SentrySMP Purchase" : request.Description),
