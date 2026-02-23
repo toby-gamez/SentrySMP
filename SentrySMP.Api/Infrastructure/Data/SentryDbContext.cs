@@ -14,6 +14,7 @@ public class SentryDbContext : DbContext
     public DbSet<Rank> Ranks { get; set; }
     public DbSet<Bundle> Bundles { get; set; }
     public DbSet<Coin> Coins { get; set; }
+    public DbSet<Other> Others { get; set; }
     public DbSet<Domain.Entities.TeamCategory> TeamCategories { get; set; }
     public DbSet<Domain.Entities.TeamMember> TeamMembers { get; set; }
     public DbSet<BattlePass> BattlePasses { get; set; }
@@ -43,6 +44,18 @@ public class SentryDbContext : DbContext
             entity.Property(e => e.Description).HasMaxLength(500);
             entity.HasOne(e => e.Server)
                   .WithMany(s => s.Coins)
+                  .HasForeignKey(e => e.ServerId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Other entity config (mirrors Coin)
+        modelBuilder.Entity<Other>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.HasOne(e => e.Server)
+                  .WithMany()
                   .HasForeignKey(e => e.ServerId)
                   .OnDelete(DeleteBehavior.Cascade);
         });

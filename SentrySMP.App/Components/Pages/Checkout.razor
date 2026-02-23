@@ -597,12 +597,58 @@
         _serverHealth.Clear();
         try
         {
-            var servers = CartState.CartItems
-                .Select(ci => ci.Key.Server)
-                .Where(s => s != null)
-                .GroupBy(s => s!.Id)
-                .Select(g => g.First()!)
-                .ToList();
+            // Build server list from cart items. If a product does not include Server info
+            // in its DTO, try to fetch the full product from the API to resolve the Server.
+            var servers = new List<ServerResponse>();
+            var cartItems = CartState.CartItems.ToList();
+
+            foreach (var ci in cartItems)
+            {
+                var prod = ci.Key;
+                if (prod?.Server != null)
+                {
+                    if (!servers.Any(s => s.Id == prod.Server.Id))
+                        servers.Add(prod.Server);
+                    continue;
+                }
+
+                // Try to resolve server by fetching full product details from API
+                try
+                {
+                    var type = (prod?.Type ?? string.Empty).ToLowerInvariant();
+                    ServerResponse? srv = null;
+                    switch (type)
+                    {
+                        case "coin":
+                            var coin = await SentryApi.GetCoinAsync(prod.Id);
+                            srv = coin?.Server;
+                            break;
+                        case "key":
+                            var key = await SentryApi.GetKeyAsync(prod.Id);
+                            srv = key?.Server;
+                            break;
+                        case "rank":
+                            var rank = await SentryApi.GetRankAsync(prod.Id);
+                            srv = rank?.Server;
+                            break;
+                        case "bundle":
+                            var bundle = await SentryApi.GetBundleAsync(prod.Id);
+                            srv = bundle?.Server;
+                            break;
+                        case "battlepass":
+                            var bp = await SentryApi.GetBattlePassAsync(prod.Id);
+                            srv = bp?.Server;
+                            break;
+                        case "other":
+                            var other = await SentryApi.GetOtherAsync(prod.Id);
+                            srv = other?.Server;
+                            break;
+                    }
+                    if (srv != null && !servers.Any(s => s.Id == srv.Id))
+                        servers.Add(srv);
+                }
+                catch { }
+            }
 
             // If the cart contains any rank products, ensure the SMP server is included
             try

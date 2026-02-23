@@ -125,6 +125,25 @@ public interface ISentryApi
     [Delete("/api/coins/{id}")]
     Task DeleteCoinAsync(int id);
 
+    // Other endpoints
+    [Get("/api/others")]
+    Task<IEnumerable<OtherResponse>> GetOthersAsync();
+
+    [Get("/api/others/by-server/{serverId}")]
+    Task<IEnumerable<OtherResponse>> GetOthersByServerAsync(int serverId);
+
+    [Get("/api/others/{id}")]
+    Task<OtherResponse> GetOtherAsync(int id);
+
+    [Post("/api/others")]
+    Task<OtherResponse> CreateOtherAsync([Body] CreateOtherDto other);
+
+    [Put("/api/others/{id}")]
+    Task<OtherResponse> UpdateOtherAsync(int id, [Body] UpdateOtherDto other);
+
+    [Delete("/api/others/{id}")]
+    Task DeleteOtherAsync(int id);
+
     // File upload endpoints
     [Multipart]
     [Post("/api/files/upload")]

@@ -1,0 +1,235 @@
+@using Microsoft.AspNetCore.Components.Forms
+@page "/edit-other/{Id:int}"
+@rendermode InteractiveServer
+@using SentrySMP.Shared.DTOs
+@inject ISentryApi Api
+@inject ILogger<EditOther> Logger
+@inject NavigationManager Navigation
+
+<PageTitle>Edit Other - SentrySMP Admin</PageTitle>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1>
+                        <i class="bi bi-pencil-square me-2"></i>
+                        Edit Item
+                    </h1>
+                    <p class="text-muted">Update item configuration</p>
+                </div>
+                <button class="btn btn-outline-secondary" @onclick="GoBack">
+                    <i class="bi bi-arrow-left"></i> Back to Other
+                </button>
+            </div>
+        </div>
+    </div>
+    @if (loading)
+    {
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else if (itemNotFound)
+    {
+        <div class="alert alert-warning" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            Item with ID @Id not found.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        @errorMessage
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(successMessage))
+                {
+                    <div class="alert alert-success" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        @successMessage
+                    </div>
+                }
+                <EditForm Model="itemModel" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Name</label>
+                                <InputText class="form-control" @bind-Value="itemModel.Name" />
+                                <ValidationMessage For="() => itemModel.Name" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Description</label>
+                                <InputTextArea class="form-control" @bind-Value="itemModel.Description" />
+                                <ValidationMessage For="() => itemModel.Description" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Image URL</label>
+                                <InputText class="form-control" @bind-Value="itemModel.Image" />
+                                <ValidationMessage For="() => itemModel.Image" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Price</label>
+                                <InputNumber class="form-control" @bind-Value="itemModel.Price" />
+                                <ValidationMessage For="() => itemModel.Price" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Sale (%)</label>
+                                <InputNumber class="form-control" @bind-Value="itemModel.Sale" />
+                                <ValidationMessage For="() => itemModel.Sale" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Global Max Order (Optional)</label>
+                                <InputNumber class="form-control" @bind-Value="itemModel.GlobalMaxOrder" placeholder="Leave empty for unlimited" />
+                                <div class="form-text">Maximum total quantity per user across all orders (leave empty for unlimited)</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Server</label>
+                                <InputSelect class="form-select" @bind-Value="itemModel.ServerId">
+                                    <option value="">Select server</option>
+                                    @foreach (var server in servers)
+                                    {
+                                        <option value="@server.Id">@server.Name</option>
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="() => itemModel.ServerId" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3 mt-3">
+                        <label class="form-label">Commands</label>
+                        <div class="form-text text-muted mb-2">For replacing string with name use %player%.</div>
+                        @if (itemCommands == null || !itemCommands.Any())
+                        {
+                            <div class="text-muted">No commands attached.</div>
+                        }
+                        @for (int i = 0; i < (itemCommands?.Count ?? 0); i++)
+                        {
+                            var idx = i;
+                            var cmd = itemCommands![idx];
+                            <div class="input-group mb-2">
+                                <InputText @bind-Value="cmd.CommandText" class="form-control" />
+                                <button type="button" class="btn btn-outline-danger" @onclick="() => RemoveItemCommand(idx)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        }
+                        <button type="button" class="btn btn-sm btn-outline-primary" @onclick="AddItemCommand">
+                            <i class="bi bi-plus"></i> Add Command
+                        </button>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-3">
+                        <i class="bi bi-save"></i> Save Changes
+                    </button>
+                </EditForm>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private UpdateOtherDto itemModel = new();
+    private List<ServerResponse> servers = new();
+    private string? errorMessage;
+    private string? successMessage;
+    private bool loading = true;
+    private bool itemNotFound = false;
+    private List<CommandInputModel>? itemCommands = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            loading = true;
+            servers = (await Api.GetServersAsync()).ToList();
+            var dto = await Api.GetOtherAsync(Id);
+            if (dto == null)
+            {
+                itemNotFound = true;
+                return;
+            }
+            itemModel = new UpdateOtherDto
+            {
+                Name = dto.Name,
+                Description = dto.Description,
+                Price = dto.Price,
+                Sale = dto.Sale,
+                Image = dto.Image,
+                GlobalMaxOrder = dto.GlobalMaxOrder,
+                ServerId = dto.Server?.Id ?? 0
+            };
+                if (dto.Commands != null && dto.Commands.Any())
+                {
+                    itemCommands = dto.Commands.Select(c => new CommandInputModel { CommandText = c.CommandText }).ToList();
+                }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading item: {ex.Message}";
+            Logger.LogError(ex, "Error loading other");
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            errorMessage = null;
+            successMessage = null;
+            if (itemCommands != null && itemCommands.Any())
+            {
+                itemModel.Commands = itemCommands.Select(c => new CreateCommandDto { CommandText = c.CommandText }).ToList();
+            }
+            await Api.UpdateOtherAsync(Id, itemModel);
+            successMessage = "Item updated successfully! Redirecting...";
+            StateHasChanged();
+            await Task.Delay(1500);
+            Navigation.NavigateTo("/other");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error updating item: {ex.Message}";
+            Logger.LogError(ex, "Error updating other");
+        }
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/other");
+    }
+
+    private class CommandInputModel
+    {
+        public string CommandText { get; set; } = string.Empty;
+    }
+
+    private void AddItemCommand()
+    {
+        if (itemCommands == null) itemCommands = new List<CommandInputModel>();
+        itemCommands.Add(new CommandInputModel());
+    }
+
+    private void RemoveItemCommand(int index)
+    {
+        if (itemCommands == null) return;
+        if (index < 0 || index >= itemCommands.Count) return;
+        itemCommands.RemoveAt(index);
+    }
+}

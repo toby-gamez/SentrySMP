@@ -1,0 +1,376 @@
+@page "/other"
+@using SentrySMP.Shared.DTOs
+@using SentrySMP.Shared.Interfaces
+@inject ISentryApi Api
+@inject ILogger<Other> Logger
+@inject SentrySMP.App.Components.State.CartState CartState
+@inject IJSRuntime JS
+@inject IPurchaseTrackingService PurchaseTrackingService
+@inject SentrySMP.App.Authentication.UserService UserService
+@rendermode InteractiveServer
+<PageTitle>Other - SentrySMP</PageTitle>
+
+<div class="main-wrapper">
+    <h1 class="main">Other</h1>
+</div>
+            <!-- Server filter dropdown -->
+            @if (items?.Any() == true)
+            {
+                <div class="mb-3 d-flex align-items-center gap-2">
+                    <label for="serverFilter" class="form-label mb-0">Filter by server:</label>
+                    <select id="serverFilter" class="form-select w-auto" @onchange="OnServerFilterChanged">
+                        <option value="">All servers</option>
+                        @foreach (var server in servers)
+                        {
+                            <option value="@server.Id" selected="@(server.Id == selectedServerId)">@server.Name</option>
+                        }
+                    </select>
+                </div>
+            }
+            @if (loading)
+            {
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            }
+            else if (errorMessage != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    @errorMessage
+                </div>
+            }
+            else if (filteredItems?.Any() == true)
+            {
+                <div class="product-grid">
+                    @foreach (var item in filteredItems)
+                    {
+                        var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == item.Id && i.Key.Type == "Other");
+                        <div class="product">
+                            <div class="card h-100">
+                                @if (!string.IsNullOrEmpty(item.Image))
+                                {
+                                    <img src="@item.Image" class="product-image" alt="@item.Name">
+                                }
+                                else
+                                {
+                                    <div class="" style="height: 200px;">
+                                        <i class="bi bi-box-fill text-white" style="font-size: 3rem;"></i>
+                                    </div>
+                                }
+                                <div class="">
+                                    <h2 class="">@item.Name</h2>
+                                    @if (!string.IsNullOrEmpty(item.Description))
+                                    {
+                                        <p style="font-weight: normal; font-size: 18px">@item.Description</p>
+                                    }
+                                    <small class="text-muted">Server: @item.Server?.Name</small>
+                                    <div class="mt-auto">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <div class="price-container">
+                                                @if (item.Sale > 0)
+                                                {
+                                                    <p class="original-price" title="Original price">
+                                                        €@item.Price.ToString("F2")
+                                                    </p>
+                                                    <p class="discounted-price" title="Sale price">
+                                                        €@(CalculateSalePrice(item.Price, item.Sale).ToString("F2"))
+                                                    </p>
+                                                    <span class="discount-badge">@item.Sale% OFF</span>
+                                                }
+                                                else
+                                                {
+                                                    <strong class="text-primary fs-5">€@item.Price.ToString("F2")</strong>
+                                                }
+                                            </div>
+                                        </div>
+                                        @if (item.GlobalMaxOrder.HasValue)
+                                        {
+                                            <div class="mb-2">
+                                                <small class="text-info">
+                                                    <i class="bi bi-info-circle"></i> Limited availability
+                                                    @if (_purchasedCounts.TryGetValue($"Other_{item.Id}", out var purchased))
+                                                    {
+                                                        <br /><span class="text-warning">Sold: @purchased/@item.GlobalMaxOrder</span>
+                                                    }
+                                                </small>
+                                            </div>
+                                        }
+                                        @{
+                                            var remainingQty = GetRemainingQuantity("Other", item.Id, item.GlobalMaxOrder);
+                                            var isSoldOut = remainingQty == 0;
+                                        }
+                                        <div style="display: flex; align-items: center; justify-content: space-between">
+                                            <button class="" @onclick="() => ShowItemDetails(item)">
+                                                <i class="bi bi-info-circle"></i> Details
+                                            </button>
+                                            @if (cartItem == null)
+                                            {
+                                                <button class="btn btn-outline-success btn-sm w-100 mt-2" @onclick="async () => await AddToCart(item)" disabled="@isSoldOut">
+                                                    <i class="bi bi-@(isSoldOut ? "x-circle" : "cart-plus")"></i> @(isSoldOut ? "Sold Out" : "Add")
+                                                </button>
+
+                                            }
+                                            else
+                                            {
+                                                <div style="display: block ruby;">
+                                                    <div class="quantity-controls">
+                                                        <button class="quantity-btn" @onclick="() => ChangeQuantity(item, -1)" disabled="@(cartItem.Quantity <= 1)">-</button>
+                                                        <span class="item-quantity">@cartItem.Quantity</span>
+                                                        <button class="quantity-btn" @onclick="() => ChangeQuantity(item, 1)" disabled="@(cartItem.Quantity >= Math.Min(10, remainingQty))">+</button>
+                                                    </div>
+                                                    <button class="danger" @onclick="async () => await RemoveFromCart(item)" title="Remove from cart">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle-fill"></i>
+                    No items available at the moment.
+                </div>
+            }
+
+<!-- Item Details Modal -->
+@if (selectedItem != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i class="bi bi-box-fill"></i>
+                        @selectedItem.Name
+                    </h2>
+                    <button type="button" class="btn-close" @onclick="CloseItemDetails"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        @if (!string.IsNullOrEmpty(selectedItem.Image))
+                        {
+                            <div class="col-md-6">
+                                <img src="@selectedItem.Image" class="img-fluid rounded" alt="@selectedItem.Name">
+                            </div>
+                        }
+                        <div class="col-md-@(string.IsNullOrEmpty(selectedItem.Image) ? "12" : "6")">
+                            <div class="row" style="padding: 20px">
+                                <h2 class="col-sm-8">@selectedItem.Name</h2>
+                                @if (!string.IsNullOrEmpty(selectedItem.Description))
+                                {
+                                    <p class="col-sm-8">@selectedItem.Description</p>
+                                }
+                                <small class="text-muted">Server: @selectedItem.Server?.Name</small>
+                                    <div class="price-container">
+                                        @if (selectedItem.Sale > 0)
+                                        {
+                                            <p class="original-price" title="Original price">
+                                                €@selectedItem.Price.ToString("F2")
+                                            </p>
+                                            <p class="discounted-price" title="Sale price">
+                                                €@(CalculateSalePrice(selectedItem.Price, selectedItem.Sale).ToString("F2"))
+                                            </p>
+                                            <span class="discount-badge">@selectedItem.Sale% OFF</span>
+                                        }
+                                        else
+                                        {
+                                            <strong class="text-primary fs-5">€@selectedItem.Price.ToString("F2")</strong>
+                                        }
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    @{
+                        var cartItemModal = CartState.CartItems.FirstOrDefault(i => i.Key.Id == selectedItem!.Id && i.Key.Type == "Other");
+                        var remainingQtyModal = GetRemainingQuantity("Other", selectedItem!.Id, selectedItem.GlobalMaxOrder);
+                        var isSoldOutModal = remainingQtyModal == 0;
+                    }
+                    @if (cartItemModal == null)
+                    {
+                        <button type="button" class="btn btn-outline-success" @onclick="async () => await AddToCart(selectedItem!)" disabled="@isSoldOutModal">
+                            <i class="bi bi-cart-plus"></i> @(isSoldOutModal ? "Sold Out" : "Add to Cart")
+                        </button>
+                    }
+                    else
+                    {
+                        <div style="display: block ruby;">
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedItem!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
+                                <span>@cartItemModal.Quantity</span>
+                                <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedItem!, 1)" disabled="@(cartItemModal.Quantity >= Math.Min(10, remainingQtyModal))">+</button>
+                            </div>
+                            <button class="danger" @onclick="async () => await RemoveFromCart(selectedItem!)" title="Remove from cart">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<OtherResponse>? items;
+    private List<OtherResponse>? filteredItems;
+    private List<ServerResponse> servers = new();
+    private int? selectedServerId;
+    private bool loading = true;
+    private string? errorMessage;
+    private OtherResponse? selectedItem;
+
+    private bool _cartLoaded = false;
+    private int? addedItemId;
+    
+    private Dictionary<string, int> _purchasedCounts = new();
+    private string? _username;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadItems();
+        await LoadPurchasedCounts();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_cartLoaded)
+        {
+            await CartState.LoadFromStorageAsync(JS);
+            _cartLoaded = true;
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadItems()
+    {
+        try
+        {
+            loading = true;
+            errorMessage = null;
+            items = (await Api.GetOthersAsync()).ToList();
+            servers = items
+                .Where(s => s.Server != null)
+                .Select(s => s.Server!)
+                .GroupBy(s => s.Id)
+                .Select(g => g.First())
+                .OrderBy(s => s.Name)
+                .ToList();
+            ApplyServerFilter();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading items: {ex.Message}";
+            Logger.LogError(ex, "Error loading others");
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private void ApplyServerFilter()
+    {
+        if (selectedServerId.HasValue)
+        {
+            filteredItems = items?.Where(s => s.Server?.Id == selectedServerId.Value).ToList();
+        }
+        else
+        {
+            filteredItems = items;
+        }
+    }
+
+    private void OnServerFilterChanged(ChangeEventArgs e)
+    {
+        var value = e.Value?.ToString();
+        if (int.TryParse(value, out var id))
+        {
+            selectedServerId = id;
+        }
+        else
+        {
+            selectedServerId = null;
+        }
+        ApplyServerFilter();
+        StateHasChanged();
+    }
+
+    private void ShowItemDetails(OtherResponse item)
+    {
+        selectedItem = item;
+    }
+
+    private void CloseItemDetails()
+    {
+        selectedItem = null;
+    }
+
+    private double CalculateSalePrice(double originalPrice, int salePercentage)
+    {
+        return originalPrice * (1 - salePercentage / 100.0);
+    }
+
+    private async Task AddToCart(OtherResponse item)
+    {
+        await JS.InvokeVoidAsync("console.log", $"AddToCart: {item.Name} (ID: {item.Id})");
+        await CartState.AddToCartAsync(item);
+        addedItemId = item.Id;
+        StateHasChanged();
+        await Task.Delay(1200);
+        if (addedItemId == item.Id) { addedItemId = null; StateHasChanged(); }
+    }
+
+    private async Task ChangeQuantity(OtherResponse item, int delta)
+    {
+        await CartState.ChangeQuantityAsync(item, delta);
+    }
+
+    private async Task RemoveFromCart(OtherResponse item)
+    {
+        await CartState.RemoveFromCartAsync(item);
+        StateHasChanged();
+    }
+
+    private async Task AddSelectedToCart()
+    {
+        if (selectedItem != null)
+        {
+            await AddToCart(selectedItem);
+        }
+    }
+
+    private async Task LoadPurchasedCounts()
+    {
+        if (items == null) return;
+        
+        foreach (var item in items.Where(c => c.GlobalMaxOrder.HasValue))
+        {
+            var count = await PurchaseTrackingService.GetGlobalPurchasedAsync("Other", item.Id);
+            _purchasedCounts[$"Other_{item.Id}"] = count;
+        }
+    }
+
+    private int GetRemainingQuantity(string type, int id, int? globalMaxOrder)
+    {
+        if (!globalMaxOrder.HasValue) return int.MaxValue;
+        
+        if (_purchasedCounts.TryGetValue($"{type}_{id}", out var purchased))
+        {
+            return Math.Max(0, globalMaxOrder.Value - purchased);
+        }
+        
+        return globalMaxOrder.Value;
+    }
+}
