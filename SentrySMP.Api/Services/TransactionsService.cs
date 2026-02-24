@@ -20,9 +20,23 @@ public class TransactionsService : ITransactionsService
         _rconService = rconService;
     }
 
+    // Backwards-compatibility helper for older serialized cart items
+    private class LegacyItem
+    {
+        public int Id { get; set; }
+        public string? Name { get; set; }
+        public string? Type { get; set; }
+        public string? Server { get; set; }
+        public int Quantity { get; set; }
+        public double Price { get; set; }
+        public int Sale { get; set; }
+    }
+
     public async Task<TransactionResponse> CreateTransactionAsync(CreateTransactionRequest req)
     {
         if (req == null) throw new ArgumentNullException(nameof(req));
+
+        try { _logger.LogInformation("CreateTransactionAsync received Provider={Provider} Amount={Amount} ItemsJsonLength={Len}", req.Provider, req.Amount, req.ItemsJson?.Length ?? 0); } catch { }
 
         decimal amount = 0;
         decimal.TryParse(req.Amount, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out amount);
@@ -45,13 +59,56 @@ public class TransactionsService : ITransactionsService
 
         _logger.LogInformation("Created transaction {TxId} provider={Provider} amount={Amount}", tx.Id, tx.Provider, tx.Amount);
 
-        // After storing transaction, attempt to execute any RCON commands attached to purchased products
+            // After storing transaction, attempt to execute any RCON commands attached to purchased products
         try
         {
             if (!string.IsNullOrEmpty(tx.ItemsJson))
             {
-                var opts = new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web);
-                var products = System.Text.Json.JsonSerializer.Deserialize<List<SentrySMP.Shared.DTOs.ProductQuantityDto>>(tx.ItemsJson, opts);
+                var opts = new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web)
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                List<SentrySMP.Shared.DTOs.ProductQuantityDto>? products = null;
+                try
+                {
+                    products = System.Text.Json.JsonSerializer.Deserialize<List<SentrySMP.Shared.DTOs.ProductQuantityDto>>(tx.ItemsJson, opts);
+                }
+                catch (Exception exDes)
+                {
+                    _logger.LogDebug(exDes, "Primary deserialization to ProductQuantityDto failed for tx {TxId}, attempting legacy shape", tx.Id);
+                }
+
+                // Backwards-compatible: if the JSON uses the older flat shape (id,name,type,server,quantity,price,sale)
+                // attempt to deserialize into a legacy type and map to ProductQuantityDto.
+                if (products == null || !products.Any())
+                {
+                    try
+                    {
+                        var legacy = System.Text.Json.JsonSerializer.Deserialize<List<LegacyItem>>(tx.ItemsJson, opts);
+                        if (legacy != null && legacy.Any())
+                        {
+                            products = legacy.Select(li => new SentrySMP.Shared.DTOs.ProductQuantityDto
+                            {
+                                Product = new SentrySMP.Shared.DTOs.ProductResponse
+                                {
+                                    Id = li.Id,
+                                    Name = li.Name ?? string.Empty,
+                                    Price = li.Price,
+                                    Sale = li.Sale,
+                                    Type = li.Type ?? "Product",
+                                    Server = string.IsNullOrWhiteSpace(li.Server) ? null : new SentrySMP.Shared.DTOs.ServerResponse { Name = li.Server }
+                                },
+                                Quantity = li.Quantity
+                            }).ToList();
+                        }
+                    }
+                    catch (Exception exLegacy)
+                    {
+                        _logger.LogDebug(exLegacy, "Legacy deserialization also failed for tx {TxId}", tx.Id);
+                    }
+                }
+
                 if (products != null && products.Any())
                 {
                     _logger.LogInformation("Triggering RCON execution for transaction {TxId}", tx.Id);

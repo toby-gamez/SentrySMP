@@ -1,0 +1,85 @@
+@page "/scoreboard"
+@using SentrySMP.Shared.DTOs
+@using SentrySMP.Shared.Interfaces
+@inject IShopScoreboardService ScoreboardService
+@rendermode InteractiveServer
+<PageTitle>Shop Scoreboard - Top Payers</PageTitle>
+
+<div class="main-wrapper">
+    <h1 class="main">Shop Scoreboard</h1>
+
+    <div class="btn-group mt-3" role="group" aria-label="Periods">
+        <button class="btn btn-outline-primary @(ActivePeriod==ScoreboardPeriod.Today?"active":"")" @onclick="() => Load(ScoreboardPeriod.Today)">Dnes</button>
+        <button class="btn btn-outline-primary @(ActivePeriod==ScoreboardPeriod.ThisWeek?"active":"")" @onclick="() => Load(ScoreboardPeriod.ThisWeek)">Tento týden</button>
+        <button class="btn btn-outline-primary @(ActivePeriod==ScoreboardPeriod.ThisMonth?"active":"")" @onclick="() => Load(ScoreboardPeriod.ThisMonth)">Tento měsíc</button>
+        <button class="btn btn-outline-primary @(ActivePeriod==ScoreboardPeriod.AllTime?"active":"")" @onclick="() => Load(ScoreboardPeriod.AllTime)">Celkem</button>
+    </div>
+
+    @if (IsLoading)
+    {
+        <div class="mt-3">Načítání…</div>
+    }
+    else if (Entries == null || Entries.Count == 0)
+    {
+        <div class="alert alert-info mt-3">Zatím nejsou žádné platby.</div>
+    }
+    else
+    {
+        <div class="table-responsive mt-3">
+            <table class="table table-sm table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Hráč</th>
+                        <th class="text-end">Zaplaceno (€)</th>
+                        <th class="text-center">Počet plateb</th>
+                        <th>Poslední platba</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var e in Entries)
+                    {
+                        <tr>
+                            <td>@e.Rank</td>
+                            <td>@e.MinecraftUsername</td>
+                            <td class="text-end">€@e.TotalPaid.ToString("F2")</td>
+                            <td class="text-center">@e.TransactionCount</td>
+                            <td>@e.LastPayment.ToLocalTime().ToString("g")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+</div>
+
+@code {
+    private List<ShopScoreboardEntryDto>? Entries;
+    private bool IsLoading = true;
+    private ScoreboardPeriod ActivePeriod = ScoreboardPeriod.AllTime;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Load(ActivePeriod);
+    }
+
+    private async Task Load(ScoreboardPeriod period)
+    {
+        ActivePeriod = period;
+        IsLoading = true;
+        try
+        {
+            Entries = await ScoreboardService.GetScoreboardAsync(period, 100);
+        }
+        catch
+        {
+            Entries = new List<ShopScoreboardEntryDto>();
+        }
+        finally
+        {
+            IsLoading = false;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+}

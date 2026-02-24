@@ -873,27 +873,47 @@
                 computedAmount = total.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
                 try { if (_logger != null) _logger.LogInformation("SaveTransactionAsync computedAmount from itemsSnapshot = {ComputedAmount} (itemsCount={Count})", computedAmount, itemsSnapshot.Count); } catch { }
             }
-            var itemsForJson = itemsSnapshot.Select(i => new
+            // Serialize items in the server-expected shape so the TransactionsService
+            // can deserialize into List<ProductQuantityDto> for RCON execution.
+            var itemsForJson = itemsSnapshot.Select(i => new SentrySMP.Shared.DTOs.ProductQuantityDto
             {
-                id = i.Key.Id,
-                name = i.Key.Name,
-                type = i.Key.Type,
-                server = i.Key.Server?.Name,
-                quantity = i.Quantity,
-                price = i.Key.Price,
-                sale = i.Key.Sale
+                Product = i.Key,
+                Quantity = i.Quantity
             }).ToList();
 
             var username = string.Empty;
             try
             {
                 var u = await UserService.GetUsernameAsync();
-                username = u ?? string.Empty;
+                username = (u ?? string.Empty).Trim();
             }
             catch
             {
                 username = string.Empty;
             }
+            // Fallback to previously loaded username if available
+            if (string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(_username))
+            {
+                username = _username.Trim();
+            }
+
+            // Ensure amount is formatted using invariant culture (dot decimal) so server parsing (invariant) succeeds.
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(computedAmount))
+                {
+                    if (decimal.TryParse(computedAmount, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.CurrentCulture, out var parsedLocal))
+                    {
+                        computedAmount = parsedLocal.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+                    }
+                    else if (decimal.TryParse(computedAmount.Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var parsedAlt))
+                    {
+                        computedAmount = parsedAlt.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+                    }
+                    // otherwise leave as-is; server will try to parse and may fallback
+                }
+            }
+            catch { }
 
             var req = new SentrySMP.Shared.DTOs.CreateTransactionRequest
             {
@@ -902,7 +922,7 @@
                 Amount = computedAmount,
                 Currency = currency ?? "EUR",
                 MinecraftUsername = username,
-                ItemsJson = JsonSerializer.Serialize(itemsForJson),
+                ItemsJson = JsonSerializer.Serialize(itemsForJson, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web)),
                 Status = status ?? string.Empty,
                 RawResponse = string.Empty
             };
@@ -910,6 +930,7 @@
             // Call server-side transactions service directly (runs on server; avoids HTTP roundtrip)
             try
             {
+                try { _logger?.LogInformation("SaveTransactionAsync calling CreateTransactionAsync provider={Provider} amount={Amount} itemsCount={Count} itemsJson={ItemsJson}", req.Provider, req.Amount, itemsForJson?.Count ?? 0, req.ItemsJson?.Length); } catch { }
                 var tx = await TransactionsService.CreateTransactionAsync(req);
                         if (tx != null)
                     {
@@ -1057,6 +1078,21 @@
     {
         if (firstRender)
         {
+            // Ensure cart is loaded from browser storage now that JS interop is available.
+            try
+            {
+                // Only attempt if cart appears empty (avoid unnecessary JS call)
+                if (CartState.CartItems == null || CartState.CartItems.Count == 0)
+                {
+                    try { _logger?.LogInformation("OnAfterRenderAsync: loading cart from localStorage"); } catch { }
+                    await CartState.LoadFromStorageAsync(JS);
+                }
+            }
+            catch (Exception exLoad)
+            {
+                try { _logger?.LogWarning(exLoad, "Failed to load cart from storage on first render"); } catch { }
+            }
+
             // Detect redirects from server-side PayPal return (e.g. ?status=success)
             var uri = new Uri(NavigationManager.Uri);
             var qs = QueryHelpers.ParseQuery(uri.Query);
