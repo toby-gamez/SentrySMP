@@ -10,8 +10,10 @@ public class TeamMemberDto
     [MaxLength(100)]
     public string MinecraftName { get; set; } = string.Empty;
 
-    [MaxLength(100)]
-    public string Role { get; set; } = string.Empty;
+    // Reference to TeamRank (nullable)
+    public int? TeamRankId { get; set; }
+
+    public TeamRankDto? Rank { get; set; }
 
     // Optional: allow a custom skin url (if empty use Minotar helm)
     [MaxLength(500)]
@@ -32,4 +34,16 @@ public class TeamCategoryDto
 public class TeamResponseDto
 {
     public List<TeamCategoryDto> Categories { get; set; } = new List<TeamCategoryDto>();
+}
+
+public class TeamRankDto
+{
+    public int Id { get; set; }
+
+    [Required]
+    [MaxLength(100)]
+    public string Name { get; set; } = string.Empty;
+
+    [MaxLength(20)]
+    public string HexColor { get; set; } = string.Empty;
 }

@@ -167,6 +167,22 @@ public interface ISentryApi
     [Post("/api/team")]
     Task<TeamResponseDto> SaveTeamAsync([Body] TeamResponseDto dto);
 
+    // TeamRank endpoints
+    [Get("/api/teamranks")]
+    Task<IEnumerable<TeamRankDto>> GetTeamRanksAsync();
+
+    [Get("/api/teamranks/{id}")]
+    Task<TeamRankDto> GetTeamRankAsync(int id);
+
+    [Post("/api/teamranks")]
+    Task<TeamRankDto> CreateTeamRankAsync([Body] TeamRankDto dto);
+
+    [Put("/api/teamranks/{id}")]
+    Task<TeamRankDto> UpdateTeamRankAsync(int id, [Body] TeamRankDto dto);
+
+    [Delete("/api/teamranks/{id}")]
+    Task DeleteTeamRankAsync(int id);
+
     // Transaction endpoints
     [Get("/api/transactions")]
     Task<IEnumerable<SentrySMP.Shared.DTOs.TransactionResponse>> GetTransactionsAsync();

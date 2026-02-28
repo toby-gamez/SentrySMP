@@ -37,10 +37,9 @@ else
                                     <img src="@GetSkinUrl(m)" class="skin-preview" alt="@m.MinecraftName" width="75px" height="75px"/>
                                 </div>
                                 <h5 class="person">@m.MinecraftName</h5>
-                                @if (!string.IsNullOrWhiteSpace(m.Role))
+                                @if (m.Rank != null)
                                 {
-                                    var roleClass = GetRoleClass(m.Role);
-                                    <span class="role-badge badge @roleClass">@m.Role</span>
+                                    <span class="role-badge badge" style="background-color: @(string.IsNullOrWhiteSpace(m.Rank.HexColor) ? "#666" : m.Rank.HexColor)">@(m.Rank.Name)</span>
                                 }
                             </div>
                     }
@@ -51,6 +50,7 @@ else
 
 @code {
     private TeamResponseDto? team;
+    private string? loadError;
 
     protected override async Task OnInitializedAsync()
     {
@@ -58,7 +58,11 @@ else
         {
             team = await Api.GetTeamAsync();
         }
-        catch { team = new TeamResponseDto(); }
+        catch (Exception ex)
+        {
+            loadError = ex.Message;
+            team = new TeamResponseDto();
+        }
     }
 
     private string GetSkinUrl(TeamMemberDto member)
@@ -68,12 +72,5 @@ else
         return $"https://minotar.net/helm/{Uri.EscapeDataString(name)}/100";
     }
 
-    private string GetRoleClass(string? role)
-    {
-        if (string.IsNullOrWhiteSpace(role)) return "role-DEFAULT";
-        // use uppercase, remove non-alphanum and trim
-        var cleaned = new string(role.ToUpperInvariant().Where(c => char.IsLetterOrDigit(c)).ToArray());
-        if (string.IsNullOrEmpty(cleaned)) return "role-DEFAULT";
-        return $"role-{cleaned}";
-    }
+    // role class helper removed; badges now use Rank.HexColor
 }

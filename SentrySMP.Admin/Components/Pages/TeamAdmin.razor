@@ -53,6 +53,34 @@
     <li class="role-MEDIA"><span class="role-dot" aria-hidden="true"></span><span>Media</span></li>
     <li class="role-ADMIN"><span class="role-dot" aria-hidden="true"></span><span>Admin</span></li>
 </ul>
+<div class="mb-3">
+    <h3>Manage Team Ranks</h3>
+    <div class="d-flex gap-2 align-items-center mb-2">
+        <input class="form-control" style="max-width:220px" placeholder="Rank name" @bind="newRankName" />
+        <input class="form-control form-control-color" style="max-width:64px; padding:0;" type="color" @bind="newRankColor" />
+        <button class="btn btn-primary" @onclick="CreateRank">Add Rank</button>
+    </div>
+    <div>
+        @if (ranks?.Any() == true)
+        {
+            <div class="list-group">
+                @foreach (var rr in ranks)
+                {
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="d-flex gap-2 align-items-center">
+                            <input class="form-control" style="max-width:200px" @bind="rr.Name" />
+                            <input class="form-control form-control-color" style="max-width:64px; padding:0;" type="color" @bind="rr.HexColor" />
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary me-1" @onclick="async () => await UpdateRank(rr)">Save</button>
+                            <button class="btn btn-sm btn-outline-danger" @onclick="async () => await DeleteRank(rr.Id)">Delete</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
 @if (team == null)
 {
     <p><em>Loading...</em></p>
@@ -101,14 +129,19 @@ else
                                 </div>
                                 <img src="@GetSkinUrl(m)" style="width:48px;height:48px;object-fit:cover;" />
                                 <input class="form-control ms-2" placeholder="Minecraft name" @bind="m.MinecraftName" @bind:event="oninput" />
-                                <input class="form-control ms-2" placeholder="Role" style="max-width:140px" @bind="m.Role" />
-                                    <span class="ms-2 align-self-center">
-                                        @if (!string.IsNullOrWhiteSpace(m.Role))
-                                        {
-                                            var rc = GetRoleClass(m.Role);
-                                            <span class="role-badge @rc">@m.Role</span>
-                                        }
-                                    </span>
+                                <select class="form-select ms-2" style="max-width:160px" @bind="m.TeamRankId">
+                                    <option value="">—</option>
+                                    @foreach (var rr in ranks)
+                                    {
+                                        <option value="@rr.Id">@rr.Name</option>
+                                    }
+                                </select>
+                                <span class="ms-2 align-self-center">
+                                    @if (m.Rank != null)
+                                    {
+                                        <span class="role-badge" style="background-color:@(string.IsNullOrWhiteSpace(m.Rank.HexColor) ? "#666" : m.Rank.HexColor)">@m.Rank.Name</span>
+                                    }
+                                </span>
                                 <button class="btn btn-outline-danger" @onclick="() => RemoveMember(cat.Id, m.Id)">X</button>
                             </div>
                         </div>
@@ -125,8 +158,11 @@ else
 
 @code {
     private TeamResponseDto? team;
+    private List<TeamRankDto> ranks = new();
     private string? statusMessage;
     private string statusClass = "";
+    private string newRankName = string.Empty;
+    private string newRankColor = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -139,10 +175,13 @@ else
         {
             team = await Api.GetTeamAsync();
             team ??= new TeamResponseDto();
+            var r = await Api.GetTeamRanksAsync();
+            ranks = r.ToList();
         }
         catch
         {
             team = new TeamResponseDto();
+            ranks = new List<TeamRankDto>();
         }
     }
 
@@ -161,7 +200,55 @@ else
     {
         var cat = team!.Categories.FirstOrDefault(c => c.Id == categoryId);
         if (cat == null) return;
-        cat.Members.Add(new TeamMemberDto { MinecraftName = "", Role = "" });
+        cat.Members.Add(new TeamMemberDto { MinecraftName = "", TeamRankId = null });
+    }
+
+    private async Task CreateRank()
+    {
+        try
+        {
+            var dto = new TeamRankDto { Name = newRankName?.Trim() ?? string.Empty, HexColor = newRankColor?.Trim() ?? string.Empty };
+            var created = await Api.CreateTeamRankAsync(dto);
+            ranks.Add(created);
+            newRankName = string.Empty;
+            newRankColor = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            statusMessage = "Failed to create rank: " + ex.Message;
+            statusClass = "alert alert-danger";
+        }
+    }
+
+    private async Task DeleteRank(int id)
+    {
+        try
+        {
+            await Api.DeleteTeamRankAsync(id);
+            var e = ranks.FirstOrDefault(r => r.Id == id);
+            if (e != null) ranks.Remove(e);
+        }
+        catch (Exception ex)
+        {
+            statusMessage = "Failed to delete rank: " + ex.Message;
+            statusClass = "alert alert-danger";
+        }
+    }
+
+    private async Task UpdateRank(TeamRankDto rr)
+    {
+        try
+        {
+            var dto = new TeamRankDto { Id = rr.Id, Name = rr.Name, HexColor = rr.HexColor };
+            await Api.UpdateTeamRankAsync(rr.Id, dto);
+            statusMessage = "Rank updated.";
+            statusClass = "alert alert-success";
+        }
+        catch (Exception ex)
+        {
+            statusMessage = "Failed to update rank: " + ex.Message;
+            statusClass = "alert alert-danger";
+        }
     }
 
     private void RemoveMember(string categoryId, string memberId)

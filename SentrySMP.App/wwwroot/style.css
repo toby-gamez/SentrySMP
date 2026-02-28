@@ -320,7 +320,7 @@ a:has(li) {
     list-style: none;
     text-align: center;
     align-content: center;
-    color: white;
+    color: black;
     font-size: 2rem;
     font-weight: bold;
     display: grid;
@@ -2141,10 +2141,11 @@ body.light h2 {
     color: black;
 }
 
-/* Light-mode overrides for specific sections */
-body.light .grid-div h2,
-body.light .game-menu h2,
-body.light .latest-announcements h2 {
+body.light .grid-div h2 {
+    color: #333;
+}
+
+body.light .game-menu h2 {
     color: #333;
 }
 
@@ -2398,10 +2399,6 @@ body.light .payment-option.selected {
 
 body.light .thing-grid-item {
     background-color: #dcdcdc;
-}
-
-body.light .thing-grid-item {
-    color: #333;
 }
 
 body.light .payment-option i {

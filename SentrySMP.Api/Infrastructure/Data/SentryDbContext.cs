@@ -17,6 +17,7 @@ public class SentryDbContext : DbContext
     public DbSet<Other> Others { get; set; }
     public DbSet<Domain.Entities.TeamCategory> TeamCategories { get; set; }
     public DbSet<Domain.Entities.TeamMember> TeamMembers { get; set; }
+    public DbSet<Domain.Entities.TeamRank> TeamRanks { get; set; }
     public DbSet<BattlePass> BattlePasses { get; set; }
     public DbSet<Command> Commands { get; set; }
     public DbSet<SentrySMP.Domain.Entities.PaymentTransaction> PaymentTransactions { get; set; }
@@ -227,15 +228,28 @@ public class SentryDbContext : DbContext
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
+        modelBuilder.Entity<Domain.Entities.TeamRank>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.HexColor).HasMaxLength(20);
+        });
+
         modelBuilder.Entity<Domain.Entities.TeamMember>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).HasMaxLength(36);
             entity.Property(e => e.MinecraftName).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.Role).HasMaxLength(100);
             entity.Property(e => e.SkinUrl).HasMaxLength(500);
             entity.Property(e => e.TeamCategoryId).HasMaxLength(36);
             entity.Property(e => e.SortOrder).IsRequired();
+
+            // TeamRank relationship (nullable) - use the explicit property and navigation
+            entity.HasOne(m => m.Rank)
+                .WithMany(r => r.Members)
+                .HasForeignKey(m => m.TeamRankId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         // Configure PaymentSettings

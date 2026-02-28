@@ -30,6 +30,7 @@ public class TeamService : ITeamService
         {
             var categories = await _db.TeamCategories
                 .Include(c => c.Members)
+                    .ThenInclude(m => m.Rank)
                 .OrderBy(c => c.SortOrder)
                 .AsNoTracking()
                 .ToListAsync();
@@ -44,7 +45,8 @@ public class TeamService : ITeamService
                     {
                         Id = m.Id,
                         MinecraftName = m.MinecraftName,
-                        Role = m.Role,
+                        TeamRankId = m.TeamRankId,
+                        Rank = m.Rank == null ? null : new TeamRankDto { Id = m.Rank.Id, Name = m.Rank.Name, HexColor = m.Rank.HexColor },
                         SkinUrl = m.SkinUrl
                     }).ToList()
                 }).ToList()
@@ -83,19 +85,19 @@ public class TeamService : ITeamService
                     Name = cat.Name,
                     SortOrder = i
                 };
-                for (int j = 0; j < cat.Members.Count; j++)
-                {
-                    var mem = cat.Members[j];
-                    entityCat.Members.Add(new TeamMember
+                    for (int j = 0; j < cat.Members.Count; j++)
                     {
-                        Id = mem.Id ?? Guid.NewGuid().ToString(),
-                        MinecraftName = mem.MinecraftName,
-                        Role = mem.Role,
-                        SkinUrl = mem.SkinUrl,
-                        TeamCategoryId = entityCat.Id,
-                        SortOrder = j
-                    });
-                }
+                        var mem = cat.Members[j];
+                        entityCat.Members.Add(new TeamMember
+                        {
+                            Id = mem.Id ?? Guid.NewGuid().ToString(),
+                            MinecraftName = mem.MinecraftName,
+                            TeamRankId = mem.TeamRankId,
+                            SkinUrl = mem.SkinUrl,
+                            TeamCategoryId = entityCat.Id,
+                            SortOrder = j
+                        });
+                    }
                 _db.TeamCategories.Add(entityCat);
             }
 

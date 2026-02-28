@@ -13,8 +13,10 @@ public class TeamMember
     [MaxLength(100)]
     public string MinecraftName { get; set; } = string.Empty;
 
-    [MaxLength(100)]
-    public string Role { get; set; } = string.Empty;
+    // Replaced free-text Role with FK to TeamRank
+    public int? TeamRankId { get; set; }
+
+    public TeamRank? Rank { get; set; }
 
     [MaxLength(500)]
     public string? SkinUrl { get; set; }

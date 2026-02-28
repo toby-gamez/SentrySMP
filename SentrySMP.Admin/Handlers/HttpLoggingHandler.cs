@@ -20,7 +20,7 @@ public sealed class HttpLoggingHandler : DelegatingHandler
 
 		  _logger.LogDebug(msg);
 
-		  _logger.LogDebug($"{msg} ====== Start API {req.Method} {request.RequestUri.ToString()} ========");
+		  _logger.LogDebug($"{msg} ====== Start API {req.Method} {request.RequestUri?.ToString() ?? "<no-uri>"} ========");
 		  _logger.LogDebug($"{msg} ");
 
 
@@ -56,7 +56,7 @@ public sealed class HttpLoggingHandler : DelegatingHandler
 
 		  HttpResponseMessage resp = response;
 
-		  _logger.LogDebug($"{msg} {req.RequestUri.Scheme.ToUpper()}/{resp.Version} {(int)resp.StatusCode} {resp.ReasonPhrase}");
+		  _logger.LogDebug($"{msg} {(req.RequestUri?.Scheme?.ToUpper() ?? "HTTP")}/{resp.Version} {(int)resp.StatusCode} {resp.ReasonPhrase}");
 
 		  foreach (var header in resp.Headers)
 		  {
@@ -89,18 +89,17 @@ public sealed class HttpLoggingHandler : DelegatingHandler
 		  return response;
 	 }
 
-	 readonly string[] types = ["html", "text", "xml", "json", "txt", "x-www-form-urlencoded"];
+	    readonly string[] types = new[] { "html", "text", "xml", "json", "txt", "x-www-form-urlencoded" };
 
-	 bool IsTextBasedContentType(HttpHeaders headers)
-	 {
-		  IEnumerable<string> values;
-		  if (!headers.TryGetValues("Content-Type", out values))
-		  {
-				return false;
-		  }
+	    bool IsTextBasedContentType(HttpHeaders headers)
+	    {
+		   if (!headers.TryGetValues("Content-Type", out var values) || values == null)
+		   {
+			   return false;
+		   }
 
-		  var header = string.Join(" ", values).ToLowerInvariant();
+		   var header = string.Join(" ", values).ToLowerInvariant();
 
-		  return types.Any(t => header.Contains(t));
-	 }
+		   return types.Any(t => header.Contains(t));
+	    }
 }
