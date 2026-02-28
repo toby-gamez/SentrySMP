@@ -12,12 +12,14 @@ public class TransactionsService : ITransactionsService
     private readonly SentryDbContext _db;
     private readonly ILogger<TransactionsService> _logger;
     private readonly SentrySMP.Shared.Interfaces.IRconService _rconService;
+    private readonly SentrySMP.Shared.Interfaces.IPurchaseTrackingService _purchaseTrackingService;
 
-    public TransactionsService(SentryDbContext db, ILogger<TransactionsService> logger, SentrySMP.Shared.Interfaces.IRconService rconService)
+    public TransactionsService(SentryDbContext db, ILogger<TransactionsService> logger, SentrySMP.Shared.Interfaces.IRconService rconService, SentrySMP.Shared.Interfaces.IPurchaseTrackingService purchaseTrackingService)
     {
         _db = db;
         _logger = logger;
         _rconService = rconService;
+        _purchaseTrackingService = purchaseTrackingService;
     }
 
     // Backwards-compatibility helper for older serialized cart items
@@ -134,6 +136,34 @@ public class TransactionsService : ITransactionsService
                     {
                         _logger.LogWarning(exSerial, "Failed to serialize/store RCON result for transaction {TxId}", tx.Id);
                     }
+                }
+
+                // Record purchases regardless of RCON result so "sold" counts / user purchase records
+                // are updated when payment completed.
+                try
+                {
+                    foreach (var product in products)
+                    {
+                        try
+                        {
+                            var username = tx.MinecraftUsername ?? string.Empty;
+                            var ptype = product?.Product?.Type ?? string.Empty;
+                            var pid = product?.Product?.Id ?? 0;
+                            var qty = product?.Quantity ?? 0;
+                            if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(ptype) && pid > 0 && qty > 0)
+                            {
+                                await _purchaseTrackingService.RecordPurchaseAsync(username, ptype, pid, qty);
+                            }
+                        }
+                        catch (Exception exRecordInner)
+                        {
+                            _logger.LogWarning(exRecordInner, "Failed to record purchase for tx {TxId} product={Product}", tx.Id, product?.Product?.Id);
+                        }
+                    }
+                }
+                catch (Exception exRecord)
+                {
+                    _logger.LogWarning(exRecord, "Failed to record purchases for tx {TxId}", tx.Id);
                 }
             }
         }
