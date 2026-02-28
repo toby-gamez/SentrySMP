@@ -1,4 +1,6 @@
 @page "/scoreboard"
+@using System
+@using System.Linq
 @using SentrySMP.Shared.DTOs
 @using SentrySMP.Shared.Interfaces
 @inject IShopScoreboardService ScoreboardService
@@ -9,19 +11,19 @@
     <h1 class="main">Shop Scoreboard</h1>
 
     <div class="btn-group mt-3" role="group" aria-label="Periods">
-        <button class="btn btn-outline-primary @(ActivePeriod==ScoreboardPeriod.Today?"active":"")" @onclick="() => Load(ScoreboardPeriod.Today)">Dnes</button>
-        <button class="btn btn-outline-primary @(ActivePeriod==ScoreboardPeriod.ThisWeek?"active":"")" @onclick="() => Load(ScoreboardPeriod.ThisWeek)">Tento týden</button>
-        <button class="btn btn-outline-primary @(ActivePeriod==ScoreboardPeriod.ThisMonth?"active":"")" @onclick="() => Load(ScoreboardPeriod.ThisMonth)">Tento měsíc</button>
-        <button class="btn btn-outline-primary @(ActivePeriod==ScoreboardPeriod.AllTime?"active":"")" @onclick="() => Load(ScoreboardPeriod.AllTime)">Celkem</button>
+        <button class="btn btn-outline-primary @(ActivePeriod==ScoreboardPeriod.Today?"active":"")" @onclick="() => Load(ScoreboardPeriod.Today)">Today</button>
+        <button class="btn btn-outline-primary @(ActivePeriod==ScoreboardPeriod.ThisWeek?"active":"")" @onclick="() => Load(ScoreboardPeriod.ThisWeek)">This Week</button>
+        <button class="btn btn-outline-primary @(ActivePeriod==ScoreboardPeriod.ThisMonth?"active":"")" @onclick="() => Load(ScoreboardPeriod.ThisMonth)">This Month</button>
+        <button class="btn btn-outline-primary @(ActivePeriod==ScoreboardPeriod.AllTime?"active":"")" @onclick="() => Load(ScoreboardPeriod.AllTime)">All Time</button>
     </div>
 
     @if (IsLoading)
     {
-        <div class="mt-3">Načítání…</div>
+        <div class="mt-3">Loading…</div>
     }
     else if (Entries == null || Entries.Count == 0)
     {
-        <div class="alert alert-info mt-3">Zatím nejsou žádné platby.</div>
+        <div class="alert alert-info mt-3">No payments yet.</div>
     }
     else
     {
@@ -30,10 +32,10 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Hráč</th>
-                        <th class="text-end">Zaplaceno (€)</th>
-                        <th class="text-center">Počet plateb</th>
-                        <th>Poslední platba</th>
+                        <th>Player</th>
+                        <th class="text-end">Paid (€)</th>
+                        <th class="text-center">Transaction Count</th>
+                        <th>Last Payment</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,7 +55,6 @@
     }
 
 </div>
-
 @code {
     private List<ShopScoreboardEntryDto>? Entries;
     private bool IsLoading = true;
@@ -71,6 +72,24 @@
         try
         {
             Entries = await ScoreboardService.GetScoreboardAsync(period, 100);
+
+            if (Entries != null)
+            {
+                var excludedNames = new[] { "Taneq", "webdev" };
+                Entries = Entries
+                    .Where(e => !string.IsNullOrWhiteSpace(e.MinecraftUsername))
+                    .Where(e => e.TotalPaid > 0)
+                    .Where(e => !excludedNames.Contains(e.MinecraftUsername, StringComparer.OrdinalIgnoreCase))
+                    .Where(e => !string.Equals(e.MinecraftUsername?.Trim(), "<unknown>", StringComparison.OrdinalIgnoreCase))
+                    .OrderByDescending(e => e.TotalPaid)
+                    .ToList();
+
+                // Reassign ranks sequentially after filtering
+                for (int i = 0; i < Entries.Count; i++)
+                {
+                    Entries[i].Rank = i + 1;
+                }
+            }
         }
         catch
         {
