@@ -9,7 +9,7 @@
 
 <div class="main-wrapper">
     <h1 class="main">Shop Scoreboard</h1>
-
+</div>
     <div class="btn-group mt-3" role="group" aria-label="Periods">
         <button class="btn btn-outline-primary @(ActivePeriod==ScoreboardPeriod.Today?"active":"")" @onclick="() => Load(ScoreboardPeriod.Today)">Today</button>
         <button class="btn btn-outline-primary @(ActivePeriod==ScoreboardPeriod.ThisWeek?"active":"")" @onclick="() => Load(ScoreboardPeriod.ThisWeek)">This Week</button>
@@ -27,7 +27,7 @@
     }
     else
     {
-        <div class="table-responsive mt-3">
+        <div class="table-wrapper">
             <table class="table table-sm table-striped">
                 <thead>
                     <tr>
@@ -53,8 +53,6 @@
             </table>
         </div>
     }
-
-</div>
 @code {
     private List<ShopScoreboardEntryDto>? Entries;
     private bool IsLoading = true;
