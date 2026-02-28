@@ -325,6 +325,7 @@ a:has(li) {
     font-weight: bold;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    color: white;
 }
 
 .thing-grid-item:hover {
@@ -1235,20 +1236,37 @@ input.item-quantity::-webkit-inner-spin-button {
     color: #fff;
 }
 
+
+.vote-item {
+    border: 2px solid darkgray;
+    border-radius: 10px;
+    background-color: #242424;
+    text-align: center;
+    align-items: center;
+    transition: all ease 0.3s;
+}
+
+.vote-item:hover {
+    transform: scale(1.05);
+}
+
+.vote-item p {
+    text-align: center;
+}
+
 .vote-grid a {
     color: white;
+    font-weight: bold;
 }
 
 .vote-grid a:hover {
     color: white;
 }
 
-.vote-item {
-    border: 2px solid #9a9a9a;
-    background-color: #242424;
-    text-align: center;
-    align-items: center;
-    transition: all ease 0.3s;
+.vote-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
 }
 
 .modal-content {
@@ -1335,7 +1353,7 @@ input.item-quantity::-webkit-inner-spin-button {
     text-align: center;
     font-size: 2rem;
     margin-bottom: 30px;
-    color: #090909;
+    color: #ffffff;
 }
 
 .team-grid {
@@ -2409,18 +2427,7 @@ body.light .menu-item {
     background-color: #dcdcdc;
 }
 
-body.light .vote-grid a {
-    color: black;
-}
 
-body.light .vote-grid a:hover {
-    color: black;
-}
-
-body.light .vote-item {
-    border: 2px solid #9a9a9a;
-    background-color: #dcdcdc;
-}
 
 body.light .modal-content {
     background-color: #dcdcdc;
@@ -2760,4 +2767,17 @@ body.light .add-to-cart-btn.update:hover {
     .snowflake {
         font-size: 1em;
     }
+}
+
+body.light .vote-grid a {
+    color: black;
+}
+
+body.light .vote-grid a:hover {
+    color: black;
+}
+
+body.light .vote-item {
+    border: 2px solid #9a9a9a;
+    background-color: #dcdcdc;
 }

@@ -17,21 +17,6 @@
     font-weight: 600;
     font-size: 0.85rem;
 }
-
-/* Role colors - add more as needed */
-.role-OWNER { background: #db3444; }
-.role-COOWNER { background: #db4d34; }
-.role-MANAGER { background: #ff4500; }
-.role-LEADER { background: #F7961B; }
-.role-DEV { background: #800080; }
-.role-WEBDEV { background: #663399; }
-.role-MOD { background: #51d3fd; }
-.role-MOD+ { background: #12b4e8; }
-.role-BUILDER { background: #5ce54c; }
-.role-BUILDER+ { background: #35d622; }
-.role-MEDIA { background: #DB0B54; }
-.role-ADMIN { background: #CCBB08; }
-
 /* Team avatar sizing */
 .team-avatar {
     width: 100px;
