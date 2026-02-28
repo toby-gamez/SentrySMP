@@ -10,3 +10,7 @@ SentrySMP.App/appsettings.json
 SentrySMP.Admin/appsettings.json
 SentrySMP.Admin/appsettings.Development.json
 SentrySMP.App/appsettings.Development.json
+build/build-ftp-admin.json
+build/build-ftp.json
+build/C:/*
+build/tools/*
