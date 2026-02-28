@@ -1,20 +1,34 @@
 window.sentryTheme = (function () {
-    // Use localStorage key 'dark' with values 'true' or 'false'
+    // Use preferences: store both 'le' (boolean string for light enabled)
+    // and 'cs' (color-scheme = 'light'|'dark'). For compatibility expose
+    // the same `applyTheme(dark)` API which accepts a boolean where
+    // true means dark (keeps existing callers working).
     function applyTheme(dark) {
         try {
             console.log('sentryTheme.applyTheme called with', dark);
+            // We keep boolean semantics: `dark === true` means dark theme.
+            function setStoredPreferences(isLight) {
+                try {
+                    localStorage.setItem('le', isLight ? 'true' : 'false');
+                    localStorage.setItem('cs', isLight ? 'light' : 'dark');
+                    // Keep legacy key for compatibility
+                    localStorage.setItem('dark', isLight ? 'false' : 'true');
+                    console.log('sentryTheme: set localStorage.le=', localStorage.getItem('le'), ' cs=', localStorage.getItem('cs'));
+                } catch (e) { }
+            }
+
             if (dark) {
-                document.body.classList.add('dark');
-                try { document.documentElement.classList.add('dark'); } catch (_) { }
+                // dark theme -> ensure `.light` class is removed
+                document.body.classList.remove('light');
+                try { document.documentElement.classList.remove('light'); } catch (_) { }
                 try { document.documentElement.setAttribute('data-theme', 'dark'); } catch (_) { }
-                localStorage.setItem('dark', 'true');
-                console.log('sentryTheme: set localStorage.dark = true');
+                setStoredPreferences(false);
             } else {
-                document.body.classList.remove('dark');
-                try { document.documentElement.classList.remove('dark'); } catch (_) { }
+                // light theme -> add `.light` class (CSS now targets body.light)
+                document.body.classList.add('light');
+                try { document.documentElement.classList.add('light'); } catch (_) { }
                 try { document.documentElement.setAttribute('data-theme', 'light'); } catch (_) { }
-                localStorage.setItem('dark', 'false');
-                console.log('sentryTheme: set localStorage.dark = false');
+                setStoredPreferences(true);
             }
         } catch (e) {
             // ignore
@@ -23,10 +37,36 @@ window.sentryTheme = (function () {
     }
 
     function getSavedTheme() {
+        // Return legacy-compatible 'true' (dark) / 'false' (light) string
         try {
-            var v = localStorage.getItem('dark');
-            console.log('sentryTheme.getSavedTheme ->', v);
-            return v;
+            var cs = localStorage.getItem('cs');
+            if (cs === 'light') {
+                console.log('sentryTheme.getSavedTheme -> cs=light');
+                return 'false'; // not dark
+            }
+            if (cs === 'dark') {
+                console.log('sentryTheme.getSavedTheme -> cs=dark');
+                return 'true'; // dark
+            }
+
+            var le = localStorage.getItem('le');
+            if (le === 'true') {
+                console.log('sentryTheme.getSavedTheme -> le=true');
+                return 'false';
+            }
+            if (le === 'false') {
+                console.log('sentryTheme.getSavedTheme -> le=false');
+                return 'true';
+            }
+
+            // Fallback to legacy 'dark' key if present
+            var legacy = localStorage.getItem('dark');
+            if (legacy === 'true' || legacy === 'false') {
+                console.log('sentryTheme.getSavedTheme -> legacy dark=', legacy);
+                return legacy;
+            }
+
+            return null;
         } catch (e) {
             console.warn('sentryTheme.getSavedTheme error', e);
             return null;
@@ -37,9 +77,11 @@ window.sentryTheme = (function () {
     try {
         var saved = getSavedTheme();
         if (saved === 'true') {
-            document.body.classList.add('dark');
+            // dark saved -> ensure .light is removed
+            document.body.classList.remove('light');
         } else if (saved === 'false') {
-            document.body.classList.remove('dark');
+            // light saved -> ensure .light is present
+            document.body.classList.add('light');
         }
     } catch (_) { }
 
@@ -54,12 +96,14 @@ window.sentryTheme = (function () {
                     setTimeout(function () {
                         try {
                             if (dark) {
-                                document.body.classList.add('dark');
-                                document.documentElement.classList.add('dark');
+                                // Ensure light class removed for dark theme
+                                document.body.classList.remove('light');
+                                document.documentElement.classList.remove('light');
                                 document.documentElement.setAttribute('data-theme', 'dark');
                             } else {
-                                document.body.classList.remove('dark');
-                                document.documentElement.classList.remove('dark');
+                                // Ensure light class present for light theme
+                                document.body.classList.add('light');
+                                document.documentElement.classList.add('light');
                                 document.documentElement.setAttribute('data-theme', 'light');
                             }
                         } catch (e) { }
@@ -71,17 +115,17 @@ window.sentryTheme = (function () {
                     var observer = new MutationObserver(function (mutations) {
                         try {
                             var s = getSavedTheme();
-                            var want = s === 'true';
-                            if (want) {
-                                if (!document.body.classList.contains('dark')) {
-                                    document.body.classList.add('dark');
-                                    document.documentElement.classList.add('dark');
+                            var wantDark = s === 'true';
+                            if (wantDark) {
+                                if (document.body.classList.contains('light')) {
+                                    document.body.classList.remove('light');
+                                    document.documentElement.classList.remove('light');
                                     document.documentElement.setAttribute('data-theme', 'dark');
                                 }
                             } else {
-                                if (document.body.classList.contains('dark')) {
-                                    document.body.classList.remove('dark');
-                                    document.documentElement.classList.remove('dark');
+                                if (!document.body.classList.contains('light')) {
+                                    document.body.classList.add('light');
+                                    document.documentElement.classList.add('light');
                                     document.documentElement.setAttribute('data-theme', 'light');
                                 }
                             }
@@ -104,13 +148,13 @@ window.sentryTheme = (function () {
                 console.log('sentryTheme.applySaved ->', s);
                 var dark = s === 'true';
                 if (dark) {
-                    document.body.classList.add('dark');
-                    try { document.documentElement.classList.add('dark'); } catch (_) { }
+                    document.body.classList.remove('light');
+                    try { document.documentElement.classList.remove('light'); } catch (_) { }
                     try { document.documentElement.setAttribute('data-theme', 'dark'); } catch (_) { }
                 }
                 else {
-                    document.body.classList.remove('dark');
-                    try { document.documentElement.classList.remove('dark'); } catch (_) { }
+                    document.body.classList.add('light');
+                    try { document.documentElement.classList.add('light'); } catch (_) { }
                     try { document.documentElement.setAttribute('data-theme', 'light'); } catch (_) { }
                 }
                 // Ensure theme sticks across any subsequent DOM manipulations

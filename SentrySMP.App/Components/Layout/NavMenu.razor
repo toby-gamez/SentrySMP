@@ -13,7 +13,7 @@
             <li><a href="/scoreboard"><i class="bi bi-trophy"></i> Scoreboard</a></li>
             <li><a href="vote-for-us"><i class="bi bi-heart"></i> Vote For Us</a></li>
             <label class="switch">
-                <input type="checkbox" id="modeToggle" @bind="IsDarkBindable" />
+                <input type="checkbox" id="modeToggle" @bind="IsLightBindable" />
                 <span class="slider"></span>
             </label>
         </ul>
@@ -32,7 +32,7 @@
     [Microsoft.AspNetCore.Components.Inject]
     public SentrySMP.App.Services.MenuToggleService MenuToggleService { get; set; } = default!;
 
-    private bool isDark;
+    private bool isLight;
     private bool initialized = false;
 
     protected override async System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender)
@@ -44,7 +44,8 @@
             await ThemeService.InitializeAsync(JSRuntime);
             // initialize menu toggle service so it can call JS
             try { await MenuToggleService.InitializeAsync(JSRuntime); } catch { }
-            isDark = ThemeService.IsDark;
+            // Represent switch as 'light enabled' (checked = light). Default empty preference will show light on.
+            isLight = !ThemeService.IsDark;
             ThemeService.OnThemeChanged += ThemeChanged;
             await InvokeAsync(StateHasChanged);
         }
@@ -61,20 +62,21 @@
 
     private void ThemeChanged(bool dark)
     {
-        isDark = dark;
+        // Update local light-state when theme changes
+        isLight = !dark;
         InvokeAsync(StateHasChanged);
     }
 
     // Two-way bind target that forwards changes to ThemeService
-    public bool IsDarkBindable
+    public bool IsLightBindable
     {
-        get => isDark;
+        get => isLight;
         set
         {
-            if (isDark == value) return;
-            isDark = value;
-            // fire-and-forget is fine here; ThemeService will update localStorage and apply theme
-            _ = ThemeService.SetThemeAsync(value);
+            if (isLight == value) return;
+            isLight = value;
+            // Checkbox represents light enabled; pass inverse (dark) to ThemeService
+            _ = ThemeService.SetThemeAsync(!value);
             InvokeAsync(StateHasChanged);
         }
     }

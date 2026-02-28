@@ -12,17 +12,15 @@
 
 ::selection {
     background-color: #dc3545;
-    /* barva pozadí při výběru */
     color: white;
-    /* barva textu při výběru */
 }
 
 body {
-    background-color: #f9f9f9;
+    background-color: #090909;
     font-family: "Outfit", sans-serif;
     font-weight: 400;
     font-style: normal;
-    color: black;
+    color: white;
 }
 
 .container p {
@@ -49,7 +47,6 @@ h2 {
     width: 36rem;
 }
 
-/* This style is defined twice - unified here */
 .big {
     transition: all 0.3s ease;
     font-size: 20px;
@@ -58,7 +55,6 @@ h2 {
 ul,
 ol {
     padding-left: 50px;
-    /* přidává odsazení pro celý seznam */
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     line-height: 1.8;
@@ -66,20 +62,19 @@ ol {
 
 .container a,
 #cookie-banner a {
-    color: #dc3545;
+    color: #dc0000;
     transition: all ease 0.3s;
     font-weight: bold;
 }
 
 a:hover {
-    color: #c82333;
+    color: #b90000;
 }
 
 .main-wrapper {
     padding-top: 3rem;
     text-align: center;
     padding-bottom: 2rem;
-    /* mezera pod čárou */
 }
 
 .main {
@@ -103,12 +98,12 @@ a:hover {
 
 .motto {
     font-size: 20px;
-    color: #dcdcdc;
+    color: #242424;
     text-align: center;
 }
 
 .announcement {
-    background-color: #dcdcdc;
+    background-color: #242424;
     margin-bottom: 1rem;
     padding: 20px;
     border-radius: 10px;
@@ -120,7 +115,7 @@ a:hover {
 }
 
 .account {
-    background-color: #e2e2e2;
+    background-color: #1a1a1a;
     margin-bottom: 1rem;
     padding: 20px;
     border-radius: 10px;
@@ -131,11 +126,11 @@ a:hover {
 }
 
 hr {
-    color: black;
+    color: white;
 }
 
 .info {
-    background-color: #e2e2e2;
+    background-color: #1a1a1a;
     margin-bottom: 1rem;
     padding: 20px;
     border-radius: 10px;
@@ -143,13 +138,13 @@ hr {
 
 input,
 textarea {
-    background-color: #dcdcdc;
-    color: black;
+    background-color: #242424;
+    color: white;
     border-radius: 10px;
     width: 100%;
     margin-bottom: 0.5rem;
     padding: 0.5rem;
-    border: 2px solid #dcdcdc;
+    border: 2px solid #242424;
 }
 
 textarea {
@@ -161,7 +156,7 @@ textarea {
 
 input:focus,
 textarea:focus {
-    border: 2px solid black;
+    border: 2px solid white;
     outline: none;
 }
 
@@ -225,7 +220,6 @@ button:disabled {
     padding: 0;
 }
 
-/* Removed duplicate - already defined above */
 header {
     height: 250px;
     position: relative;
@@ -304,7 +298,7 @@ a:has(li) {
 .grid-div h2 {
     text-align: center;
     margin-bottom: 30px;
-    color: #333;
+    color: white;
 }
 
 .thing-grid {
@@ -320,13 +314,13 @@ a:has(li) {
     border-radius: 10px;
     transition: 0.3s ease all;
     padding: 20px;
-    background-color: #dcdcdc;
+    background-color: #242424;
     width: 450px;
     height: 200px;
     list-style: none;
     text-align: center;
     align-content: center;
-    color: black;
+    color: white;
     font-size: 2rem;
     font-weight: bold;
     display: grid;
@@ -391,7 +385,7 @@ footer {
     width: 100%;
     margin-top: 40px;
     border-top: 1px solid #ddd;
-    background: #e2e2e2;
+    background: #090909;
     padding: 40px 20px 20px;
     color: #fff;
     bottom: 0;
@@ -410,7 +404,7 @@ footer {
 }
 
 .footer-column h3 {
-    color: black;
+    color: #fff;
     margin-bottom: 15px;
 }
 
@@ -424,13 +418,13 @@ footer {
 }
 
 .footer-column ul li a {
-    color: #5b5b5b;
+    color: #9e9e9e;
     text-decoration: none;
     transition: color 0.3s;
 }
 
 .footer-column ul li a:hover {
-    color: black;
+    color: #fff;
 }
 
 .footer-bottom {
@@ -441,23 +435,23 @@ footer {
 }
 
 .footer-bottom a {
-    color: #5b5b5b;
+    color: #9e9e9e;
     text-decoration: none;
     transition: color 0.3s;
 }
 
 .footer-bottom a:hover {
-    color: black;
+    color: #fff;
 }
 
 .mojang-notice {
-    color: #5b5b5b;
+    color: #9e9e9e;
     font-size: 0.9em;
     margin-top: 10px;
 }
 
 .footer-p {
-    color: black;
+    color: white;
 }
 
 /* nav */
@@ -468,21 +462,17 @@ footer {
 }
 
 .navbar {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.2);
     padding: 0.75rem 1rem;
     position: fixed;
-    /* Tady pÅ™idÃ¡me */
     z-index: 100;
-    /* Aby byl nad ostatnÃ­m obsahem */
     width: 100%;
-    /* Aby navbar zabÃ­ral celou Å¡Ã­Å™ku */
     max-width: 1200px;
     left: 50%;
     transform: translateX(-50%);
     border-radius: 10px;
     top: 10px;
     backdrop-filter: blur(10px);
-    /* rozmazÃ¡nÃ­ za prvkem */
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -496,7 +486,6 @@ footer {
     flex-wrap: wrap;
 }
 
-/* Logo a toggle na jednom Å™Ã¡dku */
 .logonav {
     font-size: 2rem;
     font-weight: bold;
@@ -532,12 +521,12 @@ footer {
 }
 
 .nav-links li:hover {
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid white;
 }
 
 .nav-links a {
     text-decoration: none;
-    color: black;
+    color: white;
     transition: all ease 0.3s;
 }
 
@@ -567,15 +556,12 @@ footer {
     background: #f0f0f0;
 }
 
-/* Hover pro desktop */
 @media (min-width: 769px) {
     .dropdown:hover .dropdown-menu {
         display: block;
     }
 }
 
-/* MobilnÃ­ verze */
-/* MobilnÃ­ verze */
 @media (max-width: 871px) {
     .navbar {
         width: calc(100% - 10px);
@@ -588,7 +574,7 @@ footer {
 
     .toggle-btn {
         display: block;
-        color: black;
+        color: white;
     }
 
     .nav-links {
@@ -628,11 +614,11 @@ footer {
 
 .cart-item,
 .product {
-    background-color: #dcdcdc;
+    background-color: #242424;
     border-radius: 10px;
     padding: 20px;
     max-width: 400px;
-    border: 1px solid lightslategray;
+    border: 1px solid darkgray;
     transition: all 0.3s ease;
 }
 
@@ -654,7 +640,6 @@ footer {
     font-weight: bold;
 }
 
-/* Unified special-cart styles */
 .special-cart {
     display: none;
     background-color: #dcdcdc;
@@ -678,15 +663,15 @@ footer {
     bottom: 0;
     left: 0;
     right: 0;
-    background: #dcdcdc;
-    color: black;
+    background: #242424;
+    color: white;
     padding: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     z-index: 9999;
     font-size: 14px;
-    border-top: 1px solid black;
+    border-top: 1px solid white;
 }
 
 .accept {
@@ -805,7 +790,7 @@ button.minecraft-button:active {
 }
 
 .collapse-wrapper {
-    border: 1px solid #dcdcdc;
+    border: 1px solid #373737;
     border-radius: 10px;
     margin: 20px 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -813,7 +798,7 @@ button.minecraft-button:active {
 }
 
 .collapse-header {
-    background-color: #dcdcdc;
+    background-color: #242424;
     padding: 15px;
     border-radius: 10px;
     margin: 0;
@@ -857,7 +842,7 @@ button.minecraft-button:active {
 
 #login-box-outer {
     z-index: 99;
-    background-color: #f0f0f0;
+    background-color: #111111;
     padding: 10px 0;
     width: 100%;
 }
@@ -875,10 +860,10 @@ button.minecraft-button:active {
 }
 
 select {
-    background-color: #dcdcdc;
+    background-color: #242424;
     padding: 0.5rem;
     border: none;
-    color: black;
+    color: white;
     border-radius: 10px;
 }
 
@@ -978,18 +963,12 @@ input:checked+.slider:before {
     width: 100%;
 }
 
-body.dark .notification {
-    background-color: #333;
-    color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
 .notification {
-    background-color: #f8f9fa;
+    background-color: #333;
     border-left: 4px solid #28a745;
-    color: #333;
+    color: #fff;
     border-radius: 4px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     padding: 15px;
     margin-bottom: 15px;
     position: relative;
@@ -1006,8 +985,8 @@ body.dark .notification {
 }
 
 .payment-option {
-    background: #f9f9f9;
-    border: 2px solid #dcdcdc;
+    background: #242424;
+    border: 2px solid #242424;
     padding: 10px 14px;
     border-radius: 10px;
     min-width: 180px;
@@ -1018,7 +997,7 @@ body.dark .notification {
 }
 
 .payment-option i {
-    color: #000;
+    color: white;
 }
 
 .payment-option .small {
@@ -1026,9 +1005,8 @@ body.dark .notification {
 }
 
 .payment-option.selected {
-    background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
-    border-color: black;
-    /* highlight color */
+    background: #242424;
+    border-color: white;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
 }
 
@@ -1055,9 +1033,6 @@ body.dark .notification {
 }
 
 .notification .message {
-
-
-
     margin-right: 25px;
     margin-bottom: 5px;
     font-size: 14px;
@@ -1083,10 +1058,6 @@ body.dark .notification {
     left: 0;
     height: 3px;
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.2);
-}
-
-body.dark .notification .timer-bar {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
@@ -1122,18 +1093,14 @@ body.dark .notification .timer-bar {
     margin: 10px 0;
 }
 
-body.dark .quantity-controls span {
-    color: #ddd;
-}
-
 .quantity-btn {
-    background: #cfcfcf;
+    background: #1a1a1a;
     border: none;
     width: 25px;
     height: 25px;
     cursor: pointer;
     margin: 0 5px;
-    color: #333;
+    color: #fff;
     font-weight: bold;
     font-size: 20px;
     display: flex;
@@ -1141,16 +1108,7 @@ body.dark .quantity-controls span {
     justify-content: center;
 }
 
-body.dark .quantity-btn {
-    background: #1a1a1a;
-    color: #fff;
-}
-
 .quantity-btn:hover {
-    background: #c3c3c3;
-}
-
-body.dark .quantity-btn:hover {
     background: #2a2a2a;
 }
 
@@ -1173,29 +1131,17 @@ body.dark .quantity-btn:hover {
 .cart-total {
     margin: 20px 0;
     padding: 10px;
-    background-color: #f4f4f4;
+    background-color: #1a1a1a;
     border-radius: 5px;
     text-align: right;
 }
 
-body.dark .cart-total {
-    background-color: #1a1a1a;
-}
-
 /* Add to Cart Button */
 button.add-to-cart-btn.update {
-    background-color: #2196f3;
-}
-
-button.add-to-cart-btn.update:hover {
-    background-color: #0b7dda;
-}
-
-body.dark button.add-to-cart-btn.update {
     background-color: #1d8be2;
 }
 
-body.dark button.add-to-cart-btn.update:hover {
+button.add-to-cart-btn.update:hover {
     background-color: #197dcc;
 }
 
@@ -1208,16 +1154,11 @@ input.item-quantity {
     appearance: textfield;
     font-size: 14px;
     font-weight: bold;
-    background-color: #d5d5d5;
-}
-
-body.dark input.item-quantity {
     background-color: #1f1f1f;
     color: #fff;
 }
 
 /* Remove arrow buttons from number input */
-/* Unified with quantity-controls input above */
 input.item-quantity::-webkit-outer-spin-button,
 input.item-quantity::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -1233,10 +1174,6 @@ input.item-quantity::-webkit-inner-spin-button {
     margin-bottom: 15px;
     justify-content: space-between;
 }
-
-/* VIP Package */
-
-/* Cart Styles */
 
 .cart-item h3 {
     margin-top: 0;
@@ -1268,13 +1205,13 @@ input.item-quantity::-webkit-inner-spin-button {
 }
 
 .quantity-controls button {
-    background: #cfcfcf;
+    background: #1a1a1a;
     border: none;
     width: 25px;
     height: 25px;
     cursor: pointer;
     margin: 0 5px;
-    color: #333;
+    color: #fff;
     font-weight: bold;
     font-size: 20px;
     display: flex;
@@ -1282,16 +1219,7 @@ input.item-quantity::-webkit-inner-spin-button {
     justify-content: center;
 }
 
-body.dark .quantity-controls button {
-    background: #1a1a1a;
-    color: #fff;
-}
-
 .quantity-controls button:hover {
-    background: #c3c3c3;
-}
-
-body.dark .quantity-controls button:hover {
     background: #2a2a2a;
 }
 
@@ -1303,23 +1231,19 @@ body.dark .quantity-controls button:hover {
     appearance: textfield;
     font-size: 14px;
     font-weight: bold;
-    background-color: #d5d5d5;
-}
-
-body.dark .quantity-controls input {
     background-color: #1f1f1f;
     color: #fff;
 }
 
-body.dark .vote-grid a {
+.vote-grid a {
     color: white;
 }
 
-body.dark .vote-grid a:hover {
+.vote-grid a:hover {
     color: white;
 }
 
-body.dark .vote-item {
+.vote-item {
     border: 2px solid #9a9a9a;
     background-color: #242424;
     text-align: center;
@@ -1327,7 +1251,7 @@ body.dark .vote-item {
     transition: all ease 0.3s;
 }
 
-body.dark .modal-content {
+.modal-content {
     background-color: #242424;
     border-color: #dcdcdc;
 }
@@ -1358,7 +1282,7 @@ body.dark .modal-content {
 }
 
 .discounted-price {
-    color: #000;
+    color: #fff;
     font-weight: bold;
     margin: 0;
 }
@@ -1368,20 +1292,8 @@ body.dark .modal-content {
     font-weight: normal;
 }
 
-body.dark .discounted-price {
-    color: #fff;
-}
-
-body.dark .cart-item .discounted-price {
-    font-weight: normal;
-}
-
 /* Override when inside subtotal */
 .item-subtotal.discounted-price {
-    color: #e74c3c;
-}
-
-body.dark .item-subtotal.discounted-price {
     color: #e74c3c;
 }
 
@@ -1436,11 +1348,11 @@ body.dark .item-subtotal.discounted-price {
 }
 
 .team-item {
-    background: #dcdcdc;
+    background: #242424;
     border-radius: 15px;
     padding: 30px 20px;
     text-align: center;
-    border: 1px solid lightslategray;
+    border: 1px solid lightgray;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
     width: 100%;
@@ -1535,34 +1447,24 @@ body.dark .item-subtotal.discounted-price {
     margin-bottom: 60px;
 }
 
-/* Unified dark mode button styles */
-body.dark .team-item {
-    background: #242424;
-    border-color: lightgray;
-}
-
-body.dark .update-btn,
-body.dark .informational {
+.update-btn,
+.informational {
     background-color: #1d8be2;
 }
 
-body.dark .update-btn:hover,
-body.dark .informational:hover {
+.update-btn:hover,
+.informational:hover {
     background-color: #197dcc;
 }
 
 .cart-total {
     margin: 20px 0;
     padding: 10px;
-    background-color: #f4f4f4;
+    background-color: #1a1a1a;
     border-radius: 5px;
     text-align: right;
     font-size: 1.2em;
     font-weight: bold;
-}
-
-body.dark .cart-total {
-    background-color: #1a1a1a;
 }
 
 .cart-buttons {
@@ -1583,39 +1485,27 @@ body.dark .cart-total {
 .empty-cart-message {
     text-align: center;
     font-size: 1.2em;
-    color: #888;
+    color: #aaa;
     padding: 40px;
-    background-color: #dcdcdc;
+    background-color: #242424;
     border-radius: 10px;
     margin-top: 20px;
-    border: 1px solid lightslategray;
-}
-
-body.dark .empty-cart-message {
-    background-color: #242424;
     border: 1px solid darkgray;
-    color: #aaa;
 }
 
 /* Special VIP section */
 .special-cart {
-    background-color: #dcdcdc;
+    background-color: #242424;
     padding: 10px;
     margin-bottom: 5px;
     border-radius: 10px;
-    color: black;
+    color: white;
     transition: all ease 0.3s;
-    border: 1px solid lightslategray;
+    border: 1px solid darkgray;
 }
 
 .special-cart:hover {
     transform: scale(1.05);
-}
-
-body.dark .special-cart {
-    background-color: #242424;
-    color: white;
-    border: 1px solid darkgray;
 }
 
 .special-cart h3 {
@@ -1623,19 +1513,15 @@ body.dark .special-cart {
     padding-bottom: 10px;
 }
 
-body.dark .vip-package h3 {
+.vip-package h3 {
     color: #bb86fc;
 }
 
 .vip-package .view-cart-link {
-    color: #7b1fa2;
+    color: #bb86fc;
     text-decoration: none;
     font-weight: bold;
     padding: 10px;
-}
-
-body.dark .vip-package .view-cart-link {
-    color: #bb86fc;
 }
 
 .vip-package .view-cart-link:hover {
@@ -1649,7 +1535,6 @@ body.dark .vip-package .view-cart-link {
 }
 
 /* Danger Button */
-/* Unified danger styles */
 .danger {
     background-color: #dc3545;
     color: white;
@@ -1659,7 +1544,6 @@ body.dark .vip-package .view-cart-link {
     background-color: #c82333;
 }
 
-/* Unified with update-btn which has the same colors */
 .informational,
 .update-btn {
     background-color: #2196f3;
@@ -1670,8 +1554,6 @@ body.dark .vip-package .view-cart-link {
 .update-btn:hover {
     background-color: #0b7dda;
 }
-
-/* Removed duplicate - unified above */
 
 /* Animation Keyframes */
 @keyframes pulse {
@@ -1727,7 +1609,6 @@ body.dark .vip-package .view-cart-link {
     .header-background {
         background-size: cover;
 
-        /* RCON result styles */
         .rcon-result {
             background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
             border: 1px solid #e6e6e6;
@@ -1827,17 +1708,17 @@ div .spaw {
 }
 
 .table-wrapper::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: #2f2f2f;
     border-radius: 4px;
 }
 
 .table-wrapper::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
+    background: #555;
     border-radius: 4px;
 }
 
 .table-wrapper::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
+    background: #777;
 }
 
 table {
@@ -1845,13 +1726,12 @@ table {
     border-collapse: collapse;
     margin: 0;
     min-width: 600px;
-    /* Ensures table doesn't get too compressed */
 }
 
 table,
 th,
 td {
-    border: 1px solid #ddd;
+    border: 1px solid #2f2f2f;
 }
 
 th,
@@ -1859,18 +1739,17 @@ td {
     padding: 12px;
     text-align: left;
     white-space: nowrap;
-    /* Prevents text wrapping in cells for better mobile scrolling */
 }
 
 th {
-    background-color: #f1f1f1;
+    background-color: #222222;
     position: sticky;
     top: 0;
     z-index: 1;
 }
 
 tr:nth-child(even) {
-    background-color: #f5f5f5;
+    background-color: #1a1a1a;
 }
 
 /* Flexible table cell content */
@@ -1888,20 +1767,16 @@ tr:nth-child(even) {
 @media (max-width: 768px) {
     table {
         min-width: 500px;
-        /* Smaller minimum width on mobile */
     }
 
     th,
     td {
         padding: 8px 10px;
-        /* Smaller padding on mobile */
         font-size: 14px;
-        /* Slightly smaller text */
     }
 
     .table-cell-wrap {
         max-width: 150px;
-        /* Smaller max-width on mobile */
     }
 }
 
@@ -1955,20 +1830,19 @@ tr:nth-child(even) {
 
 .web-version {
     float: right;
-    color: black;
+    color: white;
     font-size: 13px;
 }
 
 .secondary {
-    color: black;
-    background-color: #e5e5e5;
+    color: white;
+    background-color: #141414;
 }
 
 .secondary:hover {
-    background-color: #d7d7d7;
+    background-color: #282828;
 }
 
-/* Removed duplicate - already defined above */
 .logoimage,
 .logo {
     transition: all 0.3s ease;
@@ -1984,21 +1858,10 @@ tr:nth-child(even) {
     transform: scale(0.95);
 }
 
-/* --------------------------------------------------------------------------
-   Custom modal styles (Bootstrap-free)
-   These rules target the existing markup in `Keys.razor` which uses
-   the `modal`, `modal-dialog`, `modal-content`, `modal-header`, etc.
-   They provide a centered dialog, backdrop look, responsive sizing and
-   a basic close button so the modal behaves visually like Bootstrap's.
-   No JS is added here; if you want backdrop-click or ESC-to-close, add
-   a small script or wire it in the component.
-   ----------------------------------------------------------------------- */
 .modal {
     position: fixed;
     inset: 0;
-    /* top:0; right:0; bottom:0; left:0 */
     display: none;
-    /* shown via .show or .d-block on the element */
     align-items: center;
     justify-content: center;
     z-index: 1050;
@@ -2032,20 +1895,15 @@ tr:nth-child(even) {
 }
 
 .modal-content {
-    /* Make modal visually match product cards so it looks related */
-    background-color: #dcdcdc;
-    /* same as .product */
+    background-color: #242424;
     color: black;
     border-radius: 10px;
-    /* match product rounded corners */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
     overflow: hidden;
     width: 100%;
     border: 1px solid lightslategray;
-    /* same border as .product */
 }
 
-/* Make images inside modal look like product images */
 .modal-body img,
 .modal .product-image,
 .modal .item-image {
@@ -2055,14 +1913,12 @@ tr:nth-child(even) {
     display: block;
 }
 
-/* Align price and badges inside modal similar to product */
 .modal .price-container {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-/* Discount badge placement for modal (keeps the same look) */
 .modal .discount-badge {
     position: relative;
     top: 0;
@@ -2070,14 +1926,10 @@ tr:nth-child(even) {
     transform: none;
 }
 
-/* Make modal body content slightly larger/spaced like product */
 .modal-body {
     padding: 1.25rem;
 }
 
-/* Layout: show info to the right of the image inside modal (desktop).
-   Target only the top-level .row that is a direct child of .modal-body so
-   inner .row/.col use (e.g., inside <dl>) are not affected. */
 .modal .modal-body>.row {
     display: flex;
     align-items: flex-start;
@@ -2101,8 +1953,6 @@ tr:nth-child(even) {
 }
 
 @media (max-width: 767px) {
-
-    /* stack on small screens */
     .modal .modal-body>.row>.col-md-6 {
         flex-basis: 100%;
         max-width: 100%;
@@ -2137,7 +1987,6 @@ tr:nth-child(even) {
     justify-content: flex-end;
 }
 
-/* Simple close button similar to bootstrap's btn-close */
 .btn-close {
     appearance: none;
     -webkit-appearance: none;
@@ -2166,8 +2015,6 @@ tr:nth-child(even) {
     transform: translate(-50%, -50%) rotate(-45deg);
 }
 
-/* Backdrop visual hint: component used inline already sets background-color,
-   if there is no inline background-color, add a fullscreen darkening layer. */
 .modal:not([style])::before {
     content: '';
     position: fixed;
@@ -2176,7 +2023,6 @@ tr:nth-child(even) {
     z-index: -1;
 }
 
-/* Responsive tweaks */
 @media (max-width: 767px) {
     .modal-dialog {
         max-width: 95%;
@@ -2187,7 +2033,6 @@ tr:nth-child(even) {
     }
 }
 
-/* Small accessibility focus ring for keyboard users */
 .modal:focus,
 .modal-dialog:focus,
 .modal-content:focus {
@@ -2201,7 +2046,6 @@ tr:nth-child(even) {
 
 .rcon-result {
     background-color: #dcdcdc;
-
 }
 
 .rcon-response {
@@ -2215,7 +2059,7 @@ tr:nth-child(even) {
 }
 
 .menu-item {
-    background-color: #dcdcdc;
+    background-color: #242424;
     margin-bottom: 1rem;
     padding: 20px;
     border-radius: 10px;
@@ -2232,7 +2076,7 @@ tr:nth-child(even) {
 .game-menu h2 {
     text-align: center;
     margin-bottom: 30px;
-    color: #333;
+    color: white;
 }
 
 .menu-item:hover {
@@ -2244,267 +2088,267 @@ tr:nth-child(even) {
 }
 
 /* dark */
-/* Dark mode table wrapper */
-
-body.dark .table-wrapper::-webkit-scrollbar-track {
-    background: #2f2f2f;
+body.light .table-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
 }
 
-body.dark .table-wrapper::-webkit-scrollbar-thumb {
-    background: #555;
+body.light .table-wrapper::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
 }
 
-body.dark .table-wrapper::-webkit-scrollbar-thumb:hover {
-    background: #777;
+body.light .table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
 }
 
-body.dark table,
-body.dark th,
-body.dark td {
-    border: 1px solid #2f2f2f;
+body.light table,
+body.light th,
+body.light td {
+    border: 1px solid #ddd;
 }
 
-body.dark th,
-body.dark td {
+body.light th,
+body.light td {
     padding: 12px;
     text-align: left;
 }
 
-body.dark th {
-    background-color: #222222;
+body.light th {
+    background-color: #f1f1f1;
 }
 
-body.dark tr:nth-child(even) {
-    background-color: #1a1a1a;
+body.light tr:nth-child(even) {
+    background-color: #f5f5f5;
 }
 
-
-body.dark {
-    background-color: #090909;
-    color: white;
+body.light {
+    background-color: #f9f9f9;
+    color: black;
 }
 
-body.dark .container p,
-body.dark .container small {
-    color: white;
+body.light .container p,
+body.light .container small {
+    color: black;
 }
 
-body.dark h2,
-body.dark h3,
-body.dark h4,
-body.dark h5 {
-    color: white;
+body.light h2,
+body.light h3,
+body.light h4,
+body.light h5 {
+    color: black;
 }
 
-body.dark h2 {
-    color: white;
+body.light h2 {
+    color: black;
 }
 
-body.dark ul,
-body.dark ol {
-    color: white;
+/* Light-mode overrides for specific sections */
+body.light .grid-div h2,
+body.light .game-menu h2,
+body.light .latest-announcements h2 {
+    color: #333;
 }
 
-body.dark .container a,
-body.dark #cookie-banner a {
-    color: #dc0000;
+body.light ul,
+body.light ol {
+    color: black;
 }
 
-body.dark a:hover {
-    color: #b90000;
+body.light .container a,
+body.light #cookie-banner a {
+    color: #dc3545;
 }
 
-body.dark .motto {
-    color: #242424;
+body.light a:hover {
+    color: #c82333;
 }
 
-body.dark .announcement {
-    background-color: #242424;
+body.light .motto {
+    color: #dcdcdc;
 }
 
-body.dark .account {
-    background-color: #1a1a1a;
+body.light .announcement {
+    background-color: #dcdcdc;
 }
 
-body.dark hr {
-    color: white;
+body.light .account {
+    background-color: #e2e2e2;
 }
 
-body.dark .info {
-    background-color: #1a1a1a;
+body.light hr {
+    color: black;
 }
 
-body.dark input,
-body.dark textarea {
-    background-color: #242424;
-    color: white;
-    border: 2px solid #242424;
+body.light .info {
+    background-color: #e2e2e2;
 }
 
-body.dark input:focus,
-textarea:focus {
-    border: 2px solid white;
+body.light input,
+body.light textarea {
+    background-color: #dcdcdc;
+    color: black;
+    border: 2px solid #dcdcdc;
+}
+
+body.light input:focus,
+body.light textarea:focus {
+    border: 2px solid black;
     outline: none;
 }
 
-body.dark .grid span,
-body.dark .grid i {
+body.light .grid span,
+body.light .grid i {
     color: white;
 }
 
-body.dark .error {
+body.light .error {
     background-color: #930000;
 }
 
-body.dark footer {
-    background-color: #090909;
+body.light footer {
+    background-color: #e2e2e2;
     color: #fff;
 }
 
-body.dark .footer-column h3 {
-    color: #fff;
+body.light .footer-column h3 {
+    color: black;
 }
 
-body.dark .footer-column ul li a {
-    color: #9e9e9e;
+body.light .footer-column ul li a {
+    color: #5b5b5b;
 }
 
-body.dark .footer-column ul li a:hover {
-    color: #fff;
+body.light .footer-column ul li a:hover {
+    color: black;
 }
 
-body.dark .footer-column .bi-discord {
+body.light .footer-column .bi-discord {
     color: #7289da;
 }
 
-body.dark .footer-column .bi-discord:hover {
+body.light .footer-column .bi-discord:hover {
     color: #fff;
 }
 
-body.dark .footer-bottom a {
-    color: #9e9e9e;
+body.light .footer-bottom a {
+    color: #5b5b5b;
 }
 
-body.dark .footer-bottom a:hover {
-    color: #fff;
+body.light .footer-bottom a:hover {
+    color: black;
 }
 
-body.dark .mojang-notice {
-    color: #9e9e9e;
+body.light .mojang-notice {
+    color: #5b5b5b;
 }
 
-body.dark .navbar {
-    background: rgba(0, 0, 0, 0.2);
+body.light .navbar {
+    background: rgba(255, 255, 255, 0.2);
 }
 
-body.dark .cart-item,
-body.dark .product {
-    background-color: #242424;
-    border: 1px solid darkgray;
+body.light .cart-item,
+body.light .product {
+    background-color: #dcdcdc;
+    border: 1px solid lightslategray;
 }
 
-body.dark .special-cart {
-    background-color: #242424;
+body.light .special-cart {
+    background-color: #dcdcdc;
 }
 
-body.dark #cookie-banner {
-    background: #242424;
-    color: white;
-    border-top: 1px solid white;
+body.light #cookie-banner {
+    background: #dcdcdc;
+    color: black;
+    border-top: 1px solid black;
 }
 
-body.dark #cookie-banner .accept {
+body.light #cookie-banner .accept {
     background: #2ecc71;
 }
 
-body.dark #cookie-banner .accept:hover {
+body.light #cookie-banner .accept:hover {
     background: #27ae60;
 }
 
-body.dark #cookie-banner .decline {
+body.light #cookie-banner .decline {
     background: #e74c3c;
 }
 
-body.dark #cookie-banner .decline:hover {
+body.light #cookie-banner .decline:hover {
     background: #c0392b;
 }
 
-body.dark .key {
-    background-color: #242424;
-}
-
-body.dark button.minecraft-button {
+body.light button.minecraft-button {
     background-color: #3c8527;
     color: #fff;
 }
 
-body.dark button.minecraft-button:hover {
+body.light button.minecraft-button:hover {
     background-color: #46a032;
 }
 
-body.dark #login-box-outer {
-    background-color: #111111;
+body.light #login-box-outer {
+    background-color: #f0f0f0;
 }
 
-body.dark select {
-    background-color: #242424;
-    color: white;
+body.light select {
+    background-color: #dcdcdc;
+    color: black;
 }
 
-body.dark .collapse-wrapper {
-    border: 1px solid #373737;
+body.light .collapse-wrapper {
+    border: 1px solid #dcdcdc;
 }
 
-body.dark .collapse-header {
-    background-color: #242424;
+body.light .collapse-header {
+    background-color: #dcdcdc;
 }
 
-body.dark .header-background {
+body.light .header-background {
     background-size: 120% auto;
 }
 
-body.dark .footer-p {
-    color: white;
+body.light .footer-p {
+    color: black;
 }
 
-body.dark .nav-links a {
-    color: white;
+body.light .nav-links a {
+    color: black;
 }
 
-body.dark .nav-links li:hover {
-    border-bottom: 2px solid white;
+body.light .nav-links li:hover {
+    border-bottom: 2px solid black;
 }
 
-body.dark .item-gold {
+body.light .item-gold {
     background: linear-gradient(to right, orange, yellow);
 }
 
-body.dark .item-green {
+body.light .item-green {
     background: linear-gradient(to right, green, lime);
 }
 
-body.dark .item-blue {
+body.light .item-blue {
     background: linear-gradient(to right, blue, indigo);
 }
 
-body.dark .item-red {
+body.light .item-red {
     background: linear-gradient(to right, red, orange);
 }
 
-body.dark .item-pink {
+body.light .item-pink {
     background: linear-gradient(to right, #c200bf, #dba7da);
 }
 
-body.dark .item-turquoise {
+body.light .item-turquoise {
     background: linear-gradient(to right, turquoise, #a0f0ee);
 }
 
-body.dark .item-gold,
-body.dark .item-green,
-body.dark .item-blue,
-body.dark .item-red,
-body.dark .item-pink,
-body.dark .item-turquoise {
+body.light .item-gold,
+body.light .item-green,
+body.light .item-blue,
+body.light .item-red,
+body.light .item-pink,
+body.light .item-turquoise {
     text-shadow:
         -1px -1px 0 white,
         1px -1px 0 white,
@@ -2513,55 +2357,178 @@ body.dark .item-turquoise {
 }
 
 @media (max-width: 1249px) {
-    body.dark .header-background {
+    body.light .header-background {
         background-size: cover;
     }
 }
 
-body.dark .toggle-btn {
+body.light .toggle-btn {
     color: white;
     background: none;
 }
 
 @media (max-width: 871px) {
-    body.dark .toggle-btn {
+    body.light .toggle-btn {
         color: white;
     }
 }
 
-body.dark .web-version {
-    color: white;
+body.light .web-version {
+    color: black;
 }
 
-body.dark .secondary {
-    background-color: #141414;
-    color: white;
+body.light .secondary {
+    background-color: #e5e5e5;
+    color: black;
 }
 
-body.dark .secondary:hover {
-    background-color: #282828;
+body.light .secondary:hover {
+    background-color: #d7d7d7;
 }
 
-body.dark .payment-option {
-    background-color: #242424;
-    border-color: #242424;
+body.light .payment-option {
+    background-color: #f9f9f9;
+    border-color: #dcdcdc;
 }
 
-body.dark .payment-option.selected {
-    background: #242424;
-    border-color: white;
+body.light .payment-option.selected {
+    background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+    border-color: black;
 }
 
-body.dark .thing-grid-item {
-    background-color: #242424;
+body.light .thing-grid-item {
+    background-color: #dcdcdc;
 }
 
-body.dark .payment-option i {
-    color: white;
+body.light .thing-grid-item {
+    color: #333;
 }
 
-body.dark .menu-item {
-    background-color: #242424;
+body.light .payment-option i {
+    color: #000;
+}
+
+body.light .menu-item {
+    background-color: #dcdcdc;
+}
+
+body.light .vote-grid a {
+    color: black;
+}
+
+body.light .vote-grid a:hover {
+    color: black;
+}
+
+body.light .vote-item {
+    border: 2px solid #9a9a9a;
+    background-color: #dcdcdc;
+}
+
+body.light .modal-content {
+    background-color: #dcdcdc;
+    border-color: #dcdcdc;
+}
+
+body.light .update-btn,
+body.light .informational {
+    background-color: #2196f3;
+}
+
+body.light .update-btn:hover,
+body.light .informational:hover {
+    background-color: #0b7dda;
+}
+
+body.light .notification {
+    background-color: #f8f9fa;
+    color: #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+body.light .notification .timer-bar {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+body.light .quantity-controls span {
+    color: black;
+}
+
+body.light .quantity-btn {
+    background: #cfcfcf;
+    color: #333;
+}
+
+body.light .quantity-btn:hover {
+    background: #c3c3c3;
+}
+
+body.light .quantity-controls button {
+    background: #cfcfcf;
+    color: #333;
+}
+
+body.light .quantity-controls button:hover {
+    background: #c3c3c3;
+}
+
+body.light input.item-quantity {
+    background-color: #d5d5d5;
+    color: black;
+}
+
+body.light .quantity-controls input {
+    background-color: #d5d5d5;
+    color: black;
+}
+
+body.light .cart-total {
+    background-color: #f4f4f4;
+}
+
+body.light .discounted-price {
+    color: #000;
+}
+
+body.light .cart-item .discounted-price {
+    font-weight: normal;
+}
+
+body.light .item-subtotal.discounted-price {
+    color: #e74c3c;
+}
+
+body.light .empty-cart-message {
+    background-color: #dcdcdc;
+    border: 1px solid lightslategray;
+    color: #888;
+}
+
+body.light .special-cart {
+    background-color: #dcdcdc;
+    color: black;
+    border: 1px solid lightslategray;
+}
+
+body.light .vip-package h3 {
+    color: #7b1fa2;
+}
+
+body.light .vip-package .view-cart-link {
+    color: #7b1fa2;
+}
+
+body.light .team-item {
+    background: #dcdcdc;
+    border-color: lightslategray;
+}
+
+body.light .add-to-cart-btn.update {
+    background-color: #2196f3;
+}
+
+body.light .add-to-cart-btn.update:hover {
+    background-color: #0b7dda;
 }
 
 /* Snowflakes animation */
@@ -2574,7 +2541,7 @@ body.dark .menu-item {
     pointer-events: none;
     z-index: 9999;
     overflow: hidden;
-    display: none; /* only disable in winter */
+    display: none;
 }
 
 .snowflake {
