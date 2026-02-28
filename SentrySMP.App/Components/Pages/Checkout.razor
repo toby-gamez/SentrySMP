@@ -104,6 +104,66 @@
                 </div>
             </div>
         }
+        <!-- Purchase confirmation for cases where delivery (RCON) failed -->
+        @if (_paymentSucceeded && ((_rconResult != null && !_rconResult.AllSucceeded) || (!string.IsNullOrWhiteSpace(_rconStatusMessage) && _rconStatusMessage.IndexOf("failed", StringComparison.OrdinalIgnoreCase) >= 0)))
+        {
+            <div style="background:#ffffff; color:#000; border:1px solid #ddd; border-radius:10px; padding:16px; margin-top:1rem; box-shadow: 0 1px 2px rgba(0,0,0,0.04); position:relative;">
+                <h2 style="color:#000;">Purchase confirmation</h2>
+                <div style="position:absolute; right:16px; top:12px; font-size:2.4rem; line-height:1;">
+                    <i class="bi @( (_rconResult != null && _rconResult.AllSucceeded) ? "bi-check-circle" : "bi-x-circle")" style="color:@( (_rconResult != null && _rconResult.AllSucceeded) ? "#44ae44" : "#dc3545")"></i>
+                </div>
+                <div class="mb-2">Transaction ID: <strong>@(_lastTransactionId?.ToString() ?? "N/A")</strong>
+                    <button class="btn btn-sm btn-outline-secondary ms-2" @onclick="CopyTransactionId">Copy ID</button>
+                    <button class="btn btn-sm btn-outline-secondary ms-2" @onclick="CopyIssue">Copy full issue</button>
+                    @if (!string.IsNullOrWhiteSpace(_copyFeedback))
+                    {
+                        <span class="ms-2 small text-muted">@_copyFeedback</span>
+                    }
+                </div>
+
+                <div class="alert alert-warning">
+                    <strong>Delivery issue:</strong>
+                    <div class="mt-1 small text-muted">Some items could not be delivered to the server automatically. Keep your transaction ID and contact support if the items do not arrive.</div>
+                    @if (!string.IsNullOrWhiteSpace(_rconStatusMessage))
+                    {
+                        <div class="mt-2">Status: @_rconStatusMessage</div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(_failureMessage))
+                    {
+                        <div class="mt-2">Details: @_failureMessage</div>
+                    }
+                </div>
+
+                <!-- order details moved below the confirmation box -->
+            </div>
+        }
+        @if (_lastOrderItems != null && _lastOrderItems.Count > 0)
+        {
+            <div class="mt-2">
+                <h2>Order details</h2>
+                <div class="table-wrapper">
+                    <table class="table table-sm mt-2">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Server</th>
+                                <th class="text-center">Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var it in _lastOrderItems)
+                            {
+                                <tr>
+                                    <td class="table-cell-wrap">@FormatPlayerToken(it.Key.Name)</td>
+                                    <td class="table-cell-nowrap">@(it.Key.Server?.Name ?? "-")</td>
+                                    <td class="text-center table-cell-nowrap">@it.Quantity</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
     }
     else if (CartState.CartItems.Count == 0)
     {
@@ -321,7 +381,7 @@
                     {
                         <div class="card mt-3">
                             <div class="card-body">
-                                <h6>Order details</h6>
+                                <h2>Order details</h2>
                                 <div class="table-wrapper">
                                     <table class="table table-sm mt-2">
                                         <thead>
@@ -506,6 +566,56 @@
     {
         NavigationManager.NavigateTo("/");
     }
+
+    private async Task CopyTransactionId()
+    {
+        try
+        {
+            if (_lastTransactionId.HasValue)
+            {
+                await JS.InvokeVoidAsync("navigator.clipboard.writeText", _lastTransactionId.Value.ToString());
+                _copyFeedback = "Transaction ID copied";
+                StateHasChanged();
+                await Task.Delay(2000);
+                _copyFeedback = null;
+                StateHasChanged();
+            }
+        }
+        catch { }
+    }
+
+    private async Task CopyIssue()
+    {
+        try
+        {
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine($"Transaction ID: {_lastTransactionId?.ToString() ?? "N/A"}");
+            if (!string.IsNullOrWhiteSpace(_rconStatusMessage)) sb.AppendLine($"RCON status: {_rconStatusMessage}");
+            if (!string.IsNullOrWhiteSpace(_failureMessage)) sb.AppendLine($"Failure details: {_failureMessage}");
+            sb.AppendLine("Items:");
+            if (_lastOrderItems != null)
+            {
+                foreach (var it in _lastOrderItems)
+                {
+                    sb.AppendLine($"- {it.Key.Name} | Server: {it.Key.Server?.Name ?? "-"} | Qty: {it.Quantity}");
+                }
+            }
+            var text = sb.ToString();
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", text);
+            _copyFeedback = "Full issue copied";
+            StateHasChanged();
+            await Task.Delay(2000);
+            _copyFeedback = null;
+            StateHasChanged();
+        }
+        catch
+        {
+            _copyFeedback = "Copy failed";
+            try { StateHasChanged(); } catch { }
+        }
+    }
+
+    private string? _copyFeedback;
 
     private async Task ProceedToPayment()
     {

@@ -8,3 +8,5 @@ obj
 .build/*
 SentrySMP.App/appsettings.json
 SentrySMP.Admin/appsettings.json
+SentrySMP.Admin/appsettings.Development.json
+SentrySMP.App/appsettings.Development.json
