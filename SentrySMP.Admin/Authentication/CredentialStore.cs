@@ -7,13 +7,15 @@ public class CredentialStore
 {
     private (string Username, string Password)? _credentials;
     private readonly ILogger<CredentialStore> _logger;
+    private readonly IServiceProvider _serviceProvider;
     
     // Event to notify when credentials change
     public event Action? CredentialsChanged;
 
-    public CredentialStore(ILogger<CredentialStore> logger)
+    public CredentialStore(ILogger<CredentialStore> logger, IServiceProvider serviceProvider)
     {
         _logger = logger;
+        _serviceProvider = serviceProvider;
     }
 
     public async Task InitializeAsync(IJSRuntime jsRuntime)
@@ -35,6 +37,20 @@ public class CredentialStore
                 // Notify listeners
                 _logger.LogInformation("CredentialStore: Notifying {ListenerCount} listeners", CredentialsChanged?.GetInvocationList().Length ?? 0);
                 CredentialsChanged?.Invoke();
+
+                // Also try to notify AuthenticationStateProvider in case it wasn't subscribed yet
+                try
+                {
+                    var authStateProvider = _serviceProvider.GetService(typeof(AuthenticationStateProvider)) as AuthenticationStateProvider;
+                    if (authStateProvider is SentrySMP.Admin.Authentication.BasicAuthenticationStateProvider basicAuth)
+                    {
+                        basicAuth.NotifyAuthenticationStateChanged();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "CredentialStore: Failed to notify AuthenticationStateProvider");
+                }
             }
             else
             {
@@ -63,12 +79,38 @@ public class CredentialStore
         }
         
         CredentialsChanged?.Invoke();
+
+        try
+        {
+            var authStateProvider = _serviceProvider.GetService(typeof(AuthenticationStateProvider)) as AuthenticationStateProvider;
+            if (authStateProvider is SentrySMP.Admin.Authentication.BasicAuthenticationStateProvider basicAuth)
+            {
+                basicAuth.NotifyAuthenticationStateChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "CredentialStore: Failed to notify AuthenticationStateProvider");
+        }
     }
 
     public void Set(string username, string password)
     {
         _credentials = (username, password);
         CredentialsChanged?.Invoke();
+
+        try
+        {
+            var authStateProvider = _serviceProvider.GetService(typeof(AuthenticationStateProvider)) as AuthenticationStateProvider;
+            if (authStateProvider is SentrySMP.Admin.Authentication.BasicAuthenticationStateProvider basicAuth)
+            {
+                basicAuth.NotifyAuthenticationStateChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "CredentialStore: Failed to notify AuthenticationStateProvider");
+        }
     }
 
     public (string Username, string Password)? Get()

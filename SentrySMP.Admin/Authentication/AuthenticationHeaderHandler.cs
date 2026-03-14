@@ -14,7 +14,7 @@ public class AuthenticationHeaderHandler : DelegatingHandler
         _logger = logger;
     }
 
-    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
         (string Username, string Password)? credentials = _credentialStore.Get();
         if (credentials is (var username, var password))
@@ -22,13 +22,18 @@ public class AuthenticationHeaderHandler : DelegatingHandler
             var byteArray = Encoding.ASCII.GetBytes($"{username}:{password}");
             request.Headers.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
-            _logger.LogDebug("[AuthHandler] Injected Basic Auth for user {Username}", username);
+            string maskedUser;
+            if (string.IsNullOrEmpty(username)) maskedUser = "<empty>";
+            else if (username.Length <= 2) maskedUser = new string('*', username.Length);
+            else maskedUser = $"{username[0]}{new string('*', Math.Max(1, username.Length - 2))}{username[^1]}";
+
+            _logger.LogDebug("[AuthHandler] Injected Basic Auth for user {MaskedUser} (pwdLen={PwdLen})", maskedUser, password?.Length ?? 0);
         }
         else
         {
             _logger.LogWarning("[AuthHandler] No credentials present");
         }
 
-        return base.SendAsync(request, cancellationToken);
+        return await base.SendAsync(request, cancellationToken);
     }
 }

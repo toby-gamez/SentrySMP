@@ -51,7 +51,7 @@ services.AddAuthorization();
 
 // Add Blazor authentication
 services.AddCascadingAuthenticationState();
-services.AddSingleton<AuthenticationStateProvider, BasicAuthenticationStateProvider>();
+services.AddScoped<AuthenticationStateProvider, BasicAuthenticationStateProvider>();
 
 services.AddRazorComponents().AddInteractiveServerComponents();
 
