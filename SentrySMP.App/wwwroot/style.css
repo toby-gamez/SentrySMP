@@ -1914,7 +1914,7 @@ tr:nth-child(even) {
 
 .modal-content {
     background-color: #242424;
-    color: black;
+    color: white;
     border-radius: 10px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
     overflow: hidden;
@@ -2432,6 +2432,7 @@ body.light .menu-item {
 body.light .modal-content {
     background-color: #dcdcdc;
     border-color: #dcdcdc;
+    color: black;
 }
 
 body.light .update-btn,
