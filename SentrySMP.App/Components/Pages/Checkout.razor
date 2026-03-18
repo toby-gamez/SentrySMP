@@ -1217,20 +1217,33 @@
                     // Infer provider from querystring (Stripe returns session_id, PayPal returns orderId)
                     string providerName = "Manual";
                     string providerTxId = "return";
+                    bool hasPaymentId = false;
                     if (qs.TryGetValue("session_id", out var sid) && !string.IsNullOrWhiteSpace(sid))
                     {
                         providerName = "Stripe";
                         providerTxId = sid.ToString();
+                        hasPaymentId = true;
                     }
                     else if (qs.TryGetValue("orderId", out var oid) && !string.IsNullOrWhiteSpace(oid))
                     {
                         providerName = "PayPal";
                         providerTxId = oid.ToString();
+                        hasPaymentId = true;
                     }
                     else if (qs.TryGetValue("provider", out var pv) && !string.IsNullOrWhiteSpace(pv))
                     {
                         // honor explicit provider if provided
                         providerName = pv.ToString();
+                    }
+
+                    // In production, reject the payment when no real payment ID was returned by the provider.
+                    if (!hasPaymentId && Env.IsProduction())
+                    {
+                        _logger?.LogWarning("Payment return without payment ID rejected in production (uri={Uri})", NavigationManager.Uri);
+                        _failureMessage = "Payment could not be confirmed — no payment ID was received. Please contact support if you were charged.";
+                        _wasRedirectStatusSuccess = false;
+                        StateHasChanged();
+                        return;
                     }
 
                     // Persist transaction to API (best-effort)
