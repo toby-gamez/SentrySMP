@@ -57,7 +57,7 @@ Task("Build")
     .IsDependentOn("AddOfflineFile")
     .Does(() =>
     {
-        StartProcess("dotnet", new ProcessSettings 
+        StartProcess("dotnet", new ProcessSettings
         {
             Arguments = $"build {config.ProjectPath} --configuration Release"
         });
@@ -67,7 +67,7 @@ Task("Publish")
     .IsDependentOn("Build")
     .Does(() =>
     {
-        StartProcess("dotnet", new ProcessSettings 
+        StartProcess("dotnet", new ProcessSettings
         {
             Arguments = $"publish {config.ProjectPath} --configuration Release -o {config.PublishDirectory} --no-build"
         });
@@ -86,7 +86,7 @@ Task("CleanRemote")
         await client.ConnectAsync();
         LogInformation($"Connected to FTP server {config.FtpHost}");
 
-        if (!config.FtpRemoteDirectory.EndsWith("www") && !config.FtpRemoteDirectory.Contains("site"))
+        if (!config.FtpRemoteDirectory.EndsWith("wwwroot") && !config.FtpRemoteDirectory.Contains("site"))
         {
             throw new InvalidOperationException("Remote directory path seems unsafe to clean. Please double-check.");
         }
@@ -138,11 +138,11 @@ Task("UploadToFTP")
             using var client = new FtpClient(config.FtpHost, new NetworkCredential(config.FtpUsername, config.FtpPassword));
             await client.ConnectAsync();
             LogInformation($"Connecting to FTP server {config.FtpHost}");
-            
+
             var remoteOfflineFilePath = config.FtpRemoteDirectory + "/app_offline.htm";
             LogInformation($"Uploading {config.OfflineFilePath} to {remoteOfflineFilePath}");
             var uploadResult = await client.UploadFileAsync(config.OfflineFilePath, remoteOfflineFilePath);
-            
+
             if (uploadResult == FtpStatus.Success)
             {
                 LogInformation($"Successfully uploaded {config.OfflineFilePath} to {remoteOfflineFilePath}");

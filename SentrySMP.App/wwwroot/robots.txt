@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 
 # Point search engines to the sitemap (use www)
-Sitemap: https://www.sentrysmp.eu/sitemap.xml
+Sitemap: https://store.sentrysmp.eu/sitemap.xml

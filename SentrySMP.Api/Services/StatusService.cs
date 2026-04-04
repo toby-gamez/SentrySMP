@@ -55,7 +55,7 @@ namespace SentrySMP.Api.Services
             try
             {
                 var client = _httpFactory.CreateClient();
-                var url = "https://api.mcstatus.io/v2/status/java/mc.sentrysmp.eu";
+                var url = "https://api.mcstatus.io/v2/status/java/sentrysmp.eu";
                 var resp = await client.GetAsync(url);
                 if (!resp.IsSuccessStatusCode) return null;
 

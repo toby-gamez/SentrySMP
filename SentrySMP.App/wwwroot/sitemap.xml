@@ -1,121 +1,139 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<?xml version="1.0" encoding="UTF-8" ?>
+<urlset xmlns="http://store.sitemaps.org/schemas/sitemap/0.9">
 	<url>
-		<loc>https://www.sentrysmp.eu/</loc>
+		<loc>https://store.sentrysmp.eu/</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>1.00</priority>
 	</url>
 	<url>
-		<loc>https://www.sentrysmp.eu/our-team</loc>
+		<loc>https://store.sentrysmp.eu/our-team</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.90</priority>
 	</url>
 	<url>
-		<loc>https://www.sentrysmp.eu/join</loc>
+		<loc>https://store.sentrysmp.eu/join</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.90</priority>
 	</url>
 	<url>
-		<loc>https://www.sentrysmp.eu/checkout</loc>
+		<loc>https://store.sentrysmp.eu/checkout</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.90</priority>
 	</url>
 	<url>
-		<loc>https://www.sentrysmp.eu/terms-of-use</loc>
+		<loc>https://store.sentrysmp.eu/terms-of-use</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.90</priority>
 	</url>
 	<url>
-		<loc>https://www.sentrysmp.eu/privacy-policy</loc>
+		<loc>https://store.sentrysmp.eu/privacy-policy</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.90</priority>
 	</url>
 	<url>
-		<loc>https://www.sentrysmp.eu/minecraft-server-rules</loc>
+		<loc>https://store.sentrysmp.eu/minecraft-server-rules</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.90</priority>
 	</url>
 	<url>
-		<loc>https://www.sentrysmp.eu/discord-server-rules</loc>
+		<loc>https://store.sentrysmp.eu/discord-server-rules</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.90</priority>
 	</url>
 	<url>
-		<loc>https://www.sentrysmp.eu/changelog</loc>
+		<loc>https://store.sentrysmp.eu/staff-rules</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.90</priority>
 	</url>
 	<url>
-		<loc>https://www.sentrysmp.eu/about</loc>
+		<loc>https://store.sentrysmp.eu/media-rules</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.90</priority>
 	</url>
 	<url>
-		<loc>https://www.sentrysmp.eu/vote-for-us</loc>
+		<loc>https://store.sentrysmp.eu/changelog</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.90</priority>
 	</url>
 	<url>
-		<loc>https://www.sentrysmp.eu/support</loc>
+		<loc>https://store.sentrysmp.eu/about</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.90</priority>
 	</url>
 	<url>
-		<loc>https://www.sentrysmp.eu/news</loc>
+		<loc>https://store.sentrysmp.eu/vote-for-us</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.90</priority>
 	</url>
 	<url>
-		<loc>https://www.sentrysmp.eu/login</loc>
+		<loc>https://store.sentrysmp.eu/support</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.90</priority>
 	</url>
 	<url>
-		<loc>https://www.sentrysmp.eu/battlepasses</loc>
+		<loc>https://store.sentrysmp.eu/news</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.90</priority>
 	</url>
 	<url>
-		<loc>https://www.sentrysmp.eu/ranks</loc>
+		<loc>https://store.sentrysmp.eu/login</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.90</priority>
 	</url>
 	<url>
-		<loc>https://www.sentrysmp.eu/bundles</loc>
+		<loc>https://store.sentrysmp.eu/battlepasses</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.90</priority>
 	</url>
 	<url>
-		<loc>https://www.sentrysmp.eu/shards</loc>
+		<loc>https://store.sentrysmp.eu/ranks</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.90</priority>
 	</url>
 	<url>
-		<loc>https://www.sentrysmp.eu/cart</loc>
+		<loc>https://store.sentrysmp.eu/bundles</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.90</priority>
 	</url>
 	<url>
-		<loc>https://www.sentrysmp.eu/keys</loc>
+		<loc>https://store.sentrysmp.eu/coins</loc>
+		<lastmod>2025-10-28</lastmod>
+		<changefreq>weekly</changefreq>
+		<priority>0.90</priority>
+	</url>
+	<url>
+		<loc>https://store.sentrysmp.eu/cart</loc>
+		<lastmod>2025-10-28</lastmod>
+		<changefreq>weekly</changefreq>
+		<priority>0.90</priority>
+	</url>
+	<url>
+		<loc>https://store.sentrysmp.eu/keys</loc>
+		<lastmod>2025-10-28</lastmod>
+		<changefreq>weekly</changefreq>
+		<priority>0.90</priority>
+	</url>
+	<url>
+		<loc>https://store.sentrysmp.eu/other</loc>
 		<lastmod>2025-10-28</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.90</priority>
