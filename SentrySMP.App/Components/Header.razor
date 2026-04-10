@@ -4,6 +4,7 @@
 <style>
     body.light .header-background {
         background-image: url("images/background-image.png");
+        
     }
     body:not(.light) .header-background {
         background-image: url("images/background-image-dark.png");
@@ -19,7 +20,7 @@
             class="logo"
             alt="logo"
         /></div></a>
-    <i class="bi bi-play mobile-none" style="font-size: 3rem"></i>
+    <i class="bi bi-controller mobile-none" style="font-size: 3rem"></i>
     <div
         class="grid-item"
         id="copy-ip"
@@ -59,11 +60,9 @@
         class="bi bi-discord mobile-none"
     ></i>
 </div>
-<div id="login-box-outer">
     <div id="login-box">
         <SentrySMP.App.Components.Shared.ShowUsername/>
     </div>
-</div>
 
 @code {
     private int? McPlayers;
