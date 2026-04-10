@@ -192,7 +192,7 @@ button:disabled {
     grid-gap: 1rem;
     display: flex;
     padding-top: 120px;
-    padding-bottom: 41px;
+    padding-bottom: 60px;
     max-width: 1200px;
     align-items: center;
     width: 100%;
@@ -931,8 +931,7 @@ input:checked+.slider:before {
 .header-background {
     position: absolute;
     width: 100%;
-    height: 370px;
-    background-size: 120% auto;
+    height: 450px;
     animation: moveLeftRight 20s linear infinite alternate;
     z-index: -1;
     background: radial-gradient(
@@ -940,6 +939,18 @@ input:checked+.slider:before {
             rgba(0, 0, 0, 0.7),
             transparent 70%
     ) no-repeat center;
+    background-size: 120% auto;
+}
+
+.header-background::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 220px;
+    background: linear-gradient(to bottom, transparent 0%, #090909 80%);
+    pointer-events: none;
 }
 
 @keyframes moveLeftRight {
@@ -1866,7 +1877,7 @@ tr:nth-child(even) {
 
 .logoimage:hover,
 .logo:hover {
-    transform: scale(1.05);
+    transform: scale(1.03);
 }
 
 .logoimage:active,
@@ -2103,6 +2114,103 @@ tr:nth-child(even) {
     border: 2px solid #dc3545;
 }
 
+.nav-list {
+    display: flex;
+    flex-direction: column;
+    background-color: #111111;
+    padding: 10px;
+    width: 300px;
+    border-radius: 10px;
+    margin-bottom: 40px;
+}
+
+.nav-list p {
+    padding: 0.5rem;
+} 
+
+.nav-heading {
+    border-radius: 8px !important;
+
+    padding-left: 18px;
+    padding-right: 18px;
+    height: 38px !important;
+    margin: -36px auto 12px;
+    line-height: 35px;
+    width: fit-content;
+    background-color: #dc3545;
+    border-bottom: 4px solid #9C2D36;
+
+    color: #ffffff;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 14px;
+    z-index: 100;
+    
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #242424;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 10px 10px 0;
+    gap: 20px;
+    transition: all ease 0.3s;
+}
+.nav.item:last-child {
+    margin-bottom: 10px;
+}
+
+.nav-item span {
+    color: white;
+    text-decoration: none;
+    transition: all ease 0.3s;
+    font-weight: bold;
+}
+.nav-item:hover span {
+    transform: translate(5px, 0);
+}
+
+.nav-icon, .nav-icon i {
+    height: 40px;
+    font-size: 30px;
+    color: white;
+}
+
+.nav-item:hover {
+    background-color: #282828;
+}
+
+.nav-item--donor {
+    gap: 10px;
+    cursor: default;
+}
+
+.nav-head {
+    width: 24px;
+    height: 24px;
+    image-rendering: pixelated;
+    flex-shrink: 0;
+    border-radius: 5px !important;
+}
+
+.nav-donor-name {
+    flex: 1;
+    font-size: 13px;
+}
+
+.nav-donor-amount {
+    font-size: 12px;
+    color: #f0c040 !important;
+    white-space: nowrap;
+}
+
+.text-muted {
+    opacity: 70%;
+}
+
 /* dark */
 body.light .table-wrapper::-webkit-scrollbar-track {
     background: #f1f1f1;
@@ -2303,9 +2411,6 @@ body.light button.minecraft-button:hover {
     background-color: #46a032;
 }
 
-body.light #login-box-outer {
-    background-color: #f0f0f0;
-}
 
 body.light select {
     background-color: #dcdcdc;
@@ -2322,6 +2427,10 @@ body.light .collapse-header {
 
 body.light .header-background {
     background-size: 120% auto;
+}
+
+body.light .header-background::after {
+    background: linear-gradient(to bottom, transparent, #f9f9f9);
 }
 
 body.light .footer-p {
@@ -2469,6 +2578,10 @@ body.light .quantity-btn:hover {
 body.light .quantity-controls button {
     background: #cfcfcf;
     color: #333;
+}
+
+body.light #login-box {
+    background-color: #f0f0f0;
 }
 
 body.light .quantity-controls button:hover {

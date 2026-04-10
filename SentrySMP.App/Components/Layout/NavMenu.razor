@@ -1,24 +1,131 @@
 ﻿@rendermode InteractiveServer
+@using SentrySMP.Shared.DTOs
+@using SentrySMP.Shared.Interfaces
+@inject IShopScoreboardService ScoreboardService
 
+<div class="nav-list">
+    <a href="">
+        <div class="nav-item">
+            <div class="nav-icon">
+                <i class="bi bi-house-door-fill" alt="home"/>
+            </div>
+            <span>HOME</span>
+        </div>
+    </a>
+</div>
+
+<div class="nav-list">
+    <a href="keys">
+        <div class="nav-item">
+            <div class="nav-icon">
+                <img class="nav-icon" src="images/red-bundle.png" alt="KEYS">
+            </div>
+            <span>KEYS</span>
+        </div>
+    </a>
+    <a href="coins">
+        <div class="nav-item">
+            <div class="nav-icon">
+                <img class="nav-icon" src="images/yellow-bundle.png" alt="COINS">
+            </div>
+            <span>COINS</span>
+        </div>
+    </a>
+    <a href="bundles">
+        <div class="nav-item">
+            <div class="nav-icon">
+                <img class="nav-icon" src="images/pink-bundle.png" alt="BUNDLES">
+            </div>
+            <span>BUNDLES</span>
+        </div>
+    </a>
+    <a href="ranks">
+        <div class="nav-item">
+            <div class="nav-icon">
+                <img class="nav-icon" src="images/green-bundle.png" alt="RANKS">
+            </div>
+            <span>RANKS</span>
+        </div>
+    </a>
+    <!--
+    <a href="battlepasses">
+        <div class="nav-item">
+            <div class="nav-icon">
+                <img class="nav-icon" src="images/blue-bundle.png" alt="BATTLE PASS">
+            </div>
+            <span>BATTLE PASS</span>
+        </div>
+    </a>
+    -->
+    <a href="other">
+        <div class="nav-item">
+            <div class="nav-icon">
+                <img class="nav-icon" src="images/gray-bundle.png" alt="OTHER">
+            </div>
+            <span>OTHER</span>
+        </div>
+    </a>
+</div>
+<div class="nav-list">
+    <div class="nav-heading">JOIN</div>
+    <a href="join">
+        <div class="nav-item">
+            <div class="nav-icon">
+                <img class="nav-icon" src="images/java.png" alt="java">
+            </div>
+            <span>JAVA</span>
+        </div>
+    </a>
+    <a href="join">
+        <div class="nav-item">
+            <div class="nav-icon">
+                <img class="nav-icon" src="images/bedrock.webp" alt="bedrock">
+            </div>
+            <span>BEDROCK</span>
+        </div>
+    </a>
+</div>
+@if (TopPlayers != null && TopPlayers.Count > 0)
+{
+    <div class="nav-list">
+        <div class="nav-heading">TOP DONORS</div>
+        @foreach (var e in TopPlayers)
+        {
+            <div class="nav-item nav-item--donor">
+                <img class="nav-head" src="https://minotar.net/helm/@Uri.EscapeDataString(e.MinecraftUsername)/24" alt="@e.MinecraftUsername" />
+                <span class="nav-donor-name">@e.MinecraftUsername</span>
+                <span class="nav-donor-amount">€@e.TotalPaid.ToString("F2")</span>
+            </div>
+        }
+    </div>
+}
+<div class="nav-list">
+    <div class="nav-heading">REFUND POLICY</div>
+    <p class="text-muted">By making a purchase, you agree that all sales are final. Refunds cannot be provided under any circumstances.</p>
+</div>
+<!-- 
 <nav class="navbar">
+    
+
     <div class="navbar-container">
         <a href="/" class="logonav">
-            <img src="images/logo.png" class="logoimage" width="150px" alt="" />
+            <img src="images/logo.png" class="logoimage" width="150px" alt=""/>
         </a>
-    <button class="toggle-btn" id="toggleBtn" style="text-align: center; margin-top: auto" @onclick="ToggleNav">&#9776;</button>
+        <button class="toggle-btn" id="toggleBtn" style="text-align: center; margin-top: auto" @onclick="ToggleNav">&#9776;</button>
         <ul class="nav-links" id="navLinks">
             <li><a href="/"><i class="bi bi-house"></i> Home</a></li>
             <li><a href="about"><i class="bi bi-info-circle"></i> About Server</a></li>
             <li><a href="our-team"><i class="bi bi-people"></i> Our Team</a></li>
-            <li><a href="/scoreboard"><i class="bi bi-trophy"></i> Scoreboard</a></li>
+            <li><a href="scoreboard"><i class="bi bi-trophy"></i> Scoreboard</a></li>
             <li><a href="vote-for-us"><i class="bi bi-heart"></i> Vote For Us</a></li>
             <label class="switch">
-                <input type="checkbox" id="modeToggle" @bind="IsLightBindable" />
+                <input type="checkbox" id="modeToggle" @bind="IsLightBindable"/>
                 <span class="slider"></span>
             </label>
         </ul>
     </div>
 </nav>
+-->
 
 @implements IDisposable
 
@@ -34,6 +141,29 @@
 
     private bool isLight;
     private bool initialized = false;
+    private List<ShopScoreboardEntryDto>? TopPlayers;
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        try
+        {
+            var excludedNames = new[] { "Taneq", "webdev" };
+            var all = await ScoreboardService.GetScoreboardAsync(ScoreboardPeriod.AllTime, 50);
+            TopPlayers = all?
+                .Where(e => !string.IsNullOrWhiteSpace(e.MinecraftUsername))
+                .Where(e => e.TotalPaid > 0)
+                .Where(e => !excludedNames.Contains(e.MinecraftUsername, StringComparer.OrdinalIgnoreCase))
+                .Where(e => !string.Equals(e.MinecraftUsername?.Trim(), "<unknown>", StringComparison.OrdinalIgnoreCase))
+                .Where(e => !e.MinecraftUsername.StartsWith('.'))
+                .OrderByDescending(e => e.TotalPaid)
+                .Take(5)
+                .ToList();
+        }
+        catch
+        {
+            TopPlayers = new List<ShopScoreboardEntryDto>();
+        }
+    }
 
     protected override async System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender)
     {
