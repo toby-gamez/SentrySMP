@@ -69,8 +69,14 @@
         <article class="content px-4">
             <Header />
             <div class="container">
-                <NavMenu/>
-                @Body
+                <div class="page-layout">
+                    <aside class="page-sidebar">
+                        <NavMenu/>
+                    </aside>
+                    <div class="page-content">
+                        @Body
+                    </div>
+                </div>
             </div>
             <Footer/>
         </article>
