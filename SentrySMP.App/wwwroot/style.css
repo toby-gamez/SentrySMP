@@ -1150,7 +1150,7 @@ button.minecraft-button:active {
     margin: 0 auto;
     align-items: center;
     width: 100%;
-    background-color: #111111;
+    background-color: #1a1a1a;
     border-radius: 10px;
 }
 
@@ -2532,7 +2532,7 @@ tr:nth-child(even) {
 .nav-list {
     display: flex;
     flex-direction: column;
-    background-color: #111111;
+    background-color: #1a1a1a;
     width: 300px;
     border-radius: 10px;
     margin-bottom: 40px;

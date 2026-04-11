@@ -198,6 +198,7 @@
     private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
     {
         _ = MenuToggleService.CloseAsync();
+        _ = JSRuntime.InvokeVoidAsync("eval", "window.scrollTo({top:0,behavior:'smooth'})");
         InvokeAsync(StateHasChanged);
     }
 
