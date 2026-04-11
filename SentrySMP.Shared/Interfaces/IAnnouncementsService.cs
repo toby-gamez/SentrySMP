@@ -7,5 +7,6 @@ namespace SentrySMP.Shared.Interfaces
     public interface IAnnouncementsService
     {
         Task<IEnumerable<AnnouncementDto>> GetLatestAnnouncementsAsync();
+        Task<IEnumerable<AnnouncementDto>> GetServerChangelogAsync();
     }
 }

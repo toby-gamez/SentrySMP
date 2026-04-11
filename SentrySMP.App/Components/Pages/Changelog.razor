@@ -1,10 +1,24 @@
 @page "/changelog"
+@inject SentrySMP.Shared.Interfaces.IAnnouncementsService AnnouncementsService
+@rendermode InteractiveServer
 
-<PageTitle>Web Changelog - SentrySMP</PageTitle>
+<PageTitle>Changelog - SentrySMP</PageTitle>
 
 <div class="main-wrapper">
-    <h1 class="main">Web Changelog</h1>
+    <h1 class="main">Changelog</h1>
 </div>
+
+<div class="changelog-tabs">
+    <button class="changelog-tab @(activeTab == "web" ? "active" : "")" @onclick='() => SwitchTab("web")'>
+        <i class="bi bi-globe"></i> Web
+    </button>
+    <button class="changelog-tab @(activeTab == "server" ? "active" : "")" @onclick='() => SwitchTab("server")'>
+        <i class="bi bi-server"></i> Server
+    </button>
+</div>
+
+@if (activeTab == "web")
+{
 <p>
     If you want to contribute, submit an issue or check our code,
     here you are:
@@ -350,3 +364,82 @@
     <li>Cart and server information sections created</li>
     <li>Favicon icon added</li>
 </ul>
+}
+else
+{
+    @if (serverLoading)
+    {
+        <p class="server-loading">Loading server changelog...</p>
+    }
+    else if (serverError != null)
+    {
+        <p class="error">@serverError</p>
+    }
+    else if (serverEntries?.Any() == true)
+    {
+        @foreach (var entry in serverEntries)
+        {
+            <div class="server-entry">
+                <div class="server-entry-meta">
+                    <i class="bi bi-calendar3"></i>
+                    @entry.CreatedAt.ToLocalTime().ToString("d. MMMM yyyy", new System.Globalization.CultureInfo("cs-CZ"))
+                    <span class="server-entry-time">@entry.CreatedAt.ToLocalTime().ToString("HH:mm")</span>
+                </div>
+                <div class="server-entry-content">@((MarkupString)entry.HtmlContent)</div>
+            </div>
+        }
+    }
+    else
+    {
+        <p style="color:#888">No server changelog entries found.</p>
+    }
+}
+
+@code {
+    private string activeTab = "web";
+
+    private bool serverLoading = false;
+    private bool serverLoaded = false;
+    private string? serverError;
+    private List<ServerEntryWithHtml>? serverEntries;
+
+    private async Task SwitchTab(string tab)
+    {
+        activeTab = tab;
+        if (tab == "server" && !serverLoaded)
+            await LoadServerChangelog();
+    }
+
+    private async Task LoadServerChangelog()
+    {
+        serverLoading = true;
+        serverError = null;
+        StateHasChanged();
+        try
+        {
+            var res = (await AnnouncementsService.GetServerChangelogAsync()).ToList();
+            var pipeline = new Markdig.MarkdownPipelineBuilder().Build();
+            serverEntries = res.Select(r => new ServerEntryWithHtml
+            {
+                CreatedAt = r.CreatedAt,
+                HtmlContent = Markdig.Markdown.ToHtml(r.Content ?? string.Empty, pipeline)
+            }).ToList();
+        }
+        catch
+        {
+            serverError = "Failed to load server changelog from Discord.";
+        }
+        finally
+        {
+            serverLoading = false;
+            serverLoaded = true;
+            StateHasChanged();
+        }
+    }
+
+    private class ServerEntryWithHtml
+    {
+        public DateTime CreatedAt { get; set; }
+        public string HtmlContent { get; set; } = string.Empty;
+    }
+}

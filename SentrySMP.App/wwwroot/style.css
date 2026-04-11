@@ -270,7 +270,7 @@ a:has(li) {
     position: fixed;
     top: 14px;
     left: 14px;
-    z-index: 1200;
+    z-index: 1030;
     background: black;
     border: none;
     border-radius: 8px;
@@ -516,6 +516,108 @@ body.light .vote-card {
 
 body.light .vote-card-name {
     color: #111;
+}
+
+/* Changelog tabs */
+.changelog-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.changelog-tab {
+    padding: 8px 22px;
+    border-radius: 8px;
+    border: 2px solid #333;
+    background: #1a1a1a;
+    color: #ccc;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.changelog-tab:hover {
+    border-color: #dc3545;
+    color: white;
+    transform: none;
+}
+
+.changelog-tab.active {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+/* Server changelog entries */
+.server-entry {
+    background: #1a1a1a;
+    border-left: 4px solid #dc3545;
+    border-radius: 0 10px 10px 0;
+    padding: 16px 20px;
+    margin-bottom: 1rem;
+}
+
+.server-entry-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 8px;
+}
+
+.server-entry-time {
+    margin-left: 4px;
+    opacity: 0.7;
+}
+
+.server-entry-content {
+    line-height: 1.6;
+    color: #e0e0e0;
+}
+
+.server-entry-content p {
+    padding: 0;
+    margin: 0 0 4px;
+}
+
+.server-loading {
+    color: #888;
+}
+
+/* Light mode — changelog */
+body.light .changelog-tab {
+    background: #f0f0f0;
+    border-color: #ccc;
+    color: #444;
+}
+
+body.light .changelog-tab:hover {
+    border-color: #dc3545;
+    color: #111;
+}
+
+body.light .changelog-tab.active {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+body.light .server-entry {
+    background: #f5f5f5;
+}
+
+body.light .server-entry-meta {
+    color: #666;
+}
+
+body.light .server-entry-content {
+    color: #222;
+}
+
+body.light .server-loading {
+    color: #666;
 }
 
 .item-blue {

@@ -23,14 +23,29 @@ namespace SentrySMP.Api.Services
 
         public async Task<IEnumerable<AnnouncementDto>> GetLatestAnnouncementsAsync()
         {
+            var channelId = Environment.GetEnvironmentVariable("DISCORD_CHANNEL_ID") ?? _configuration["Discord:ChannelId"] ?? _configuration["Discord:ChannelID"];
+            if (string.IsNullOrEmpty(channelId))
+            {
+                _logger.LogWarning("Missing DISCORD_CHANNEL_ID configuration");
+                return Enumerable.Empty<AnnouncementDto>();
+            }
+            return await FetchFromChannelAsync(channelId, authorFilter: null, limit: 20);
+        }
+
+        public async Task<IEnumerable<AnnouncementDto>> GetServerChangelogAsync()
+        {
+            return await FetchFromChannelAsync("1477752609463861442", authorFilter: null, excludeAuthor: "tobygamez7747", limit: 100);
+        }
+
+        private async Task<IEnumerable<AnnouncementDto>> FetchFromChannelAsync(string channelId, string? authorFilter, string? excludeAuthor = null, int limit = 20)
+        {
             try
             {
                 var botToken = Environment.GetEnvironmentVariable("DISCORD_BOT_TOKEN") ?? _configuration["Discord:BotToken"];
-                var channelId = Environment.GetEnvironmentVariable("DISCORD_CHANNEL_ID") ?? _configuration["Discord:ChannelId"] ?? _configuration["Discord:ChannelID"];
 
-                if (string.IsNullOrEmpty(botToken) || string.IsNullOrEmpty(channelId))
+                if (string.IsNullOrEmpty(botToken))
                 {
-                    _logger.LogWarning("Missing DISCORD_BOT_TOKEN or DISCORD_CHANNEL_ID configuration");
+                    _logger.LogWarning("Missing DISCORD_BOT_TOKEN configuration");
                     return Enumerable.Empty<AnnouncementDto>();
                 }
 
@@ -38,7 +53,7 @@ namespace SentrySMP.Api.Services
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bot", botToken);
                 client.DefaultRequestHeaders.UserAgent.ParseAdd("SentrySMP-Website/1.0");
 
-                var url = $"https://discord.com/api/v10/channels/{channelId}/messages?limit=20";
+                var url = $"https://discord.com/api/v10/channels/{channelId}/messages?limit={limit}";
                 var resp = await client.GetAsync(url);
                 if (!resp.IsSuccessStatusCode)
                 {
@@ -68,6 +83,13 @@ namespace SentrySMP.Api.Services
                             continue;
                         }
 
+                        // Filter by author if specified
+                        var authorName = msg.TryGetProperty("author", out var ael) ? ael.GetPropertyOrDefault("username") : "Unknown";
+                        if (authorFilter is not null && !string.Equals(authorName, authorFilter, StringComparison.OrdinalIgnoreCase))
+                            continue;
+                        if (excludeAuthor is not null && string.Equals(authorName, excludeAuthor, StringComparison.OrdinalIgnoreCase))
+                            continue;
+
                         string content = msg.GetPropertyOrDefault("content");
 
                         // Try embeds
@@ -83,7 +105,7 @@ namespace SentrySMP.Api.Services
                         if (string.IsNullOrWhiteSpace(content) && msg.TryGetProperty("attachments", out var attachments) && attachments.ValueKind == JsonValueKind.Array && attachments.GetArrayLength() > 0)
                         {
                             var names = attachments.EnumerateArray().Select(a => a.GetPropertyOrDefault("filename")).Where(x => !string.IsNullOrEmpty(x));
-                            content = "📎 " + string.Join(", ", names);
+                            content = "\U0001f4ce " + string.Join(", ", names);
                         }
 
                         // If still empty, placeholder
@@ -92,7 +114,7 @@ namespace SentrySMP.Api.Services
                             var tsStr = msg.GetPropertyOrDefault("timestamp");
                             if (DateTime.TryParse(tsStr, out var mdate))
                             {
-                                content = $"*[Message from {mdate:yyyy-MM-dd HH:mm} - no content available]*";
+                                content = $"*[Message from {{mdate:yyyy-MM-dd HH:mm}} - no content available]*";
                             }
                             else
                             {
@@ -106,9 +128,10 @@ namespace SentrySMP.Api.Services
                         if (lines.Length > 1)
                         {
                             var firstLine = lines[0].Trim();
-                                if (firstLine.Length < 120 && firstLine.Length > 3 && (firstLine.Contains("**") || firstLine.Contains("__") || firstLine.StartsWith("#") || Regex.IsMatch(firstLine, "^[A-Z][^.!?]*$") || lines.Length > 2))
+                            if (firstLine.Length < 120 && firstLine.Length > 3 && (firstLine.Contains("**") || firstLine.Contains("__") || firstLine.StartsWith("#") || Regex.IsMatch(firstLine, "^[A-Z][^.!?]*$") || lines.Length > 2))
                             {
-                                titleCandidate = Regex.Replace(firstLine, @"(|__|#|)", "");
+                                titleCandidate = Regex.Replace(firstLine, @"^#+\s*", "").Trim();
+                                titleCandidate = Regex.Replace(titleCandidate, @"(\*\*|__|~~|`)", "").Trim();
                                 content = string.Join("\n", lines.Skip(1)).Trim();
                             }
                         }
@@ -122,7 +145,6 @@ namespace SentrySMP.Api.Services
                         // Convert Discord markdown to standard markdown/html-friendly text
                         content = ConvertDiscordMarkdown(content);
 
-                        var authorName = msg.TryGetProperty("author", out var ael) ? ael.GetPropertyOrDefault("username") : "Unknown";
                         var createdAtStr = msg.GetPropertyOrDefault("timestamp");
                         DateTime createdAt = DateTime.UtcNow;
                         if (!string.IsNullOrEmpty(createdAtStr) && DateTime.TryParse(createdAtStr, out var parsed))
@@ -144,12 +166,12 @@ namespace SentrySMP.Api.Services
                     }
                 }
 
-                _logger.LogInformation("Processed {Count} announcements from Discord", results.Count);
+                _logger.LogInformation("Processed {Count} messages from channel {ChannelId}", results.Count, channelId);
                 return results;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error while fetching announcements from Discord");
+                _logger.LogError(ex, "Unexpected error while fetching messages from Discord channel {ChannelId}", channelId);
                 return Enumerable.Empty<AnnouncementDto>();
             }
         }
