@@ -1,4 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
+.maintenance-banner {
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #dc3545;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 7px 20px;
+    border-radius: 999px;
+    letter-spacing: 0.06em;
+    z-index: 99999;
+    white-space: nowrap;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.45);
+}
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
 
 @font-face {
@@ -3135,9 +3152,14 @@ body.light .add-to-cart-btn.update {
 }
 
 
-.product .great-button:disabled {
+.great-button:disabled {
+    background-color: #434343;
     opacity: 0.5;
     cursor: not-allowed;
+    border-bottom-color: #2e2e2e;
+}
+.great-button:disabled:hover {
+    background-color: #434343;
 }
 
 .product-cart-remove {

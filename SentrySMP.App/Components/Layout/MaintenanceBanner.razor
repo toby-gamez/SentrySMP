@@ -1,0 +1,23 @@
+@rendermode InteractiveServer
+@inject SentrySMP.Shared.Interfaces.IStatusService StatusService
+
+@if (showBanner)
+{
+    <div class="maintenance-banner">SERVER IN MAINTENANCE</div>
+}
+
+@code {
+    private bool showBanner = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        try
+        {
+            var players = await StatusService.GetMcPlayersAsync();
+            showBanner = players.HasValue && players.Value < 3;
+            StateHasChanged();
+        }
+        catch { }
+    }
+}
