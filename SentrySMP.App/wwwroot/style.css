@@ -3488,3 +3488,236 @@ body.light .cart-sidebar-item {
 body.light .cart-sidebar-footer {
     border-top-color: #ddd;
 }
+
+/* ===== Join Page ===== */
+.join-container {
+    max-width: 1100px;
+    margin: 0 auto 3rem;
+    padding: 0 1rem;
+}
+
+.join-tabs {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 2rem 0 2rem;
+}
+
+.join-tab {
+    padding: 12px 30px;
+    border-radius: 12px;
+    background-color: #1a1a1a;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 1rem;
+    font-weight: 600;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.join-tab i {
+    margin-right: 8px;
+}
+
+.join-tab:hover {
+    background-color: #242424;
+    color: white;
+    transform: none;
+}
+
+.join-tab.active {
+    background-color: transparent;
+    border-color: #dc3545;
+    color: white;
+}
+
+.join-tab.active:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+    transform: none;
+}
+
+.join-server-info {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 2rem;
+}
+
+.join-info-card {
+    flex: 1;
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    padding: 16px 20px;
+    border-left: 4px solid #dc3545;
+}
+
+@media (max-width: 576px) {
+    .join-server-info {
+        flex-wrap: wrap;
+    }
+
+    .join-info-card:first-child {
+        flex: 0 0 100%;
+        padding: 28px 32px;
+    }
+
+    .join-info-card:first-child .join-info-value {
+        font-size: 1.4rem;
+    }
+
+    .join-info-card:first-child .join-info-label {
+        margin-bottom: 10px;
+    }
+}
+
+.join-info-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #999;
+    margin-bottom: 6px;
+}
+
+.join-info-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+}
+
+.join-info-green {
+    color: #4caf50;
+    font-family: inherit;
+}
+
+.join-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.join-step {
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.join-step:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.join-step-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 32px;
+    height: 32px;
+    background: #dc3545;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 900;
+    color: white;
+    z-index: 1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.join-step-img {
+    width: 100%;
+    display: block;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+}
+
+.join-step-footer {
+    padding: 12px 14px;
+}
+
+.join-step-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.join-notice {
+    background-color: #1a1a1a;
+    border-left: 4px solid #dc3545;
+    border-radius: 0 12px 12px 0;
+    padding: 16px 20px;
+    margin-top: 1.5rem;
+}
+
+.join-notice p {
+    padding: 0;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.6;
+    text-align: left;
+}
+
+@media (max-width: 900px) {
+    .join-steps {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .join-steps {
+        grid-template-columns: 1fr;
+    }
+
+    .join-tabs {
+        flex-direction: column;
+    }
+
+    .join-tab {
+        text-align: center;
+    }
+}
+
+/* Join page — light theme */
+body.light .join-info-card {
+    background-color: #efefef;
+}
+
+body.light .join-info-value {
+    color: #111;
+}
+
+body.light .join-step {
+    background-color: #efefef;
+}
+
+body.light .join-step-title {
+    color: #111;
+}
+
+body.light .join-notice {
+    background-color: #efefef;
+}
+
+body.light .join-notice p {
+    color: #333;
+}
+
+body.light .join-tab {
+    background-color: #e0e0e0;
+    color: rgba(0, 0, 0, 0.55);
+}
+
+body.light .join-tab:hover {
+    background-color: #d0d0d0;
+    color: #111;
+}
+
+body.light .join-tab.active {
+    background-color: transparent;
+    color: #111;
+}

@@ -1,64 +1,179 @@
 @page "/join"
+@rendermode InteractiveServer
 <PageTitle>How Can I Join? - SentrySMP</PageTitle>
-<style>
-    .smallimagesdiv img {
-        width: 348px;
+
+@code {
+    [SupplyParameterFromQuery(Name = "edition")]
+    public string? Edition { get; set; }
+
+    private string _edition = "java";
+    private string JavaTabClass => _edition == "java" ? "join-tab active" : "join-tab";
+    private string BedrockTabClass => _edition == "bedrock" ? "join-tab active" : "join-tab";
+    private void SetEdition(string edition) => _edition = edition;
+
+    protected override void OnParametersSet()
+    {
+        if (!string.IsNullOrEmpty(Edition))
+            _edition = Edition.ToLower() == "bedrock" ? "bedrock" : "java";
     }
-</style>
-<div class="main-wrapper">
-    <h1 class="main">How Can I Join?</h1>
-</div>
-<div class="smallimagesdiv">
-    <h2>Java</h2>
-            <p>
-                Server IP: <b>sentrysmp.eu</b><br />
-                Version: <b>1.21.4+</b>
-            </p>
-            <p>Voice chat is available</p>
-            <h3>1. Go to Multiplayer section</h3>
-            <img src="images/title-screen.png" alt="title screen" />
-            <h3>2. Add a server</h3>
-            <img src="images/multiplayer.png" alt="multiplayer screen" />
-            <h3>3. Enter the details</h3>
-            <img src="images/ip.png" alt="IP in Minecraft Java" />
-            <h3>4. Join the server</h3>
-            <img src="images/join.png" alt="Join the server" />
-            <h3>5. Register/login</h3>
-            <img src="images/login.png" alt="Login/register" />
-            <h3>6. Enjoy playing!</h3>
-            <img src="images/play.png" alt="Enjoy!" />
-            <p>
-                We <b>recommend</b> playing on <b>vanilla Minecraft</b>. Please
-                <b>do not use cheats</b>—we have a strong anti-cheat system and
-                a fast admin team to detect hacks.
-            </p>
-            <h2>Bedrock</h2>
-            <p>
-                Server IP: <b>node.sentrysmp.eu</b><br />
-                Version: <b>newest</b> <br />
-                Port: <b>25566</b>
-            </p>
-            <h3>1. Go to Play section</h3>
-            <img src="images/title-bed.png" alt="Go to Play section" />
-            <h3>2. Go to Servers tab</h3>
-            <img src="images/play-bed.png" alt="Go to servers tab" />
-            <h3>3. Add a new server</h3>
-            <img src="images/servers-bed.png" alt="Add a new server" />
-            <h3>4. Enter the details, add, and join</h3>
-            <img
-                src="images/details-bed.png"
-                alt="Enter the details, add and join"
-            />
-            <h3>5. Proceed with playing</h3>
-            <img src="images/procced-bed.png" alt="Proceed with playing" />
-            <h3>6. Accept our resource packs</h3>
-            <img src="images/resource-bed.png" alt="Accept our resources" />
-            <h3>7. Register/login</h3>
-            <img src="images/login-bed.png" alt="Login/register" />
-            <h3>8. Enjoy playing!</h3>
-            <img src="images/enjoy-bed.png" alt="Enjoy!" />
-            <p>
-                Please <b>do not use cheats</b>—we have a strong anti-cheat
-                system and a fast admin team to detect hacks.
-            </p>
+}
+
+<div class="join-container">
+
+    <div class="join-tabs">
+        <button type="button" class="@JavaTabClass" @onclick='() => SetEdition("java")'>
+            <i class="bi bi-display"></i> Java Edition
+        </button>
+        <button type="button" class="@BedrockTabClass" @onclick='() => SetEdition("bedrock")'>
+            <i class="bi bi-controller"></i> Bedrock Edition
+        </button>
+    </div>
+
+    @if (_edition == "java")
+    {
+        <div class="join-server-info">
+            <div class="join-info-card">
+                <div class="join-info-label">Server IP</div>
+                <div class="join-info-value">sentrysmp.eu</div>
+            </div>
+            <div class="join-info-card">
+                <div class="join-info-label">Version</div>
+                <div class="join-info-value">1.21.4+</div>
+            </div>
+            <div class="join-info-card">
+                <div class="join-info-label">Voice Chat</div>
+                <div class="join-info-value join-info-green"><i class="bi bi-check-circle-fill"></i> Available</div>
+            </div>
+        </div>
+
+        <div class="join-steps">
+            <div class="join-step">
+                <span class="join-step-badge">1</span>
+                <img class="join-step-img" src="images/title-screen.png" alt="title screen" />
+                <div class="join-step-footer">
+                    <h3 class="join-step-title">Go to Multiplayer section</h3>
+                </div>
+            </div>
+            <div class="join-step">
+                <span class="join-step-badge">2</span>
+                <img class="join-step-img" src="images/multiplayer.png" alt="multiplayer screen" />
+                <div class="join-step-footer">
+                    <h3 class="join-step-title">Add a server</h3>
+                </div>
+            </div>
+            <div class="join-step">
+                <span class="join-step-badge">3</span>
+                <img class="join-step-img" src="images/ip.png" alt="IP in Minecraft Java" />
+                <div class="join-step-footer">
+                    <h3 class="join-step-title">Enter the details</h3>
+                </div>
+            </div>
+            <div class="join-step">
+                <span class="join-step-badge">4</span>
+                <img class="join-step-img" src="images/join.png" alt="Join the server" />
+                <div class="join-step-footer">
+                    <h3 class="join-step-title">Join the server</h3>
+                </div>
+            </div>
+            <div class="join-step">
+                <span class="join-step-badge">5</span>
+                <img class="join-step-img" src="images/login.png" alt="Login/register" />
+                <div class="join-step-footer">
+                    <h3 class="join-step-title">Register / Login</h3>
+                </div>
+            </div>
+            <div class="join-step">
+                <span class="join-step-badge">6</span>
+                <img class="join-step-img" src="images/play.png" alt="Enjoy!" />
+                <div class="join-step-footer">
+                    <h3 class="join-step-title">Enjoy playing!</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="join-notice">
+            <p>We <b>recommend</b> playing on <b>vanilla Minecraft</b>. Please <b>do not use cheats</b> — we have a strong anti-cheat system and a fast admin team to detect hacks.</p>
+        </div>
+    }
+    else
+    {
+        <div class="join-server-info">
+            <div class="join-info-card">
+                <div class="join-info-label">Server IP</div>
+                <div class="join-info-value">node.sentrysmp.eu</div>
+            </div>
+            <div class="join-info-card">
+                <div class="join-info-label">Version</div>
+                <div class="join-info-value">Newest</div>
+            </div>
+            <div class="join-info-card">
+                <div class="join-info-label">Port</div>
+                <div class="join-info-value">25566</div>
+            </div>
+        </div>
+
+        <div class="join-steps">
+            <div class="join-step">
+                <span class="join-step-badge">1</span>
+                <img class="join-step-img" src="images/title-bed.png" alt="Go to Play section" />
+                <div class="join-step-footer">
+                    <h3 class="join-step-title">Go to Play section</h3>
+                </div>
+            </div>
+            <div class="join-step">
+                <span class="join-step-badge">2</span>
+                <img class="join-step-img" src="images/play-bed.png" alt="Go to servers tab" />
+                <div class="join-step-footer">
+                    <h3 class="join-step-title">Go to Servers tab</h3>
+                </div>
+            </div>
+            <div class="join-step">
+                <span class="join-step-badge">3</span>
+                <img class="join-step-img" src="images/servers-bed.png" alt="Add a new server" />
+                <div class="join-step-footer">
+                    <h3 class="join-step-title">Add a new server</h3>
+                </div>
+            </div>
+            <div class="join-step">
+                <span class="join-step-badge">4</span>
+                <img class="join-step-img" src="images/details-bed.png" alt="Enter the details, add and join" />
+                <div class="join-step-footer">
+                    <h3 class="join-step-title">Enter the details, add, and join</h3>
+                </div>
+            </div>
+            <div class="join-step">
+                <span class="join-step-badge">5</span>
+                <img class="join-step-img" src="images/procced-bed.png" alt="Proceed with playing" />
+                <div class="join-step-footer">
+                    <h3 class="join-step-title">Proceed with playing</h3>
+                </div>
+            </div>
+            <div class="join-step">
+                <span class="join-step-badge">6</span>
+                <img class="join-step-img" src="images/resource-bed.png" alt="Accept our resource packs" />
+                <div class="join-step-footer">
+                    <h3 class="join-step-title">Accept our resource packs</h3>
+                </div>
+            </div>
+            <div class="join-step">
+                <span class="join-step-badge">7</span>
+                <img class="join-step-img" src="images/login-bed.png" alt="Login/register" />
+                <div class="join-step-footer">
+                    <h3 class="join-step-title">Register / Login</h3>
+                </div>
+            </div>
+            <div class="join-step">
+                <span class="join-step-badge">8</span>
+                <img class="join-step-img" src="images/enjoy-bed.png" alt="Enjoy!" />
+                <div class="join-step-footer">
+                    <h3 class="join-step-title">Enjoy playing!</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="join-notice">
+            <p>Please <b>do not use cheats</b> — we have a strong anti-cheat system and a fast admin team to detect hacks.</p>
+        </div>
+    }
+
 </div>
