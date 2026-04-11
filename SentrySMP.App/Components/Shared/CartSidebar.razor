@@ -64,11 +64,16 @@
                             </div>
                             @if (item.Type != "Rank")
                             {
+                                var maxQty = item.GlobalMaxOrder ?? 20;
                                 <div class="quantity-controls">
                                     <button class="quantity-btn" @onclick="() => ChangeQuantity(item, -1)" disabled="@(qty <= 1)">-</button>
                                     <span>@qty</span>
-                                    <button class="quantity-btn" @onclick="() => ChangeQuantity(item, 1)" disabled="@(qty >= 20)">+</button>
+                                    <button class="quantity-btn" @onclick="() => ChangeQuantity(item, 1)" disabled="@(qty >= maxQty)">+</button>
                                 </div>
+                                @if (item.GlobalMaxOrder.HasValue)
+                                {
+                                    <div class="cart-sidebar-item-limit">Max: @item.GlobalMaxOrder</div>
+                                }
                             }
                         </div>
                         <button class="danger cart-sidebar-item-remove" @onclick="() => RemoveFromCart(item)" title="Remove"><i class="bi bi-trash"></i></button>
@@ -87,7 +92,7 @@
             <button class="danger" @onclick="ClearCart" disabled="@(CartState.CartItems.Count == 0)">
                 <i class="bi bi-x-circle"></i> Clear Cart
             </button>
-            <button @onclick="GoToCheckout" disabled="@(CartState.CartItems.Count == 0 || !_isLoggedIn)">
+            <button @onclick="GoToCheckout" class="great-button" style="width: 100%" disabled="@(CartState.CartItems.Count == 0 || !_isLoggedIn)">
                 <i class="bi bi-bag-check"></i> Checkout
             </button>
         </div>

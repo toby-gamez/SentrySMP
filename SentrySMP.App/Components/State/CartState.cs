@@ -52,7 +52,8 @@ namespace SentrySMP.App.Components.State
             var item = _cartItems.FirstOrDefault(i => i.Key.Id == key.Id && i.Key.Type == key.Type);
             if (item != null)
             {
-                if (item.Quantity < 20)
+                var max = key.GlobalMaxOrder ?? 20;
+                if (item.Quantity < max)
                 {
                     item.Quantity++;
                 }
@@ -81,7 +82,8 @@ namespace SentrySMP.App.Components.State
             var item = _cartItems.FirstOrDefault(i => i.Key.Id == key.Id && i.Key.Type == key.Type);
             if (item != null)
             {
-                item.Quantity = Math.Clamp(item.Quantity + delta, 1, 20);
+                var max = item.Key.GlobalMaxOrder ?? 20;
+                item.Quantity = Math.Clamp(item.Quantity + delta, 1, max);
                 NotifyStateChanged();
                 await SaveToStorageAsync();
             }

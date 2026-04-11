@@ -14,7 +14,7 @@
 @inject SentrySMP.Shared.Interfaces.ITransactionsService TransactionsService
 @inject SentrySMP.App.Authentication.UserService UserService
 @inject SentrySMP.Shared.Interfaces.IRconService RconService
-@inject SentrySMP.Shared.Interfaces.IServerService ServerService
+@inject SentrySMP.Shared.Interfaces.IStatusService StatusService
 @inject Microsoft.Extensions.Logging.ILoggerFactory LoggerFactory
 @inject SentrySMP.App.Services.IBackgroundTaskQueue BackgroundQueue
 @inject SentrySMP.Shared.Interfaces.ISentryApi SentryApi
@@ -206,21 +206,19 @@
                     </table>
                 </div>
                 <h2 class="mt-3">Server status</h2>
-                @if (_serverHealth.Count > 0)
+                @if (!_statusChecked)
+                {
+                    <div class="small text-muted">Checking server status...</div>
+                }
+                else if (_cartServers.Count > 0)
                 {
                     <ul class="list-unstyled mt-2" style="list-style-type: none;">
-                        @foreach (var sh in _serverHealth.GroupBy(h => h.Server.Id).Select(g => g.First()))
+                        @foreach (var srv in _cartServers)
                         {
                             <li class="d-flex align-items-center gap-2 py-1">
-                                <i class="bi bi-circle-fill" style="color: #@(sh.Ok ? "44ae44" : "dc3545")"></i>
-                                <span class="me-2">@sh.Server.Name</span>
-                                @if (!sh.Ok && !string.IsNullOrWhiteSpace(sh.Error))
-                                {
-                                    <small style="margin-left: 5px;" class="text-muted">@TruncateCompact(sh.Error, 80)</small>
-                                }
-                                else {
-                                    <small style="margin-left: 5px;" class="text-muted">Server is ready.</small>
-                                }
+                                <i class="bi bi-circle-fill" style="color: #@(_serverOnline ? "44ae44" : "dc3545")"></i>
+                                <span class="me-2">@srv.Name</span>
+                                <small style="margin-left: 5px;" class="text-muted">@(_serverOnline ? "Server is ready." : "Server is offline")</small>
                             </li>
                         }
                     </ul>
@@ -297,13 +295,10 @@
                 <div class="mt-4 d-flex gap-2">
                     <button class="great-button" @onclick="ProceedToPayment" disabled="@(!_canProceedToPayment || _paymentsDisabled || (_stripeDisabled && _payPalDisabled) || _purchaseLimitErrors.Count > 0)">Proceed to payment</button></div>
 
-                @if (_hasUnavailableServers)
+                @if (!_serverOnline && _statusChecked)
                 {
                     <div class="alert alert-warning mt-2">
-                        The server is unavailable, so you won't receive the items you purchased. Would you like to remove them from your cart?
-                        <div class="mt-2">
-                            <button class="danger" @onclick="RemoveUnavailableServerItems">Remove unavailable items</button>
-                        </div>
+                        The server is currently offline. Your items may not be delivered automatically after purchase.
                     </div>
                 }
 
@@ -424,24 +419,16 @@
 
 
 @code {
-    private class ServerHealth
-    {
-        public SentrySMP.Shared.DTOs.ServerResponse Server { get; set; } = new();
-        public bool Ok { get; set; }
-        public string? Error { get; set; }
-        public string? HostUsed { get; set; }
-        public int PortUsed { get; set; }
-    }
-
     private string _selectedPayment = "stripe";
     private bool _showPaymentCard = false;
     private bool _paymentSucceeded = false;
     private string _amount = ""; // default amount (start empty; cart total will prefill if available)
     private string? _successMessage;
     private string? _failureMessage;
-    private readonly List<ServerHealth> _serverHealth = new();
-    private bool _hasUnavailableServers = false;
-    private bool _canProceedToPayment = false; // enabled only when all relevant servers are OK
+    private bool _statusChecked = false;
+    private bool _serverOnline = false;
+    private List<SentrySMP.Shared.DTOs.ServerResponse> _cartServers = new();
+    private bool _canProceedToPayment = false; // enabled only when server is online
     private PaymentSettingsResponse? _paymentSettings;
     private bool _paymentsDisabled = false;
     private bool _stripeDisabled = false;
@@ -488,7 +475,7 @@
         }
         catch { }
         // Initial server availability check
-        try { await CheckServersAsync(); } catch { }
+        try { await CheckServerStatusAsync(); } catch { }
 
         // Prefill amount from cart total if we have items
         var total = CartState.CartItems.Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity);
@@ -532,7 +519,7 @@
 
     private async void HandleCartChanged()
     {
-        try { await CheckServersAsync(); } catch { }
+        try { await CheckServerStatusAsync(); } catch { }
         try { await ValidateCartLimitsAsync(); } catch { }
         try { await InvokeAsync(StateHasChanged); } catch { }
     }
@@ -692,223 +679,27 @@
         }
     }
 
-    private async Task CheckServersAsync()
+    private async Task CheckServerStatusAsync()
     {
-        _serverHealth.Clear();
+        // Collect unique servers from cart items
+        _cartServers = CartState.CartItems
+            .Where(ci => ci.Key?.Server != null)
+            .Select(ci => ci.Key.Server!)
+            .GroupBy(s => s.Id)
+            .Select(g => g.First())
+            .ToList();
+
         try
         {
-            // Build server list from cart items. If a product does not include Server info
-            // in its DTO, try to fetch the full product from the API to resolve the Server.
-            var servers = new List<ServerResponse>();
-            var cartItems = CartState.CartItems.ToList();
-
-            foreach (var ci in cartItems)
-            {
-                var prod = ci.Key;
-                if (prod?.Server != null)
-                {
-                    if (!servers.Any(s => s.Id == prod.Server.Id))
-                        servers.Add(prod.Server);
-                    continue;
-                }
-
-                // Try to resolve server by fetching full product details from API
-                try
-                {
-                    var type = (prod?.Type ?? string.Empty).ToLowerInvariant();
-                    ServerResponse? srv = null;
-                    switch (type)
-                    {
-                        case "coin":
-                            var coin = await SentryApi.GetCoinAsync(prod.Id);
-                            srv = coin?.Server;
-                            break;
-                        case "key":
-                            var key = await SentryApi.GetKeyAsync(prod.Id);
-                            srv = key?.Server;
-                            break;
-                        case "rank":
-                            var rank = await SentryApi.GetRankAsync(prod.Id);
-                            srv = rank?.Server;
-                            break;
-                        case "bundle":
-                            var bundle = await SentryApi.GetBundleAsync(prod.Id);
-                            srv = bundle?.Server;
-                            break;
-                        case "battlepass":
-                            var bp = await SentryApi.GetBattlePassAsync(prod.Id);
-                            srv = bp?.Server;
-                            break;
-                        case "other":
-                            var other = await SentryApi.GetOtherAsync(prod.Id);
-                            srv = other?.Server;
-                            break;
-                    }
-                    if (srv != null && !servers.Any(s => s.Id == srv.Id))
-                        servers.Add(srv);
-                }
-                catch { }
-            }
-
-            // If the cart contains any rank products, ensure the SMP server is included
-            try
-            {
-                var hasRank = CartState.CartItems.Any(ci => string.Equals(ci.Key.Type ?? string.Empty, "rank", StringComparison.OrdinalIgnoreCase));
-                if (hasRank)
-                {
-                    try
-                    {
-                        var all = await ServerService.GetAllServersAsync();
-                        var smp = all?.FirstOrDefault(s => !string.IsNullOrEmpty(s.Name) && s.Name.IndexOf("smp", StringComparison.OrdinalIgnoreCase) >= 0);
-                        if (smp != null && !servers.Any(s => s.Id == smp.Id))
-                        {
-                            servers.Add(smp);
-                        }
-                    }
-                    catch { }
-                }
-            }
-            catch { }
-
-            foreach (var srv in servers)
-            {
-                var entry = new ServerHealth { Server = srv };
-                try
-                {
-                    // ICMP ping check to the server IP/host (normalize DB value; ignore port portion if included)
-                    var rawHost = srv.RCONIP;
-                    var host = NormalizeHost(rawHost);
-                    entry.HostUsed = host;
-                    entry.PortUsed = srv.RCONPort;
-                    if (string.IsNullOrWhiteSpace(host))
-                    {
-                        entry.Ok = false;
-                        entry.Error = "Invalid host";
-                        _logger?.LogWarning("Server health: invalid host. Raw='{RawHost}', Normalized='{Host}'", rawHost, host);
-                        _serverHealth.Add(entry);
-                        continue;
-                    }
-
-                    _logger?.LogInformation("Server health: pinging host '{Host}' (raw='{Raw}', port={Port})", host, rawHost, srv.RCONPort);
-
-                    using var ping = new System.Net.NetworkInformation.Ping();
-                    System.Net.NetworkInformation.PingReply? reply = null;
-                    try
-                    {
-                        reply = await ping.SendPingAsync(host, 4000);
-                    }
-                    catch (Exception pex)
-                    {
-                        entry.Ok = false;
-                        entry.Error = pex.Message;
-                    }
-
-                    if (reply != null)
-                    {
-                        if (reply.Status == System.Net.NetworkInformation.IPStatus.Success)
-                        {
-                            entry.Ok = true;
-                        }
-                        else
-                        {
-                            entry.Ok = false;
-                            entry.Error = reply.Status == System.Net.NetworkInformation.IPStatus.TimedOut
-                                ? "Ping timeout"
-                                : $"Ping failed: {reply.Status}";
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    entry.Ok = false;
-                    entry.Error = ex.Message;
-                }
-                _serverHealth.Add(entry);
-            }
+            var players = await StatusService.GetMcPlayersAsync();
+            _serverOnline = players.HasValue && players.Value > 2;
         }
-        catch (Exception ex)
+        catch
         {
-            try { _logger?.LogWarning(ex, "Server availability check failed"); } catch { }
+            _serverOnline = false;
         }
-        _hasUnavailableServers = _serverHealth.Any(h => !h.Ok);
-        // Proceed button should be enabled only when there is at least one relevant server
-        // and all of them are OK. If there are no servers associated, keep disabled.
-        var hasServers = _serverHealth.Count > 0;
-        _canProceedToPayment = hasServers && !_hasUnavailableServers;
-    }
-
-    // Normalize a DB-provided host value: trim, drop control chars, remove surrounding quotes, and strip optional ":port" suffix (safely for IPv6).
-    private string NormalizeHost(string? input)
-    {
-        var h = input ?? string.Empty;
-        try
-        {
-            // Remove control characters (including zero-width)
-            h = System.Text.RegularExpressions.Regex.Replace(h, @"\p{C}", string.Empty);
-        }
-        catch { }
-        h = h.Trim();
-        if (h.Length >= 2 && h.StartsWith("\"") && h.EndsWith("\""))
-        {
-            h = h.Substring(1, h.Length - 2);
-        }
-        return StripPortIfPresent(h);
-    }
-
-    // If host is like "1.2.3.4:25565" or "[2001:db8::1]:25565", strip the port and keep only the address.
-    private string StripPortIfPresent(string host)
-    {
-        if (string.IsNullOrWhiteSpace(host)) return host;
-        try
-        {
-            if (host.StartsWith("["))
-            {
-                var rb = host.IndexOf(']');
-                if (rb > 0)
-                {
-                    return host.Substring(1, rb - 1);
-                }
-                return host;
-            }
-            var idx = host.LastIndexOf(':');
-            if (idx > -1)
-            {
-                var after = host.Substring(idx + 1);
-                var allDigits = true;
-                for (int i = 0; i < after.Length; i++)
-                {
-                    if (!char.IsDigit(after[i])) { allDigits = false; break; }
-                }
-                if (allDigits && after.Length > 0)
-                {
-                    return host.Substring(0, idx);
-                }
-            }
-        }
-        catch { }
-        return host;
-    }
-
-    private async Task RemoveUnavailableServerItems()
-    {
-        try
-        {
-            var unavailableIds = _serverHealth.Where(h => !h.Ok).Select(h => h.Server.Id).ToHashSet();
-            var toRemove = CartState.CartItems
-                .Where(ci => ci.Key.Server != null && unavailableIds.Contains(ci.Key.Server.Id))
-                .Select(ci => ci.Key)
-                .ToList();
-            foreach (var key in toRemove)
-            {
-                await CartState.RemoveFromCartAsync(key);
-            }
-            await CheckServersAsync();
-            StateHasChanged();
-        }
-        catch (Exception ex)
-        {
-            try { _logger?.LogWarning(ex, "Failed to remove unavailable server items from cart"); } catch { }
-        }
+        _statusChecked = true;
+        _canProceedToPayment = _cartServers.Count > 0 && _serverOnline;
     }
 
 

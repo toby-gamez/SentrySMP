@@ -16,7 +16,7 @@
 }
 
 body {
-    background-color: #090909;
+    background-color: #1c1c1c;
     font-family: "Outfit", sans-serif;
     font-weight: 400;
     font-style: normal;
@@ -404,9 +404,20 @@ p.thing-grid-subtitle {
     transform: scale(0.97);
 }
 
-body.light .vote-item {
-    border: 2px solid #9a9a9a;
-    background-color: #dcdcdc;
+body.light .vote-notice {
+    background-color: #efefef;
+}
+
+body.light .vote-notice p {
+    color: #333;
+}
+
+body.light .vote-card {
+    background-color: #efefef;
+}
+
+body.light .vote-card-name {
+    color: #111;
 }
 
 .item-blue {
@@ -1037,7 +1048,7 @@ input:checked+.slider:before {
     z-index: -1;
     background: radial-gradient(
             ellipse at bottom,
-            rgba(0, 0, 0, 0.7),
+            #1c1c1c,
             transparent 70%
     ) no-repeat center;
     background-size: 120% auto;
@@ -1050,7 +1061,7 @@ input:checked+.slider:before {
     left: 0;
     width: 100%;
     height: 220px;
-    background: linear-gradient(to bottom, transparent 0%, #090909 80%);
+    background: linear-gradient(to bottom, transparent 0%, #1c1c1c 80%);
     pointer-events: none;
 }
 
@@ -1347,36 +1358,77 @@ input.item-quantity::-webkit-inner-spin-button {
 }
 
 
-.vote-item {
-    border: 2px solid darkgray;
-    border-radius: 10px;
-    background-color: #242424;
-    text-align: center;
-    align-items: center;
-    transition: all ease 0.3s;
+.vote-container {
+    max-width: 900px;
+    margin: 0 auto 3rem;
+    padding: 0 1rem;
 }
 
-.vote-item:hover {
-    transform: scale(1.05);
+.vote-notice {
+    background-color: #1a1a1a;
+    border-left: 4px solid #dc3545;
+    border-radius: 0 12px 12px 0;
+    padding: 16px 20px;
+    margin-bottom: 2rem;
 }
 
-.vote-item p {
-    text-align: center;
-}
-
-.vote-grid a {
-    color: white;
-    font-weight: bold;
-}
-
-.vote-grid a:hover {
-    color: white;
+.vote-notice p {
+    padding: 0;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.6;
+    text-align: left;
 }
 
 .vote-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.vote-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.vote-card {
+    display: flex;
+    align-items: center;
     gap: 20px;
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    border-left: 4px solid #dc3545;
+    padding: 20px 24px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.vote-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.vote-card-icon {
+    font-size: 2rem;
+    color: #dc3545;
+    flex-shrink: 0;
+}
+
+.vote-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.vote-card-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+}
+
+.vote-card-action {
+    font-size: 0.85rem;
+    color: #dc3545;
+    font-weight: 600;
 }
 
 .modal-content {
@@ -3085,17 +3137,8 @@ body.light .add-to-cart-btn.update:hover {
     }
 }
 
-body.light .vote-grid a {
-    color: black;
-}
-
-body.light .vote-grid a:hover {
-    color: black;
-}
-
-body.light .vote-item {
-    border: 2px solid #9a9a9a;
-    background-color: #dcdcdc;
+body.light .vote-card-name {
+    color: #111;
 }
 
 body.light .item-blue {
@@ -3433,6 +3476,11 @@ body.light .edition-option--active {
     font-size: 0.9rem;
 }
 
+.cart-sidebar-item-limit {
+    font-size: 0.75rem;
+    opacity: 0.55;
+}
+
 .cart-sidebar-item-remove {
     flex-shrink: 0;
     padding: 0.3rem 0.5rem;
@@ -3458,6 +3506,7 @@ body.light .edition-option--active {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
+    flex-direction: row;
 }
 
 .cart-sidebar-note {
@@ -3720,4 +3769,122 @@ body.light .join-tab:hover {
 body.light .join-tab.active {
     background-color: transparent;
     color: #111;
+}
+
+/* ============================================================
+   About page
+   ============================================================ */
+
+.about-container {
+    max-width: 1100px;
+    margin: 0 auto 3rem;
+    padding: 0 1rem;
+}
+
+/* Hero */
+.about-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    background-color: #1a1a1a;
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.about-hero-logo {
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+
+.about-lead {
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.65;
+    margin: 0;
+    padding: 0;
+    max-width: 620px;
+}
+
+/* Feature cards grid */
+.about-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 1.5rem;
+}
+
+.about-feature-card {
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    padding: 20px 22px;
+    border-top: 3px solid #dc3545;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.about-feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.about-feature-icon {
+    font-size: 1.6rem;
+    color: #dc3545;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.about-feature-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 8px;
+    padding: 0;
+}
+
+.about-feature-desc {
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .about-features {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 576px) {
+    .about-features {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* About page — light theme */
+body.light .about-hero {
+    background-color: #efefef;
+}
+
+body.light .about-lead {
+    color: rgba(0, 0, 0, 0.65);
+}
+
+body.light .about-feature-card {
+    background-color: #efefef;
+}
+
+body.light .about-feature-title {
+    color: #111;
+}
+
+body.light .about-feature-desc {
+    color: rgba(0, 0, 0, 0.6);
 }
