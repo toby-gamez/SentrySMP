@@ -73,11 +73,9 @@
                                 <InputTextArea class="form-control" @bind-Value="itemModel.Description" />
                                 <ValidationMessage For="() => itemModel.Description" />
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Image URL</label>
-                                <InputText class="form-control" @bind-Value="itemModel.Image" />
-                                <ValidationMessage For="() => itemModel.Image" />
-                            </div>
+                            <ImageUploader Label="Item Image"
+                                         ImageUrl="@itemModel.Image"
+                                         ImageUrlChanged="@((string? url) => itemModel.Image = url)" />
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">

@@ -241,9 +241,6 @@
                                 <div>• @error</div>
                             }
                         </div>
-                        <div class="mt-2">
-                            <button class="secondary" @onclick="BackToCart">Adjust Cart</button>
-                        </div>
                     </div>
                 }
                 
@@ -298,9 +295,7 @@
                 }
 
                 <div class="mt-4 d-flex gap-2">
-                    <button class="btn btn-primary" @onclick="ProceedToPayment" disabled="@(!_canProceedToPayment || _paymentsDisabled || (_stripeDisabled && _payPalDisabled) || _purchaseLimitErrors.Count > 0)">Proceed to payment</button>
-                    <button class="secondary" @onclick="BackToCart">Back to cart</button>
-                </div>
+                    <button class="great-button" @onclick="ProceedToPayment" disabled="@(!_canProceedToPayment || _paymentsDisabled || (_stripeDisabled && _payPalDisabled) || _purchaseLimitErrors.Count > 0)">Proceed to payment</button></div>
 
                 @if (_hasUnavailableServers)
                 {
@@ -308,7 +303,6 @@
                         The server is unavailable, so you won't receive the items you purchased. Would you like to remove them from your cart?
                         <div class="mt-2">
                             <button class="danger" @onclick="RemoveUnavailableServerItems">Remove unavailable items</button>
-                            <button class="secondary" @onclick="BackToCart">Back to cart</button>
                         </div>
                     </div>
                 }
@@ -557,11 +551,7 @@
     {
         _selectedPayment = "paypal";
     }
-
-    private void BackToCart()
-    {
-        NavigationManager.NavigateTo("/cart");
-    }
+    
     private void ContinueShopping()
     {
         NavigationManager.NavigateTo("/");

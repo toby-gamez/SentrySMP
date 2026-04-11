@@ -1,0 +1,167 @@
+@using SentrySMP.Shared.DTOs
+@inject SentrySMP.App.Components.State.CartState CartState
+@inject SentrySMP.App.Components.State.CartSidebarState SidebarState
+@inject IJSRuntime JS
+@inject NavigationManager NavigationManager
+@inject SentrySMP.App.Authentication.UserService UserService
+@inject Microsoft.Extensions.Logging.ILoggerFactory LoggerFactory
+@implements IDisposable
+@rendermode InteractiveServer
+
+@if (SidebarState.IsOpen)
+{
+    <div class="cart-sidebar-overlay" @onclick="Close"></div>
+}
+<div class="cart-sidebar @(SidebarState.IsOpen ? "cart-sidebar--open" : "")">
+    <div class="cart-sidebar-header">
+        <h2><i class="bi bi-cart"></i> Cart</h2>
+        <button class="cart-sidebar-close" @onclick="Close" aria-label="Close cart"><i class="bi bi-x-lg"></i></button>
+    </div>
+
+    <div class="cart-sidebar-body">
+        @if (!_isLoggedIn)
+        {
+            <p style="color:red;">You are not logged in.</p>
+        }
+        @if (CartState.CartItems.Count == 0)
+        {
+            <div class="alert alert-info mt-2">
+                <i class="bi bi-info-circle"></i> Your cart is empty.
+            </div>
+        }
+        else
+        {
+            <div class="cart-sidebar-items">
+                @foreach (var cartItem in CartState.CartItems)
+                {
+                    var item = cartItem.Key;
+                    var qty = cartItem.Quantity;
+                    double unitPrice = item.Sale > 0 ? Convert.ToDouble(item.Price) * (1 - item.Sale / 100.0) : Convert.ToDouble(item.Price);
+                    <div class="cart-sidebar-item">
+                        <div class="cart-sidebar-item-img">
+                            @if (!string.IsNullOrEmpty(item.Image))
+                            {
+                                <img src="@item.Image" alt="@item.Name" />
+                            }
+                            else
+                            {
+                                <i class="bi bi-key-fill"></i>
+                            }
+                        </div>
+                        <div class="cart-sidebar-item-info">
+                            <div class="cart-sidebar-item-name">@item.Name</div>
+                            <div class="cart-sidebar-item-server">@item.Server?.Name</div>
+                            <div class="cart-sidebar-item-price">
+                                @if (item.Sale > 0)
+                                {
+                                    <span class="text-muted text-decoration-line-through">€@item.Price.ToString("F2")</span>
+                                    <span class="text-success"> €@((unitPrice * qty).ToString("F2"))</span>
+                                }
+                                else
+                                {
+                                    <span>€@((unitPrice * qty).ToString("F2"))</span>
+                                }
+                            </div>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" @onclick="() => ChangeQuantity(item, -1)" disabled="@(qty <= 1)">-</button>
+                                <span>@qty</span>
+                                <button class="quantity-btn" @onclick="() => ChangeQuantity(item, 1)" disabled="@(qty >= 10)">+</button>
+                            </div>
+                        </div>
+                        <button class="danger cart-sidebar-item-remove" @onclick="() => RemoveFromCart(item)" title="Remove"><i class="bi bi-trash"></i></button>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="cart-sidebar-footer">
+        <div class="cart-sidebar-total">
+            <strong>Total:</strong>
+            <span>€@CartState.CartItems.Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity).ToString("F2")</span>
+        </div>
+        <div class="cart-sidebar-actions">
+            <button class="danger" @onclick="ClearCart" disabled="@(CartState.CartItems.Count == 0)">
+                <i class="bi bi-x-circle"></i> Clear Cart
+            </button>
+            <button @onclick="GoToCheckout" disabled="@(CartState.CartItems.Count == 0 || !_isLoggedIn)">
+                <i class="bi bi-bag-check"></i> Checkout
+            </button>
+        </div>
+        <p class="cart-sidebar-note">
+            To receive your purchase, you must be connected to the server where you bought items from. <b>Lobby is also a dedicated server.</b>
+        </p>
+    </div>
+</div>
+
+@code {
+    private bool _cartLoaded = false;
+    private string? _username;
+    private bool _isLoggedIn = false;
+    private Microsoft.Extensions.Logging.ILogger? _logger;
+    private Action? _cartChanged;
+    private Action? _sidebarChanged;
+
+    protected override void OnInitialized()
+    {
+        _cartChanged = () => InvokeAsync(StateHasChanged);
+        _sidebarChanged = () => InvokeAsync(StateHasChanged);
+        CartState.OnChange += _cartChanged;
+        SidebarState.OnChange += _sidebarChanged;
+        UserService.OnChange += OnUserChanged;
+        try { _logger = LoggerFactory?.CreateLogger("CartSidebar"); } catch { }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_cartLoaded)
+        {
+            await CartState.LoadFromStorageAsync(JS);
+            _cartLoaded = true;
+            await LoadUserAsync();
+            StateHasChanged();
+        }
+    }
+
+    public void Dispose()
+    {
+        CartState.OnChange -= _cartChanged;
+        SidebarState.OnChange -= _sidebarChanged;
+        UserService.OnChange -= OnUserChanged;
+    }
+
+    private void Close() => SidebarState.Close();
+
+    private async Task RemoveFromCart(ProductResponse item) => await CartState.RemoveFromCartAsync(item);
+
+    private async Task ClearCart()
+    {
+        try { _logger?.LogInformation("ClearCart invoked user={User}", _username ?? string.Empty); } catch { }
+        await CartState.ClearCartAsync();
+    }
+
+    private async Task ChangeQuantity(ProductResponse item, int delta) => await CartState.ChangeQuantityAsync(item, delta);
+
+    private void GoToCheckout()
+    {
+        SidebarState.Close();
+        NavigationManager.NavigateTo("/checkout");
+    }
+
+    private void OnUserChanged() => _ = LoadUserAsync();
+
+    private async Task LoadUserAsync()
+    {
+        try
+        {
+            _username = await UserService.GetUsernameAsync();
+            _isLoggedIn = !string.IsNullOrEmpty(_username);
+        }
+        catch
+        {
+            _username = null;
+            _isLoggedIn = false;
+        }
+        StateHasChanged();
+    }
+}

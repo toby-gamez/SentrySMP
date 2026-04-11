@@ -2,6 +2,7 @@
 
 @inject NavigationManager Navigation
 @inject SentrySMP.Shared.Interfaces.IStatusService StatusService
+@inject SentrySMP.App.Components.State.CartSidebarState CartSidebarState
 @using SentrySMP.App.Components.Pages
 @implements IDisposable
 @rendermode InteractiveServer
@@ -16,7 +17,7 @@
     </div>
     <div>
         <button class="secondary" @onclick="Logout">Log out</button>
-        <button class="great-button" onclick="Cart()"><i class="bi bi-cart"></i> Cart</button>
+        <button class="great-button" @onclick="OpenCart"><i class="bi bi-cart-fill"></i> Cart</button>
     </div>
 }
 else
@@ -33,9 +34,6 @@ else
     <script>
         function LogIn() {
             window.location.href = "/login";
-        }
-        function Cart() {
-            window.location.href = "/cart";
         }
     </script>
 }
@@ -85,6 +83,8 @@ else
         await UserService.SetEditionAsync(null);
         Navigation.NavigateTo("/");
     }
+
+    private void OpenCart() => CartSidebarState.Open();
 
     public void Dispose()
     {
