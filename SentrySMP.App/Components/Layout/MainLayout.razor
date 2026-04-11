@@ -66,6 +66,12 @@
 
 <div class="page">
     <main>
+        <!-- Mobile burger button — visible only on mobile via CSS -->
+        <button type="button" class="burger-btn" onclick="document.body.classList.toggle('nav-open')" aria-label="Toggle navigation">
+            <i class="bi bi-list"></i>
+        </button>
+        <!-- Overlay backdrop for mobile sidebar -->
+        <div class="nav-overlay" onclick="document.body.classList.remove('nav-open')"></div>
         <article class="content px-4">
             <Header />
             <div class="container">

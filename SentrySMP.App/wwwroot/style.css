@@ -207,6 +207,10 @@ button:disabled {
     margin-bottom: auto;
 }
 
+#copy-ip {
+    min-width: 210px;
+}
+
 .big:hover {
     color: #c9c9c9;
 }
@@ -260,18 +264,90 @@ a:has(li) {
     min-width: 0;
 }
 
+/* Burger button — hidden on desktop */
+.burger-btn {
+    display: none;
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 1200;
+    background: black;
+    border: none;
+    border-radius: 8px;
+    width: 44px;
+    height: 44px;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+    transition: background 0.2s ease;
+    padding: 0;
+}
+
+.burger-btn:hover {
+    background: #b90000;
+    transform: none;
+}
+
+/* Sidebar overlay backdrop — hidden by default */
+.nav-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    cursor: pointer;
+}
+
 @media (max-width: 900px) {
     .page-layout {
-        flex-direction: column;
+        /* content fills full width; sidebar is overlaid */
     }
 
     .page-sidebar {
-        width: 100%;
-        position: static;
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: 300px;
+        z-index: 1000;
+        overflow-y: auto;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        background: #1c1c1c;
+        padding: 70px 0 30px;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.55);
+    }
+
+    .page-sidebar .nav-list {
+        width: auto;
+    }
+
+    body.nav-open .page-sidebar {
+        transform: translateX(0);
+    }
+
+    body.nav-open .nav-overlay {
+        display: block;
     }
 
     .page-content {
         width: 100%;
+    }
+
+    .burger-btn {
+        display: flex;
+    }
+    
+}
+
+/* Light theme sidebar background on mobile */
+@media (max-width: 900px) {
+    body.light .page-sidebar {
+        background: #f5f5f5;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
     }
 }
 
@@ -1779,6 +1855,12 @@ input.item-quantity::-webkit-inner-spin-button {
     }
 }
 
+@media (max-width: 900px) {
+    .header-background::after {
+        display: none;
+    }
+}
+
 @media (max-width: 1249px) {
     .header-background {
         height: 440px;
@@ -1887,6 +1969,65 @@ input.item-quantity::-webkit-inner-spin-button {
                 max-height: 180px;
             }
         }
+    }
+}
+
+/* Mobile header layout — logo on top, IP + Discord side by side */
+@media (max-width: 680px) {
+    header {
+        height: auto;
+    }
+
+    .header-background {
+        height: 290px;
+    }
+
+    .grid {
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding-top: 70px;
+        padding-bottom: 12px;
+        gap: 0.5rem;
+        align-items: flex-start;
+        justify-content: space-between;
+    }
+
+    /* Logo: full width, shown at top */
+    .grid > a:has(.logo) {
+        order: -1;
+        flex: 0 0 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .grid > a:has(.logo) .logo img {
+        width: 20rem;
+    }
+
+
+    /* IP section – left side */
+    .grid > #copy-ip {
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 6px 10px;
+        margin-left: 12px;
+    }
+
+    /* Discord anchor – right side */
+    .grid > a:not(:has(.logo)) {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    .grid > a:not(:has(.logo)) > div.grid-item {
+        padding: 6px 10px;
+        text-align: right;
+        margin-right: 12px;
+    }
+
+    /* Slightly smaller text in header on phones */
+    .grid .big {
+        font-size: 16px;
     }
 }
 

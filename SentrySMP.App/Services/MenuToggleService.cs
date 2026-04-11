@@ -30,5 +30,18 @@ namespace SentrySMP.App.Services
                 // swallow JS errors (menu toggle is non-critical)
             }
         }
+
+        public async Task CloseAsync()
+        {
+            if (_js is null) return; // not yet initialized — nothing to close
+            try
+            {
+                await _js.InvokeVoidAsync("sentrySMP.closeNav");
+            }
+            catch
+            {
+                // swallow JS errors (menu toggle is non-critical)
+            }
+        }
     }
 }
