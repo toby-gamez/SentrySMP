@@ -103,9 +103,6 @@
     user-select: none;
     position: relative; /* for internal positioning */
 }
-.edition-option:hover {
-    background: #fafafa;
-}
 
 /* Visually hide the native input but keep it accessible. The input is
    directly followed by .radio-visual so the sibling selector below works. */

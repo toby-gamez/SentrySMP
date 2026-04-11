@@ -6,53 +6,64 @@
 @rendermode InteractiveServer
 <PageTitle>Login - SentrySMP</PageTitle>
 
-<div class="main-wrapper">
-    <h1 class="main">Login</h1>
-</div>
-
-@if (!string.IsNullOrEmpty(ExistingUsername))
-{
-    <h1 class="display-1">@ExistingUsername (@(IsBedrock ? "Bedrock" : "Java"))</h1>
-}
-<div class="mb-3">
-    <div class="skin-preview-div">
-        <img id="skin-preview" src="@PreviewUrl" alt="Skin preview" style="width:100px;height:100px;" />
+<div class="container">
+    <div class="main-wrapper">
+        <h1 class="main">Login</h1>
     </div>
-    
-</div>
-<div class="mb-3 username-field">
-    <label for="username" class="field-label">Minecraft name</label>
-    @if (IsBedrock)
-    {
-            <input id="username" class="username-input-field" @bind="UsernameEditable" @bind:event="oninput" />
-    }
-    else
-    {
-        <input id="username" class="username-input-field" @bind="UsernameEditable" @bind:event="oninput" />
-    }
-    <div class="field-hint">Enter username only.</div>
-</div>
 
-<div class="mb-3">
-    <label class="field-label">Account type</label>
-    <InputRadioGroup class="" @bind-Value="AccountType">
-        <div class="edition-selector" role="tablist" aria-label="Account type">
-            <label class="edition-option">
-                <InputRadio class="edition-radio" Value='@("java")' />
-                <span class="radio-visual" aria-hidden="true"></span>
-                <span class="edition-text">Java</span>
-            </label>
-            <label class="edition-option">
-                <InputRadio class="edition-radio" Value='@("bedrock")' />
-                <span class="radio-visual" aria-hidden="true"></span>
-                <span class="edition-text">Bedrock</span>
-            </label>
+    <div class="login-card">
+        <!-- Left: skin preview -->
+        <div class="login-skin-panel">
+            <img id="skin-preview" src="@PreviewUrl" alt="Skin preview" class="login-skin-img" />
+            @if (!string.IsNullOrEmpty(ExistingUsername))
+            {
+                <div class="login-skin-name">@(IsBedrock ? ExistingUsername.TrimStart('.') : ExistingUsername)</div>
+                <div class="login-skin-badge">@(IsBedrock ? "Bedrock" : "Java") Edition</div>
+            }
+            else
+            {
+                <div class="login-skin-name">Minecraft Player</div>
+                <div class="login-skin-badge">Choose edition →</div>
+            }
         </div>
-    </InputRadioGroup>
-</div>
 
-<div class="actions">
-    <button class="btn-primary" @onclick="Save">Log in</button>
+        <!-- Right: form -->
+        <div class="login-form-panel">
+            <div class="login-field">
+                <label for="username" class="login-label">Minecraft username</label>
+                <input id="username"
+                       @bind="UsernameEditable"
+                       @bind:event="oninput"
+                       placeholder="Your Nick" />
+                <small class="login-hint">Enter your username only, without a leading dot.</small>
+            </div>
+
+            <div class="login-field">
+                <label class="login-label">Edition</label>
+                <InputRadioGroup @bind-Value="AccountType">
+                    <div class="edition-selector" role="tablist" aria-label="Account type">
+                        <label class="edition-option @(AccountType == "java" ? "edition-option--active" : "")">
+                            <InputRadio class="edition-radio" Value='@("java")' />
+                            <i class="bi bi-display"></i>
+                            <span>Java</span>
+                        </label>
+                        <label class="edition-option @(AccountType == "bedrock" ? "edition-option--active" : "")">
+                            <InputRadio class="edition-radio" Value='@("bedrock")' />
+                            <i class="bi bi-phone"></i>
+                            <span>Bedrock</span>
+                        </label>
+                    </div>
+                </InputRadioGroup>
+            </div>
+
+            <div class="login-actions">
+                <button @onclick="Save" class="great-button">
+                    Log in
+                </button>
+                <button class="secondary" @onclick="Cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 @code {
