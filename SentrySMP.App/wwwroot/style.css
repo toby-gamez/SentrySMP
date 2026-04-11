@@ -393,6 +393,28 @@ p.thing-grid-subtitle {
     align-items: flex-end;
     justify-content: flex-end;
     height: 100%;
+    position: relative;
+}
+
+.thing-grid-ghost {
+    position: absolute;
+    bottom: 0;
+    right: 40px;
+    z-index: 0;
+    opacity: 0.2;
+    transform: rotate(-20deg);
+    transition: transform 0.35s ease, opacity 0.35s ease;
+    pointer-events: none;
+}
+
+.thing-grid-image > img:not(.thing-grid-ghost) {
+    position: relative;
+    z-index: 1;
+}
+
+.thing-grid-item:hover .thing-grid-ghost {
+    transform: rotate(-33deg);
+    opacity: 0.3
 }
 
 .thing-grid-item:hover {
