@@ -52,7 +52,7 @@ namespace SentrySMP.App.Components.State
             var item = _cartItems.FirstOrDefault(i => i.Key.Id == key.Id && i.Key.Type == key.Type);
             if (item != null)
             {
-                if (item.Quantity < 10)
+                if (item.Quantity < 20)
                 {
                     item.Quantity++;
                 }
@@ -81,10 +81,25 @@ namespace SentrySMP.App.Components.State
             var item = _cartItems.FirstOrDefault(i => i.Key.Id == key.Id && i.Key.Type == key.Type);
             if (item != null)
             {
-                item.Quantity = Math.Clamp(item.Quantity + delta, 1, 10);
+                item.Quantity = Math.Clamp(item.Quantity + delta, 1, 20);
                 NotifyStateChanged();
                 await SaveToStorageAsync();
             }
+        }
+
+        public async Task SetQuantityAsync(ProductResponse key, int quantity)
+        {
+            var item = _cartItems.FirstOrDefault(i => i.Key.Id == key.Id && i.Key.Type == key.Type);
+            if (item != null)
+            {
+                item.Quantity = Math.Max(1, quantity);
+            }
+            else
+            {
+                _cartItems.Add(new CartItem(key, Math.Max(1, quantity)));
+            }
+            NotifyStateChanged();
+            await SaveToStorageAsync();
         }
 
         public async Task ClearCartAsync()

@@ -4,31 +4,29 @@
 @inject ISentryApi Api
 @inject ILogger<Keys> Logger
 @inject SentrySMP.App.Components.State.CartState CartState
+@inject SentrySMP.App.Components.State.CartSidebarState SidebarState
 @inject IJSRuntime JS
 @inject IPurchaseTrackingService PurchaseTrackingService
 @inject SentrySMP.App.Authentication.UserService UserService
 @rendermode InteractiveServer
+@implements IDisposable
 
 <PageTitle>Keys - SentrySMP</PageTitle>
-
-<div class="main-wrapper">
-    <h1 class="main">Keys</h1>
-</div>
-
-            <!-- Server filter dropdown -->
-            @if (keys?.Any() == true)
+<!--
+@if (keys?.Any() == true)
+{
+    <div class="mb-3 d-flex align-items-center gap-2">
+        <label for="serverFilter" class="form-label mb-0">Filter by server:</label>
+        <select id="serverFilter" class="form-select w-auto" @onchange="OnServerFilterChanged">
+            <option value="">All servers</option>
+            @foreach (var server in servers)
             {
-                <div class="mb-3 d-flex align-items-center gap-2">
-                    <label for="serverFilter" class="form-label mb-0">Filter by server:</label>
-                    <select id="serverFilter" class="form-select w-auto" @onchange="OnServerFilterChanged">
-                        <option value="">All servers</option>
-                        @foreach (var server in servers)
-                        {
-                            <option value="@server.Id" selected="@(server.Id == selectedServerId)">@server.Name</option>
-                        }
-                    </select>
-                </div>
+                <option value="@server.Id" selected="@(server.Id == selectedServerId)">@server.Name</option>
             }
+        </select>
+    </div>
+}
+-->
             @if (loading)
             {
                 <div class="d-flex justify-content-center">
@@ -49,12 +47,11 @@
                 <div class="product-grid">
                     @foreach (var key in filteredKeys)
                     {
-                        var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == key.Id);
                         <div class="product">
                             <div class="card h-100">
                                 @if (!string.IsNullOrEmpty(key.Image))
                                 {
-                                    <img src="@key.Image" class="product-image" alt="@key.Name">
+                                    <img src="@key.Image" class="product-image" @onclick="() => ShowKeyDetails(key)" alt="@key.Name">
                                 }
                                 else
                                 {
@@ -63,8 +60,8 @@
                                     </div>
                                 }
                                 <div class="">
-                                    <h2 class="">@key.Name</h2>
-                                    <small class="text-muted">Server: @key.Server?.Name</small>
+                                    <h3 class="">@key.Name</h3>
+                                    <small class="text-muted">@key.Server?.Name</small>
                                     <div class="mt-auto">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <div class="price-container">
@@ -102,32 +99,30 @@
                                         @{
                                             var remainingQty = GetRemainingQuantity("Key", key.Id, key.GlobalMaxOrder);
                                             var isSoldOut = remainingQty == 0;
+                                            var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == key.Id);
+                                            var selectedQty = GetSelectedQty(key.Id);
                                         }
-                                        <div style="display: flex; align-items: center; justify-content: space-between">
-                                            <button class="" @onclick="() => ShowKeyDetails(key)">
-                                                <i class="bi bi-info-circle"></i> Details
-                                            </button>
-                                            @if (cartItem == null)
+                                        <div class="qty-presets">
+                                            @foreach (var qty in QtyPresets)
                                             {
-                                                <button class="btn btn-outline-success btn-sm w-100 mt-2" @onclick="async () => await AddToCart(key)" disabled="@isSoldOut">
-                                                    <i class="bi bi-@(isSoldOut ? "x-circle" : "plus")"></i> @(isSoldOut ? "Sold Out" : "Cart")
-                                                </button>
-
+                                                <button class="qty-preset-btn @(selectedQty == qty ? "selected" : "")"
+                                                        @onclick="() => SelectQty(key.Id, qty)"
+                                                        disabled="@(qty > remainingQty || isSoldOut)"
+                                                        title="@qty×">@qty×</button>
                                             }
-                                            else
-                                            {
-                                                <div style="display: block ruby;">
-                                                    <div class="quantity-controls">
-                                                        <button class="quantity-btn" @onclick="() => ChangeQuantity(key, -1)" disabled="@(cartItem.Quantity <= 1)">-</button>
-                                                        <span class="item-quantity">@cartItem.Quantity</span>
-                                                        <button class="quantity-btn" @onclick="() => ChangeQuantity(key, 1)" disabled="@(cartItem.Quantity >= Math.Min(10, remainingQty))">+</button>
-                                                    </div>
-                                                    <button class="danger" @onclick="async () => await RemoveFromCart(key)" title="Remove from cart">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </div>
-                                            }    
                                         </div>
+                                        <button class="great-button" @onclick="async () => await AddToCartPreset(key)" disabled="@isSoldOut">
+                                            <i class="bi bi-@(isSoldOut ? "x-circle" : "cart-plus")"></i>
+                                            @(isSoldOut ? "Sold Out" : cartItem != null ? "Update Cart" : "Add to Cart")
+                                        </button>
+                                        @if (cartItem != null)
+                                        {
+                                            <div class="product-cart-remove">
+                                                <button @onclick="async () => await RemoveFromCart(key)" title="Remove from cart">
+                                                    <i class="bi bi-trash"></i> Remove
+                                                </button>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -210,7 +205,7 @@
                             <div class="quantity-controls">
                                 <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedKey!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
                                 <span>@cartItemModal.Quantity</span>
-                                <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedKey!, 1)" disabled="@(cartItemModal.Quantity >= Math.Min(10, remainingQtyModal))">+</button>
+                                <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedKey!, 1)" disabled="@(cartItemModal.Quantity >= Math.Min(20, remainingQtyModal))">+</button>
                             </div>
                             <button class="danger" @onclick="async () => await RemoveFromCart(selectedKey!)" title="Remove from cart">
                                 <i class="bi bi-trash"></i>
@@ -233,14 +228,38 @@
     private KeyResponse? selectedKey;
 
     private bool _cartLoaded = false;
+
+    private static readonly int[] QtyPresets = [1, 5, 10, 20];
+    private Dictionary<int, int> _selectedQtyMap = new();
+
+    private int GetSelectedQty(int keyId)
+    {
+        var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == keyId);
+        if (cartItem != null) return cartItem.Quantity;
+        return _selectedQtyMap.GetValueOrDefault(keyId, 1);
+    }
+
+    private void SelectQty(int keyId, int qty)
+    {
+        _selectedQtyMap[keyId] = qty;
+    }
+
     private Dictionary<string, int> _purchasedCounts = new();
     private string? _username;
     
     protected override async Task OnInitializedAsync()
     {
+        CartState.OnChange += OnCartChanged;
         await LoadKeys();
         await LoadPurchasedCounts();
     }
+
+    public void Dispose()
+    {
+        CartState.OnChange -= OnCartChanged;
+    }
+
+    private void OnCartChanged() => InvokeAsync(StateHasChanged);
     
     private async Task LoadPurchasedCounts()
     {
@@ -361,6 +380,14 @@
         StateHasChanged();
         await Task.Delay(1200);
         if (addedKeyId == key.Id) { addedKeyId = null; StateHasChanged(); }
+    }
+
+    private async Task AddToCartPreset(KeyResponse key)
+    {
+        var qty = GetSelectedQty(key.Id);
+        await CartState.SetQuantityAsync(key, qty);
+        SidebarState.Open();
+        StateHasChanged();
     }
 
     private async Task ChangeQuantity(KeyResponse key, int delta)

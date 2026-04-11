@@ -4,16 +4,15 @@
 @inject ISentryApi Api
 @inject ILogger<Coins> Logger
 @inject SentrySMP.App.Components.State.CartState CartState
+@inject SentrySMP.App.Components.State.CartSidebarState SidebarState
 @inject IJSRuntime JS
 @inject IPurchaseTrackingService PurchaseTrackingService
 @inject SentrySMP.App.Authentication.UserService UserService
 @rendermode InteractiveServer
+@implements IDisposable
 <PageTitle>Coins - SentrySMP</PageTitle>
-
-<div class="main-wrapper">
-    <h1 class="main">Coins</h1>
-</div>
-            <!-- Server filter dropdown -->
+<!--
+Server filter dropdown
             @if (coins?.Any() == true)
             {
                 <div class="mb-3 d-flex align-items-center gap-2">
@@ -27,6 +26,7 @@
                     </select>
                 </div>
             }
+-->
             @if (loading)
             {
                 <div class="d-flex justify-content-center">
@@ -47,12 +47,11 @@
                 <div class="product-grid">
                     @foreach (var coin in filteredCoins)
                     {
-                        var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == coin.Id && i.Key.Type == "Coin");
                         <div class="product">
                             <div class="card h-100">
                                 @if (!string.IsNullOrEmpty(coin.Image))
                                 {
-                                    <img src="@coin.Image" class="product-image" alt="@coin.Name">
+                                    <img src="@coin.Image" class="product-image" @onclick="() => ShowCoinDetails(coin)" alt="@coin.Name">
                                 }
                                 else
                                 {
@@ -61,8 +60,8 @@
                                     </div>
                                 }
                                 <div class="">
-                                    <h2 class="">@coin.Name</h2>
-                                    <small class="text-muted">Server: @coin.Server?.Name</small>
+                                    <h3 class="">@coin.Name</h3>
+                                    <small class="text-muted">@coin.Server?.Name</small>
                                     <div class="mt-auto">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <div class="price-container">
@@ -97,32 +96,30 @@
                                         @{
                                             var remainingQty = GetRemainingQuantity("Coin", coin.Id, coin.GlobalMaxOrder);
                                             var isSoldOut = remainingQty == 0;
+                                            var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == coin.Id && i.Key.Type == "Coin");
+                                            var selectedQty = GetSelectedQty(coin.Id);
                                         }
-                                        <div style="display: flex; align-items: center; justify-content: space-between">
-                                            <button class="" @onclick="() => ShowCoinDetails(coin)">
-                                                <i class="bi bi-info-circle"></i> Details
-                                            </button>
-                                            @if (cartItem == null)
+                                        <div class="qty-presets">
+                                            @foreach (var qty in QtyPresets)
                                             {
-                                                <button class="btn btn-outline-success btn-sm w-100 mt-2" @onclick="async () => await AddToCart(coin)" disabled="@isSoldOut">
-                                                    <i class="bi bi-@(isSoldOut ? "x-circle" : "cart-plus")"></i> @(isSoldOut ? "Sold Out" : "Add")
-                                                </button>
-
-                                            }
-                                            else
-                                            {
-                                                <div style="display: block ruby;">
-                                                    <div class="quantity-controls">
-                                                        <button class="quantity-btn" @onclick="() => ChangeQuantity(coin, -1)" disabled="@(cartItem.Quantity <= 1)">-</button>
-                                                        <span class="item-quantity">@cartItem.Quantity</span>
-                                                        <button class="quantity-btn" @onclick="() => ChangeQuantity(coin, 1)" disabled="@(cartItem.Quantity >= Math.Min(10, remainingQty))">+</button>
-                                                    </div>
-                                                    <button class="danger" @onclick="async () => await RemoveFromCart(coin)" title="Remove from cart">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </div>
+                                                <button class="qty-preset-btn @(selectedQty == qty ? "selected" : "")"
+                                                        @onclick="() => SelectQty(coin.Id, qty)"
+                                                        disabled="@(qty > remainingQty || isSoldOut)"
+                                                        title="@qty×">@qty×</button>
                                             }
                                         </div>
+                                        <button class="great-button" @onclick="async () => await AddToCartPreset(coin)" disabled="@isSoldOut">
+                                            <i class="bi bi-@(isSoldOut ? "x-circle" : "cart-plus")"></i>
+                                            @(isSoldOut ? "Sold Out" : cartItem != null ? "Update Cart" : "Add to Cart")
+                                        </button>
+                                        @if (cartItem != null)
+                                        {
+                                            <div class="product-cart-remove">
+                                                <button @onclick="async () => await RemoveFromCart(coin)" title="Remove from cart">
+                                                    <i class="bi bi-trash"></i> Remove
+                                                </button>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -229,15 +226,38 @@
 
     private bool _cartLoaded = false;
     private int? addedCoinId;
-    
+
+    private static readonly int[] QtyPresets = [1, 5, 10, 20];
+    private Dictionary<int, int> _selectedQtyMap = new();
+
+    private int GetSelectedQty(int coinId)
+    {
+        var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == coinId && i.Key.Type == "Coin");
+        if (cartItem != null) return cartItem.Quantity;
+        return _selectedQtyMap.GetValueOrDefault(coinId, 1);
+    }
+
+    private void SelectQty(int coinId, int qty)
+    {
+        _selectedQtyMap[coinId] = qty;
+    }
+
     private Dictionary<string, int> _purchasedCounts = new();
     private string? _username;
 
     protected override async Task OnInitializedAsync()
     {
+        CartState.OnChange += OnCartChanged;
         await LoadCoins();
         await LoadPurchasedCounts();
     }
+
+    public void Dispose()
+    {
+        CartState.OnChange -= OnCartChanged;
+    }
+
+    private void OnCartChanged() => InvokeAsync(StateHasChanged);
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -327,6 +347,14 @@
         StateHasChanged();
         await Task.Delay(1200);
         if (addedCoinId == coin.Id) { addedCoinId = null; StateHasChanged(); }
+    }
+
+    private async Task AddToCartPreset(CoinResponse coin)
+    {
+        var qty = GetSelectedQty(coin.Id);
+        await CartState.SetQuantityAsync(coin, qty);
+        SidebarState.Open();
+        StateHasChanged();
     }
 
     private async Task ChangeQuantity(CoinResponse coin, int delta)

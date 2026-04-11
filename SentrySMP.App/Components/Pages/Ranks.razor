@@ -7,22 +7,14 @@
 @inject ISentryApi Api
 @inject ILogger<Ranks> Logger
 @inject SentrySMP.App.Components.State.CartState CartState
+@inject SentrySMP.App.Components.State.CartSidebarState SidebarState
 @inject IJSRuntime JS
 @inject IPurchaseTrackingService PurchaseTrackingService
 @inject SentrySMP.App.Authentication.UserService UserService
 @rendermode InteractiveServer
+@implements IDisposable
 
 <PageTitle>Ranks - SentrySMP</PageTitle>
-<div class="main-wrapper">
-    <h1 class="main">Ranks</h1>
-</div>
-
-            @if (ranks?.Any() == true)
-            {
-                <div class="mb-3">
-                    <!-- No server filter for ranks -->
-                </div>
-            }
 
             @if (loading)
             {
@@ -44,12 +36,11 @@
                 <div class="product-grid">
                     @foreach (var rank in ranks)
                     {
-                        var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == rank.Id && i.Key.Type == rank.Type);
                         <div class="product">
                             <div class="card h-100">
                                 @if (!string.IsNullOrEmpty(rank.Image))
                                 {
-                                    <img src="@rank.Image" class="product-image" alt="@rank.Name">
+                                    <img src="@rank.Image" class="product-image" @onclick="() => ShowRankDetails(rank)" alt="@rank.Name">
                                 }
                                 else
                                 {
@@ -58,7 +49,7 @@
                                     </div>
                                 }
                                 <div class="">
-                                    <h2 class="">@rank.Name</h2>
+                                    <h3 class="">@rank.Name</h3>
                                     <div class="mt-auto">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <div class="price-container">
@@ -89,31 +80,21 @@
                                         @{
                                             var remainingQty = GetRemainingQuantity("Rank", rank.Id, rank.GlobalMaxOrder);
                                             var isSoldOut = remainingQty == 0;
+                                            var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == rank.Id && i.Key.Type == rank.Type);
+                                            var selectedQty = GetSelectedQty(rank.Id);
                                         }
-                                        <div style="display: flex; align-items: center; justify-content: space-between">
-                                            <button class="" @onclick="() => ShowRankDetails(rank)">
-                                                <i class="bi bi-info-circle"></i> Details
-                                            </button>
-                                            @if (cartItem == null)
-                                            {
-                                                <button class="btn btn-outline-success btn-sm w-100 mt-2" @onclick="async () => await AddToCart(rank)" disabled="@isSoldOut">
-                                                    <i class="bi bi-@(isSoldOut ? "x-circle" : "cart-plus")"></i> @(isSoldOut ? "Sold Out" : "Add to Cart")
+                                        <button class="great-button" @onclick="async () => await AddToCartPreset(rank)" disabled="@isSoldOut">
+                                            <i class="bi bi-@(isSoldOut ? "x-circle" : "cart-plus")"></i>
+                                            @(isSoldOut ? "Sold Out" : cartItem != null ? "Update Cart" : "Add to Cart")
+                                        </button>
+                                        @if (cartItem != null)
+                                        {
+                                            <div class="product-cart-remove">
+                                                <button @onclick="async () => await RemoveFromCart(rank)" title="Remove from cart">
+                                                    <i class="bi bi-trash"></i> Remove
                                                 </button>
-                                            }
-                                            else
-                                            {
-                                                <div style="display: block ruby;">
-                                                    <div class="quantity-controls">
-                                                        <button class="quantity-btn" @onclick="() => ChangeQuantity(rank, -1)" disabled="@(cartItem.Quantity <= 1)">-</button>
-                                                        <span class="item-quantity">@cartItem.Quantity</span>
-                                                        <button class="quantity-btn" @onclick="() => ChangeQuantity(rank, 1)" disabled="@(cartItem.Quantity >= Math.Min(1, remainingQty))">+</button>
-                                                    </div>
-                                                    <button class="danger" @onclick="async () => await RemoveFromCart(rank)" title="Remove from cart">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </div>
-                                            }
-                                        </div>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -211,15 +192,32 @@
     private RankResponse? selectedRank;
 
     private bool _cartLoaded = false;
-    
+
+    private Dictionary<int, int> _selectedQtyMap = new();
+
+    private int GetSelectedQty(int rankId)
+    {
+        var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == rankId && i.Key.Type == "Rank");
+        if (cartItem != null) return cartItem.Quantity;
+        return _selectedQtyMap.GetValueOrDefault(rankId, 1);
+    }
+
     private Dictionary<string, int> _purchasedCounts = new();
     private string? _username;
     
     protected override async Task OnInitializedAsync()
     {
+        CartState.OnChange += OnCartChanged;
         await LoadRanks();
         await LoadPurchasedCounts();
     }
+
+    public void Dispose()
+    {
+        CartState.OnChange -= OnCartChanged;
+    }
+
+    private void OnCartChanged() => InvokeAsync(StateHasChanged);
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -277,6 +275,13 @@
         StateHasChanged();
         await Task.Delay(1200);
         if (addedRankId == rank.Id) { addedRankId = null; StateHasChanged(); }
+    }
+
+    private async Task AddToCartPreset(RankResponse rank)
+    {
+        await CartState.SetQuantityAsync(rank, 1);
+        SidebarState.Open();
+        StateHasChanged();
     }
 
     private async Task ChangeQuantity(RankResponse rank, int delta)

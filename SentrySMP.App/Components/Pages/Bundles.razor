@@ -4,16 +4,15 @@
 @inject ISentryApi Api
 @inject ILogger<Bundles> Logger
 @inject SentrySMP.App.Components.State.CartState CartState
+@inject SentrySMP.App.Components.State.CartSidebarState SidebarState
 @inject IJSRuntime JS
 @inject IPurchaseTrackingService PurchaseTrackingService
 @inject SentrySMP.App.Authentication.UserService UserService
 @rendermode InteractiveServer
+@implements IDisposable
 
 <PageTitle>Bundles - SentrySMP</PageTitle>
-
-<div class="main-wrapper">
-    <h1 class="main">Bundles</h1>
-</div>
+<!--
             @if (bundles?.Any() == true)
             {
                 <div class="mb-3 d-flex align-items-center gap-2">
@@ -27,6 +26,7 @@
                     </select>
                 </div>
             }
+            -->
 
             @if (loading)
             {
@@ -48,12 +48,11 @@
                 <div class="product-grid">
                     @foreach (var bundle in filteredBundles)
                     {
-                        var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == bundle.Id);
                         <div class="product">
                             <div class="card h-100">
                                 @if (!string.IsNullOrEmpty(bundle.Image))
                                 {
-                                    <img src="@bundle.Image" class="product-image" alt="@bundle.Name">
+                                    <img src="@bundle.Image" class="product-image" @onclick="() => ShowBundleDetails(bundle)" alt="@bundle.Name">
                                 }
                                 else
                                 {
@@ -62,8 +61,8 @@
                                     </div>
                                 }
                                 <div class="">
-                                    <h2 class="">@bundle.Name</h2>
-                                    <small class="text-muted">Server: @bundle.Server?.Name</small>
+                                    <h3 class="">@bundle.Name</h3>
+                                    <small class="text-muted">@bundle.Server?.Name</small>
                                     <div class="mt-auto">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <div class="price-container">
@@ -94,31 +93,30 @@
                                         @{
                                             var remainingQty = GetRemainingQuantity("Bundle", bundle.Id, bundle.GlobalMaxOrder);
                                             var isSoldOut = remainingQty == 0;
+                                            var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == bundle.Id);
+                                            var selectedQty = GetSelectedQty(bundle.Id);
                                         }
-                                        <div style="display: flex; align-items: center; justify-content: space-between">
-                                            <button class="" @onclick="() => ShowBundleDetails(bundle)"><i class="bi bi-info-circle"></i> Details</button>
-                                            @if (cartItem == null)
+                                        <div class="qty-presets">
+                                            @foreach (var qty in QtyPresets)
                                             {
-                                                <button class="btn btn-outline-success btn-sm w-100 mt-2" @onclick="async () => await AddToCart(bundle)" disabled="@isSoldOut"><i class="bi bi-@(isSoldOut ? "x-circle" : "cart-plus")"></i> @(isSoldOut ? "Sold Out" : "Add")</button>
-                                                @if (addedBundleId == bundle.Id)
-                                                {
-                                                    <div class="alert alert-success py-1 px-2 mt-2 mb-0 text-center" style="font-size:0.95em;">Přidáno!</div>
-                                                }
-                                            }
-                                            else
-                                            {
-                                                <div style="display: block ruby;">
-                                                    <div class="quantity-controls">
-                                                        <button class="quantity-btn" @onclick="() => ChangeQuantity(bundle, -1)" disabled="@(cartItem.Quantity <= 1)">-</button>
-                                                        <span class="item-quantity">@cartItem.Quantity</span>
-                                                        <button class="quantity-btn" @onclick="() => ChangeQuantity(bundle, 1)" disabled="@(cartItem.Quantity >= Math.Min(10, remainingQty))">+</button>
-                                                    </div>
-                                                    <button class="danger" @onclick="async () => await RemoveFromCart(bundle)" title="Remove from cart">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </div>
+                                                <button class="qty-preset-btn @(selectedQty == qty ? "selected" : "")"
+                                                        @onclick="() => SelectQty(bundle.Id, qty)"
+                                                        disabled="@(qty > remainingQty || isSoldOut)"
+                                                        title="@qty×">@qty×</button>
                                             }
                                         </div>
+                                        <button class="great-button" @onclick="async () => await AddToCartPreset(bundle)" disabled="@isSoldOut">
+                                            <i class="bi bi-@(isSoldOut ? "x-circle" : "cart-plus")"></i>
+                                            @(isSoldOut ? "Sold Out" : cartItem != null ? "Update Cart" : "Add to Cart")
+                                        </button>
+                                        @if (cartItem != null)
+                                        {
+                                            <div class="product-cart-remove">
+                                                <button @onclick="async () => await RemoveFromCart(bundle)" title="Remove from cart">
+                                                    <i class="bi bi-trash"></i> Remove
+                                                </button>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -196,7 +194,7 @@
                             <div class="quantity-controls">
                                 <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedBundle!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
                                 <span>@cartItemModal.Quantity</span>
-                                <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedBundle!, 1)" disabled="@(cartItemModal.Quantity >= Math.Min(10, remainingQtyModal))">+</button>
+                                <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedBundle!, 1)" disabled="@(cartItemModal.Quantity >= Math.Min(20, remainingQtyModal))">+</button>
                             </div>
                             <button class="danger" @onclick="async () => await RemoveFromCart(selectedBundle!)" title="Remove from cart">
                                 <i class="bi bi-trash"></i>
@@ -219,15 +217,38 @@
     private BundleResponse? selectedBundle;
 
     private bool _cartLoaded = false;
-    
+
+    private static readonly int[] QtyPresets = [1, 5, 10, 20];
+    private Dictionary<int, int> _selectedQtyMap = new();
+
+    private int GetSelectedQty(int bundleId)
+    {
+        var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == bundleId);
+        if (cartItem != null) return cartItem.Quantity;
+        return _selectedQtyMap.GetValueOrDefault(bundleId, 1);
+    }
+
+    private void SelectQty(int bundleId, int qty)
+    {
+        _selectedQtyMap[bundleId] = qty;
+    }
+
     private Dictionary<string, int> _purchasedCounts = new();
     private string? _username;
     
     protected override async Task OnInitializedAsync()
     {
+        CartState.OnChange += OnCartChanged;
         await LoadBundles();
         await LoadPurchasedCounts();
     }
+
+    public void Dispose()
+    {
+        CartState.OnChange -= OnCartChanged;
+    }
+
+    private void OnCartChanged() => InvokeAsync(StateHasChanged);
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -332,6 +353,25 @@
         StateHasChanged();
         await Task.Delay(1200);
         if (addedBundleId == bundle.Id) { addedBundleId = null; StateHasChanged(); }
+    }
+
+    private async Task AddToCartPreset(BundleResponse bundle)
+    {
+        var qty = GetSelectedQty(bundle.Id);
+        var keyLike = new KeyResponse
+        {
+            Id = bundle.Id,
+            Name = bundle.Name,
+            Description = bundle.Description,
+            Price = bundle.Price,
+            ServerId = bundle.ServerId,
+            Sale = bundle.Sale,
+            Image = bundle.Image,
+            Server = bundle.Server
+        };
+        await CartState.SetQuantityAsync(keyLike, qty);
+        SidebarState.Open();
+        StateHasChanged();
     }
 
     private async Task ChangeQuantity(BundleResponse bundle, int delta)

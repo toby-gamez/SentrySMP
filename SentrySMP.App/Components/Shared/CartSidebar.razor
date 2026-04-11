@@ -62,11 +62,14 @@
                                     <span>€@((unitPrice * qty).ToString("F2"))</span>
                                 }
                             </div>
-                            <div class="quantity-controls">
-                                <button class="quantity-btn" @onclick="() => ChangeQuantity(item, -1)" disabled="@(qty <= 1)">-</button>
-                                <span>@qty</span>
-                                <button class="quantity-btn" @onclick="() => ChangeQuantity(item, 1)" disabled="@(qty >= 10)">+</button>
-                            </div>
+                            @if (item.Type != "Rank")
+                            {
+                                <div class="quantity-controls">
+                                    <button class="quantity-btn" @onclick="() => ChangeQuantity(item, -1)" disabled="@(qty <= 1)">-</button>
+                                    <span>@qty</span>
+                                    <button class="quantity-btn" @onclick="() => ChangeQuantity(item, 1)" disabled="@(qty >= 20)">+</button>
+                                </div>
+                            }
                         </div>
                         <button class="danger cart-sidebar-item-remove" @onclick="() => RemoveFromCart(item)" title="Remove"><i class="bi bi-trash"></i></button>
                     </div>
