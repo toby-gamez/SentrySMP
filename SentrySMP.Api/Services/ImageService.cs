@@ -12,7 +12,7 @@ public class ImageService : IImageService
     private readonly IHostEnvironment _env;
     private readonly ILogger<ImageService> _logger;
 
-    private const string DefaultRemoteBase = "https://store.sentrysmp.eu/uploads/keys/";
+    private const string DefaultRemoteBase = "https://sentrysmp.eu/uploads/keys/";
 
     public ImageService(IHttpClientFactory httpFactory, IHostEnvironment env, ILogger<ImageService> logger)
     {
