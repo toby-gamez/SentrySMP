@@ -28,7 +28,7 @@
     @if (_paymentSucceeded)
     {
         <div style="font-size: 5rem; text-align:center; color:#44ae44;">
-            <i class="bi bi-check-circle"></i> 
+            <i class="bi bi-check-circle"></i>
         </div>
         <div class="alert alert-success mt-4">
 
@@ -210,7 +210,14 @@
                 {
                     <div class="small text-muted">Checking server status...</div>
                 }
-                else if (_cartServers.Count > 0)
+                else if (_cartServers.Count == 0)
+                {
+                    <div class="small d-flex align-items-center gap-2 py-1" style="color:#44ae44;">
+                        <i class="bi bi-circle-fill"></i>
+                        <span>All servers are ready.</span>
+                    </div>
+                }
+                else
                 {
                     <ul class="list-unstyled mt-2" style="list-style-type: none;">
                         @foreach (var srv in _cartServers)
@@ -223,11 +230,7 @@
                         }
                     </ul>
                 }
-                else
-                {
-                    <div class="small text-muted">No servers associated with items in your cart.</div>
-                }
-                
+
                 @if (_purchaseLimitErrors.Count > 0)
                 {
                     <div class="alert alert-danger mt-3">
@@ -241,7 +244,7 @@
                         </div>
                     </div>
                 }
-                
+
                 <h2 class="mt-3">Choose payment method</h2>
                 @if (_paymentsDisabled)
                 {
@@ -295,7 +298,7 @@
                 <div class="mt-4 d-flex gap-2">
                     <button class="great-button" @onclick="ProceedToPayment" disabled="@(!_canProceedToPayment || _paymentsDisabled || (_stripeDisabled && _payPalDisabled) || _purchaseLimitErrors.Count > 0)">Proceed to payment</button></div>
 
-                @if (!_serverOnline && _statusChecked)
+                @if (_cartServers.Count > 0 && !_serverOnline && _statusChecked)
                 {
                     <div class="alert alert-warning mt-2">
                         The server is currently offline. Your items may not be delivered automatically after purchase.
@@ -323,7 +326,7 @@
                 {
                     <div class="alert alert-success mt-3">
                         <div style="font-size: 5rem; text-align:center; color:#44ae44;">
-                            <i class="bi bi-check-circle"></i> 
+                            <i class="bi bi-check-circle"></i>
                         </div>
                         <div class="info">
                             <p><em>If the webpage keeps reloading, <u>it wants to send you your purchased items</u>.</em>If the problem persists, please contact us.</p>
@@ -438,7 +441,7 @@
     protected override async Task OnInitializedAsync()
     {
         CartState.OnChange += HandleCartChanged;
-        
+
         // Load payment settings first
         try
         {
@@ -448,7 +451,7 @@
                 _paymentsDisabled = !_paymentSettings.EnablePayments;
                 _stripeDisabled = _paymentSettings.DisableStripe;
                 _payPalDisabled = _paymentSettings.DisablePayPal;
-                
+
                 // Auto-select first available payment method
                 if (!_paymentsDisabled)
                 {
@@ -467,7 +470,7 @@
         {
             _logger?.LogWarning(ex, "Failed to load payment settings");
         }
-        
+
         // Load cart from browser storage (important when arriving via redirect)
         try
         {
@@ -500,7 +503,7 @@
             _logger = LoggerFactory?.CreateLogger("Checkout");
         }
         catch { }
-        
+
         // Validate cart limits
         try
         {
@@ -538,7 +541,7 @@
     {
         _selectedPayment = "paypal";
     }
-    
+
     private void ContinueShopping()
     {
         NavigationManager.NavigateTo("/");
@@ -689,6 +692,14 @@
             .Select(g => g.First())
             .ToList();
 
+        // If no items require a server (e.g. rank-only cart), skip the online check entirely.
+        if (_cartServers.Count == 0)
+        {
+            _statusChecked = true;
+            _canProceedToPayment = true;
+            return;
+        }
+
         try
         {
             var players = await StatusService.GetMcPlayersAsync();
@@ -699,12 +710,12 @@
             _serverOnline = false;
         }
         _statusChecked = true;
-        _canProceedToPayment = _cartServers.Count > 0 && _serverOnline;
+        _canProceedToPayment = _serverOnline;
     }
 
 
 
-    
+
 
     // Snapshot of last successfully purchased items (used to show order details after return)
     private List<CartItem>? _lastOrderItems;
@@ -1073,7 +1084,7 @@
                     // history entry here to remove it automatically.
                 }
             }
-            
+
             // Mark that first render completed and execute any deferred RCON requests.
             _hasRendered = true;
             if (_pendingRconExecProducts != null)
@@ -1292,12 +1303,12 @@
             return false;
         }
     }
-    
+
     // Validate cart against GlobalMaxOrder limits
     private async Task ValidateCartLimitsAsync()
     {
         _purchaseLimitErrors.Clear();
-        
+
         try
         {
             var username = await UserService.GetUsernameAsync();
@@ -1314,7 +1325,7 @@
         {
             _logger?.LogError(ex, "Failed to validate cart limits");
         }
-        
+
         StateHasChanged();
     }
     }
