@@ -8,35 +8,35 @@ public interface ISentryApi
     // Server endpoints
     [Get("/api/servers")]
     Task<IEnumerable<ServerResponse>> GetServersAsync();
-    
+
     [Get("/api/servers/{id}")]
     Task<ServerResponse> GetServerAsync(int id);
-    
+
     [Post("/api/servers")]
     Task<ServerResponse> CreateServerAsync([Body] CreateServerDto server);
-    
+
     [Put("/api/servers/{id}")]
     Task<ServerResponse> UpdateServerAsync(int id, [Body] UpdateServerDto server);
-    
+
     [Delete("/api/servers/{id}")]
     Task DeleteServerAsync(int id);
-    
+
     // Key endpoints
     [Get("/api/keys")]
     Task<IEnumerable<KeyResponse>> GetKeysAsync();
-    
+
     [Get("/api/keys/server/{serverId}")]
     Task<IEnumerable<KeyResponse>> GetKeysByServerAsync(int serverId);
-    
+
     [Get("/api/keys/{id}")]
     Task<KeyResponse> GetKeyAsync(int id);
-    
+
     [Post("/api/keys")]
     Task<KeyResponse> CreateKeyAsync([Body] CreateKeyDto key);
-    
+
     [Put("/api/keys/{id}")]
     Task<KeyResponse> UpdateKeyAsync(int id, [Body] UpdateKeyDto key);
-    
+
     [Delete("/api/keys/{id}")]
     Task DeleteKeyAsync(int id);
 
@@ -94,18 +94,18 @@ public interface ISentryApi
 
     [Delete("/api/battlepasses/{id}")]
     Task DeleteBattlePassAsync(int id);
-    
+
     // Status endpoints (MC / Discord)
     [Get("/api/status/mc")]
     Task<McStatusResponse> GetMcStatusAsync();
 
     [Get("/api/status/discord")]
     Task<DiscordStatusResponse> GetDiscordStatusAsync();
-    
+
     // Announcements / News
     [Get("/api/announcements")]
     Task<IEnumerable<SentrySMP.Shared.DTOs.AnnouncementDto>> GetAnnouncementsAsync();
-    
+
     // Coin endpoints
     [Get("/api/coins")]
     Task<IEnumerable<CoinResponse>> GetCoinsAsync();
@@ -148,7 +148,7 @@ public interface ISentryApi
     [Multipart]
     [Post("/api/files/upload")]
     Task<FileUploadResponse> UploadImageAsync([AliasAs("file")] StreamPart stream);
-    
+
     [Delete("/api/files/{fileName}")]
     Task DeleteImageAsync(string fileName);
 
@@ -193,4 +193,26 @@ public interface ISentryApi
 
     [Put("/api/settings/payments")]
     Task<PaymentSettingsResponse?> UpdatePaymentSettingsAsync([Body] UpdatePaymentSettingsRequest request);
+
+    // Voucher endpoints
+    [Get("/api/vouchers")]
+    Task<IEnumerable<VoucherResponse>> GetVouchersAsync();
+
+    [Get("/api/vouchers/{id}")]
+    Task<VoucherResponse> GetVoucherByIdAsync(int id);
+
+    [Post("/api/vouchers")]
+    Task<VoucherResponse> CreateVoucherAsync([Body] CreateVoucherDto dto);
+
+    [Put("/api/vouchers/{id}")]
+    Task<VoucherResponse> UpdateVoucherAsync(int id, [Body] UpdateVoucherDto dto);
+
+    [Delete("/api/vouchers/{id}")]
+    Task DeleteVoucherAsync(int id);
+
+    [Post("/api/vouchers/validate")]
+    Task<ValidateVoucherResponse> ValidateVoucherAsync([Body] ValidateVoucherRequest request);
+
+    [Post("/api/vouchers/record-usage")]
+    Task RecordVoucherUsageAsync([Body] RecordVoucherUsageRequest request);
 }

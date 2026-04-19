@@ -45,7 +45,7 @@ services.AddHttpContextAccessor();
 
 services.AddDbContext<SentryDbContext>(options =>
 {
-    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), 
+    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection")),
         b => b.MigrationsAssembly("SentrySMP.Api"));
 });
@@ -65,6 +65,7 @@ services.AddScoped<IOtherService, OtherService>();
 services.AddScoped<IKeyService, KeyService>();
 services.AddScoped<IBundleService, BundleService>();
 services.AddScoped<IRankService, RankService>();
+services.AddScoped<IVoucherService, VoucherService>();
 // Team service (file-backed)
 services.AddScoped<ITeamService, TeamService>();
 services.AddScoped<ITeamRankService, SentrySMP.Api.Services.TeamRankService>();

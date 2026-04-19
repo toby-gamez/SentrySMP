@@ -173,7 +173,68 @@
     }
     else
     {
-        <div class="cart-total">€@CartState.CartItems.Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity).ToString("F2")</div>
+        <div class="cart-total">
+            @if (_appliedVoucher != null)
+            {
+                <span class="text-muted text-decoration-line-through me-2" style="font-size:0.9em;">€@CartTotal.ToString("F2")</span>
+                <span class="text-success">€@FinalTotal.ToString("F2")</span>
+            }
+            else
+            {
+                <span>€@CartTotal.ToString("F2")</span>
+            }
+        </div>
+
+        @* Voucher / Promo Code *@
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    <i class="bi bi-tag-fill me-2 text-primary"></i>Promo Code
+                </h5>
+                @if (_appliedVoucher == null)
+                {
+                    <div class="input-group">
+                        <input type="text"
+                                               class="form-control"
+                                               placeholder="Enter promo code"
+                                               @bind="_voucherCode"
+                                               @bind:event="oninput"
+                                               @onkeydown="OnVoucherKeyDown" />
+                        <button class="btn btn-outline-primary"
+                                @onclick="ApplyVoucherAsync"
+                                disabled="@_voucherLoading">
+                            @if (_voucherLoading)
+                            {
+                                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                            }
+                            Apply
+                        </button>
+                    </div>
+                    @if (!string.IsNullOrEmpty(_voucherError))
+                    {
+                        <div class="mt-2 text-danger small">
+                            <i class="bi bi-exclamation-circle me-1"></i>@_voucherError
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="badge bg-success fs-6 me-2">
+                                <i class="bi bi-check-circle me-1"></i>@_appliedVoucher.Code
+                            </span>
+                            <span class="text-success fw-bold">-€@_appliedVoucher.DiscountAmount.ToString("F2")</span>
+                            <div class="small text-muted mt-1">@_appliedVoucher.Message</div>
+                        </div>
+                        <button class="btn btn-sm btn-outline-danger" @onclick="RemoveVoucher">
+                            <i class="bi bi-x-circle me-1"></i>Remove
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+
         <div class="card mt-4">
             <div class="card-body">
                 <h2 class="card-title">Order summary</h2>
@@ -438,6 +499,18 @@
     private bool _payPalDisabled = false;
     private Dictionary<string, string> _purchaseLimitErrors = new();
 
+    // Voucher state
+    private string _voucherCode = string.Empty;
+    private ValidateVoucherResponse? _appliedVoucher;
+    private bool _voucherLoading = false;
+    private string? _voucherError;
+
+    // computed totals
+    private double CartTotal => CartState.CartItems.Sum(i =>
+        (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity);
+
+    private double FinalTotal => Math.Max(0, CartTotal - (double)(_appliedVoucher?.DiscountAmount ?? 0));
+
     protected override async Task OnInitializedAsync()
     {
         CartState.OnChange += HandleCartChanged;
@@ -610,8 +683,9 @@
                 var formattedStripe = _amount;
                 if (!double.TryParse(_amount, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out parsedStripe) || parsedStripe <= 0)
                 {
-                    parsedStripe = CartState.CartItems.Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity);
-                    formattedStripe = parsedStripe.ToString("F2");
+                    // Use FinalTotal as fallback so vouchers affect Stripe amount
+                    parsedStripe = FinalTotal;
+                    formattedStripe = parsedStripe.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
                 }
 
                 var stripeResp = await CheckoutApi.CreateStripeSessionAsync(new CreateStripeSessionRequest { Amount = formattedStripe, Description = "SentrySMP purchase" });
@@ -643,14 +717,14 @@
             // Server-side create-order + redirect flow (no frontend JS)
             try
             {
-                // Use the manually entered amount (fallback to cart total if parsing fails)
+                // Use the manually entered amount (fallback to FinalTotal if parsing fails)
                 double parsed = 0;
                 var formatted = _amount;
                 if (!double.TryParse(_amount, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out parsed) || parsed <= 0)
                 {
-                    // try fallback to cart total
-                    parsed = CartState.CartItems.Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity);
-                    formatted = parsed.ToString("F2");
+                    // Use FinalTotal as fallback so vouchers affect PayPal amount
+                    parsed = FinalTotal;
+                    formatted = parsed.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
                 }
 
                 try
@@ -1071,6 +1145,23 @@
                     _successMessage = "Payment received — thank you! Your payment has been received.";
                     StateHasChanged();
 
+                    // Record voucher usage if one was applied
+                    if (_appliedVoucher != null && !string.IsNullOrWhiteSpace(_appliedVoucher.Code))
+                    {
+                        try
+                        {
+                            await SentryApi.RecordVoucherUsageAsync(new RecordVoucherUsageRequest
+                            {
+                                Code = _appliedVoucher.Code,
+                                MinecraftUsername = _username ?? string.Empty
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger?.LogWarning(ex, "Failed to record voucher usage for code {Code}", _appliedVoucher.Code);
+                        }
+                    }
+
                     // Note: we intentionally do not immediately remove the query string here so the success
                     // message can be shown after redirect. If you prefer the query removed, we can
                     // replace the history entry, but that will also re-initialize component state.
@@ -1327,6 +1418,73 @@
         }
 
         StateHasChanged();
+    }
+
+    private async Task OnVoucherKeyDown(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs e)
+    {
+        if (e?.Key == "Enter")
+        {
+            await ApplyVoucherAsync();
+        }
+    }
+
+    private async Task ApplyVoucherAsync()
+    {
+        _voucherError = null;
+        _appliedVoucher = null;
+        var code = _voucherCode.Trim();
+        if (string.IsNullOrWhiteSpace(code)) { _voucherError = "Please enter a voucher code."; return; }
+
+        _voucherLoading = true;
+        StateHasChanged();
+        try
+        {
+            var items = CartState.CartItems.Select(ci =>
+            {
+                double unitPrice = ci.Key.Sale > 0
+                    ? Convert.ToDouble(ci.Key.Price) * (1 - ci.Key.Sale / 100.0)
+                    : Convert.ToDouble(ci.Key.Price);
+                return new VoucherCartItem
+                {
+                    Type = ci.Key.Type,
+                    Id = ci.Key.Id,
+                    Quantity = ci.Quantity,
+                    UnitPrice = unitPrice
+                };
+            }).ToList();
+
+            var response = await SentryApi.ValidateVoucherAsync(new ValidateVoucherRequest { Code = code, Items = items });
+
+            if (response.IsValid)
+            {
+                _appliedVoucher = response;
+                // Update _amount so PayPal/Stripe get the discounted total
+                _amount = FinalTotal.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                _voucherError = response.Message ?? "Invalid voucher code.";
+            }
+        }
+        catch (Exception ex)
+        {
+            _voucherError = $"Error applying voucher: {ex.Message}";
+            _logger?.LogError(ex, "Error applying voucher code {Code}", code);
+        }
+        finally
+        {
+            _voucherLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void RemoveVoucher()
+    {
+        _appliedVoucher = null;
+        _voucherCode = string.Empty;
+        _voucherError = null;
+        // Restore original amount
+        _amount = CartTotal.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
     }
     }
 }

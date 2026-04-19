@@ -23,6 +23,8 @@ public class SentryDbContext : DbContext
     public DbSet<SentrySMP.Domain.Entities.PaymentTransaction> PaymentTransactions { get; set; }
     public DbSet<PaymentSettings> PaymentSettings { get; set; }
     public DbSet<UserPurchaseRecord> UserPurchaseRecords { get; set; }
+    public DbSet<Voucher> Vouchers { get; set; }
+    public DbSet<VoucherUsage> VoucherUsages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -86,22 +88,22 @@ public class SentryDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id)
                 .ValueGeneratedOnAdd();
-                
+
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(100);
-                
+
             entity.Property(e => e.Description)
                 .HasMaxLength(500);
-                
+
             entity.Property(e => e.Price)
                 .IsRequired()
                 .HasColumnType("float");
-                
+
             entity.Property(e => e.Sale)
                 .HasColumnType("float")
                 .HasDefaultValue(0);
-                
+
             entity.Property(e => e.Image)
                 .HasMaxLength(255);
 
@@ -260,6 +262,30 @@ public class SentryDbContext : DbContext
             entity.Property(e => e.DisableStripe).IsRequired().HasDefaultValue(false);
             entity.Property(e => e.DisablePayPal).IsRequired().HasDefaultValue(false);
             entity.Property(e => e.UpdatedAt).IsRequired();
+        });
+
+        // Configure Voucher entity
+        modelBuilder.Entity<Voucher>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Code).IsRequired().HasMaxLength(50);
+            entity.HasIndex(e => e.Code).IsUnique();
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.DiscountPercent).HasColumnType("decimal(5,2)");
+            entity.Property(e => e.Scope).IsRequired().HasMaxLength(20).HasDefaultValue("All");
+            entity.Property(e => e.ScopeCategory).HasMaxLength(30);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.HasMany(e => e.Usages)
+                  .WithOne(u => u.Voucher)
+                  .HasForeignKey(u => u.VoucherId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<VoucherUsage>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.MinecraftUsername).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.UsedAt).IsRequired();
         });
     }
 }

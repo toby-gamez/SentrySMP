@@ -1,0 +1,282 @@
+@page "/add-voucher"
+@using System.ComponentModel.DataAnnotations
+@using SentrySMP.Shared.DTOs
+@using SentrySMP.Shared.Interfaces
+@inject ISentryApi Api
+@inject ILogger<AddVoucher> Logger
+@inject NavigationManager Nav
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+
+<PageTitle>Add Voucher - SentrySMP Admin</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>
+                    <i class="bi bi-plus-circle-fill text-success me-2"></i>
+                    Create Voucher
+                </h1>
+
+                <div>
+                    <a href="/vouchers" class="btn btn-outline-secondary me-2">
+                        <i class="bi bi-chevron-left me-1"></i>
+                        Back
+                    </a>
+                </div>
+            </div>
+
+            <EditForm Model="@model" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                @if (submitError != null)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        @submitError
+                    </div>
+                }
+
+                <div class="mb-3">
+                    <label class="form-label">Code <span class="text-danger">*</span></label>
+                    <input class="form-control" placeholder="e.g. SUMMER-SALE-20"
+                           value="@model.Code"
+                           @oninput="OnCodeInput"
+                           @bind:event="oninput" />
+                    <div class="form-text">e.g. SUMMER-SALE-20 (will be auto-uppercased)</div>
+                    <ValidationMessage For="@(() => model.Code)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" rows="3" @bind="model.Description"></textarea>
+                    <ValidationMessage For="@(() => model.Description)" />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" class="form-control"
+                               @bind="model.StartDate" @bind:format="yyyy-MM-dd" />
+                        <ValidationMessage For="@(() => model.StartDate)" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Expiration Date</label>
+                        <input type="date" class="form-control"
+                               @bind="model.ExpirationDate" @bind:format="yyyy-MM-dd" />
+                        <ValidationMessage For="@(() => model.ExpirationDate)" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Discount %</label>
+                        <input type="number" class="form-control" min="0" max="100" step="0.1"
+                               @bind="model.DiscountPercent" />
+                        <ValidationMessage For="@(() => model.DiscountPercent)" />
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Max Uses</label>
+                        <input type="number" class="form-control" min="1"
+                               value="@model.MaxUses"
+                               @oninput="e => ParseNullableInt(e, v => model.MaxUses = v)" />
+                        <div class="form-text">Leave empty for unlimited</div>
+                        <ValidationMessage For="@(() => model.MaxUses)" />
+                    </div>
+                    <div class="col-md-4 mb-3 d-flex align-items-end">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="isActive" @bind="model.IsActive" />
+                            <label class="form-check-label" for="isActive">Is Active</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Scope</label>
+                    <select class="form-select" @bind="model.Scope">
+                        <option value="All">All</option>
+                        <option value="Category">Category</option>
+                        <option value="Item">Item</option>
+                    </select>
+                    <ValidationMessage For="@(() => model.Scope)" />
+                </div>
+
+                @if (model.Scope == "Category" || model.Scope == "Item")
+                {
+                    <div class="mb-3">
+                        <label class="form-label">Scope Category</label>
+                        <select class="form-select" @bind="model.ScopeCategory">
+                            <option value="">Select category</option>
+                            <option>Key</option>
+                            <option>Rank</option>
+                            <option>Bundle</option>
+                            <option>Coin</option>
+                            <option>Other</option>
+                            <option>BattlePass</option>
+                        </select>
+                        <ValidationMessage For="@(() => model.ScopeCategory)" />
+                    </div>
+                }
+
+                @if (model.Scope == "Item")
+                {
+                    <div class="mb-3">
+                        <label class="form-label">Scope Item Id</label>
+                        <input type="number" class="form-control" min="0"
+                               value="@model.ScopeItemId"
+                               @oninput="e => ParseNullableInt(e, v => model.ScopeItemId = v)" />
+                        <ValidationMessage For="@(() => model.ScopeItemId)" />
+                    </div>
+                }
+
+                <div class="mb-4">
+                    <label class="form-label">Preview</label>
+                    <div class="p-3 rounded" style="background: #f8f9fa;">
+                        @if (model.Scope == "All")
+                        {
+                            <div class="badge bg-success fs-6">
+                                🎫 @model.DiscountPercent.ToString("0.##")% off entire cart
+                            </div>
+                        }
+                        else if (model.Scope == "Category")
+                        {
+                            <div class="badge bg-primary fs-6">
+                                🎫 @model.DiscountPercent.ToString("0.##")% off all @((string.IsNullOrEmpty(model.ScopeCategory) ? "categories" : model.ScopeCategory + "s"))
+                            </div>
+                        }
+                        else if (model.Scope == "Item")
+                        {
+                            <div class="badge text-white fs-6" style="background-color:#6f42c1;">
+                                🎫 @model.DiscountPercent.ToString("0.##")% off @((model.ScopeCategory ?? "Item")) @if(model.ScopeItemId.HasValue){<text>#{model.ScopeItemId}</text>}
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary" type="submit" disabled="@submitting">
+                        <i class="bi bi-save me-1"></i>
+                        @if (submitting)
+                        {
+                            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                        }
+                        Save
+                    </button>
+                    <a class="btn btn-outline-secondary" href="/vouchers">Cancel</a>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    private FormModel model = new FormModel
+    {
+        StartDate = DateTime.Today,
+        ExpirationDate = DateTime.Today.AddDays(7),
+        DiscountPercent = 10m,
+        Scope = "All",
+        IsActive = true
+    };
+
+    private bool submitting = false;
+    private string? submitError;
+
+    private async Task HandleValidSubmit()
+    {
+        submitError = null;
+
+        if (model.ExpirationDate < model.StartDate)
+        {
+            submitError = "Expiration date cannot be before start date.";
+            return;
+        }
+
+        submitting = true;
+        try
+        {
+            var dto = new CreateVoucherDto
+            {
+                Code = model.Code?.ToUpperInvariant() ?? "",
+                Description = model.Description ?? "",
+                StartDate = model.StartDate,
+                ExpirationDate = model.ExpirationDate,
+                MaxUses = model.MaxUses,
+                DiscountPercent = model.DiscountPercent,
+                Scope = model.Scope ?? "All",
+                ScopeCategory = string.IsNullOrWhiteSpace(model.ScopeCategory) ? null : model.ScopeCategory,
+                ScopeItemId = model.ScopeItemId,
+                IsActive = model.IsActive
+            };
+
+            var created = await Api.CreateVoucherAsync(dto);
+            await JSRuntime.InvokeVoidAsync("alert", "Voucher created successfully!");
+            Nav.NavigateTo("/vouchers");
+        }
+        catch (Exception ex)
+        {
+            submitError = $"Error creating voucher: {ex.Message}";
+            Logger.LogError(ex, "Error creating voucher");
+        }
+        finally
+        {
+            submitting = false;
+        }
+    }
+
+    private void OnCodeInput(ChangeEventArgs e)
+    {
+        var val = e?.Value?.ToString() ?? "";
+        model.Code = val.ToUpperInvariant();
+        StateHasChanged();
+    }
+
+    private void ParseNullableInt(ChangeEventArgs e, Action<int?> assign)
+    {
+        var str = e?.Value?.ToString();
+        if (string.IsNullOrWhiteSpace(str))
+        {
+            assign(null);
+            return;
+        }
+
+        if (int.TryParse(str, out var v))
+        {
+            assign(v);
+        }
+        else
+        {
+            assign(null);
+        }
+    }
+
+    private class FormModel
+    {
+        [Required(ErrorMessage = "Code is required")]
+        public string? Code { get; set; }
+
+        public string? Description { get; set; }
+
+        [Required]
+        public DateTime StartDate { get; set; }
+
+        [Required]
+        public DateTime ExpirationDate { get; set; }
+
+        [Range(0, 100, ErrorMessage = "Discount must be between 0 and 100")]
+        public decimal DiscountPercent { get; set; }
+
+        public int? MaxUses { get; set; }
+
+        [Required]
+        public string Scope { get; set; } = "All";
+
+        public string? ScopeCategory { get; set; }
+
+        public int? ScopeItemId { get; set; }
+
+        public bool IsActive { get; set; }
+    }
+}
