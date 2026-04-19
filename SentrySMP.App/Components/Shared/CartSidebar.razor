@@ -5,6 +5,7 @@
 @inject NavigationManager NavigationManager
 @inject SentrySMP.App.Authentication.UserService UserService
 @inject Microsoft.Extensions.Logging.ILoggerFactory LoggerFactory
+@inject SentrySMP.Shared.Interfaces.ISentryApi SentryApi
 @implements IDisposable
 @rendermode InteractiveServer
 
@@ -84,9 +85,61 @@
     </div>
 
     <div class="cart-sidebar-footer">
+        <div class="mb-2">
+            @if (_appliedVoucher == null)
+            {
+                <div class="input-group">
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Enter promo code"
+                           @bind="_voucherCode"
+                           @bind:event="oninput"
+                           @onkeydown="OnVoucherKeyDownSidebar" />
+                    <button class="btn btn-outline-primary"
+                            @onclick="ApplyVoucherFromSidebar"
+                            disabled="@_voucherLoading">
+                        @if (_voucherLoading)
+                        {
+                            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                        }
+                        Apply
+                    </button>
+                </div>
+                @if (!string.IsNullOrEmpty(_voucherError))
+                {
+                    <div class="mt-2 text-danger small">
+                        <i class="bi bi-exclamation-circle me-1"></i>@_voucherError
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="badge bg-success fs-6 me-2">
+                            <i class="bi bi-check-circle me-1"></i>@_appliedVoucher.Code
+                        </span>
+                        <span class="text-success fw-bold">-€@_appliedVoucher.DiscountAmount.ToString("F2")</span>
+                        <div class="small text-muted mt-1">@_appliedVoucher.Message</div>
+                    </div>
+                    <button class="btn btn-sm btn-outline-danger" @onclick="RemoveVoucherFromSidebar">
+                        <i class="bi bi-x-circle me-1"></i>Remove
+                    </button>
+                </div>
+            }
+        </div>
+
         <div class="cart-sidebar-total">
             <strong>Total:</strong>
-            <span>€@CartState.CartItems.Sum(i => (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity).ToString("F2")</span>
+            @if (_appliedVoucher != null)
+            {
+                <span class="text-muted text-decoration-line-through me-2" style="font-size:0.9em;">€@CartTotal.ToString("F2")</span>
+                <span class="text-success">€@FinalTotal.ToString("F2")</span>
+            }
+            else
+            {
+                <span>€@CartTotal.ToString("F2")</span>
+            }
         </div>
         <div class="cart-sidebar-actions">
             <button class="danger" @onclick="ClearCart" disabled="@(CartState.CartItems.Count == 0)">
@@ -103,12 +156,20 @@
 </div>
 
 @code {
+    private const string VoucherStorageKey = "applied_voucher";
+
     private bool _cartLoaded = false;
     private string? _username;
     private bool _isLoggedIn = false;
     private Microsoft.Extensions.Logging.ILogger? _logger;
     private Action? _cartChanged;
     private Action? _sidebarChanged;
+
+    // Voucher state
+    private string _voucherCode = string.Empty;
+    private ValidateVoucherResponse? _appliedVoucher;
+    private bool _voucherLoading = false;
+    private string? _voucherError;
 
     protected override void OnInitialized()
     {
@@ -127,15 +188,33 @@
             await CartState.LoadFromStorageAsync(JS);
             _cartLoaded = true;
             await LoadUserAsync();
+
+            // Attempt to load persisted voucher code (if any) and apply it
+            try
+            {
+                var persisted = await JS.InvokeAsync<string>("localStorage.getItem", VoucherStorageKey);
+                if (!string.IsNullOrWhiteSpace(persisted))
+                {
+                    // Set field and try to apply (do not persist again when applying)
+                    _voucherCode = persisted!;
+                    await ApplyVoucherInternalAsync(persisted!, persist: false);
+                }
+            }
+            catch
+            {
+                // ignore localStorage errors
+            }
+
             StateHasChanged();
         }
     }
 
     public void Dispose()
     {
-        CartState.OnChange -= _cartChanged;
-        SidebarState.OnChange -= _sidebarChanged;
-        UserService.OnChange -= OnUserChanged;
+        // Unsubscribe only the delegates we registered to avoid memory leaks / multiple unsubscription errors
+        try { if (_cartChanged != null) CartState.OnChange -= _cartChanged; } catch { }
+        try { if (_sidebarChanged != null) SidebarState.OnChange -= _sidebarChanged; } catch { }
+        try { UserService.OnChange -= OnUserChanged; } catch { }
     }
 
     private void Close() => SidebarState.Close();
@@ -153,7 +232,16 @@
     private void GoToCheckout()
     {
         SidebarState.Close();
-        NavigationManager.NavigateTo("/checkout");
+        // if voucher applied, pass it as query param so Checkout can optionally pick it up
+        if (_appliedVoucher != null && !string.IsNullOrWhiteSpace(_appliedVoucher.Code))
+        {
+            var encoded = Uri.EscapeDataString(_appliedVoucher.Code);
+            NavigationManager.NavigateTo($"/checkout?voucher={encoded}");
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/checkout");
+        }
     }
 
     private void OnUserChanged() => _ = LoadUserAsync();
@@ -170,6 +258,100 @@
             _username = null;
             _isLoggedIn = false;
         }
+        StateHasChanged();
+    }
+
+    // Computed totals
+    private double CartTotal => CartState.CartItems.Sum(i =>
+        (i.Key.Sale > 0 ? Convert.ToDouble(i.Key.Price) * (1 - i.Key.Sale / 100.0) : Convert.ToDouble(i.Key.Price)) * i.Quantity);
+
+    private double FinalTotal => Math.Max(0, CartTotal - (double)(_appliedVoucher?.DiscountAmount ?? 0));
+
+    // Sidebar voucher UI handlers
+    private async Task OnVoucherKeyDownSidebar(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs e)
+    {
+        if (e?.Key == "Enter")
+        {
+            await ApplyVoucherFromSidebar();
+        }
+    }
+
+    private async Task ApplyVoucherFromSidebar()
+    {
+        var code = _voucherCode?.Trim() ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(code))
+        {
+            _voucherError = "Please enter a voucher code.";
+            return;
+        }
+        await ApplyVoucherInternalAsync(code, persist: true);
+    }
+
+    private async Task ApplyVoucherInternalAsync(string code, bool persist)
+    {
+        _voucherError = null;
+        _appliedVoucher = null;
+        _voucherLoading = true;
+        StateHasChanged();
+
+        try
+        {
+            var items = CartState.CartItems.Select(ci =>
+            {
+                double unitPrice = ci.Key.Sale > 0
+                    ? Convert.ToDouble(ci.Key.Price) * (1 - ci.Key.Sale / 100.0)
+                    : Convert.ToDouble(ci.Key.Price);
+                return new VoucherCartItem
+                {
+                    Type = ci.Key.Type,
+                    Id = ci.Key.Id,
+                    Quantity = ci.Quantity,
+                    UnitPrice = unitPrice
+                };
+            }).ToList();
+
+            var response = await SentryApi.ValidateVoucherAsync(new ValidateVoucherRequest { Code = code, Items = items });
+
+            if (response != null && response.IsValid)
+            {
+                _appliedVoucher = response;
+                _voucherCode = response.Code ?? code;
+                if (persist)
+                {
+                    try
+                    {
+                        await JS.InvokeVoidAsync("localStorage.setItem", VoucherStorageKey, _voucherCode);
+                    }
+                    catch { }
+                }
+            }
+            else
+            {
+                _voucherError = response?.Message ?? "Invalid voucher code.";
+            }
+        }
+        catch (Exception ex)
+        {
+            _voucherError = $"Error applying voucher: {ex.Message}";
+            try { _logger?.LogError(ex, "Error applying voucher code {Code}", code); } catch { }
+        }
+        finally
+        {
+            _voucherLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task RemoveVoucherFromSidebar()
+    {
+        _appliedVoucher = null;
+        _voucherCode = string.Empty;
+        _voucherError = null;
+        try
+        {
+            await JS.InvokeVoidAsync("localStorage.removeItem", VoucherStorageKey);
+        }
+        catch { }
         StateHasChanged();
     }
 }

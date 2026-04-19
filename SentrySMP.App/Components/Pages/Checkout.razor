@@ -483,6 +483,8 @@
 
 
 @code {
+    private const string VoucherStorageKey = "applied_voucher";
+
     private string _selectedPayment = "stripe";
     private bool _showPaymentCard = false;
     private bool _paymentSucceeded = false;
@@ -680,10 +682,14 @@
             try
             {
                 double parsedStripe = 0;
-                var formattedStripe = _amount;
-                if (!double.TryParse(_amount, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out parsedStripe) || parsedStripe <= 0)
+                // Prefer the discounted total when a voucher is applied; otherwise use the manually entered _amount.
+                var formattedStripe = _appliedVoucher != null
+                    ? FinalTotal.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)
+                    : _amount;
+
+                if (!double.TryParse(formattedStripe, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out parsedStripe) || parsedStripe <= 0)
                 {
-                    // Use FinalTotal as fallback so vouchers affect Stripe amount
+                    // Use FinalTotal as fallback so vouchers always affect Stripe amount
                     parsedStripe = FinalTotal;
                     formattedStripe = parsedStripe.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
                 }
@@ -717,10 +723,13 @@
             // Server-side create-order + redirect flow (no frontend JS)
             try
             {
-                // Use the manually entered amount (fallback to FinalTotal if parsing fails)
+                // Prefer the discounted total when a voucher is applied; otherwise use the manually entered _amount.
                 double parsed = 0;
-                var formatted = _amount;
-                if (!double.TryParse(_amount, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out parsed) || parsed <= 0)
+                var formatted = _appliedVoucher != null
+                    ? FinalTotal.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)
+                    : _amount;
+
+                if (!double.TryParse(formatted, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out parsed) || parsed <= 0)
                 {
                     // Use FinalTotal as fallback so vouchers affect PayPal amount
                     parsed = FinalTotal;
@@ -1069,10 +1078,43 @@
                 try { _logger?.LogWarning(exLoad, "Failed to load cart from storage on first render"); } catch { }
             }
 
+            // Auto-apply persisted voucher from localStorage (if any) and also honor querystring ?voucher=
+            try
+            {
+                // Querystring param takes precedence over localStorage
+                var uri = new Uri(NavigationManager.Uri);
+                var qs = QueryHelpers.ParseQuery(uri.Query);
+                string? voucherParam = null;
+                if (qs.TryGetValue("voucher", out var v) && !string.IsNullOrWhiteSpace(v))
+                {
+                    voucherParam = v.ToString();
+                }
+
+                if (!string.IsNullOrWhiteSpace(voucherParam))
+                {
+                    _voucherCode = voucherParam!;
+                    try { await ApplyVoucherAsync(); } catch { }
+                }
+                else
+                {
+                    try
+                    {
+                        var stored = await JS.InvokeAsync<string>("localStorage.getItem", VoucherStorageKey);
+                        if (!string.IsNullOrWhiteSpace(stored) && string.IsNullOrWhiteSpace(_voucherCode))
+                        {
+                            _voucherCode = stored!;
+                            try { await ApplyVoucherAsync(); } catch { }
+                        }
+                    }
+                    catch { }
+                }
+            }
+            catch { }
+
             // Detect redirects from server-side PayPal return (e.g. ?status=success)
-            var uri = new Uri(NavigationManager.Uri);
-            var qs = QueryHelpers.ParseQuery(uri.Query);
-            if (qs.TryGetValue("status", out var status))
+            var uri2 = new Uri(NavigationManager.Uri);
+            var qs2 = QueryHelpers.ParseQuery(uri2.Query);
+            if (qs2.TryGetValue("status", out var status))
             {
                 if (status == "success")
                 {
@@ -1084,19 +1126,19 @@
                     string providerName = "Manual";
                     string providerTxId = "return";
                     bool hasPaymentId = false;
-                    if (qs.TryGetValue("session_id", out var sid) && !string.IsNullOrWhiteSpace(sid))
+                    if (qs2.TryGetValue("session_id", out var sid) && !string.IsNullOrWhiteSpace(sid))
                     {
                         providerName = "Stripe";
                         providerTxId = sid.ToString();
                         hasPaymentId = true;
                     }
-                    else if (qs.TryGetValue("orderId", out var oid) && !string.IsNullOrWhiteSpace(oid))
+                    else if (qs2.TryGetValue("orderId", out var oid) && !string.IsNullOrWhiteSpace(oid))
                     {
                         providerName = "PayPal";
                         providerTxId = oid.ToString();
                         hasPaymentId = true;
                     }
-                    else if (qs.TryGetValue("provider", out var pv) && !string.IsNullOrWhiteSpace(pv))
+                    else if (qs2.TryGetValue("provider", out var pv) && !string.IsNullOrWhiteSpace(pv))
                     {
                         // honor explicit provider if provided
                         providerName = pv.ToString();
@@ -1460,6 +1502,16 @@
                 _appliedVoucher = response;
                 // Update _amount so PayPal/Stripe get the discounted total
                 _amount = FinalTotal.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+
+                // Persist applied voucher code to browser storage so it can be auto-applied on future visits
+                try
+                {
+                    await JS.InvokeVoidAsync("localStorage.setItem", VoucherStorageKey, code);
+                }
+                catch
+                {
+                    // ignore storage failures
+                }
             }
             else
             {
@@ -1478,13 +1530,23 @@
         }
     }
 
-    private void RemoveVoucher()
+    private async Task RemoveVoucher()
     {
         _appliedVoucher = null;
         _voucherCode = string.Empty;
         _voucherError = null;
         // Restore original amount
         _amount = CartTotal.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+
+        // Remove persisted voucher from localStorage
+        try
+        {
+            await JS.InvokeVoidAsync("localStorage.removeItem", VoucherStorageKey);
+        }
+        catch
+        {
+            // ignore
+        }
     }
     }
 }
