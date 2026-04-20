@@ -18,6 +18,40 @@
                 </h1>
             </div>
 
+            <div class="mb-3">
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <input class="form-control" placeholder="Search username / tx id / provider tx id" @bind="searchTerm" @oninput="OnSearchChanged" />
+                    </div>
+                    <div class="col-md-2">
+                        <input type="date" class="form-control" value="@startDateString" @onchange="OnStartDateChanged" />
+                    </div>
+                    <div class="col-md-2">
+                        <input type="date" class="form-control" value="@endDateString" @onchange="OnEndDateChanged" />
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" @bind="selectedStatus">
+                            <option value="">All statuses</option>
+                            @foreach (var s in statusOptions)
+                            {
+                                <option value="@s">@s</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" @bind="pageSize">
+                            <option value="10">10 / page</option>
+                            <option value="25">25 / page</option>
+                            <option value="50">50 / page</option>
+                            <option value="100">100 / page</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1 d-flex">
+                        <button class="btn btn-outline-secondary me-2" @onclick="ClearFilters">Clear</button>
+                    </div>
+                </div>
+            </div>
+
             @if (loading)
             {
                 <div class="d-flex justify-content-center">
@@ -33,7 +67,7 @@
                     @errorMessage
                 </div>
             }
-            else if (transactions?.Any() == true)
+            else if (filteredTransactions?.Any() == true)
             {
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
@@ -51,7 +85,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var tx in transactions)
+                            @foreach (var tx in pagedTransactions)
                             {
                                 <tr>
                                     <td>@tx.Id</td>
@@ -68,6 +102,16 @@
                         </tbody>
                     </table>
                 </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                    <div>
+                        Showing @((page-1)*pageSize + 1) - @Math.Min(page*pageSize, filteredTransactions.Count) of @filteredTransactions.Count
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-outline-primary me-1" @onclick="PrevPage" disabled="@(page == 1)">Prev</button>
+                        <button class="btn btn-sm btn-outline-primary" @onclick="NextPage" disabled="@(page >= totalPages)">Next</button>
+                    </div>
+                </div>
             }
             else
             {
@@ -82,10 +126,25 @@
 
 @code {
     private List<TransactionResponse>? transactions;
+    private List<TransactionResponse> filteredTransactions = new();
+    private IEnumerable<TransactionResponse> pagedTransactions => filteredTransactions.Skip((page - 1) * pageSize).Take(pageSize);
     private bool loading = true;
     private string? errorMessage;
 
     private bool isInitialized = false;
+
+    // Filter / paging state
+    private string searchTerm = string.Empty;
+    private string? startDateString;
+    private string? endDateString;
+    private DateTime? startDate => TryParseDate(startDateString);
+    private DateTime? endDate => TryParseDate(endDateString)?.Date.AddDays(1).AddTicks(-1);
+    private string selectedStatus = string.Empty;
+    private List<string> statusOptions = new();
+
+    private int page = 1;
+    private int pageSize = 25;
+    private int totalPages => Math.Max(1, (int)Math.Ceiling((double)filteredTransactions.Count / pageSize));
 
     protected override async Task OnInitializedAsync()
     {
@@ -104,6 +163,9 @@
             errorMessage = null;
             var list = await Api.GetTransactionsAsync();
             transactions = list.OrderByDescending(t => t.CreatedAt).ToList();
+            // initialize status options
+            statusOptions = transactions.Select(t => t.Status ?? string.Empty).Where(s => !string.IsNullOrEmpty(s)).Distinct().OrderBy(s => s).ToList();
+            ApplyFilters();
         }
         catch (Exception ex)
         {
@@ -113,6 +175,113 @@
         finally
         {
             loading = false;
+        }
+    }
+
+    private void OnSearchChanged(ChangeEventArgs e)
+    {
+        searchTerm = e?.Value?.ToString() ?? string.Empty;
+        ApplyFilters();
+    }
+
+    private void OnStartDateChanged(ChangeEventArgs e)
+    {
+        startDateString = NormalizeDateChangeValue(e?.Value);
+        ApplyFilters();
+    }
+
+    private void OnEndDateChanged(ChangeEventArgs e)
+    {
+        endDateString = NormalizeDateChangeValue(e?.Value);
+        ApplyFilters();
+    }
+
+    private void ApplyFilters()
+    {
+        if (transactions == null)
+        {
+            filteredTransactions = new();
+            page = 1;
+            return;
+        }
+
+        IEnumerable<TransactionResponse> q = transactions;
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var lower = searchTerm.Trim().ToLowerInvariant();
+            q = q.Where(t => (t.MinecraftUsername ?? string.Empty).ToLowerInvariant().Contains(lower)
+                         || (t.ProviderTransactionId ?? string.Empty).ToLowerInvariant().Contains(lower)
+                         || (t.Provider ?? string.Empty).ToLowerInvariant().Contains(lower)
+                         || t.Id.ToString().Contains(lower));
+        }
+
+        if (startDate.HasValue)
+        {
+            q = q.Where(t => t.CreatedAt >= startDate.Value);
+        }
+
+        if (endDate.HasValue)
+        {
+            q = q.Where(t => t.CreatedAt <= endDate.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(selectedStatus))
+        {
+            q = q.Where(t => string.Equals(t.Status, selectedStatus, StringComparison.OrdinalIgnoreCase));
+        }
+
+        filteredTransactions = q.OrderByDescending(t => t.CreatedAt).ToList();
+        // ensure page is within range
+        page = Math.Clamp(page, 1, totalPages);
+        StateHasChanged();
+    }
+
+    private void ClearFilters()
+    {
+        searchTerm = string.Empty;
+        startDateString = null;
+        endDateString = null;
+        selectedStatus = string.Empty;
+        page = 1;
+        ApplyFilters();
+    }
+
+    private void PrevPage()
+    {
+        if (page > 1) { page--; }
+        StateHasChanged();
+    }
+
+    private void NextPage()
+    {
+        if (page < totalPages) { page++; }
+        StateHasChanged();
+    }
+
+    private static DateTime? TryParseDate(string? s)
+    {
+        if (string.IsNullOrWhiteSpace(s)) return null;
+        if (DateTime.TryParse(s, out var d)) return d;
+        if (DateOnly.TryParse(s, out var dOnly)) return dOnly.ToDateTime(TimeOnly.MinValue);
+        return null;
+    }
+
+    private static string? NormalizeDateChangeValue(object? value)
+    {
+        if (value == null) return null;
+        switch (value)
+        {
+            case string s:
+                return string.IsNullOrWhiteSpace(s) ? null : s;
+            case DateTime dt:
+                return dt.ToString("yyyy-MM-dd");
+            case DateOnly d:
+                return d.ToString("yyyy-MM-dd");
+            case TimeOnly t:
+                return t.ToString();
+            default:
+                return value.ToString();
         }
     }
 }
