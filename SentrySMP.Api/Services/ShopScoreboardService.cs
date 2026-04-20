@@ -31,7 +31,10 @@ namespace SentrySMP.Api.Services
 
             var query = _db.PaymentTransactions
                 .AsNoTracking()
-                .Where(t => t.Status != null && t.Status.ToLower() == "succeeded");
+                .Where(t => t.Status != null && (
+                    t.Status.ToLower().StartsWith("succeeded;")
+                    && (t.Status.ToLower().Contains("rcon_ok") || t.Status.ToLower().Contains("rcon_failed"))
+                ));
 
             if (from.HasValue)
             {
