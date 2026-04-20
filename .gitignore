@@ -14,3 +14,5 @@ build/build-ftp-admin.json
 build/build-ftp.json
 build/C:/*
 build/tools/*
+build/build-ftp-images.cake
+build/build-ftp-images.json
