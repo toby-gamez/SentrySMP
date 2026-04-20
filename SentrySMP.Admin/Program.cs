@@ -89,6 +89,31 @@ services
     .AddHttpMessageHandler<AuthenticationHeaderHandler>()
     .AddHttpMessageHandler<HttpLoggingHandler>();
 
+// Refit client for Images service
+services
+    .AddRefitClient<SentrySMP.Shared.Interfaces.IImagesApi>()
+    .ConfigureHttpClient(c =>
+    {
+        var baseAddress = builder.Configuration["Images:BaseAddress"];
+        if (string.IsNullOrEmpty(baseAddress))
+        {
+            // fallback to Api base address if Images not configured
+            baseAddress = builder.Configuration["Api:BaseAddress"];
+        }
+        c.BaseAddress = new Uri(baseAddress!);
+    })
+    .ConfigurePrimaryHttpMessageHandler(() =>
+    {
+        var handler = new HttpClientHandler();
+        if (builder.Environment.IsDevelopment())
+        {
+            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+        }
+        return handler;
+    })
+    .AddHttpMessageHandler<AuthenticationHeaderHandler>()
+    .AddHttpMessageHandler<HttpLoggingHandler>();
+
 services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Sentry API", Version = "v1" });

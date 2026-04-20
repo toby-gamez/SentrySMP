@@ -80,7 +80,8 @@ services.AddScoped<IShopScoreboardService, SentrySMP.Api.Services.ShopScoreboard
 // IRconService is implemented in the API project (server-side service)
 services.AddScoped<SentrySMP.Shared.Interfaces.IRconService, SentrySMP.Api.Services.RconService>();
 // Image sync service (downloads missing images into wwwroot/uploads/keys)
-services.AddScoped<IImageService, ImageService>();
+// Use proxy service that talks to SentrySMP.Images via Refit
+services.AddScoped<IImageService, SentrySMP.App.Services.ImagesProxyService>();
 services.AddScoped<CartState>(sp => new CartState(sp.GetRequiredService<Microsoft.JSInterop.IJSRuntime>()));
 services.AddScoped<SentrySMP.App.Components.State.CartSidebarState>();
 services.AddScoped<SentrySMP.App.Components.State.VoucherState>();
@@ -121,6 +122,29 @@ services.AddRefitClient<ISentryApi>()
         if (builder.Environment.IsDevelopment())
         {
             // Ignore SSL certificate errors in development
+            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+        }
+        return handler;
+    })
+    .AddHttpMessageHandler<HttpLoggingHandler>();
+
+// Refit client for Images service
+services
+    .AddRefitClient<SentrySMP.Shared.Interfaces.IImagesApi>()
+    .ConfigureHttpClient(c =>
+    {
+        var baseAddress = builder.Configuration["Images:BaseAddress"];
+        if (string.IsNullOrEmpty(baseAddress))
+        {
+            baseAddress = builder.Configuration["Api:BaseAddress"];
+        }
+        c.BaseAddress = new Uri(baseAddress!);
+    })
+    .ConfigurePrimaryHttpMessageHandler(() =>
+    {
+        var handler = new HttpClientHandler();
+        if (builder.Environment.IsDevelopment())
+        {
             handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
         }
         return handler;
