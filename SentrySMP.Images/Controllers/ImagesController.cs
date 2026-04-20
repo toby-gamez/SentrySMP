@@ -14,7 +14,7 @@ public class ImagesController : ControllerBase
     private static readonly string[] AllowedContentTypes = { "image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif" };
     private const long MaxFileSize = 10 * 1024 * 1024; // 10MB
 
-    public ImagesController(ILogger<ImagesController> logger, IWebHostEnvironment env)
+        public ImagesController(ILogger<ImagesController> logger, IWebHostEnvironment env)
     {
         _logger = logger;
         _env = env;
@@ -22,7 +22,7 @@ public class ImagesController : ControllerBase
 
     [HttpPost("upload")]
     [Authorize(AuthenticationSchemes = "BasicAuth")]
-    public async Task<ActionResult<FileUploadResponse>> UploadImage(IFormFile file, [FromQuery] string? subDirectory = "keys")
+        public async Task<ActionResult<FileUploadResponse>> UploadImage(IFormFile file, [FromQuery] string? subDirectory = "keys")
     {
         if (file == null || file.Length == 0)
             return BadRequest(new { error = "No file provided" });
@@ -36,7 +36,8 @@ public class ImagesController : ControllerBase
         var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
         var uniqueName = $"{Guid.NewGuid()}{ext}";
 
-        var uploadDir = Path.Combine(_env.WebRootPath ?? _env.ContentRootPath, "uploads", string.IsNullOrWhiteSpace(subDirectory) ? "keys" : subDirectory);
+        var webRoot = !string.IsNullOrWhiteSpace(_env.WebRootPath) ? _env.WebRootPath : Path.Combine(_env.ContentRootPath, "wwwroot");
+        var uploadDir = Path.Combine(webRoot, "uploads", string.IsNullOrWhiteSpace(subDirectory) ? "keys" : subDirectory);
         if (!Directory.Exists(uploadDir)) Directory.CreateDirectory(uploadDir);
 
         var filePath = Path.Combine(uploadDir, uniqueName);
@@ -62,7 +63,8 @@ public class ImagesController : ControllerBase
     [AllowAnonymous]
     public ActionResult<IEnumerable<FileUploadResponse>> GetImages([FromQuery] string? subDirectory = "keys")
     {
-        var uploadDir = Path.Combine(_env.WebRootPath ?? _env.ContentRootPath, "uploads", string.IsNullOrWhiteSpace(subDirectory) ? "keys" : subDirectory);
+        var webRoot = !string.IsNullOrWhiteSpace(_env.WebRootPath) ? _env.WebRootPath : Path.Combine(_env.ContentRootPath, "wwwroot");
+        var uploadDir = Path.Combine(webRoot, "uploads", string.IsNullOrWhiteSpace(subDirectory) ? "keys" : subDirectory);
         if (!Directory.Exists(uploadDir)) return Ok(Enumerable.Empty<FileUploadResponse>());
 
         var baseUrl = Request.Scheme + "://" + Request.Host;
@@ -87,7 +89,8 @@ public class ImagesController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(fileName)) return BadRequest(new { error = "fileName required" });
 
-        var filePath = Path.Combine(_env.WebRootPath ?? _env.ContentRootPath, "uploads", subDirectory ?? "keys", fileName);
+        var webRoot = !string.IsNullOrWhiteSpace(_env.WebRootPath) ? _env.WebRootPath : Path.Combine(_env.ContentRootPath, "wwwroot");
+        var filePath = Path.Combine(webRoot, "uploads", subDirectory ?? "keys", fileName);
         if (!System.IO.File.Exists(filePath)) return NotFound(new { error = "Not found" });
 
         System.IO.File.Delete(filePath);
