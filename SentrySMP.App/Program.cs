@@ -83,6 +83,7 @@ services.AddScoped<SentrySMP.Shared.Interfaces.IRconService, SentrySMP.Api.Servi
 services.AddScoped<IImageService, ImageService>();
 services.AddScoped<CartState>(sp => new CartState(sp.GetRequiredService<Microsoft.JSInterop.IJSRuntime>()));
 services.AddScoped<SentrySMP.App.Components.State.CartSidebarState>();
+services.AddScoped<SentrySMP.App.Components.State.VoucherState>();
 services.AddControllers()
     .AddJsonOptions(options =>
     {

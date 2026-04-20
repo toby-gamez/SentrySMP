@@ -123,7 +123,7 @@
                     {
                         <div class="mb-3">
                             <label class="form-label">Scope Category</label>
-                            <select class="form-select" @bind="model.ScopeCategory">
+                            <select class="form-select" value="@model.ScopeCategory" @onchange="OnScopeCategoryChanged">
                                 <option value="">Select category</option>
                                 <option>Key</option>
                                 <option>Rank</option>
@@ -139,10 +139,26 @@
                     @if (model.Scope == "Item")
                     {
                         <div class="mb-3">
-                            <label class="form-label">Scope Item Id</label>
-                            <input type="number" class="form-control" min="0"
-                                   value="@model.ScopeItemId"
-                                   @oninput="e => ParseNullableInt(e, v => model.ScopeItemId = v)" />
+                            <label class="form-label">Scope Item</label>
+                            @if (scopeItemsLoading)
+                            {
+                                <div>Loading items...</div>
+                            }
+                            else if (!string.IsNullOrEmpty(scopeItemsError))
+                            {
+                                <div class="alert alert-danger">@scopeItemsError</div>
+                            }
+                            else
+                            {
+                                <select class="form-select" value="@(model.ScopeItemId?.ToString() ?? "")" @onchange="OnScopeItemChanged">
+                                    <option value="">Select item</option>
+                                    @foreach (var it in scopeItems)
+                                    {
+                                        <option value="@it.Id">@it.Name (@it.Id)</option>
+                                    }
+                                </select>
+                            }
+
                             <ValidationMessage For="@(() => model.ScopeItemId)" />
                         </div>
                     }
@@ -171,7 +187,7 @@
                             else if (model.Scope == "Item")
                             {
                                 <div class="badge text-white fs-6" style="background-color:#6f42c1;">
-                                    🎫 @model.DiscountPercent.ToString("0.##")% off @((model.ScopeCategory ?? "Item")) @if(model.ScopeItemId.HasValue){<text>#{model.ScopeItemId}</text>}
+                                    🎫 @model.DiscountPercent.ToString("0.##")% off @(model.ScopeCategory ?? "Item")@if(model.ScopeItemId.HasValue){<text>#{model.ScopeItemId}</text>}
                                 </div>
                             }
                         </div>
@@ -253,6 +269,10 @@
             };
 
             currentUses = v.CurrentUses;
+            if (model.Scope == "Item" && !string.IsNullOrWhiteSpace(model.ScopeCategory))
+            {
+                await LoadScopeItems();
+            }
         }
         catch (Exception ex)
         {
@@ -330,6 +350,83 @@
         else
         {
             assign(null);
+        }
+    }
+
+    // Scope item listing
+    private List<ProductResponse> scopeItems = new();
+    private bool scopeItemsLoading = false;
+    private string? scopeItemsError;
+
+    private async Task OnScopeCategoryChanged(ChangeEventArgs e)
+    {
+        model.ScopeCategory = e?.Value?.ToString();
+        model.ScopeItemId = null;
+        await LoadScopeItems();
+    }
+
+    private async Task OnScopeItemChanged(ChangeEventArgs e)
+    {
+        var str = e?.Value?.ToString();
+        if (string.IsNullOrWhiteSpace(str))
+        {
+            model.ScopeItemId = null;
+            return;
+        }
+
+        if (int.TryParse(str, out var v)) model.ScopeItemId = v;
+        else model.ScopeItemId = null;
+    }
+
+    private async Task LoadScopeItems()
+    {
+        scopeItems.Clear();
+        scopeItemsError = null;
+        if (string.IsNullOrWhiteSpace(model.ScopeCategory)) return;
+
+        scopeItemsLoading = true;
+        try
+        {
+            switch ((model.ScopeCategory ?? string.Empty).Trim())
+            {
+                case "Key":
+                    var keys = await Api.GetKeysAsync();
+                    scopeItems = keys.Select(k => (ProductResponse)k).ToList();
+                    break;
+                case "Rank":
+                    var ranks = await Api.GetRanksAsync();
+                    scopeItems = ranks.Select(r => (ProductResponse)r).ToList();
+                    break;
+                case "Bundle":
+                    var bundles = await Api.GetBundlesAsync();
+                    scopeItems = bundles.Select(b => (ProductResponse)b).ToList();
+                    break;
+                case "Coin":
+                    var coins = await Api.GetCoinsAsync();
+                    scopeItems = coins.Select(c => (ProductResponse)c).ToList();
+                    break;
+                case "Other":
+                    var others = await Api.GetOthersAsync();
+                    scopeItems = others.Select(o => (ProductResponse)o).ToList();
+                    break;
+                case "BattlePass":
+                    var bps = await Api.GetBattlePassesAsync();
+                    scopeItems = bps.Select(bp => (ProductResponse)bp).ToList();
+                    break;
+                default:
+                    scopeItems = new List<ProductResponse>();
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            scopeItemsError = ex.Message;
+            Logger.LogError(ex, "Error loading scope items for category {Category}", model.ScopeCategory);
+        }
+        finally
+        {
+            scopeItemsLoading = false;
+            StateHasChanged();
         }
     }
 

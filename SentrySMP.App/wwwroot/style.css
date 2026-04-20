@@ -2699,9 +2699,29 @@ tr:nth-child(even) {
     background-color: #dc3545;
 }
 
+
+.voucher-item {
+    background-color: #242424;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.voucher-cart-header {
+    display: flex;
+    justify-content: space-between;
+}
+
 /* light */
 body.light .table-wrapper::-webkit-scrollbar-track {
     background: #f1f1f1;
+}
+
+body.light .voucher-item {
+    background-color: #f0f0f0;
 }
 
 body.light .nav-list

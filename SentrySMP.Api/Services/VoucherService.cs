@@ -131,13 +131,16 @@ public class VoucherService : IVoucherService
                 applicableTotal += (decimal)(item.UnitPrice * item.Quantity);
         }
 
-        var discountAmount = Math.Round(applicableTotal * voucher.DiscountPercent / 100m, 2);
+        // If there are no applicable items in the cart, do not claim the voucher's percent
+        // (so UI won't display e.g. "50% discount applied" when amount is actually €0).
+        var discountPercentToApply = applicableTotal > 0 ? voucher.DiscountPercent : 0m;
+        var discountAmount = Math.Round(applicableTotal * discountPercentToApply / 100m, 2);
 
         return new ValidateVoucherResponse
         {
             IsValid = true,
-            Message = $"{voucher.DiscountPercent}% discount applied!",
-            DiscountPercent = voucher.DiscountPercent,
+            Message = discountPercentToApply > 0 ? $"{voucher.DiscountPercent}% discount applied!" : "No applicable items in cart",
+            DiscountPercent = discountPercentToApply,
             DiscountAmount = discountAmount,
             Scope = voucher.Scope,
             ScopeCategory = voucher.ScopeCategory,

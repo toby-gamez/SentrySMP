@@ -19,6 +19,7 @@
 @inject SentrySMP.App.Services.IBackgroundTaskQueue BackgroundQueue
 @inject SentrySMP.Shared.Interfaces.ISentryApi SentryApi
 @inject SentrySMP.Shared.Interfaces.IPurchaseTrackingService PurchaseTrackingService
+@inject SentrySMP.App.Components.State.VoucherState VoucherState
 @rendermode InteractiveServer
 <PageTitle>Checkout - SentrySMP</PageTitle>
 
@@ -176,7 +177,7 @@
         <div class="cart-total">
             @if (_appliedVoucher != null)
             {
-                <span class="text-muted text-decoration-line-through me-2" style="font-size:0.9em;">€@CartTotal.ToString("F2")</span>
+                <span class="text-muted me-2" style="font-size:0.9em; text-decoration: line-through">€@CartTotal.ToString("F2")</span>
                 <span class="text-success">€@FinalTotal.ToString("F2")</span>
             }
             else
@@ -188,19 +189,19 @@
         @* Voucher / Promo Code *@
         <div class="card mb-3">
             <div class="card-body">
-                <h5 class="card-title mb-3">
-                    <i class="bi bi-tag-fill me-2 text-primary"></i>Promo Code
-                </h5>
+                <h3 class="card-title mb-3">
+                    Voucher
+                </h3>
                 @if (_appliedVoucher == null)
                 {
-                    <div class="input-group">
+                    <div>
                         <input type="text"
                                                class="form-control"
-                                               placeholder="Enter promo code"
+                                               placeholder="Enter voucher code"
                                                @bind="_voucherCode"
                                                @bind:event="oninput"
                                                @onkeydown="OnVoucherKeyDown" />
-                        <button class="btn btn-outline-primary"
+                        <button class="great-button"
                                 @onclick="ApplyVoucherAsync"
                                 disabled="@_voucherLoading">
                             @if (_voucherLoading)
@@ -219,16 +220,16 @@
                 }
                 else
                 {
-                    <div class="d-flex align-items-center justify-content-between">
+                    <div class="voucher-item">
                         <div>
-                            <span class="badge bg-success fs-6 me-2">
-                                <i class="bi bi-check-circle me-1"></i>@_appliedVoucher.Code
+                            <span>
+                                <b>@_appliedVoucher.Code</b>
                             </span>
-                            <span class="text-success fw-bold">-€@_appliedVoucher.DiscountAmount.ToString("F2")</span>
-                            <div class="small text-muted mt-1">@_appliedVoucher.Message</div>
+                            @* Show only the concise summary sentence instead of individual discount/applies-to lines *@
+                            <div class="small text-success mt-1">@((!string.IsNullOrWhiteSpace(GetVoucherSummary(_appliedVoucher, _voucherAppliesTo))) ? GetVoucherSummary(_appliedVoucher, _voucherAppliesTo) : (_appliedVoucher.Message ?? "Discount applied"))</div>
                         </div>
-                        <button class="btn btn-sm btn-outline-danger" @onclick="RemoveVoucher">
-                            <i class="bi bi-x-circle me-1"></i>Remove
+                        <button class="danger" @onclick="RemoveVoucher">
+                            <i class="bi bi-x-circle me-1"></i> Remove
                         </button>
                     </div>
                 }
@@ -506,6 +507,9 @@
     private ValidateVoucherResponse? _appliedVoucher;
     private bool _voucherLoading = false;
     private string? _voucherError;
+    // UI details for applied voucher
+    private string? _voucherAppliesTo;
+    private string? _voucherDescription;
 
     // computed totals
     private double CartTotal => CartState.CartItems.Sum(i =>
@@ -579,6 +583,13 @@
         }
         catch { }
 
+        // initialize from shared voucher state and subscribe
+        VoucherState.OnChange += OnVoucherStateChanged;
+        _appliedVoucher = VoucherState.AppliedVoucher;
+        _voucherCode = VoucherState.VoucherCode ?? string.Empty;
+        _voucherError = VoucherState.Error;
+        _voucherLoading = VoucherState.IsLoading;
+
         // Validate cart limits
         try
         {
@@ -593,13 +604,74 @@
     public void Dispose()
     {
         CartState.OnChange -= HandleCartChanged;
+        VoucherState.OnChange -= OnVoucherStateChanged;
     }
 
     private async void HandleCartChanged()
     {
         try { await CheckServerStatusAsync(); } catch { }
         try { await ValidateCartLimitsAsync(); } catch { }
+        try { await ReevaluateVoucherAsync(); } catch { }
         try { await InvokeAsync(StateHasChanged); } catch { }
+    }
+
+    // Re-evaluate the currently applied voucher when the cart changes.
+    // If there are no applicable items left, suppress the percent/amount so UI and payment amounts stay correct.
+    private async Task ReevaluateVoucherAsync()
+    {
+        if (_appliedVoucher == null) return;
+
+        try
+        {
+            var items = CartState.CartItems.Select(ci =>
+            {
+                double unitPrice = ci.Key.Sale > 0
+                    ? Convert.ToDouble(ci.Key.Price) * (1 - ci.Key.Sale / 100.0)
+                    : Convert.ToDouble(ci.Key.Price);
+                return new VoucherCartItem
+                {
+                    Type = ci.Key.Type,
+                    Id = ci.Key.Id,
+                    Quantity = ci.Quantity,
+                    UnitPrice = unitPrice
+                };
+            }).ToList();
+
+            decimal applicableTotal = 0m;
+            foreach (var it in items)
+            {
+                bool applies = (_appliedVoucher.Scope ?? "All") switch
+                {
+                    "All" => true,
+                    "Category" => string.Equals(it.Type, _appliedVoucher.ScopeCategory, StringComparison.OrdinalIgnoreCase),
+                    "Item" => string.Equals(it.Type, _appliedVoucher.ScopeCategory, StringComparison.OrdinalIgnoreCase) && it.Id == _appliedVoucher.ScopeItemId,
+                    _ => false
+                };
+
+                if (applies)
+                    applicableTotal += (decimal)(it.UnitPrice * it.Quantity);
+            }
+
+            if (applicableTotal <= 0)
+            {
+                _appliedVoucher.DiscountPercent = 0m;
+                _appliedVoucher.DiscountAmount = 0m;
+                _appliedVoucher.Message = "No applicable items in cart";
+                _amount = CartTotal.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                // Recalculate discount amount based on remaining applicable items
+                var dp = _appliedVoucher.DiscountPercent;
+                var newAmt = Math.Round(applicableTotal * dp / 100m, 2);
+                _appliedVoucher.DiscountAmount = newAmt;
+                _amount = FinalTotal.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+            }
+        }
+        catch
+        {
+            // best-effort; don't break cart updates on errors
+        }
     }
 
     private void SelectPayment(string method)
@@ -1093,20 +1165,11 @@
                 if (!string.IsNullOrWhiteSpace(voucherParam))
                 {
                     _voucherCode = voucherParam!;
-                    try { await ApplyVoucherAsync(); } catch { }
+                    try { await VoucherState.ApplyAsync(_voucherCode, CartState, persist: true); } catch { }
                 }
                 else
                 {
-                    try
-                    {
-                        var stored = await JS.InvokeAsync<string>("localStorage.getItem", VoucherStorageKey);
-                        if (!string.IsNullOrWhiteSpace(stored) && string.IsNullOrWhiteSpace(_voucherCode))
-                        {
-                            _voucherCode = stored!;
-                            try { await ApplyVoucherAsync(); } catch { }
-                        }
-                    }
-                    catch { }
+                    try { await VoucherState.LoadFromStorageAsync(CartState); } catch { }
                 }
             }
             catch { }
@@ -1481,41 +1544,15 @@
         StateHasChanged();
         try
         {
-            var items = CartState.CartItems.Select(ci =>
+            await VoucherState.ApplyAsync(code, CartState, persist: true);
+            // copy results into local view
+            _appliedVoucher = VoucherState.AppliedVoucher;
+            _voucherError = VoucherState.Error;
+            _voucherLoading = VoucherState.IsLoading;
+            if (_appliedVoucher != null)
             {
-                double unitPrice = ci.Key.Sale > 0
-                    ? Convert.ToDouble(ci.Key.Price) * (1 - ci.Key.Sale / 100.0)
-                    : Convert.ToDouble(ci.Key.Price);
-                return new VoucherCartItem
-                {
-                    Type = ci.Key.Type,
-                    Id = ci.Key.Id,
-                    Quantity = ci.Quantity,
-                    UnitPrice = unitPrice
-                };
-            }).ToList();
-
-            var response = await SentryApi.ValidateVoucherAsync(new ValidateVoucherRequest { Code = code, Items = items });
-
-            if (response.IsValid)
-            {
-                _appliedVoucher = response;
-                // Update _amount so PayPal/Stripe get the discounted total
+                try { await LoadVoucherDetailsAsync(_appliedVoucher); } catch { }
                 _amount = FinalTotal.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
-
-                // Persist applied voucher code to browser storage so it can be auto-applied on future visits
-                try
-                {
-                    await JS.InvokeVoidAsync("localStorage.setItem", VoucherStorageKey, code);
-                }
-                catch
-                {
-                    // ignore storage failures
-                }
-            }
-            else
-            {
-                _voucherError = response.Message ?? "Invalid voucher code.";
             }
         }
         catch (Exception ex)
@@ -1532,20 +1569,152 @@
 
     private async Task RemoveVoucher()
     {
+        await VoucherState.RemoveAsync();
         _appliedVoucher = null;
         _voucherCode = string.Empty;
         _voucherError = null;
+        _voucherAppliesTo = null;
+        _voucherDescription = null;
         // Restore original amount
         _amount = CartTotal.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+    }
 
-        // Remove persisted voucher from localStorage
+    private async Task LoadVoucherDetailsAsync(ValidateVoucherResponse resp)
+    {
+        _voucherAppliesTo = null;
+        _voucherDescription = resp.Message;
+
         try
         {
-            await JS.InvokeVoidAsync("localStorage.removeItem", VoucherStorageKey);
+            var scope = resp.Scope ?? "All";
+            if (scope.Equals("All", StringComparison.OrdinalIgnoreCase))
+            {
+                _voucherAppliesTo = "All items";
+            }
+            else if (scope.Equals("Category", StringComparison.OrdinalIgnoreCase))
+            {
+                _voucherAppliesTo = resp.ScopeCategory ?? "Category";
+            }
+            else if (scope.Equals("Item", StringComparison.OrdinalIgnoreCase) && resp.ScopeItemId.HasValue)
+            {
+                var id = resp.ScopeItemId.Value;
+                var cat = resp.ScopeCategory ?? string.Empty;
+                try
+                {
+                    switch (cat)
+                    {
+                        case "Key":
+                            var key = await SentryApi.GetKeyAsync(id);
+                            _voucherAppliesTo = key?.Name ?? ($"{cat} #{id}");
+                            break;
+                        case "Rank":
+                            var rank = await SentryApi.GetRankAsync(id);
+                            _voucherAppliesTo = rank?.Name ?? ($"{cat} #{id}");
+                            break;
+                        case "Bundle":
+                            var bundle = await SentryApi.GetBundleAsync(id);
+                            _voucherAppliesTo = bundle?.Name ?? ($"{cat} #{id}");
+                            break;
+                        case "Coin":
+                            var coin = await SentryApi.GetCoinAsync(id);
+                            _voucherAppliesTo = coin?.Name ?? ($"{cat} #{id}");
+                            break;
+                        case "Other":
+                            var other = await SentryApi.GetOtherAsync(id);
+                            _voucherAppliesTo = other?.Name ?? ($"{cat} #{id}");
+                            break;
+                        case "BattlePass":
+                            var bp = await SentryApi.GetBattlePassAsync(id);
+                            _voucherAppliesTo = bp?.Name ?? ($"{cat} #{id}");
+                            break;
+                        default:
+                            _voucherAppliesTo = $"{cat} #{id}";
+                            break;
+                    }
+                }
+                catch
+                {
+                    _voucherAppliesTo = $"{cat} #{id}";
+                }
+            }
+
+            // Try to fetch a richer description from voucher list if available
+            try
+            {
+                var list = await SentryApi.GetVouchersAsync();
+                var found = list?.FirstOrDefault(v => string.Equals(v.Code, resp.Code, StringComparison.OrdinalIgnoreCase));
+                if (found != null && !string.IsNullOrWhiteSpace(found.Description))
+                {
+                    _voucherDescription = found.Description;
+                }
+            }
+            catch { }
         }
-        catch
+        catch { }
+
+        StateHasChanged();
+    }
+
+    private void OnVoucherStateChanged()
+    {
+        _appliedVoucher = VoucherState.AppliedVoucher;
+        _voucherCode = VoucherState.VoucherCode ?? string.Empty;
+        _voucherError = VoucherState.Error;
+        _voucherLoading = VoucherState.IsLoading;
+        try { InvokeAsync(StateHasChanged); } catch { }
+    }
+
+    private string GetVoucherSummary(ValidateVoucherResponse v, string? appliesTo)
+    {
+        if (v == null) return string.Empty;
+        // Human-readable scope text; prefer appliesTo if provided
+        var scopeRaw = (appliesTo ?? v.Scope ?? "all").ToString();
+        string scopeText;
+        if (string.Equals(v.Scope ?? string.Empty, "Category", StringComparison.OrdinalIgnoreCase))
         {
-            // ignore
+            var cat = (v.ScopeCategory ?? scopeRaw ?? "items").Trim();
+            scopeText = PluralizeCategory(cat).ToLowerInvariant();
+        }
+        else
+        {
+            scopeText = scopeRaw;
+        }
+
+        try
+        {
+            var d = v.DiscountPercent;
+            var isWhole = d == decimal.Truncate(d);
+            if (d > 0)
+            {
+                var pctStr = isWhole ? ((int)d).ToString() : d.ToString("0.#");
+                return $"{pctStr}% discount applied for {scopeText.ToLowerInvariant()}";
+            }
+        }
+        catch { }
+
+        if (v.DiscountAmount > 0)
+        {
+            return $"€{v.DiscountAmount:F2} off applied for {scopeText.ToLowerInvariant()}";
+        }
+
+        return v.Message ?? "Discount applied";
+    }
+
+    private string PluralizeCategory(string cat)
+    {
+        if (string.IsNullOrWhiteSpace(cat)) return "items";
+        switch (cat.Trim())
+        {
+            case "Key": return "Keys";
+            case "Rank": return "Ranks";
+            case "Bundle": return "Bundles";
+            case "Coin": return "Coins";
+            case "Other": return "Others";
+            case "BattlePass": return "BattlePasses";
+            default:
+                if (cat.EndsWith("y", StringComparison.OrdinalIgnoreCase))
+                    return cat.Substring(0, cat.Length - 1) + "ies";
+                return cat + "s";
         }
     }
     }
