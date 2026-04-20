@@ -73,9 +73,9 @@
                                 <InputTextArea class="form-control" @bind-Value="coinsModel.Description" />
                                 <ValidationMessage For="() => coinsModel.Description" />
                             </div>
-                            <ImageUploader Label="Coin Image"
-                                         ImageUrl="@coinsModel.Image"
-                                         ImageUrlChanged="@((string? url) => coinsModel.Image = url)" />
+                            <ImageUploader Label="Coin Image" SubDirectory="coins"
+                                           ImageUrl="@coinsModel.Image" ImageUrlChanged="@((string? url) => coinsModel.Image = url)" />
+
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">

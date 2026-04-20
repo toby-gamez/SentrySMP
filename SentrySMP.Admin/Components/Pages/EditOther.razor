@@ -73,7 +73,7 @@
                                 <InputTextArea class="form-control" @bind-Value="itemModel.Description" />
                                 <ValidationMessage For="() => itemModel.Description" />
                             </div>
-                            <ImageUploader Label="Item Image"
+                            <ImageUploader Label="Item Image" SubDirectory="others"
                                          ImageUrl="@itemModel.Image"
                                          ImageUrlChanged="@((string? url) => itemModel.Image = url)" />
                         </div>

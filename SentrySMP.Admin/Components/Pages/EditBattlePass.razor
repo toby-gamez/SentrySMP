@@ -90,7 +90,7 @@
                         <div class="col-lg-6">
                             <div class="mb-4">
                                 <h4 class="text-primary mb-3"><i class="bi bi-image me-2"></i>Additional Details</h4>
-                                <ImageUploader Label="Image" ImageUrl="@model.Image" ImageUrlChanged="@((string? url) => model.Image = url)" />
+                                <ImageUploader Label="Image" SubDirectory="battlepasses" ImageUrl="@model.Image" ImageUrlChanged="@((string? url) => model.Image = url)" />
                                 <div class="mb-3">
                                     <label class="form-label">Sale Percentage (0-100%)</label>
                                     <InputNumber @bind-Value="model.Sale" class="form-control" />

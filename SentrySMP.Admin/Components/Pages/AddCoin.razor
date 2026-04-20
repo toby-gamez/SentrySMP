@@ -58,8 +58,9 @@
                 </div>
                 <div class="mb-3">
                     <ImageUploader Label="Coin Image"
-                                   ImageUrl="@coinModel.Image"
-                                   ImageUrlChanged="@((string? url) => coinModel.Image = url)" />
+                                       SubDirectory="coins"
+                                       ImageUrl="@coinModel.Image"
+                                       ImageUrlChanged="@((string? url) => coinModel.Image = url)" />
                 </div>
             </div>
             <div class="col-md-6">

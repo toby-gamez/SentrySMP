@@ -95,7 +95,7 @@
                                 Additional Details
                             </h4>
 
-                            <ImageUploader Label="Image" ImageUrl="@model.Image" ImageUrlChanged="@((string? url) => model.Image = url)" />
+                            <ImageUploader Label="Image" SubDirectory="battlepasses" ImageUrl="@model.Image" ImageUrlChanged="@((string? url) => model.Image = url)" />
 
                             <div class="mb-3">
                                 <label class="form-label">Sale Percentage (0-100%)</label>
