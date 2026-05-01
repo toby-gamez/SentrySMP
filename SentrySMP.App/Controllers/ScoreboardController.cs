@@ -20,7 +20,7 @@ namespace SentrySMP.App.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("scoreboard/all")]
+        [HttpGet("api/scoreboard/all")]
         public async Task<ActionResult<List<ShopScoreboardEntryDto>>> All([FromQuery] int topN = 100)
         {
             var entries = await _scoreboard.GetScoreboardAsync(ScoreboardPeriod.AllTime, topN);
@@ -29,7 +29,7 @@ namespace SentrySMP.App.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("scoreboard/today")]
+        [HttpGet("api/scoreboard/today")]
         public async Task<ActionResult<List<ShopScoreboardEntryDto>>> Today([FromQuery] int topN = 100)
         {
             var entries = await _scoreboard.GetScoreboardAsync(ScoreboardPeriod.Today, topN);
@@ -38,7 +38,7 @@ namespace SentrySMP.App.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("scoreboard/week")]
+        [HttpGet("api/scoreboard/week")]
         public async Task<ActionResult<List<ShopScoreboardEntryDto>>> Week([FromQuery] int topN = 100)
         {
             var entries = await _scoreboard.GetScoreboardAsync(ScoreboardPeriod.ThisWeek, topN);
@@ -47,7 +47,7 @@ namespace SentrySMP.App.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("scoreboard/month")]
+        [HttpGet("api/scoreboard/month")]
         public async Task<ActionResult<List<ShopScoreboardEntryDto>>> Month([FromQuery] int topN = 100)
         {
             var entries = await _scoreboard.GetScoreboardAsync(ScoreboardPeriod.ThisMonth, topN);
