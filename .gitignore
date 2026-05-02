@@ -16,3 +16,4 @@ build/C:/*
 build/tools/*
 build/build-ftp-images.cake
 build/build-ftp-images.json
+build/C_/*
