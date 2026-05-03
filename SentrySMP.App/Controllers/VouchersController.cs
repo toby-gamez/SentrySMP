@@ -38,6 +38,19 @@ public class VouchersController : ControllerBase
         catch (Exception ex) { _logger.LogError(ex, "Error getting voucher {Id}", id); return StatusCode(500, "Internal server error"); }
     }
 
+    /// <summary>Returns voucher info by code/name — anonymous.</summary>
+    [HttpGet("{name}")]
+    [AllowAnonymous]
+    public async Task<ActionResult<VoucherResponse>> GetByName(string name)
+    {
+        try
+        {
+            var v = await _voucherService.GetVoucherByNameAsync(name);
+            return v == null ? NotFound() : Ok(v);
+        }
+        catch (Exception ex) { _logger.LogError(ex, "Error getting voucher by name {Name}", name); return StatusCode(500, "Internal server error"); }
+    }
+
     [HttpPost]
     [Authorize]
     public async Task<ActionResult<VoucherResponse>> Create([FromBody] CreateVoucherDto dto)

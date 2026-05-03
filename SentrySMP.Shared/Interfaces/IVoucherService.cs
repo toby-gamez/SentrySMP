@@ -6,6 +6,7 @@ public interface IVoucherService
 {
     Task<IEnumerable<VoucherResponse>> GetAllVouchersAsync();
     Task<VoucherResponse?> GetVoucherByIdAsync(int id);
+    Task<VoucherResponse?> GetVoucherByNameAsync(string name);
     Task<VoucherResponse> CreateVoucherAsync(CreateVoucherDto dto);
     Task<VoucherResponse?> UpdateVoucherAsync(int id, UpdateVoucherDto dto);
     Task<bool> DeleteVoucherAsync(int id);

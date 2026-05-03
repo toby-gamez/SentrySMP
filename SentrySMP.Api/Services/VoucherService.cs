@@ -30,6 +30,13 @@ public class VoucherService : IVoucherService
         return v == null ? null : MapToResponse(v);
     }
 
+    public async Task<VoucherResponse?> GetVoucherByNameAsync(string name)
+    {
+        var code = name.Trim().ToUpperInvariant();
+        var v = await _context.Vouchers.Include(x => x.Usages).FirstOrDefaultAsync(x => x.Code == code);
+        return v == null ? null : MapToResponse(v);
+    }
+
     public async Task<VoucherResponse> CreateVoucherAsync(CreateVoucherDto dto)
     {
         // Ensure code is uppercase
