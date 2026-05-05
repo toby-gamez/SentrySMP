@@ -36,37 +36,38 @@
             <div class="info">
                 @(_successMessage ?? "Payment successful.")
             </div>
-            @if (_wasRedirectStatusSuccess && string.IsNullOrWhiteSpace(_rconStatusMessage) && string.IsNullOrWhiteSpace(_failureMessage))
+            @if (_wasRedirectStatusSuccess && string.IsNullOrWhiteSpace(_deliveryStatusMessage) && string.IsNullOrWhiteSpace(_failureMessage))
             {
                 <p><em>If the webpage keeps reloading, <u>it wants to send you your purchased items</u>.</em>If the problem persists, please contact us.</p>
             }
             <button @onclick="ContinueShopping">Continue shopping</button>
         </div>
 
-        @if (_rconResult != null)
+        @if (_deliveryResult != null)
         {
                 <h2>Status</h2>
                 <div class="table-wrapper">
                     <table>
                         <thead>
                             <tr>
-                                <th>Command</th>
+                                <th>Command for</th>
                                 <th class="text-center">Status</th>
-                                <th>Response</th>
+                                <th>Details</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var cr in _rconResult.CommandResults)
+                            @foreach (var cr in _deliveryResult.CommandResults)
                             {
                                 <tr class="@(cr.Succeeded ? "table-success" : "table-danger")">
-                                    <td style="min-width:240px;">@cr.CommandText</td>
+                                    <td style="min-width:160px;">@(cr.ProductName ?? cr.CommandText)</td>
                                     <td class="text-center" style="color: @(cr.Succeeded ? "#44ae44" : "#dc3545")">@(cr.Succeeded ? "OK" : "FAILED")</td>
                                     <td>
-                                        @if (!string.IsNullOrEmpty(cr.Response))
+                                        @{
+                                            var detail = !string.IsNullOrEmpty(cr.Response) ? cr.Response : cr.ErrorMessage;
+                                        }
+                                        @if (!string.IsNullOrEmpty(detail))
                                         {
-                                            <div>
-                                                <span title="@CleanSingleLine(cr.Response)" style="display:inline-block; max-width:420px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@TruncateCompact(cr.Response, 80)</span>
-                                            </div>
+                                            <span title="@detail" style="display:inline-block; max-width:420px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@TruncateCompact(detail, 100)</span>
                                         }
                                     </td>
                                 </tr>
@@ -76,42 +77,13 @@
                 </div>
         }
 
-        @if (_lastOrderItems != null && _lastOrderItems.Count > 0)
-        {
-            <div class="card mt-3">
-                <div class="card-body">
-                    <h2>Order details</h2>
-                    <div class="table-wrapper">
-                        <table class="table table-sm mt-2">
-                            <thead>
-                                <tr>
-                                    <th>Item</th>
-                                    <th>Server</th>
-                                    <th class="text-center">Qty</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var it in _lastOrderItems)
-                                {
-                                    <tr>
-                                        <td class="table-cell-wrap">@FormatPlayerToken(it.Key.Name)</td>
-                                        <td class="table-cell-nowrap">@(it.Key.Server?.Name ?? "-")</td>
-                                        <td class="text-center table-cell-nowrap">@it.Quantity</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        }
-        <!-- Purchase confirmation for cases where delivery (RCON) failed -->
-        @if (_paymentSucceeded && ((_rconResult != null && !_rconResult.AllSucceeded) || (!string.IsNullOrWhiteSpace(_rconStatusMessage) && _rconStatusMessage.IndexOf("failed", StringComparison.OrdinalIgnoreCase) >= 0)))
+        <!-- Purchase confirmation for cases where delivery failed -->
+        @if (_paymentSucceeded && ((_deliveryResult != null && !_deliveryResult.AllSucceeded) || (!string.IsNullOrWhiteSpace(_deliveryStatusMessage) && _deliveryStatusMessage.IndexOf("failed", StringComparison.OrdinalIgnoreCase) >= 0)))  
         {
             <div style="background:#ffffff; color:#000; border:1px solid #ddd; border-radius:10px; padding:16px; margin-top:1rem; box-shadow: 0 1px 2px rgba(0,0,0,0.04); position:relative;">
                 <h2 style="color:#000;">Purchase confirmation</h2>
                 <div style="position:absolute; right:16px; top:12px; font-size:2.4rem; line-height:1;">
-                    <i class="bi @( (_rconResult != null && _rconResult.AllSucceeded) ? "bi-check-circle" : "bi-x-circle")" style="color:@( (_rconResult != null && _rconResult.AllSucceeded) ? "#44ae44" : "#dc3545")"></i>
+                    <i class="bi @( (_deliveryResult != null && _deliveryResult.AllSucceeded) ? "bi-check-circle" : "bi-x-circle")" style="color:@( (_deliveryResult != null && _deliveryResult.AllSucceeded) ? "#44ae44" : "#dc3545")"></i>
                 </div>
                 <div class="mb-2">Transaction ID: <strong>@(_lastTransactionId?.ToString() ?? "N/A")</strong>
                     <button class="btn btn-sm btn-outline-secondary ms-2" @onclick="CopyTransactionId">Copy ID</button>
@@ -125,13 +97,27 @@
                 <div class="alert alert-warning">
                     <strong>Delivery issue:</strong>
                     <div class="mt-1 small text-muted">Some items could not be delivered to the server automatically. Keep your transaction ID and contact support if the items do not arrive.</div>
-                    @if (!string.IsNullOrWhiteSpace(_rconStatusMessage))
+                    @if (!string.IsNullOrWhiteSpace(_deliveryStatusMessage))
                     {
-                        <div class="mt-2">Status: @_rconStatusMessage</div>
+                        <div class="mt-2">Status: @_deliveryStatusMessage</div>
                     }
                     @if (!string.IsNullOrWhiteSpace(_failureMessage))
                     {
                         <div class="mt-2">Details: @_failureMessage</div>
+                    }
+                    @if (_deliveryResult?.CommandResults != null)
+                    {
+                        var failedResults = _deliveryResult.CommandResults
+                            .Where(cr => !cr.Succeeded)
+                            .Select(cr => new { cr.ProductName, cr.CommandText, Detail = !string.IsNullOrEmpty(cr.ErrorMessage) ? cr.ErrorMessage : cr.Response })
+                            .Where(x => !string.IsNullOrEmpty(x.Detail))
+                            .ToList();
+                        @foreach (var fr in failedResults)
+                        {
+                            <div class="mt-1 small">
+                                <strong>@(fr.ProductName ?? fr.CommandText):</strong> @fr.Detail
+                            </div>
+                        }
                     }
                 </div>
 
@@ -381,84 +367,6 @@
                         {
                             <div class="alert alert-danger mt-2">PayPal error: @_payPalErrorMessage</div>
                         }
-                    }
-                }
-
-                @if (_paymentSucceeded)
-                {
-                    <div class="alert alert-success mt-3">
-                        <div style="font-size: 5rem; text-align:center; color:#44ae44;">
-                            <i class="bi bi-check-circle"></i>
-                        </div>
-                        <div class="info">
-                            <p><em>If the webpage keeps reloading, <u>it wants to send you your purchased items</u>.</em>If the problem persists, please contact us.</p>
-                            @(_successMessage ?? "Payment successful.")
-                        </div>
-                        <button @onclick="ContinueShopping">Continue shopping</button>
-                    </div>
-
-
-                    @if (_rconResult != null)
-                    {
-                            <h2>Status</h2>
-                            <div class="table-wrapper">
-                                <table class="">
-                                    <thead>
-                                        <tr>
-                                            <th>Command</th>
-                                            <th class="text-center">Status</th>
-                                            <th>Response</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var cr in _rconResult.CommandResults)
-                                        {
-                                            <tr class="@(cr.Succeeded ? "table-success" : "table-danger")">
-                                                <td style="min-width:240px;">@cr.CommandText</td>
-                                                <td class="text-center" style="color: @(cr.Succeeded ? "#44ae44" : "#dc3545")">@(cr.Succeeded ? "OK" : "FAILED")</td>
-                                                <td>
-                                                    @if (!string.IsNullOrEmpty(cr.Response))
-                                                    {
-                                                        <div>
-                                                            <span title="@CleanSingleLine(cr.Response)" style="display:inline-block; max-width:420px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@TruncateCompact(cr.Response, 80)</span>
-                                                        </div>
-                                                    }
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                                </div>
-                    }
-
-                    @if (_lastOrderItems != null && _lastOrderItems.Count > 0)
-                    {
-                        <div class="card mt-3">
-                            <div class="card-body">
-                                <h2>Order details</h2>
-                                <div class="table-wrapper">
-                                    <table class="table table-sm mt-2">
-                                        <thead>
-                                            <tr>
-                                                <th>Item</th>
-                                                <th>Server</th>
-                                                <th class="text-center">Qty</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var it in _lastOrderItems)
-                                            {
-                                                <tr>
-                                                    <td class="table-cell-wrap">@FormatPlayerToken(it.Key.Name)</td>
-                                                    <td class="table-cell-nowrap">@(it.Key.Server?.Name ?? "-")</td>
-                                                    <td class="text-center table-cell-nowrap">@it.Quantity</td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
                     }
                 }
 
@@ -717,7 +625,7 @@
         {
             var sb = new System.Text.StringBuilder();
             sb.AppendLine($"Transaction ID: {_lastTransactionId?.ToString() ?? "N/A"}");
-            if (!string.IsNullOrWhiteSpace(_rconStatusMessage)) sb.AppendLine($"RCON status: {_rconStatusMessage}");
+            if (!string.IsNullOrWhiteSpace(_deliveryStatusMessage)) sb.AppendLine($"Delivery status: {_deliveryStatusMessage}");
             if (!string.IsNullOrWhiteSpace(_failureMessage)) sb.AppendLine($"Failure details: {_failureMessage}");
             sb.AppendLine("Items:");
             if (_lastOrderItems != null)
@@ -879,16 +787,18 @@
     private long? _lastTransactionId;
 
     private string? _payPalErrorMessage;
-    private SentrySMP.Shared.DTOs.RconExecutionResult? _rconResult;
-    private string? _rconStatusMessage;
+    private SentrySMP.Shared.DTOs.RconExecutionResult? _deliveryResult;
+    private string? _deliveryStatusMessage;
     private string? _username;
     private Microsoft.Extensions.Logging.ILogger? _logger;
     // Tracks whether the component has finished its first render on the server
     private bool _hasRendered = false;
-    // If a transaction is saved before first render completes, defer RCON execution until after render
-    private List<ProductQuantityDto>? _pendingRconExecProducts;
-    private string? _pendingRconUsername;
-    private bool _clearCartOnRconSuccess = false;
+    // If a transaction is saved before first render completes, defer delivery execution until after render
+    private List<ProductQuantityDto>? _pendingDeliveryProducts;
+    private string? _pendingDeliveryUsername;
+    private string? _pendingVoucherCode;
+    private double? _pendingFinalTotal;
+    private bool _clearCartOnDeliverySuccess = false;
     // Tracks whether the last persisted transaction had amount == 0.00
     private bool _lastTransactionAmountIsZero = false;
     // Set when the page was loaded with ?status=success so we can show a special note
@@ -1007,7 +917,7 @@
                         _lastTransactionId = tx.Id;
                             _successMessage = $"Payment received — thank you! (ID: {tx.Id})";
 
-                        // After the transaction is saved, attempt to execute RCON commands for the purchased items.
+                        // After the transaction is saved, attempt to deliver commands for the purchased items.
                         try
                         {
                             var user = string.Empty;
@@ -1020,31 +930,35 @@
                             var execProducts = itemsSnapshot.Select(ci => new ProductQuantityDto { Product = ci.Key, Quantity = ci.Quantity }).ToList();
                             if (!_hasRendered)
                             {
-                                // Defer RCON execution until after the first render completes to ensure the component
+                                // Defer delivery execution until after the first render completes to ensure the component
                                 // and related services (e.g. UserService, JS interop) are fully ready.
-                                _pendingRconExecProducts = execProducts;
-                                _pendingRconUsername = user;
+                                _pendingDeliveryProducts = execProducts;
+                                _pendingDeliveryUsername = user;
+                                _pendingVoucherCode = _appliedVoucher?.Code;
+                                _pendingFinalTotal = FinalTotal;
                             }
                             else
                             {
                                 try
                                 {
-                                    _logger?.LogInformation("Enqueuing RCON job for tx {TxId} (products={Count})", _lastTransactionId, execProducts?.Count ?? 0);
+                                    _logger?.LogInformation("Enqueuing delivery job for tx {TxId} (products={Count})", _lastTransactionId, execProducts?.Count ?? 0);
+                                    var capturedVoucherCode = _appliedVoucher?.Code;
+                                    var capturedFinalTotal = FinalTotal;
                                     BackgroundQueue.QueueBackgroundWorkItem(async token =>
                                     {
                                         try
                                         {
-                                            _logger?.LogInformation("Background RCON job starting for tx {TxId}", _lastTransactionId);
-                                            var rres = await RconService.ExecuteCommandsForProductsAsync(execProducts, user);
+                                            _logger?.LogInformation("Background delivery job starting for tx {TxId}", _lastTransactionId);
+                                            var rres = await RconService.ExecuteCommandsForProductsAsync(execProducts, user, capturedVoucherCode, capturedFinalTotal);
                                             await InvokeAsync(async () =>
                                             {
-                                                _rconResult = rres;
-                                                if (rres != null) ProcessRconResult(rres);
+                                                _deliveryResult = rres;
+                                                if (rres != null) ProcessDeliveryResult(rres);
                                                 StateHasChanged();
-                                                // If we were deferring cart clear until RCON succeeded, clear now on success
+                                                // If we were deferring cart clear until delivery succeeded, clear now on success
                                                 try
                                                 {
-                                                                                if (_clearCartOnRconSuccess && rres != null && rres.AllSucceeded)
+                                                                                if (_clearCartOnDeliverySuccess && rres != null && rres.AllSucceeded)
                                                                                 {
                                                                                     var isZero = await LastTransactionAmountIsZeroAsync();
                                                                                     if (isZero)
@@ -1058,12 +972,12 @@
                                                                                         {
                                                                                             _logger?.LogWarning(exReload, "Failed to reload page after zero-amount tx {TxId}", _lastTransactionId);
                                                                                         }
-                                                                                        _clearCartOnRconSuccess = false;
+                                                                                        _clearCartOnDeliverySuccess = false;
                                                                                         StateHasChanged();
                                                                                     }
                                                                                     else
                                                                                     {
-                                                                                        _logger?.LogInformation("RCON succeeded for tx {TxId}, recording purchases and clearing cart", _lastTransactionId);
+                                                                                        _logger?.LogInformation("Delivery succeeded for tx {TxId}, recording purchases and clearing cart", _lastTransactionId);
                                                                                         // Record purchases for each item
                                                                                         try
                                                                                         {
@@ -1078,35 +992,35 @@
                                                                                             _logger?.LogWarning(exRecord, "Failed to record purchases for tx {TxId}", _lastTransactionId);
                                                                                         }
                                                                                         await CartState.ClearCartAsync();
-                                                                                        _clearCartOnRconSuccess = false;
+                                                                                        _clearCartOnDeliverySuccess = false;
                                                                                         StateHasChanged();
                                                                                     }
                                                                                 }
                                                 }
                                                 catch (Exception exClear)
                                                 {
-                                                    _logger?.LogWarning(exClear, "Failed to clear cart after successful RCON for tx {TxId}", _lastTransactionId);
+                                                    _logger?.LogWarning(exClear, "Failed to clear cart after successful delivery for tx {TxId}", _lastTransactionId);
                                                 }
                                             });
-                                            _logger?.LogInformation("Background RCON job finished for tx {TxId}", _lastTransactionId);
+                                            _logger?.LogInformation("Background delivery job finished for tx {TxId}", _lastTransactionId);
                                         }
                                         catch (Exception exBackground)
                                         {
-                                            _logger?.LogError(exBackground, "Background RCON job failed for tx {TxId}", _lastTransactionId);
+                                            _logger?.LogError(exBackground, "Background delivery job failed for tx {TxId}", _lastTransactionId);
                                             try { await InvokeAsync(() => { _failureMessage = _failureMessage ?? $"Warning: failed to execute server commands: {exBackground.Message}"; StateHasChanged(); }); } catch { }
                                         }
                                     });
                                 }
                                 catch (Exception exQueue)
                                 {
-                                    _logger?.LogError(exQueue, "Failed to enqueue RCON job for tx {TxId}", _lastTransactionId);
+                                    _logger?.LogError(exQueue, "Failed to enqueue delivery job for tx {TxId}", _lastTransactionId);
                                     _failureMessage = _failureMessage ?? $"Warning: failed to execute server commands: {exQueue.Message}";
                                 }
                             }
                         }
                         catch (Exception ex)
                         {
-                            // Best-effort: log and continue. UI should not fail the payment flow because of RCON problems.
+                            // Best-effort: log and continue. UI should not fail the payment flow because of delivery problems.
                             _failureMessage = _failureMessage ?? $"Warning: failed to execute server commands: {ex.Message}";
                         }
                 }
@@ -1189,22 +1103,34 @@
                     string providerName = "Manual";
                     string providerTxId = "return";
                     bool hasPaymentId = false;
-                    if (qs2.TryGetValue("session_id", out var sid) && !string.IsNullOrWhiteSpace(sid))
+
+                    if (!Env.IsProduction())
                     {
-                        providerName = "Stripe";
-                        providerTxId = sid.ToString();
+                        // Debug: skip provider/payment-ID inference — treat as a test payment so we can
+                        // verify the full success flow without going through a real payment gateway.
+                        providerName = "Debug";
+                        providerTxId = $"debug-{DateTime.UtcNow:yyyyMMddHHmmss}";
                         hasPaymentId = true;
                     }
-                    else if (qs2.TryGetValue("orderId", out var oid) && !string.IsNullOrWhiteSpace(oid))
+                    else
                     {
-                        providerName = "PayPal";
-                        providerTxId = oid.ToString();
-                        hasPaymentId = true;
-                    }
-                    else if (qs2.TryGetValue("provider", out var pv) && !string.IsNullOrWhiteSpace(pv))
-                    {
-                        // honor explicit provider if provided
-                        providerName = pv.ToString();
+                        if (qs2.TryGetValue("session_id", out var sid) && !string.IsNullOrWhiteSpace(sid))
+                        {
+                            providerName = "Stripe";
+                            providerTxId = sid.ToString();
+                            hasPaymentId = true;
+                        }
+                        else if (qs2.TryGetValue("orderId", out var oid) && !string.IsNullOrWhiteSpace(oid))
+                        {
+                            providerName = "PayPal";
+                            providerTxId = oid.ToString();
+                            hasPaymentId = true;
+                        }
+                        else if (qs2.TryGetValue("provider", out var pv) && !string.IsNullOrWhiteSpace(pv))
+                        {
+                            // honor explicit provider if provided
+                            providerName = pv.ToString();
+                        }
                     }
 
                     // In production, reject the payment when no real payment ID was returned by the provider.
@@ -1281,26 +1207,26 @@
                 }
             }
 
-            // Mark that first render completed and execute any deferred RCON requests.
+            // Mark that first render completed and execute any deferred delivery requests.
             _hasRendered = true;
-            if (_pendingRconExecProducts != null)
+            if (_pendingDeliveryProducts != null)
             {
                 try
                 {
-                    var rres = await ExecuteRconWithRetries(_pendingRconExecProducts, _pendingRconUsername ?? string.Empty);
-                    _rconResult = rres;
+                    var rres = await ExecuteDeliveryWithRetries(_pendingDeliveryProducts, _pendingDeliveryUsername ?? string.Empty, _pendingVoucherCode, _pendingFinalTotal);
+                    _deliveryResult = rres;
                     if (rres != null)
                     {
-                        ProcessRconResult(rres);
+                        ProcessDeliveryResult(rres);
                     }
-                    // If we were deferring cart clear until RCON succeeded, clear now on success
+                    // If we were deferring cart clear until delivery succeeded, clear now on success
                     try
                     {
-                        if (_clearCartOnRconSuccess && rres != null && rres.AllSucceeded)
+                        if (_clearCartOnDeliverySuccess && rres != null && rres.AllSucceeded)
                         {
                             if (_lastTransactionAmountIsZero)
                             {
-                                _logger?.LogWarning("Not clearing cart for tx {TxId} after deferred RCON because saved amount was zero; triggering full reload", _lastTransactionId);
+                                _logger?.LogWarning("Not clearing cart for tx {TxId} after deferred delivery because saved amount was zero; triggering full reload", _lastTransactionId);
                                 try
                                 {
                                     await JS.InvokeVoidAsync("location.reload", true);
@@ -1309,16 +1235,16 @@
                                 {
                                     _logger?.LogWarning(exReload, "Failed to reload page after zero-amount tx {TxId}", _lastTransactionId);
                                 }
-                                _clearCartOnRconSuccess = false;
+                                _clearCartOnDeliverySuccess = false;
                             }
                             else
                             {
-                                _logger?.LogInformation("Deferred RCON succeeded for tx {TxId}, recording purchases and clearing cart", _lastTransactionId);
+                                _logger?.LogInformation("Deferred delivery succeeded for tx {TxId}, recording purchases and clearing cart", _lastTransactionId);
                                 // Record purchases for each item
                                 try
                                 {
-                                    var user = _pendingRconUsername ?? string.Empty;
-                                    var products = _pendingRconExecProducts ?? new List<ProductQuantityDto>();
+                                                    var user = _pendingDeliveryUsername ?? string.Empty;
+                                    var products = _pendingDeliveryProducts ?? new List<ProductQuantityDto>();
                                     foreach (var product in products)
                                     {
                                         await PurchaseTrackingService.RecordPurchaseAsync(user, product.Product.Type, product.Product.Id, product.Quantity);
@@ -1330,13 +1256,13 @@
                                     _logger?.LogWarning(exRecord, "Failed to record purchases for deferred tx {TxId}", _lastTransactionId);
                                 }
                                 await CartState.ClearCartAsync();
-                                _clearCartOnRconSuccess = false;
+                                _clearCartOnDeliverySuccess = false;
                             }
                         }
                     }
                     catch (Exception exClear)
                     {
-                        _logger?.LogWarning(exClear, "Failed to clear cart after deferred successful RCON for tx {TxId}", _lastTransactionId);
+                        _logger?.LogWarning(exClear, "Failed to clear cart after deferred successful delivery for tx {TxId}", _lastTransactionId);
                     }
                 }
                 catch (Exception ex)
@@ -1345,17 +1271,17 @@
                 }
                 finally
                 {
-                    _pendingRconExecProducts = null;
-                    _pendingRconUsername = null;
+                    _pendingDeliveryProducts = null;
+                    _pendingDeliveryUsername = null;
                     StateHasChanged();
                 }
             }
             }
         }
 
-    // Helper to centralize the RCON result processing so we can reuse it when executing immediately
+    // Helper to centralize the delivery result processing so we can reuse it when executing immediately
     // or when executing a deferred request after OnAfterRenderAsync.
-    private void ProcessRconResult(SentrySMP.Shared.DTOs.RconExecutionResult rres)
+    private void ProcessDeliveryResult(SentrySMP.Shared.DTOs.RconExecutionResult rres)
     {
         // More robust evaluation: don't trust AllSucceeded alone.
         var hasNoCommandsMarker = rres.CommandResults != null && rres.CommandResults.Any(cr => cr.CommandText == "<NO_RCON_COMMANDS_FOUND>");
@@ -1364,32 +1290,32 @@
 
         if (hasNoCommandsMarker)
         {
-            _rconStatusMessage = "No server commands were defined for the purchased products.";
+            _deliveryStatusMessage = "No server commands were defined for the purchased products.";
             _failureMessage = _failureMessage ?? "Warning: no server commands were configured for your purchase.";
         }
         else if (allSucceeded)
         {
-            _rconStatusMessage = "Server commands were successfully sent.";
+            _deliveryStatusMessage = "Server commands were successfully sent.";
         }
         else
         {
-            _rconStatusMessage = "Some commands failed to send:";
+            _deliveryStatusMessage = "Some commands failed to send:";
             // also set a visible failure message area
             _failureMessage = _failureMessage ?? "Warning: some server commands failed. Details below.";
         }
 
-        // Append RCON status to the success message so it remains visible together with the paid message.
-        if (!string.IsNullOrWhiteSpace(_rconStatusMessage))
+        // Append delivery status to the success message so it remains visible together with the paid message.
+        if (!string.IsNullOrWhiteSpace(_deliveryStatusMessage))
         {
             _successMessage = string.IsNullOrWhiteSpace(_successMessage)
-                ? _rconStatusMessage
-                : _successMessage + " — " + _rconStatusMessage;
+                ? _deliveryStatusMessage
+                : _successMessage + " — " + _deliveryStatusMessage;
         }
     }
 
-    // Execute RCON commands with a small retry/backoff strategy to tolerate transient network/server issues.
+    // Execute delivery commands with a small retry/backoff strategy to tolerate transient network/server issues.
     // Returns the final RconExecutionResult (may contain failed commands) or null if execution could not be attempted.
-    private async Task<SentrySMP.Shared.DTOs.RconExecutionResult?> ExecuteRconWithRetries(List<ProductQuantityDto> products, string user)
+    private async Task<SentrySMP.Shared.DTOs.RconExecutionResult?> ExecuteDeliveryWithRetries(List<ProductQuantityDto> products, string user, string? voucherCode = null, double? paidAmount = null)
     {
         if (products == null || products.Count == 0) return null;
 
@@ -1400,7 +1326,7 @@
         {
             try
             {
-                var rres = await RconService.ExecuteCommandsForProductsAsync(products, user);
+                var rres = await RconService.ExecuteCommandsForProductsAsync(products, user, voucherCode, paidAmount);
 
                 // If the service returned null, treat as transient and retry
                 if (rres == null)

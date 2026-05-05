@@ -25,7 +25,7 @@ namespace SentrySMP.Api.Services
             _logger = logger;
         }
 
-        public async Task<SentrySMP.Shared.DTOs.RconExecutionResult> ExecuteCommandsForProductsAsync(List<SentrySMP.Shared.DTOs.ProductQuantityDto> productsWithQuantity, string? username)
+        public async Task<SentrySMP.Shared.DTOs.RconExecutionResult> ExecuteCommandsForProductsAsync(List<SentrySMP.Shared.DTOs.ProductQuantityDto> productsWithQuantity, string? username, string? voucherCode = null, double? paidAmount = null)
         {
             if (productsWithQuantity == null || productsWithQuantity.Count == 0)
             {

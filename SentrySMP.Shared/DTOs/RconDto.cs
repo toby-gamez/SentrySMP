@@ -12,6 +12,8 @@ namespace SentrySMP.Shared.DTOs
     public class RconCommandResult
     {
         public string CommandText { get; set; } = string.Empty;
+        // Human-readable product name shown in the UI status table
+        public string? ProductName { get; set; }
         public bool Succeeded { get; set; }
         public string? ErrorMessage { get; set; }
         // Raw response returned by the RCON server (if any)
