@@ -1,6 +1,9 @@
 @page "/changelog"
 @inject SentrySMP.Shared.Interfaces.IAnnouncementsService AnnouncementsService
+@inject IHttpClientFactory HttpClientFactory
 @rendermode InteractiveServer
+@using System.Text.Json
+@using System.Text.RegularExpressions
 
 <PageTitle>Changelog - SentrySMP</PageTitle>
 
@@ -10,6 +13,9 @@
     </button>
     <button class="changelog-tab @(activeTab == "server" ? "active" : "")" @onclick='() => SwitchTab("server")'>
         <i class="bi bi-server"></i> Server
+    </button>
+    <button class="changelog-tab @(activeTab == "sentryapi" ? "active" : "")" @onclick='() => SwitchTab("sentryapi")'>
+        <i class="bi bi-plugin"></i> SentryAPI
     </button>
 </div>
 
@@ -385,7 +391,7 @@
     <li>Favicon icon added</li>
 </ul>
 }
-else
+else if (activeTab == "server")
 {
     @if (serverLoading)
     {
@@ -415,6 +421,39 @@ else
     }
 }
 
+@if (activeTab == "sentryapi")
+{
+    @if (sentryApiLoading)
+    {
+        <p class="server-loading">Loading SentryAPI releases...</p>
+    }
+    else if (sentryApiError != null)
+    {
+        <p class="error">@sentryApiError</p>
+    }
+    else if (sentryApiReleases?.Any() == true)
+    {
+        @foreach (var release in sentryApiReleases)
+        {
+            <div class="server-entry">
+                <div class="server-entry-meta">
+                    <i class="bi bi-tag"></i>
+                    <strong>@release.TagName</strong>
+                    <span class="server-entry-time">
+                        <i class="bi bi-calendar3"></i>
+                        @release.PublishedAt.ToLocalTime().ToString("d. MMMM yyyy", new System.Globalization.CultureInfo("cs-CZ"))
+                    </span>
+                </div>
+                <div class="server-entry-content">@((MarkupString)release.HtmlContent)</div>
+            </div>
+        }
+    }
+    else
+    {
+        <p style="color:#888">No SentryAPI releases found.</p>
+    }
+}
+
 @code {
     private string activeTab = "web";
 
@@ -423,11 +462,19 @@ else
     private string? serverError;
     private List<ServerEntryWithHtml>? serverEntries;
 
+    private bool sentryApiLoading = false;
+    private bool sentryApiLoaded = false;
+    private string? sentryApiError;
+    private List<SentryApiRelease>? sentryApiReleases;
+
     private async Task SwitchTab(string tab)
     {
         activeTab = tab;
+        StateHasChanged();
         if (tab == "server" && !serverLoaded)
             await LoadServerChangelog();
+        else if (tab == "sentryapi" && !sentryApiLoaded)
+            await LoadSentryApiReleases();
     }
 
     private async Task LoadServerChangelog()
@@ -457,9 +504,63 @@ else
         }
     }
 
+    private async Task LoadSentryApiReleases()
+    {
+        sentryApiLoading = true;
+        sentryApiError = null;
+        StateHasChanged();
+        try
+        {
+            var client = HttpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("SentrySMP-Website/1.0");
+            var resp = await client.GetAsync("https://api.github.com/repos/toby-gamez/SentryAPI/releases");
+            if (!resp.IsSuccessStatusCode)
+            {
+                sentryApiError = "Failed to load SentryAPI releases from GitHub.";
+                return;
+            }
+            var json = await resp.Content.ReadAsStringAsync();
+            using var doc = JsonDocument.Parse(json);
+            var pipeline = new Markdig.MarkdownPipelineBuilder().Build();
+            var releases = new List<SentryApiRelease>();
+            foreach (var item in doc.RootElement.EnumerateArray())
+            {
+                var tagName = item.TryGetProperty("tag_name", out var t) ? t.GetString() ?? "" : "";
+                var publishedAt = item.TryGetProperty("published_at", out var p) && DateTime.TryParse(p.GetString(), out var dt) ? dt : DateTime.UtcNow;
+                var body = item.TryGetProperty("body", out var b) ? b.GetString() ?? "" : "";
+                // Remove first ## heading
+                body = Regex.Replace(body, @"^##[^\n]*\n?", "", RegexOptions.None, TimeSpan.FromSeconds(1));
+                releases.Add(new SentryApiRelease
+                {
+                    TagName = tagName,
+                    PublishedAt = publishedAt,
+                    HtmlContent = Markdig.Markdown.ToHtml(body, pipeline)
+                });
+            }
+            sentryApiReleases = releases;
+        }
+        catch
+        {
+            sentryApiError = "Failed to load SentryAPI releases from GitHub.";
+        }
+        finally
+        {
+            sentryApiLoading = false;
+            sentryApiLoaded = true;
+            StateHasChanged();
+        }
+    }
+
     private class ServerEntryWithHtml
     {
         public DateTime CreatedAt { get; init; }
+        public string HtmlContent { get; init; } = string.Empty;
+    }
+
+    private class SentryApiRelease
+    {
+        public string TagName { get; init; } = string.Empty;
+        public DateTime PublishedAt { get; init; }
         public string HtmlContent { get; init; } = string.Empty;
     }
 }
