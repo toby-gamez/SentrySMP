@@ -211,4 +211,14 @@ public class TransactionsService : ITransactionsService
             CreatedAt = tx.CreatedAt
         };
     }
+
+    public async Task UpdateTransactionStatusAsync(long id, string appendStatus)
+    {
+        var tx = await _db.PaymentTransactions.FindAsync(id);
+        if (tx == null) return;
+        tx.Status = string.IsNullOrEmpty(tx.Status) ? appendStatus : tx.Status + ";" + appendStatus;
+        _db.PaymentTransactions.Update(tx);
+        await _db.SaveChangesAsync();
+        _logger.LogInformation("Updated tx {TxId} status to include {AppendStatus}", id, appendStatus);
+    }
 }

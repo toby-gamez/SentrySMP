@@ -224,7 +224,9 @@ namespace SentrySMP.Api.Services
                 else
                 {
                     var errorMsg = deliveryResp?.Error
-                        ?? $"Delivery API returned an error (HTTP {(int)response.StatusCode})";
+                        ?? (!string.IsNullOrWhiteSpace(responseBody)
+                            ? $"HTTP {(int)response.StatusCode}: {responseBody}"
+                            : $"Delivery API returned an error (HTTP {(int)response.StatusCode})");
 
                     _logger.LogWarning("Delivery API failure for player '{Player}': {Error}", sanitizedUsername, errorMsg);
 

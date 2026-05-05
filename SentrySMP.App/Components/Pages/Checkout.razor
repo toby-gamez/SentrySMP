@@ -119,6 +119,23 @@
                             </div>
                         }
                     }
+                    @if (_canRetryDelivery && !_retryDeliveryInProgress)
+                    {
+                        <div class="mt-3 d-flex align-items-center gap-3">
+                            <div>
+                                <i class="bi bi-info-circle me-1"></i>
+                                <strong>Player not connected.</strong> Connect to the server and click Try Again to deliver your items.
+                            </div>
+                            <button class="great-button" @onclick="TryDeliveryAgainAsync">Try Again</button>
+                        </div>
+                    }
+                    @if (_retryDeliveryInProgress)
+                    {
+                        <div class="mt-3">
+                            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                            Retrying delivery...
+                        </div>
+                    }
                 </div>
 
                 <!-- order details moved below the confirmation box -->
@@ -788,6 +805,9 @@
 
     private string? _payPalErrorMessage;
     private SentrySMP.Shared.DTOs.RconExecutionResult? _deliveryResult;
+    private bool _canRetryDelivery = false;
+    private bool _retryDeliveryInProgress = false;
+    private int _retryDeliveryCount = 0;
     private string? _deliveryStatusMessage;
     private string? _username;
     private Microsoft.Extensions.Logging.ILogger? _logger;
@@ -944,12 +964,13 @@
                                     _logger?.LogInformation("Enqueuing delivery job for tx {TxId} (products={Count})", _lastTransactionId, execProducts?.Count ?? 0);
                                     var capturedVoucherCode = _appliedVoucher?.Code;
                                     var capturedFinalTotal = FinalTotal;
+                                    var capturedTransactionId = _lastTransactionId;
                                     BackgroundQueue.QueueBackgroundWorkItem(async token =>
                                     {
                                         try
                                         {
-                                            _logger?.LogInformation("Background delivery job starting for tx {TxId}", _lastTransactionId);
-                                            var rres = await RconService.ExecuteCommandsForProductsAsync(execProducts, user, capturedVoucherCode, capturedFinalTotal);
+                                            _logger?.LogInformation("Background delivery job starting for tx {TxId}", capturedTransactionId);
+                                            var rres = await ExecuteDeliveryWithRetries(execProducts, user, capturedVoucherCode, capturedFinalTotal, capturedTransactionId);
                                             await InvokeAsync(async () =>
                                             {
                                                 _deliveryResult = rres;
@@ -1002,11 +1023,11 @@
                                                     _logger?.LogWarning(exClear, "Failed to clear cart after successful delivery for tx {TxId}", _lastTransactionId);
                                                 }
                                             });
-                                            _logger?.LogInformation("Background delivery job finished for tx {TxId}", _lastTransactionId);
+                                            _logger?.LogInformation("Background delivery job finished for tx {TxId}", capturedTransactionId);
                                         }
                                         catch (Exception exBackground)
                                         {
-                                            _logger?.LogError(exBackground, "Background delivery job failed for tx {TxId}", _lastTransactionId);
+                                            _logger?.LogError(exBackground, "Background delivery job failed for tx {TxId}", capturedTransactionId);
                                             try { await InvokeAsync(() => { _failureMessage = _failureMessage ?? $"Warning: failed to execute server commands: {exBackground.Message}"; StateHasChanged(); }); } catch { }
                                         }
                                     });
@@ -1213,7 +1234,7 @@
             {
                 try
                 {
-                    var rres = await ExecuteDeliveryWithRetries(_pendingDeliveryProducts, _pendingDeliveryUsername ?? string.Empty, _pendingVoucherCode, _pendingFinalTotal);
+                    var rres = await ExecuteDeliveryWithRetries(_pendingDeliveryProducts, _pendingDeliveryUsername ?? string.Empty, _pendingVoucherCode, _pendingFinalTotal, _lastTransactionId);
                     _deliveryResult = rres;
                     if (rres != null)
                     {
@@ -1279,6 +1300,63 @@
             }
         }
 
+    private async Task TryDeliveryAgainAsync()
+    {
+        if (_retryDeliveryInProgress) return;
+        _retryDeliveryInProgress = true;
+        _canRetryDelivery = false;
+        _deliveryStatusMessage = null;
+        StateHasChanged();
+
+        try
+        {
+            var products = _lastOrderItems?.Select(ci => new ProductQuantityDto { Product = ci.Key, Quantity = ci.Quantity }).ToList();
+            if (products == null || products.Count == 0)
+            {
+                _failureMessage = "No order items to retry.";
+                return;
+            }
+
+            var user = string.Empty;
+            try { user = await UserService.GetUsernameAsync() ?? string.Empty; } catch { }
+            if (string.IsNullOrWhiteSpace(user)) user = _username ?? string.Empty;
+
+            var rres = await RconService.ExecuteCommandsForProductsAsync(products, user, _appliedVoucher?.Code, null);
+            _deliveryResult = rres;
+            if (rres != null)
+            {
+                // ProcessDeliveryResult appends to _successMessage — preserve it during retries
+                var savedSuccessMessage = _successMessage;
+                ProcessDeliveryResult(rres);
+                _successMessage = savedSuccessMessage;
+
+                _retryDeliveryCount++;
+
+                // Update transaction status to record the manual retry
+                if (_lastTransactionId.HasValue)
+                {
+                    try { await TransactionsService.UpdateTransactionStatusAsync(_lastTransactionId.Value, "TRIED_AGAIN"); } catch { }
+                }
+                // If now all succeeded, clear the failure message
+                var allOk = rres.CommandResults != null && rres.CommandResults.Count > 0 && rres.CommandResults.All(cr => cr.Succeeded);
+                if (allOk) _failureMessage = null;
+                // Allow another retry only if all remaining failures are still "not connected" and limit not reached
+                var failedNow = rres.CommandResults?.Where(cr => !cr.Succeeded).ToList();
+                _canRetryDelivery = _retryDeliveryCount < 2
+                    && failedNow != null && failedNow.Count > 0 && failedNow.All(cr => IsPlayerNotConnectedResponse(cr));
+            }
+        }
+        catch (Exception ex)
+        {
+            _failureMessage = $"Retry failed: {ex.Message}";
+        }
+        finally
+        {
+            _retryDeliveryInProgress = false;
+            StateHasChanged();
+        }
+    }
+
     // Helper to centralize the delivery result processing so we can reuse it when executing immediately
     // or when executing a deferred request after OnAfterRenderAsync.
     private void ProcessDeliveryResult(SentrySMP.Shared.DTOs.RconExecutionResult rres)
@@ -1311,60 +1389,85 @@
                 ? _deliveryStatusMessage
                 : _successMessage + " — " + _deliveryStatusMessage;
         }
+
+        // Show "Try Again" button only when ALL failures are player-not-connected.
+        var failedCmds = rres.CommandResults?.Where(cr => !cr.Succeeded).ToList();
+        _canRetryDelivery = failedCmds != null && failedCmds.Count > 0 && failedCmds.All(cr => IsPlayerNotConnectedResponse(cr));
     }
 
-    // Execute delivery commands with a small retry/backoff strategy to tolerate transient network/server issues.
+    // Returns true when the RCON response/error indicates the player is not currently connected to the server.
+    private static bool IsPlayerNotConnectedResponse(SentrySMP.Shared.DTOs.RconCommandResult cr)
+    {
+        var text = (cr.Response ?? cr.ErrorMessage ?? string.Empty);
+        return text.IndexOf("is not connected", StringComparison.OrdinalIgnoreCase) >= 0
+            || text.IndexOf("is not online", StringComparison.OrdinalIgnoreCase) >= 0;
+    }
+
+    // Execute delivery commands.
+    // Only retries once — and only when ALL failures are "player not connected" responses.
+    // After the retry the existing transaction is updated to include "TRIED_AGAIN" in its status.
+    // Other errors are returned immediately without retrying.
     // Returns the final RconExecutionResult (may contain failed commands) or null if execution could not be attempted.
-    private async Task<SentrySMP.Shared.DTOs.RconExecutionResult?> ExecuteDeliveryWithRetries(List<ProductQuantityDto> products, string user, string? voucherCode = null, double? paidAmount = null)
+    private async Task<SentrySMP.Shared.DTOs.RconExecutionResult?> ExecuteDeliveryWithRetries(List<ProductQuantityDto> products, string user, string? voucherCode = null, double? paidAmount = null, long? transactionId = null)
     {
         if (products == null || products.Count == 0) return null;
 
-        const int maxAttempts = 3;
-        var delays = new[] { 500, 1000, 2000 }; // ms
+        SentrySMP.Shared.DTOs.RconExecutionResult? rres = null;
+        try
+        {
+            rres = await RconService.ExecuteCommandsForProductsAsync(products, user, voucherCode, paidAmount);
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "Delivery execution failed for tx {TxId}", transactionId);
+            return null;
+        }
 
-        for (int attempt = 1; attempt <= maxAttempts; attempt++)
+        if (rres == null) return null;
+
+        var hasNoCommandsMarker = rres.CommandResults != null && rres.CommandResults.Any(cr => cr.CommandText == "<NO_RCON_COMMANDS_FOUND>");
+        if (hasNoCommandsMarker) return rres;
+
+        // Check if ALL failures are "player not connected" — only then allow one retry.
+        var failedResults = rres.CommandResults?.Where(cr => !cr.Succeeded).ToList();
+        if (failedResults == null || !failedResults.Any()) return rres;
+
+        bool allFailsAreNotConnected = failedResults.All(cr => IsPlayerNotConnectedResponse(cr));
+        if (!allFailsAreNotConnected)
+        {
+            // Other error types — no retry allowed.
+            return rres;
+        }
+
+        // One retry for "player not connected" (player may just be logging in).
+        _logger?.LogInformation("Retrying delivery for tx {TxId} — all failures are player-not-connected", transactionId);
+        await Task.Delay(2000);
+
+        SentrySMP.Shared.DTOs.RconExecutionResult? retryRres = null;
+        try
+        {
+            retryRres = await RconService.ExecuteCommandsForProductsAsync(products, user, voucherCode, paidAmount);
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "Delivery retry failed for tx {TxId}", transactionId);
+            retryRres = rres;
+        }
+
+        // Mark the transaction to record that a retry was attempted.
+        if (transactionId.HasValue)
         {
             try
             {
-                var rres = await RconService.ExecuteCommandsForProductsAsync(products, user, voucherCode, paidAmount);
-
-                // If the service returned null, treat as transient and retry
-                if (rres == null)
-                {
-                    if (attempt < maxAttempts)
-                        await Task.Delay(delays[Math.Min(attempt - 1, delays.Length - 1)]);
-                    else
-                        return null;
-                }
-                else
-                {
-                    // If there are failures but also a marker indicating no commands, return immediately.
-                    var hasNoCommandsMarker = rres.CommandResults != null && rres.CommandResults.Any(cr => cr.CommandText == "<NO_RCON_COMMANDS_FOUND>");
-                    var anyFailed = rres.CommandResults != null && rres.CommandResults.Any(cr => !cr.Succeeded);
-
-                    // If there were transient failures (some commands failed) try again a few times, unless it was "no commands" marker.
-                    if (anyFailed && !hasNoCommandsMarker && attempt < maxAttempts)
-                    {
-                        await Task.Delay(delays[Math.Min(attempt - 1, delays.Length - 1)]);
-                        continue;
-                    }
-
-                    return rres;
-                }
+                await TransactionsService.UpdateTransactionStatusAsync(transactionId.Value, "TRIED_AGAIN");
             }
-            catch
+            catch (Exception ex)
             {
-                // Transient exception – retry a few times
-                if (attempt < maxAttempts)
-                {
-                    await Task.Delay(delays[Math.Min(attempt - 1, delays.Length - 1)]);
-                    continue;
-                }
-                throw;
+                _logger?.LogWarning(ex, "Failed to update tx {TxId} status to TRIED_AGAIN", transactionId.Value);
             }
         }
 
-        return null;
+        return retryRres ?? rres;
     }
 
     // Truncate long strings for compact UI rendering (compact version that strips color/control codes)

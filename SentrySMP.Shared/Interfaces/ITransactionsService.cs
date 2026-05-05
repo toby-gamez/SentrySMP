@@ -6,5 +6,6 @@ namespace SentrySMP.Shared.Interfaces
     {
         Task<TransactionResponse> CreateTransactionAsync(CreateTransactionRequest req);
         Task<TransactionResponse?> GetTransactionAsync(long id);
+        Task UpdateTransactionStatusAsync(long id, string appendStatus);
     }
 }
