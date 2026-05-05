@@ -21,6 +21,13 @@
     <a target="_blank" href="https://github.com/toby-gamez/sentrysmp">Github</a>
 </p>
 
+<h2>3.7</h2>
+
+<ul>
+    <li>added scoreboard and voucher anonymous endpoints for SentryAPI</li>
+    <li>now using SentryAPI (custom plugin) instead of RCON</li>
+</ul>
+
 <h2>3.6</h2>
 
 <ul>
@@ -80,11 +87,11 @@
 <h2>3.3</h2>
 
 <ul>
-    <li>fixed a bug when buying things was for free in certain scenarious</li>
-    <li>added payment gateaway manager</li>
-    <li>added system for limit of purchable items</li>
+    <li>fixed a bug when buying things was for free in certain scenarios</li>
+    <li>added payment gateway manager</li>
+    <li>added system for limit of purchasable items</li>
     <li>removed Christmas style</li>
-    <li>disabled multi selection on Ranks and Battle passess</li>
+    <li>disabled multi selection on Ranks and Battle passes</li>
 </ul>
 
 <h2>3.2.3</h2>
@@ -97,7 +104,7 @@
 
 <ul>
     <li>fixed server connection issue with ranks</li>
-    <li>added support for commands in battlepasses</li>
+    <li>added support for commands in battle passes</li>
 </ul>
 
 <h2>3.2.1</h2>
@@ -139,7 +146,7 @@
 <h2>3.0.7</h2>
 <ul>
     <li>finally fixed executing RCON commands</li>
-    <li>better UI in Succesful Payment page</li>
+    <li>better UI in Successful Payment page</li>
     <li>updated CoreRCON library</li>
 </ul>
 <h2>3.0.6</h2>
@@ -156,12 +163,12 @@
 </ul>
 <h2>3.0.3</h2>
 <ul>
-    <li>fixed images handeling - now working as expected</li>
+    <li>fixed images handling - now working as expected</li>
 </ul>
 <h2>3.0.2</h2>
 <ul>
-    <li>better handeling Our Team</li>
-    <li>added images handeling</li>
+    <li>better handling Our Team</li>
+    <li>added images handling</li>
 </ul>
 <h2>3.0.1</h2>
 <ul>
@@ -169,7 +176,7 @@
 </ul>
 <h2>3.0</h2>
 <ul>
-    <li>full backend reflesh (Blazor)</li>
+    <li>full backend refresh (Blazor)</li>
     <li>fixed many typos and issues</li>
     <li>better styling and adapting</li>
 </ul>
@@ -207,14 +214,14 @@
     </li>
     <li>redesign of Our Team page</li>
     <li>
-        fixed syntax errors in handeling the payment, that caused
-        the reward rcon errors
+        fixed syntax errors in handling the payment, that caused
+        the reward RCON errors
     </li>
     <li>
         fixed showing and counting coins in the cart and checkout
     </li>
     <li>
-        fixed some price formating issues in some scenarious (7€ ->
+        fixed some price formating issues in some scenarios (7€ ->
         €7)
     </li>
     <li>added support for Eternal rank</li>
@@ -224,8 +231,8 @@
     <li>spawners are now coins</li>
     <li>removed community</li>
     <li>
-        rewritten execuding commands and success page, now more
-        secure and actualy functional 🎊
+        rewritten executing commands and success page, now more
+        secure and actually functional 🎊
     </li>
     <li>fixed some bugs and did improvements</li>
 </ul>
@@ -255,7 +262,7 @@
     <li>fixed prices in cart</li>
     <li>changed Terms of Use</li>
     <li>added ranks</li>
-    <li>added total price next to Cart button in login pannel</li>
+    <li>added total price next to Cart button in login panel</li>
     <li>changed currency order (now symbol and then price)</li>
     <li>
         fixed stacking commands and removing databases when paying
@@ -264,7 +271,7 @@
         fixed system for already running commands so that the system
         does not use them as pending
     </li>
-    <li>reparated Minecraft Server Rules and Server Rules</li>
+    <li>separated Minecraft Server Rules and Server Rules</li>
     <li>all link to Home page now use "/" not "index.php"</li>
     <li>slightly changed red color, now more pink</li>
 </ul>
@@ -276,8 +283,8 @@
     </li>
     <li>fixed dark mode</li>
     <li>added support for rewriting Our Team page in admin</li>
-    <li>fixed logining in for cracked players</li>
-    <li>fixed text aragnement</li>
+    <li>fixed logging in for cracked players</li>
+    <li>fixed text arrangement</li>
     <li>added button hierarchy</li>
     <li>changed font Poppins to Outfit</li>
     <li>centered logo in navigation</li>
@@ -335,7 +342,7 @@
 </ul>
 <h2>1.1.2</h2>
 <ul>
-    <li>added keys and admin keys editatons</li>
+    <li>editable keys and admin keys</li>
     <li>edited Our Team</li>
     <li>added banner for Tiktok and Vote</li>
     <li>
@@ -452,7 +459,7 @@ else
 
     private class ServerEntryWithHtml
     {
-        public DateTime CreatedAt { get; set; }
-        public string HtmlContent { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; init; }
+        public string HtmlContent { get; init; } = string.Empty;
     }
 }
