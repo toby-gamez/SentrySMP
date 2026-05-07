@@ -291,6 +291,8 @@ namespace SentrySMP.Api.Services
                             entry.Name = nameEl.GetString();
                         if (item.TryGetProperty("uuid", out var uuidEl) && uuidEl.ValueKind != JsonValueKind.Null)
                             entry.Uuid = uuidEl.GetString();
+                        if (item.TryGetProperty("rank", out var rankEl) && rankEl.ValueKind != JsonValueKind.Null)
+                            entry.Rank = rankEl.GetString();
                         result.Players.Add(entry);
                     }
                 }

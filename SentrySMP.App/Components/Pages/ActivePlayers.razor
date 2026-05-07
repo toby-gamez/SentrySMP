@@ -2,6 +2,7 @@
 @using SentrySMP.Shared.DTOs
 @using SentrySMP.Shared.Interfaces
 @inject IGameServerService GameServerService
+@inject ITeamRankService TeamRankService
 @rendermode InteractiveServer
 
 <PageTitle>Active Players - SentrySMP</PageTitle>
@@ -28,7 +29,17 @@ else
                     <img src="https://minotar.net/helm/@(Uri.EscapeDataString(player.Name ?? "MHF_Steve"))/32"
                          alt="@player.Name"
                          class="ban-avatar skin-img" />
-                    <span class="ban-name">@(player.Name ?? "Unknown")</span>
+                    <div>
+                        @if (!string.IsNullOrWhiteSpace(player.Rank) && _rankColors.TryGetValue(player.Rank, out var hex))
+                        {
+                            <span class="rank-badge" style="background:@(hex ?? "#444"); color:#fff; padding:2px 8px; border-radius:4px; margin-right:6px; font-size:0.75em;"><strong>@player.Rank</strong></span>
+                        }
+                        else if (!string.IsNullOrWhiteSpace(player.Rank))
+                        {
+                            <span class="rank-badge" style="background:#444; color:#fff; padding:2px 8px; border-radius:4px; margin-right:6px; font-size:0.75em;"><strong>@player.Rank</strong></span>
+                        }
+                        <span class="ban-name">@(player.Name ?? "Unknown")</span>
+                    </div>
                 </div>
             </li>
         }
@@ -41,6 +52,7 @@ else
     private List<OnlinePlayerEntry> _players = new();
     private bool _loading = true;
     private string? _error;
+    private Dictionary<string, string?> _rankColors = new(StringComparer.OrdinalIgnoreCase);
 
     protected override async Task OnInitializedAsync()
     {
@@ -58,6 +70,18 @@ else
             else
             {
                 _players = result.Players;
+
+                // Preload rank colors for all unique ranks
+                var rankNames = _players
+                    .Where(p => !string.IsNullOrWhiteSpace(p.Rank))
+                    .Select(p => p.Rank!)
+                    .Distinct(StringComparer.OrdinalIgnoreCase);
+
+                foreach (var rankName in rankNames)
+                {
+                    var tr = await TeamRankService.GetByNameAsync(rankName);
+                    _rankColors[rankName] = tr?.HexColor;
+                }
             }
         }
         catch (Exception ex)

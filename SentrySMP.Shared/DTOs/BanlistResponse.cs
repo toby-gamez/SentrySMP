@@ -4,6 +4,7 @@ namespace SentrySMP.Shared.DTOs
     {
         public string? Name { get; set; }
         public string? Uuid { get; set; }
+        public string? Rank { get; set; }
     }
 
     public class OnlinePlayersResponse
