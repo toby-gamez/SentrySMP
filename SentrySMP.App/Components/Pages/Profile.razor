@@ -55,11 +55,11 @@ else
             <div class="profile-stats">
                 <div class="profile-stat-item">
                     <span class="profile-stat-label"><i class="bi bi-coin"></i> Coins</span>
-                    <span class="profile-stat-value">@(_coins.HasValue ? _coins.Value.ToString() : "—")</span>
+                    <span class="profile-stat-value">@(_coins.HasValue ? _coins.Value.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")) : "—")</span>
                 </div>
                 <div class="profile-stat-item">
                     <span class="profile-stat-label"><i class="bi bi-currency-dollar"></i> Money</span>
-                    <span class="profile-stat-value">@(_money.HasValue ? _money.Value.ToString() : "—")</span>
+                    <span class="profile-stat-value">@(_money.HasValue ? _money.Value.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")) : "—")</span>
                 </div>
                 <div class="profile-stat-item">
                     <span class="profile-stat-label"><i class="bi bi-receipt"></i> Purchases</span>
