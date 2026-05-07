@@ -1,0 +1,76 @@
+@page "/banlist"
+@using SentrySMP.Shared.DTOs
+@using SentrySMP.Shared.Interfaces
+@inject IGameServerService GameServerService
+@rendermode InteractiveServer
+
+<PageTitle>Ban List - SentrySMP</PageTitle>
+
+@if (_loading)
+{
+    <p><em>Loading...</em></p>
+}
+else if (_error != null)
+{
+    <div class="alert alert-danger">@_error</div>
+}
+else if (_entries.Count == 0)
+{
+    <div class="alert alert-info">No banned players.</div>
+}
+else
+{
+    <ul class="ban-list">
+        @foreach (var entry in _entries)
+        {
+            <li class="ban-item">
+                <div class="ban-item-header">
+                    <img src="https://minotar.net/helm/@(Uri.EscapeDataString(entry.Name ?? "MHF_Steve"))/32"
+                         alt="@entry.Name"
+                         class="ban-avatar skin-img" />
+                    <span class="ban-name">@(entry.Name ?? "Unknown")</span>
+                </div>
+                @if (!string.IsNullOrWhiteSpace(entry.Reason))
+                {
+                    <div class="ban-reason"><i class="bi bi-slash-circle"></i> @entry.Reason</div>
+                }
+            </li>
+        }
+    </ul>
+    <p class="text-muted mb-3">@_entries.Count banned player@(_entries.Count == 1 ? "" : "s")</p>
+}
+
+
+@code {
+    private List<BannedEntry> _entries = new();
+    private bool _loading = true;
+    private string? _error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var result = await GameServerService.GetBanlistAsync();
+            if (result == null)
+            {
+                _error = "GameServer is not configured.";
+            }
+            else if (result.Error != null)
+            {
+                _error = result.Error;
+            }
+            else
+            {
+                _entries = result.Banned;
+            }
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+}

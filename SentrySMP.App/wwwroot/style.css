@@ -51,8 +51,8 @@ h2,
 h3,
 h4,
 h5 {
-    padding-top: 2.5px;
-    padding-bottom: 2.5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 h2 {
@@ -4295,3 +4295,58 @@ body.light .profile-stat-item {
 body.light .profile-stat-label {
     color: #555;
 }
+
+.login-bar-icon {
+    font-size: 20px;
+}
+
+.ban-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .ban-item-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .ban-item {
+        background-color: #242424;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .ban-avatar {
+        border-radius: 4px;
+        image-rendering: pixelated;
+    }
+
+    .ban-name {
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .ban-reason {
+        font-size: 0.9rem;
+        color: #e05555;
+        margin-top: 0.15rem;
+    }
+
+    .ban-uuid {
+        font-size: 0.75rem;
+        margin-top: 0.15rem;
+        font-family: monospace;
+        opacity: 0.6;
+    }
+
+        body.light .ban-item {
+        background-color: #f0f0f0;
+        }

@@ -249,5 +249,70 @@ namespace SentrySMP.Api.Services
                 return new PlayerInfoResponse { Player = username, Error = ex.Message };
             }
         }
+
+        public async Task<BanlistResponse?> GetBanlistAsync()
+        {
+            var baseUrl = _configuration["GameServer:BaseUrl"] ?? _configuration["Delivery:ApiUrl"] ?? string.Empty;
+            var apiKey = _configuration["GameServer:ApiKey"] ?? _configuration["Delivery:ApiKey"] ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(baseUrl))
+            {
+                _logger.LogWarning("GameServer base URL is not configured");
+                return null;
+            }
+
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Add("accept", "application/json");
+                if (!string.IsNullOrWhiteSpace(apiKey))
+                    client.DefaultRequestHeaders.Add("X-API-Key", apiKey);
+
+                var url = $"{baseUrl.TrimEnd('/')}/banlist";
+                var httpResp = await client.GetAsync(url);
+                var body = await httpResp.Content.ReadAsStringAsync();
+
+                if (!httpResp.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("GameServer /banlist returned HTTP {Status}: {Body}", (int)httpResp.StatusCode, body);
+                    return new BanlistResponse { Error = $"HTTP {(int)httpResp.StatusCode}" };
+                }
+
+                try
+                {
+                    using var doc = JsonDocument.Parse(body);
+                    var root = doc.RootElement;
+                    var result = new BanlistResponse();
+
+                    if (root.TryGetProperty("banned", out var bannedEl) && bannedEl.ValueKind == JsonValueKind.Array)
+                    {
+                        foreach (var item in bannedEl.EnumerateArray())
+                        {
+                            var entry = new BannedEntry();
+                            if (item.TryGetProperty("name", out var nameEl) && nameEl.ValueKind != JsonValueKind.Null)
+                                entry.Name = nameEl.GetString();
+                            if (item.TryGetProperty("uuid", out var uuidEl) && uuidEl.ValueKind != JsonValueKind.Null)
+                                entry.Uuid = uuidEl.GetString();
+                            if (item.TryGetProperty("reason", out var reasonEl) && reasonEl.ValueKind != JsonValueKind.Null)
+                                entry.Reason = reasonEl.GetString();
+                            result.Banned.Add(entry);
+                        }
+                    }
+
+                    return result;
+                }
+                catch (Exception exParse)
+                {
+                    _logger.LogWarning(exParse, "Could not parse GameServer /banlist response JSON");
+                    return new BanlistResponse { Error = exParse.Message };
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to call GameServer /banlist endpoint");
+                return new BanlistResponse { Error = ex.Message };
+            }
+        }
     }
 }
