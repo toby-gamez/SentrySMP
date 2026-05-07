@@ -81,17 +81,11 @@ else
             {
                 _players = result.Players;
 
-                // Preload rank colors for all unique ranks
-                var rankNames = _players
-                    .Where(p => !string.IsNullOrWhiteSpace(p.Rank))
-                    .Select(p => p.Rank!)
-                    .Distinct(StringComparer.OrdinalIgnoreCase);
-
-                foreach (var rankName in rankNames)
-                {
-                    var tr = await TeamRankService.GetByNameAsync(rankName);
-                    _rankColors[rankName] = tr?.HexColor;
-                }
+                // Load all rank colors in a single query
+                var allRanks = await TeamRankService.GetAllAsync();
+                _rankColors = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
+                foreach (var r in allRanks.Where(r => !string.IsNullOrWhiteSpace(r.Name)))
+                    _rankColors[r.Name!] = r.HexColor;
             }
         }
         catch (Exception ex)

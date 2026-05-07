@@ -258,6 +258,23 @@ a:has(li) {
     margin-right: auto;
 }
 
+.login-bar-rank-badge,
+.cart-button-icon {
+    display: inline-block;
+    display: inline-block;
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    .login-bar-rank-badge,
+    .cart-button-icon {
+        display: none;
+    }
+}
+
 /* Sidebar layout */
 .page-layout {
     display: flex;

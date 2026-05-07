@@ -18,7 +18,7 @@
             <div>
                 @if (!string.IsNullOrWhiteSpace(_playerRankName))
                 {
-                    <span class="rank-badge" style="background:@(_playerRankHex ?? "#444"); color:#fff; padding:2px 8px; border-radius:4px; margin-right:6px; font-size:0.75em;"><strong>@_playerRankName</strong></span>
+                    <span class="rank-badge login-bar-rank-badge" style="background:@(_playerRankHex ?? "#444"); color:#fff; padding:2px 8px; border-radius:4px; margin-right:6px; font-size:0.75em;"><strong>@_playerRankName</strong></span>
                 }
                 <strong>@CurrentDisplay</strong>
             </div>
@@ -27,7 +27,7 @@
     <div style="display: flex; gap: 4px; margin-left: 12px;">
         <button class="secondary login-bar-icon" title="Log out" @onclick="Logout"><i class="bi bi-box-arrow-right"></i></button>
         <button class="secondary login-bar-icon" title="Profile" @onclick="OpenProfile"><i class="bi bi-person-fill"></i></button>
-        <button class="great-button" @onclick="OpenCart"><i class="bi bi-cart-fill"></i> Cart</button>
+        <button class="great-button" @onclick="OpenCart"><i class="bi bi-cart-fill cart-button-icon"></i> Cart</button>
     </div>
 }
 else
