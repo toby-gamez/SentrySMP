@@ -1013,6 +1013,7 @@
                                                                                             _logger?.LogWarning(exRecord, "Failed to record purchases for tx {TxId}", _lastTransactionId);
                                                                                         }
                                                                                         await CartState.ClearCartAsync();
+                                                                                        try { await VoucherState.RemoveAsync(); } catch { }
                                                                                         _clearCartOnDeliverySuccess = false;
                                                                                         StateHasChanged();
                                                                                     }
@@ -1189,6 +1190,7 @@
                         else
                         {
                             await CartState.ClearCartAsync();
+                            try { await VoucherState.RemoveAsync(); } catch { }
                             try { _logger?.LogInformation("Cart cleared after provider return tx={TxId}", _lastTransactionId); } catch { }
                         }
                     }
@@ -1277,6 +1279,7 @@
                                     _logger?.LogWarning(exRecord, "Failed to record purchases for deferred tx {TxId}", _lastTransactionId);
                                 }
                                 await CartState.ClearCartAsync();
+                                try { await VoucherState.RemoveAsync(); } catch { }
                                 _clearCartOnDeliverySuccess = false;
                             }
                         }
