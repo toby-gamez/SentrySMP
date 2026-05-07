@@ -16,11 +16,11 @@
         <img src="@((!string.IsNullOrEmpty(CurrentDisplay) && CurrentDisplay.StartsWith(".")) ? "https://minotar.net/helm/MHF_Steve/100" : ((!string.IsNullOrEmpty(SkinUrl) && string.Equals(Edition, "java", StringComparison.OrdinalIgnoreCase)) ? SkinUrl : "https://minotar.net/helm/MHF_Steve/100"))" class="skin-img" alt="skin" />
         <div>
             <div>
-                <strong>@CurrentDisplay</strong>
                 @if (!string.IsNullOrWhiteSpace(_playerRankName))
                 {
-                    <span class="rank-badge" style="background:@(_playerRankHex ?? "#444"); color:#fff; padding:2px 8px; border-radius:4px; margin-left:6px; font-size:0.75em;"><strong>@_playerRankName</strong></span>
+                    <span class="rank-badge" style="background:@(_playerRankHex ?? "#444"); color:#fff; padding:2px 8px; border-radius:4px; margin-right:6px; font-size:0.75em;"><strong>@_playerRankName</strong></span>
                 }
+                <strong>@CurrentDisplay</strong>
             </div>
         </div>
     </div>
