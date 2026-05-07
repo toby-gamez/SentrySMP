@@ -1,6 +1,7 @@
 @using Microsoft.AspNetCore.Components.Forms
 @using System.Text
 @using Refit
+@implements IAsyncDisposable
 @inject SentrySMP.Shared.Interfaces.IImagesApi ImagesApi
 @inject IJSRuntime JSRuntime
 @inject ILogger<ImageUploader> Logger
@@ -22,6 +23,7 @@
         }
         
         <div class="upload-area @(isDragOver ? "drag-over" : "")" 
+             @ref="dropZone"
              @ondragover="HandleDragOver" 
              @ondragover:preventDefault="true"
              @ondragleave="HandleDragLeave"
@@ -45,6 +47,10 @@
                         <p class="mt-2 mb-2">Drag & drop an image here, or 
                             <button type="button" class="btn btn-link p-0" @onclick="TriggerFileInput">
                                 click to select
+                            </button>
+                            or
+                            <button type="button" class="btn btn-link p-0" @onclick="OpenImagePicker">
+                                browse existing
                             </button>
                         </p>
                         <small class="text-muted">Supported: JPG, PNG, WEBP (max 5MB)</small>
@@ -76,6 +82,46 @@
     </div>
 </div>
 
+@if (showImagePicker)
+{
+    <div class="image-picker-backdrop" @onclick="CloseImagePicker">
+        <div class="image-picker-modal" @onclick:stopPropagation="true">
+            <div class="image-picker-header">
+                <h5 class="mb-0">Select Existing Image</h5>
+                <button type="button" class="btn-close" @onclick="CloseImagePicker"></button>
+            </div>
+            <div class="image-picker-body">
+                @if (isLoadingImages)
+                {
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                }
+                else if (existingImages == null || !existingImages.Any())
+                {
+                    <p class="text-muted text-center py-4">No existing images found in this folder.</p>
+                }
+                else
+                {
+                    <div class="image-picker-grid">
+                        @foreach (var image in existingImages)
+                        {
+                            <div class="image-picker-item @(image.Url == ImageUrl ? "selected" : "")" 
+                                 @onclick="() => SelectExistingImage(image)"
+                                 title="@image.FileName">
+                                <img src="@image.Url" alt="@image.FileName" />
+                                <small class="image-picker-name">@image.FileName</small>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
 <style>
     .upload-area {
         border: 2px dashed #dee2e6;
@@ -101,6 +147,87 @@
     .current-image {
         text-align: center;
     }
+    
+    .image-picker-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1050;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .image-picker-modal {
+        background: #fff;
+        border-radius: 8px;
+        width: min(90vw, 800px);
+        max-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    
+    .image-picker-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .image-picker-body {
+        overflow-y: auto;
+        padding: 1rem;
+        flex: 1;
+    }
+    
+    .image-picker-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 0.75rem;
+    }
+    
+    .image-picker-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.5rem;
+        border: 2px solid transparent;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .image-picker-item:hover {
+        border-color: #0d6efd;
+        background: #e7f3ff;
+    }
+    
+    .image-picker-item.selected {
+        border-color: #0d6efd;
+        background: #cfe2ff;
+    }
+    
+    .image-picker-item img {
+        width: 100%;
+        height: 90px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+    
+    .image-picker-name {
+        font-size: 0.65rem;
+        color: #6c757d;
+        word-break: break-all;
+        text-align: center;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 110px;
+    }
 </style>
 
 @code {
@@ -109,20 +236,47 @@
     [Parameter] public string? ImageUrl { get; set; }
     [Parameter] public EventCallback<string?> ImageUrlChanged { get; set; }
     
+    private ElementReference dropZone;
     private InputFile? fileInput;
     private bool isUploading = false;
     private bool isDragOver = false;
+    private bool showImagePicker = false;
+    private bool isLoadingImages = false;
+    private bool _jsInitialized = false;
+    private IEnumerable<FileUploadResponse>? existingImages;
     private string? errorMessage;
     private string? successMessage;
     
     private static readonly string[] AllowedTypes = { "image/jpeg", "image/jpg", "image/png", "image/webp" };
     private const long MaxFileSize = 5 * 1024 * 1024; // 5MB
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && fileInput != null)
+        {
+            await JSRuntime.InvokeVoidAsync("imageUploaderInterop.registerDropZone", dropZone, fileInput.Element);
+            _jsInitialized = true;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_jsInitialized)
+        {
+            try
+            {
+                await JSRuntime.InvokeVoidAsync("imageUploaderInterop.unregisterDropZone", dropZone);
+            }
+            catch (JSDisconnectedException) { }
+            catch (TaskCanceledException) { }
+        }
+    }
+
     private async Task TriggerFileInput()
     {
-        if (fileInput?.Element != null)
+        if (fileInput != null)
         {
-            await JSRuntime.InvokeVoidAsync("eval", "document.querySelector('input[type=file]').click()");
+            await JSRuntime.InvokeVoidAsync("imageUploaderInterop.clickElement", fileInput.Element);
         }
     }
     
@@ -136,11 +290,9 @@
         isDragOver = false;
     }
     
-    private async Task HandleDrop()
+    private void HandleDrop()
     {
         isDragOver = false;
-        // Note: Drag and drop file handling requires additional JavaScript interop
-        // For now, we'll focus on the file input functionality
     }
     
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
@@ -250,5 +402,48 @@
     {
         errorMessage = null;
         successMessage = null;
+    }
+    
+    private async Task OpenImagePicker()
+    {
+        showImagePicker = true;
+        isLoadingImages = true;
+        existingImages = null;
+        StateHasChanged();
+        
+        try
+        {
+            existingImages = await ImagesApi.GetImagesAsync(SubDirectory);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading images: {ex.Message}";
+            Logger.LogError(ex, "Error loading existing images");
+            showImagePicker = false;
+        }
+        finally
+        {
+            isLoadingImages = false;
+            StateHasChanged();
+        }
+    }
+    
+    private async Task SelectExistingImage(FileUploadResponse image)
+    {
+        ImageUrl = image.Url;
+        await ImageUrlChanged.InvokeAsync(ImageUrl);
+        showImagePicker = false;
+        
+        successMessage = "Image selected!";
+        _ = Task.Delay(3000).ContinueWith(t =>
+        {
+            successMessage = null;
+            InvokeAsync(StateHasChanged);
+        });
+    }
+    
+    private void CloseImagePicker()
+    {
+        showImagePicker = false;
     }
 }
