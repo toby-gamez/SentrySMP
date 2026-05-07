@@ -1,4 +1,5 @@
 @page "/profile"
+@page "/profile/{Name}"
 @using SentrySMP.Shared.DTOs
 @inject SentrySMP.App.Authentication.UserService UserService
 @inject SentrySMP.Shared.Interfaces.IGameServerService GameServerService
@@ -133,6 +134,8 @@ else
 }
 
 @code {
+    [Parameter] public string? Name { get; set; }
+
     private bool _loaded = false;
     private bool _loggedIn = false;
     private string? _username;
@@ -143,21 +146,52 @@ else
     private int? _money = null;
     private List<TransactionResponse>? _transactions;
 
-    protected override async Task OnInitializedAsync()
+    // Track which profile is currently loaded to avoid redundant reloads
+    private string? _loadedFor;
+
+    protected override async Task OnParametersSetAsync()
     {
-        try
+        // Resolve the effective username (URL param takes priority)
+        string? effectiveUsername;
+        bool requiresLogin;
+
+        if (!string.IsNullOrWhiteSpace(Name))
+        {
+            effectiveUsername = Name;
+            requiresLogin = false;
+        }
+        else
         {
             var info = await UserService.GetUserInfoAsync();
             if (!info.LoggedIn)
             {
                 _loggedIn = false;
                 _loaded = true;
+                _loadedFor = null;
                 return;
             }
-            _loggedIn = true;
-            _username = info.Username;
-            _skinUrl = info.Skin;
+            effectiveUsername = info.Username;
+            requiresLogin = true;
+        }
 
+        // Skip reload if we already have data for this player
+        if (_loadedFor == effectiveUsername)
+            return;
+
+        _loaded = false;
+        _loggedIn = true;
+        _username = effectiveUsername;
+        _skinUrl = requiresLogin
+            ? (await UserService.GetUserInfoAsync()).Skin
+            : $"https://minotar.net/helm/{Uri.EscapeDataString(effectiveUsername!)}/100";
+        _coins = null;
+        _money = null;
+        _rankName = null;
+        _rankHex = null;
+        _transactions = null;
+
+        try
+        {
             // Fetch player first (HTTP) then perform DB queries sequentially to avoid concurrent DbContext usage
             var player = await GameServerService.GetPlayerInfoAsync(_username!);
             if (player != null)
@@ -186,10 +220,12 @@ else
                 }
             }
             catch { }
+
+            _loadedFor = effectiveUsername;
         }
-        catch (Exception ex)
+        catch
         {
-            // best-effort
+            // best-effort — profile shell still renders with whatever data was set
         }
         finally
         {
