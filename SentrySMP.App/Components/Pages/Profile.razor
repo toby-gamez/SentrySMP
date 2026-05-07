@@ -10,56 +10,131 @@
 
 <PageTitle>Profile - SentrySMP</PageTitle>
 
+<div class="container">
+
 @if (!_loaded)
 {
     <div>Loading profile...</div>
 }
 else if (!_loggedIn)
 {
-    <div class="alert alert-info">You must be logged in to view your profile. <button class="btn btn-sm btn-primary" @onclick="GoLogin">Log in</button></div>
+    <div class="login-card" style="max-width:480px;">
+        <div class="login-skin-panel">
+            <img src="https://minotar.net/helm/MHF_Steve/100" alt="Skin preview" class="login-skin-img" />
+            <div class="login-skin-name">Minecraft Player</div>
+            <div class="login-skin-badge">Not logged in</div>
+        </div>
+        <div class="login-form-panel">
+            <p style="color:#9e9e9e;margin:0;">You must be logged in to view your profile.</p>
+            <div class="login-actions">
+                <button class="great-button" @onclick="GoLogin">Log in</button>
+            </div>
+        </div>
+    </div>
 }
 else
 {
-    <div class="profile-header d-flex align-items-center gap-3">
-        <img src="@(_skinUrl ?? "https://minotar.net/helm/MHF_Steve/100")" alt="skin" style="width:64px;height:64px;border-radius:8px;" />
-        <div>
-            <h2>@_username</h2>
+    
+    <div class="login-card profile-card">
+        <!-- Left: skin panel -->
+        <div class="login-card-inner">
+        <div class="login-skin-panel">
+            <img src="@(_skinUrl ?? "https://minotar.net/helm/MHF_Steve/100")" alt="Skin preview" />
+            <div class="login-skin-name">@_username</div>
             @if (!string.IsNullOrWhiteSpace(_rankName))
             {
-                <div><span class="badge" style="background:@(_rankHex ?? "#444"); color:#fff; padding:6px 10px; border-radius:6px;">@_rankName</span></div>
+                <div class="login-skin-badge" style="background:@(_rankHex ?? "#444"); color:#fff;">@_rankName</div>
             }
-            <div class="small text-muted">Coins: @(_coins.HasValue ? _coins.Value.ToString() : "-") | Money: @(_money.HasValue ? _money.Value.ToString() : "-")</div>
+            else
+            {
+                <div class="login-skin-badge">Player</div>
+            }
+        </div>
+
+        <!-- Right: stats panel -->
+        <div class="login-form-panel">
+            <div class="profile-stats">
+                <div class="profile-stat-item">
+                    <span class="profile-stat-label"><i class="bi bi-coin"></i> Coins</span>
+                    <span class="profile-stat-value">@(_coins.HasValue ? _coins.Value.ToString() : "—")</span>
+                </div>
+                <div class="profile-stat-item">
+                    <span class="profile-stat-label"><i class="bi bi-currency-dollar"></i> Money</span>
+                    <span class="profile-stat-value">@(_money.HasValue ? _money.Value.ToString() : "—")</span>
+                </div>
+                <div class="profile-stat-item">
+                    <span class="profile-stat-label"><i class="bi bi-receipt"></i> Purchases</span>
+                    <span class="profile-stat-value">@(_transactions?.Count(t =>
+                                                         !string.IsNullOrWhiteSpace(t.Status)
+                                                         && (t.Status.IndexOf("RCON_OK", StringComparison.OrdinalIgnoreCase) >= 0
+                                                             || string.Equals(t.Status, "succeeded", StringComparison.OrdinalIgnoreCase))
+                                                         && t.Amount > 0) ?? 0)</span>
+                </div>
+            </div>
+        </div>
         </div>
     </div>
 
-    <h3 class="mt-4">Purchase history</h3>
+    <h2 class="mt-4">Purchase history</h2>
     @if (_transactions == null || !_transactions.Any())
     {
         <div class="small text-muted">No purchases found.</div>
     }
     else
     {
-        <table class="table table-sm mt-2">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Items</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var tx in _transactions.Where(t => !string.IsNullOrWhiteSpace(t.Status) && (t.Status.IndexOf("RCON_OK", StringComparison.OrdinalIgnoreCase) >= 0 || string.Equals(t.Status, "succeeded", StringComparison.OrdinalIgnoreCase)) && t.Amount > 0).Take(100))
+        @foreach (var tx in _transactions
+            .Where(t => !string.IsNullOrWhiteSpace(t.Status)
+                && (t.Status.IndexOf("RCON_OK", StringComparison.OrdinalIgnoreCase) >= 0
+                    || string.Equals(t.Status, "succeeded", StringComparison.OrdinalIgnoreCase))
+                && t.Amount > 0)
+            .OrderByDescending(t => t.CreatedAt)
+            .Take(100))
+        {
+            var txItems = ParseItems(tx.ItemsJson);
+            <div class="purchase-history-group mt-3">
+                <div class="cart-total-profile">
+                    <span>@tx.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+                    <span class="text-success">€@tx.Amount.ToString("F2")</span>
+                </div>
+
+                @if (txItems.Any())
                 {
-                    <tr>
-                        <td>@tx.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
-                        <td>@($"€{tx.Amount:F2}")</td>
-                        <td>@ShortItems(tx.ItemsJson)</td>
-                    </tr>
+                    <div class="product-grid">
+                        @foreach (var item in txItems)
+                        {
+                            <div class="product">
+                                <div class="card h-100">
+                                    @if (!string.IsNullOrEmpty(item.Product?.Image))
+                                    {
+                                        <img src="@item.Product.Image" class="product-image" alt="@item.Product?.Name">
+                                    }
+                                    else
+                                    {
+                                        <div style="height: 120px;">
+                                            <i class="bi bi-box-fill text-white" style="font-size: 2rem;"></i>
+                                        </div>
+                                    }
+                                    <div class="">
+                                        <h3 class="">@item.Product?.Name</h3>
+                                        <small class="text-muted">@item.Product?.Server?.Name</small>
+                                        <div class="mt-auto">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <strong class="text-primary">€@((item.Product?.Price ?? 0).ToString("F2"))</strong>
+                                                <span class="badge bg-secondary">×@item.Quantity</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
                 }
-            </tbody>
-        </table>
+            </div>
+        }
     }
 }
+
+</div>
 
 @code {
     private bool _loaded = false;
@@ -129,23 +204,17 @@ else
 
     private void GoLogin() => NavigationManager.NavigateTo("/login");
 
-    private string ShortItems(string? itemsJson)
+    private List<ProductQuantityDto> ParseItems(string? itemsJson)
     {
-        if (string.IsNullOrWhiteSpace(itemsJson)) return string.Empty;
+        if (string.IsNullOrWhiteSpace(itemsJson)) return new();
         try
         {
-            // Keep it simple: show raw length or first product name if parseable
             var opts = new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web) { PropertyNameCaseInsensitive = true };
-            var list = System.Text.Json.JsonSerializer.Deserialize<List<ProductQuantityDto>>(itemsJson, opts);
-            if (list != null && list.Any())
-            {
-                return string.Join(", ", list.Select(l => l.Product?.Name ?? l.Product?.Type ?? "item"));
-            }
-            return itemsJson.Length <= 80 ? itemsJson : itemsJson.Substring(0, 80) + "...";
+            return System.Text.Json.JsonSerializer.Deserialize<List<ProductQuantityDto>>(itemsJson, opts) ?? new();
         }
         catch
         {
-            return itemsJson.Length <= 80 ? itemsJson : itemsJson.Substring(0, 80) + "...";
+            return new();
         }
     }
 }
