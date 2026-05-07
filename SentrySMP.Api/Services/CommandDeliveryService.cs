@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -184,7 +186,8 @@ namespace SentrySMP.Api.Services
                 if (!string.IsNullOrWhiteSpace(apiKey))
                     client.DefaultRequestHeaders.Add("X-API-Key", apiKey);
 
-                var json = JsonSerializer.Serialize(requestDict);
+                var jsonOpts = new JsonSerializerOptions { Converters = { new DoubleAsDecimalConverter() } };
+                var json = JsonSerializer.Serialize(requestDict, jsonOpts);
                 _logger.LogInformation("Delivery API request body: {Json}", json);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -193,6 +196,7 @@ namespace SentrySMP.Api.Services
                     ? apiUrl
                     : (client.BaseAddress != null ? new Uri(client.BaseAddress, "command").ToString() : apiUrl + "/command");
 
+                _logger.LogInformation("Delivery API POST target URL: {TargetUrl} (BaseAddress={BaseAddress})", targetUrl, client.BaseAddress?.ToString() ?? "(none)");
                 var response = await client.PostAsync(targetUrl, content);
                 var responseBody = await response.Content.ReadAsStringAsync();
 
@@ -262,6 +266,24 @@ namespace SentrySMP.Api.Services
                         ErrorMessage = ex.Message
                     }).ToList()
                 };
+            }
+        }
+
+        /// <summary>
+        /// Ensures double values always serialize with a decimal point (e.g. 268.0 not 268)
+        /// so Java's Jackson can deserialize them into double/BigDecimal fields without errors.
+        /// </summary>
+        private sealed class DoubleAsDecimalConverter : JsonConverter<double>
+        {
+            public override double Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+                => reader.GetDouble();
+
+            public override void Write(Utf8JsonWriter writer, double value, JsonSerializerOptions options)
+            {
+                if (double.IsFinite(value) && value == Math.Truncate(value))
+                    writer.WriteRawValue(value.ToString("F1", CultureInfo.InvariantCulture));
+                else
+                    writer.WriteRawValue(value.ToString("R", CultureInfo.InvariantCulture));
             }
         }
     }
