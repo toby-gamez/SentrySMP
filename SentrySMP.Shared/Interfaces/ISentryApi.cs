@@ -174,6 +174,9 @@ public interface ISentryApi
     [Get("/api/teamranks/{id}")]
     Task<TeamRankDto> GetTeamRankAsync(int id);
 
+    [Get("/api/teamranks/byname/{name}")]
+    Task<TeamRankDto?> GetTeamRankByNameAsync(string name);
+
     [Post("/api/teamranks")]
     Task<TeamRankDto> CreateTeamRankAsync([Body] TeamRankDto dto);
 

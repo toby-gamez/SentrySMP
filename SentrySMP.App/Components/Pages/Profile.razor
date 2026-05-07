@@ -1,0 +1,151 @@
+@page "/profile"
+@using SentrySMP.Shared.DTOs
+@inject SentrySMP.App.Authentication.UserService UserService
+@inject SentrySMP.Shared.Interfaces.IGameServerService GameServerService
+@inject SentrySMP.Shared.Interfaces.ITeamRankService TeamRankService
+@inject SentrySMP.Shared.Interfaces.ITransactionsService TransactionsService
+@inject SentrySMP.Shared.Interfaces.IShopScoreboardService ShopScoreboardService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Profile - SentrySMP</PageTitle>
+
+@if (!_loaded)
+{
+    <div>Loading profile...</div>
+}
+else if (!_loggedIn)
+{
+    <div class="alert alert-info">You must be logged in to view your profile. <button class="btn btn-sm btn-primary" @onclick="GoLogin">Log in</button></div>
+}
+else
+{
+    <div class="profile-header d-flex align-items-center gap-3">
+        <img src="@(_skinUrl ?? "https://minotar.net/helm/MHF_Steve/100")" alt="skin" style="width:64px;height:64px;border-radius:8px;" />
+        <div>
+            <h2>@_username</h2>
+            @if (!string.IsNullOrWhiteSpace(_rankName))
+            {
+                <div><span class="badge" style="background:@(_rankHex ?? "#444"); color:#fff; padding:6px 10px; border-radius:6px;">@_rankName</span></div>
+            }
+            <div class="small text-muted">Coins: @(_coins.HasValue ? _coins.Value.ToString() : "-") | Money: @(_money.HasValue ? _money.Value.ToString() : "-")</div>
+        </div>
+    </div>
+
+    <h3 class="mt-4">Purchase history</h3>
+    @if (_transactions == null || !_transactions.Any())
+    {
+        <div class="small text-muted">No purchases found.</div>
+    }
+    else
+    {
+        <table class="table table-sm mt-2">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Items</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tx in _transactions.Where(t => !string.IsNullOrWhiteSpace(t.Status) && (t.Status.IndexOf("RCON_OK", StringComparison.OrdinalIgnoreCase) >= 0 || string.Equals(t.Status, "succeeded", StringComparison.OrdinalIgnoreCase)) && t.Amount > 0).Take(100))
+                {
+                    <tr>
+                        <td>@tx.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                        <td>@($"€{tx.Amount:F2}")</td>
+                        <td>@ShortItems(tx.ItemsJson)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    private bool _loaded = false;
+    private bool _loggedIn = false;
+    private string? _username;
+    private string? _skinUrl;
+    private string? _rankName;
+    private string? _rankHex;
+    private int? _coins = null;
+    private int? _money = null;
+    private List<TransactionResponse>? _transactions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var info = await UserService.GetUserInfoAsync();
+            if (!info.LoggedIn)
+            {
+                _loggedIn = false;
+                _loaded = true;
+                return;
+            }
+            _loggedIn = true;
+            _username = info.Username;
+            _skinUrl = info.Skin;
+
+            // Fetch player first (HTTP) then perform DB queries sequentially to avoid concurrent DbContext usage
+            var player = await GameServerService.GetPlayerInfoAsync(_username!);
+            if (player != null)
+            {
+                _coins = player.Coins;
+                _money = player.Money;
+                _rankName = player.Rank;
+                if (!string.IsNullOrWhiteSpace(_rankName))
+                {
+                    var tr = await TeamRankService.GetByNameAsync(_rankName);
+                    if (tr != null) _rankHex = tr.HexColor;
+                }
+            }
+
+            // Transactions and scoreboard access the same DbContext; run them sequentially to avoid EF Core concurrency errors
+            var txs = (await TransactionsService.GetByUsernameAsync(_username!))?.ToList() ?? new List<TransactionResponse>();
+            _transactions = txs;
+
+            try
+            {
+                var board = await ShopScoreboardService.GetScoreboardAsync(ScoreboardPeriod.AllTime, 200);
+                var pos = board?.FindIndex(e => string.Equals(e.MinecraftUsername, _username, StringComparison.OrdinalIgnoreCase));
+                if (pos.HasValue && pos.Value >= 0)
+                {
+                    // Could display position if desired
+                }
+            }
+            catch { }
+        }
+        catch (Exception ex)
+        {
+            // best-effort
+        }
+        finally
+        {
+            _loaded = true;
+            StateHasChanged();
+        }
+    }
+
+    private void GoLogin() => NavigationManager.NavigateTo("/login");
+
+    private string ShortItems(string? itemsJson)
+    {
+        if (string.IsNullOrWhiteSpace(itemsJson)) return string.Empty;
+        try
+        {
+            // Keep it simple: show raw length or first product name if parseable
+            var opts = new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web) { PropertyNameCaseInsensitive = true };
+            var list = System.Text.Json.JsonSerializer.Deserialize<List<ProductQuantityDto>>(itemsJson, opts);
+            if (list != null && list.Any())
+            {
+                return string.Join(", ", list.Select(l => l.Product?.Name ?? l.Product?.Type ?? "item"));
+            }
+            return itemsJson.Length <= 80 ? itemsJson : itemsJson.Substring(0, 80) + "...";
+        }
+        catch
+        {
+            return itemsJson.Length <= 80 ? itemsJson : itemsJson.Substring(0, 80) + "...";
+        }
+    }
+}

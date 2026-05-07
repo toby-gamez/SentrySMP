@@ -168,9 +168,9 @@ namespace SentrySMP.Api.Services
             if (!string.IsNullOrWhiteSpace(voucherCode))
                 requestDict["voucher"] = voucherCode;
 
-            // 5. Send POST request to delivery API
-            var apiUrl = _configuration["Delivery:ApiUrl"] ?? "http://cz1.sentrysmp.eu:27013/command";
-            var apiKey = _configuration["Delivery:ApiKey"] ?? string.Empty;
+            // 5. Send POST request to delivery API (prefer GameServer config and named client)
+            var apiUrl = _configuration["GameServer:BaseUrl"] ?? _configuration["Delivery:ApiUrl"] ?? "http://cz1.sentrysmp.eu:27013";
+            var apiKey = _configuration["GameServer:ApiKey"] ?? _configuration["Delivery:ApiKey"] ?? string.Empty;
 
             _logger.LogInformation(
                 "Sending delivery request to {Url} for player '{Player}' with {CmdCount} command(s) price={Price} voucher={Voucher}",
@@ -178,7 +178,7 @@ namespace SentrySMP.Api.Services
 
             try
             {
-                var client = _httpClientFactory.CreateClient("Delivery");
+                var client = _httpClientFactory.CreateClient("GameServerClient");
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Add("accept", "application/json");
                 if (!string.IsNullOrWhiteSpace(apiKey))
@@ -188,7 +188,12 @@ namespace SentrySMP.Api.Services
                 _logger.LogInformation("Delivery API request body: {Json}", json);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await client.PostAsync(apiUrl, content);
+                // If configured base URL already contains the /command path, use it directly
+                var targetUrl = apiUrl.EndsWith("/command", StringComparison.OrdinalIgnoreCase)
+                    ? apiUrl
+                    : (client.BaseAddress != null ? new Uri(client.BaseAddress, "command").ToString() : apiUrl + "/command");
+
+                var response = await client.PostAsync(targetUrl, content);
                 var responseBody = await response.Content.ReadAsStringAsync();
 
                 _logger.LogInformation("Delivery API response HTTP {Code}: {Body}", (int)response.StatusCode, responseBody);

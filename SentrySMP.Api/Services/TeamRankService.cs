@@ -49,4 +49,13 @@ public class TeamRankService : ITeamRankService
         _db.TeamRanks.Remove(entity);
         await _db.SaveChangesAsync();
     }
+
+    public async Task<TeamRankDto?> GetByNameAsync(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return null;
+        var found = await _db.TeamRanks.AsNoTracking()
+            .FirstOrDefaultAsync(r => r.Name.ToLower() == name.Trim().ToLower());
+        if (found == null) return null;
+        return new TeamRankDto { Id = found.Id, Name = found.Name, HexColor = found.HexColor };
+    }
 }

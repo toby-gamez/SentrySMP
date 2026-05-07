@@ -44,6 +44,15 @@ public class TeamRanksController : ControllerBase
         return Ok(found);
     }
 
+    [HttpGet("byname/{name}")]
+    [AllowAnonymous]
+    public async Task<ActionResult<TeamRankDto>> GetByName(string name)
+    {
+        var found = await _service.GetByNameAsync(name);
+        if (found == null) return NotFound();
+        return Ok(found);
+    }
+
     [HttpPost]
     [Authorize]
     public async Task<ActionResult<TeamRankDto>> Post([FromBody] TeamRankDto dto)

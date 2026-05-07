@@ -74,6 +74,25 @@ services.AddScoped<ICommandService, CommandService>();
 services.AddScoped<IStatusService, SentrySMP.Api.Services.StatusService>();
 services.AddScoped<IAnnouncementsService, AnnouncementsService>();
 services.AddScoped<ITransactionsService, TransactionsService>();
+// Register GameServer HttpClient and service
+services.AddHttpClient("GameServerClient", client =>
+{
+    var baseAddress = builder.Configuration["GameServer:BaseUrl"] ?? builder.Configuration["Delivery:ApiUrl"];
+    if (!string.IsNullOrEmpty(baseAddress))
+    {
+        client.BaseAddress = new Uri(baseAddress);
+    }
+})
+.ConfigurePrimaryHttpMessageHandler(() =>
+{
+    var handler = new HttpClientHandler();
+    if (builder.Environment.IsDevelopment())
+    {
+        handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+    }
+    return handler;
+});
+services.AddScoped<IGameServerService, SentrySMP.Api.Services.GameServerService>();
 services.AddScoped<IPurchaseTrackingService, SentrySMP.Api.Services.PurchaseTrackingService>();
 // Shop scoreboard: aggregate top payers from PaymentTransaction
 services.AddScoped<IShopScoreboardService, SentrySMP.Api.Services.ShopScoreboardService>();

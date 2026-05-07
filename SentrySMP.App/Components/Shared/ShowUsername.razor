@@ -3,6 +3,9 @@
 @inject NavigationManager Navigation
 @inject SentrySMP.Shared.Interfaces.IStatusService StatusService
 @inject SentrySMP.App.Components.State.CartSidebarState CartSidebarState
+@inject SentrySMP.Shared.Interfaces.IGameServerService GameServerService
+@inject SentrySMP.Shared.Interfaces.ITeamRankService TeamRankService
+@inject Microsoft.Extensions.Logging.ILogger<ShowUsername> Logger
 @using SentrySMP.App.Components.Pages
 @implements IDisposable
 @rendermode InteractiveServer
@@ -12,11 +15,18 @@
     <div class="login-info">
         <img src="@((!string.IsNullOrEmpty(CurrentDisplay) && CurrentDisplay.StartsWith(".")) ? "https://minotar.net/helm/MHF_Steve/100" : ((!string.IsNullOrEmpty(SkinUrl) && string.Equals(Edition, "java", StringComparison.OrdinalIgnoreCase)) ? SkinUrl : "https://minotar.net/helm/MHF_Steve/100"))" class="skin-img" alt="skin" />
         <div>
-            <div><strong>@CurrentDisplay</strong></div>
+            <div>
+                <strong>@CurrentDisplay</strong>
+                @if (!string.IsNullOrWhiteSpace(_playerRankName))
+                {
+                    <span class="rank-badge" style="background:@(_playerRankHex ?? "#444"); color:#fff; padding:2px 8px; border-radius:4px; margin-left:6px; font-size:0.75em;"><strong>@_playerRankName</strong></span>
+                }
+            </div>
         </div>
     </div>
     <div>
         <button class="secondary" @onclick="Logout">Log out</button>
+        <button class="secondary" @onclick="OpenProfile">Profile</button>
         <button class="great-button" @onclick="OpenCart"><i class="bi bi-cart-fill"></i> Cart</button>
     </div>
 }
@@ -42,17 +52,62 @@ else
     private string? CurrentDisplay;
     private string? SkinUrl;
     private string? Edition;
+    private string? _playerRankName;
+    private string? _playerRankHex;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             var info = await UserService.GetUserInfoAsync();
+            Logger?.LogInformation("ShowUsername: UserService returned LoggedIn={LoggedIn} Username={Username}", info.LoggedIn, info.Username);
+            System.Console.WriteLine($"ShowUsername: UserService returned LoggedIn={info.LoggedIn} Username={info.Username}");
             if (info.LoggedIn)
             {
                 CurrentDisplay = info.Username;
                 Edition = info.Edition;
                 SkinUrl = info.Skin;
+                // Try to fetch rank and color from game server and team ranks
+                try
+                {
+                    if (!string.IsNullOrWhiteSpace(CurrentDisplay))
+                    {
+                        Logger?.LogInformation("ShowUsername: fetching player info for {Username}", CurrentDisplay);
+                        System.Console.WriteLine($"ShowUsername: fetching player info for {CurrentDisplay}");
+                        var p = await GameServerService.GetPlayerInfoAsync(CurrentDisplay);
+                        if (p == null)
+                        {
+                            Logger?.LogWarning("ShowUsername: GameServerService returned null for {Username}", CurrentDisplay);
+                            System.Console.WriteLine($"ShowUsername: GameServerService returned null for {CurrentDisplay}");
+                        }
+                        else
+                        {
+                            Logger?.LogInformation("ShowUsername: GameServerService response for {Username}: Rank={Rank} Coins={Coins} Money={Money} Error={Error}", CurrentDisplay, p.Rank, p.Coins, p.Money, p.Error);
+                            System.Console.WriteLine($"ShowUsername: GameServerService response for {CurrentDisplay}: Rank={p.Rank} Coins={(p.Coins?.ToString() ?? "null")} Money={(p.Money?.ToString() ?? "null")} Error={p.Error}");
+                            if (!string.IsNullOrWhiteSpace(p.Rank))
+                            {
+                                _playerRankName = p.Rank;
+                                var tr = await TeamRankService.GetByNameAsync(_playerRankName);
+                                if (tr == null)
+                                {
+                                    Logger?.LogWarning("ShowUsername: TeamRankService returned null for rank {Rank}", _playerRankName);
+                                    System.Console.WriteLine($"ShowUsername: TeamRankService returned null for rank {_playerRankName}");
+                                }
+                                else
+                                {
+                                    _playerRankHex = tr.HexColor;
+                                    Logger?.LogInformation("ShowUsername: Resolved rank {Rank} to color {Color}", _playerRankName, _playerRankHex);
+                                    System.Console.WriteLine($"ShowUsername: Resolved rank {_playerRankName} to color {_playerRankHex}");
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger?.LogError(ex, "ShowUsername: Exception while fetching player/rank for {Username}", CurrentDisplay);
+                    System.Console.WriteLine($"ShowUsername: Exception while fetching player/rank for {CurrentDisplay}: {ex.Message}");
+                }
                 StateHasChanged();
             }
             UserService.OnChange += OnUserChanged;
@@ -62,17 +117,51 @@ else
     private async void OnUserChanged()
     {
         var info = await UserService.GetUserInfoAsync();
+        Logger?.LogInformation("ShowUsername.OnUserChanged: LoggedIn={LoggedIn} Username={Username}", info.LoggedIn, info.Username);
+        System.Console.WriteLine($"ShowUsername.OnUserChanged: LoggedIn={info.LoggedIn} Username={info.Username}");
         if (!info.LoggedIn)
         {
             CurrentDisplay = null;
             SkinUrl = null;
             Edition = null;
+            _playerRankName = null;
+            _playerRankHex = null;
         }
         else
         {
             CurrentDisplay = info.Username;
             Edition = info.Edition;
             SkinUrl = info.Skin;
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(CurrentDisplay))
+                {
+                    Logger?.LogInformation("ShowUsername: OnUserChanged fetching player info for {Username}", CurrentDisplay);
+                    System.Console.WriteLine($"ShowUsername: OnUserChanged fetching player info for {CurrentDisplay}");
+                    var p = await GameServerService.GetPlayerInfoAsync(CurrentDisplay);
+                    if (p == null)
+                    {
+                        Logger?.LogWarning("ShowUsername: OnUserChanged GameServerService returned null for {Username}", CurrentDisplay);
+                        System.Console.WriteLine($"ShowUsername: OnUserChanged GameServerService returned null for {CurrentDisplay}");
+                    }
+                    else
+                    {
+                        Logger?.LogInformation("ShowUsername: OnUserChanged GameServerService response for {Username}: Rank={Rank} Error={Error}", CurrentDisplay, p.Rank, p.Error);
+                        System.Console.WriteLine($"ShowUsername: OnUserChanged GameServerService response for {CurrentDisplay}: Rank={p.Rank} Coins={(p.Coins?.ToString() ?? "null")} Money={(p.Money?.ToString() ?? "null")} Error={p.Error}");
+                        if (!string.IsNullOrWhiteSpace(p.Rank))
+                        {
+                            _playerRankName = p.Rank;
+                            var tr = await TeamRankService.GetByNameAsync(_playerRankName);
+                            if (tr != null) _playerRankHex = tr.HexColor;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger?.LogError(ex, "ShowUsername: OnUserChanged exception fetching player/rank for {Username}", CurrentDisplay);
+                System.Console.WriteLine($"ShowUsername: OnUserChanged exception fetching player/rank for {CurrentDisplay}: {ex.Message}");
+            }
         }
         StateHasChanged();
     }
@@ -84,6 +173,8 @@ else
     }
 
     private void OpenCart() => CartSidebarState.Open();
+
+    private void OpenProfile() => Navigation.NavigateTo("/profile");
 
     public void Dispose()
     {

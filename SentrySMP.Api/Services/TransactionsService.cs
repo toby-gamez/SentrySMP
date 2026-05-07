@@ -212,6 +212,32 @@ public class TransactionsService : ITransactionsService
         };
     }
 
+    public async Task<IEnumerable<TransactionResponse>> GetByUsernameAsync(string username)
+    {
+        if (string.IsNullOrWhiteSpace(username)) return Enumerable.Empty<TransactionResponse>();
+
+        var normalized = username.Trim();
+        var txs = await _db.PaymentTransactions
+            .Where(t => t.MinecraftUsername.ToLower() == normalized.ToLower())
+            .OrderByDescending(t => t.CreatedAt)
+            .Take(200)
+            .Select(tx => new TransactionResponse
+            {
+                Id = tx.Id,
+                Provider = tx.Provider,
+                ProviderTransactionId = tx.ProviderTransactionId,
+                Amount = tx.Amount,
+                Currency = tx.Currency,
+                MinecraftUsername = tx.MinecraftUsername,
+                ItemsJson = tx.ItemsJson,
+                Status = tx.Status,
+                CreatedAt = tx.CreatedAt
+            })
+            .ToListAsync();
+
+        return txs;
+    }
+
     public async Task UpdateTransactionStatusAsync(long id, string appendStatus)
     {
         var tx = await _db.PaymentTransactions.FindAsync(id);
