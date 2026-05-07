@@ -3,6 +3,7 @@
 @using SentrySMP.Shared.Interfaces
 @inject IGameServerService GameServerService
 @inject ITeamRankService TeamRankService
+@inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
 <PageTitle>Active Players - SentrySMP</PageTitle>
@@ -41,6 +42,7 @@ else
                         <span class="ban-name">@(player.Name ?? "Unknown")</span>
                     </div>
                 </div>
+                <button class="secondary login-bar-icon" title="Profile" @onclick="() => OpenProfile(player.Name)"><i class="bi bi-person-fill"></i></button>
             </li>
         }
     </ul>
@@ -53,6 +55,14 @@ else
     private bool _loading = true;
     private string? _error;
     private Dictionary<string, string?> _rankColors = new(StringComparer.OrdinalIgnoreCase);
+
+    private void OpenProfile(string? playerName)
+    {
+        if (!string.IsNullOrWhiteSpace(playerName))
+        {
+            NavigationManager.NavigateTo($"/profile/{Uri.EscapeDataString(playerName)}");
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
