@@ -6,5 +6,7 @@ namespace SentrySMP.Shared.Interfaces
     {
         Task<PlayerInfoResponse?> GetPlayerInfoAsync(string username);
         Task<BanlistResponse?> GetBanlistAsync();
+        Task<OnlinePlayersResponse?> GetOnlinePlayersAsync();
+        Task<int?> GetOnlinePlayerCountAsync();
     }
 }

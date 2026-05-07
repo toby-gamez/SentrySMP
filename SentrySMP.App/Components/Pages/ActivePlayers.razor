@@ -1,0 +1,72 @@
+@page "/active-players"
+@using SentrySMP.Shared.DTOs
+@using SentrySMP.Shared.Interfaces
+@inject IGameServerService GameServerService
+@rendermode InteractiveServer
+
+<PageTitle>Active Players - SentrySMP</PageTitle>
+
+@if (_loading)
+{
+    <p><em>Loading...</em></p>
+}
+else if (_error != null)
+{
+    <div class="alert alert-danger">@_error</div>
+}
+else if (_players.Count == 0)
+{
+    <div class="alert alert-info">No players are currently online.</div>
+}
+else
+{
+    <ul class="ban-list">
+        @foreach (var player in _players)
+        {
+            <li class="ban-item">
+                <div class="ban-item-header">
+                    <img src="https://minotar.net/helm/@(Uri.EscapeDataString(player.Name ?? "MHF_Steve"))/32"
+                         alt="@player.Name"
+                         class="ban-avatar skin-img" />
+                    <span class="ban-name">@(player.Name ?? "Unknown")</span>
+                </div>
+            </li>
+        }
+    </ul>
+    <p class="text-muted mb-3">@_players.Count player@(_players.Count == 1 ? "" : "s") online</p>
+}
+
+
+@code {
+    private List<OnlinePlayerEntry> _players = new();
+    private bool _loading = true;
+    private string? _error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var result = await GameServerService.GetOnlinePlayersAsync();
+            if (result == null)
+            {
+                _error = "GameServer is not configured.";
+            }
+            else if (result.Error != null)
+            {
+                _error = result.Error;
+            }
+            else
+            {
+                _players = result.Players;
+            }
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+}

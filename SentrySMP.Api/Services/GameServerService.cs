@@ -250,6 +250,67 @@ namespace SentrySMP.Api.Services
             }
         }
 
+        public async Task<OnlinePlayersResponse?> GetOnlinePlayersAsync()
+        {
+            var baseUrl = _configuration["GameServer:BaseUrl"] ?? _configuration["Delivery:ApiUrl"] ?? string.Empty;
+            var apiKey = _configuration["GameServer:ApiKey"] ?? _configuration["Delivery:ApiKey"] ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(baseUrl))
+            {
+                _logger.LogWarning("GameServer base URL is not configured");
+                return null;
+            }
+
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Add("accept", "application/json");
+                if (!string.IsNullOrWhiteSpace(apiKey))
+                    client.DefaultRequestHeaders.Add("X-API-Key", apiKey);
+
+                var url = $"{baseUrl.TrimEnd('/')}/players";
+                var httpResp = await client.GetAsync(url);
+                var body = await httpResp.Content.ReadAsStringAsync();
+
+                if (!httpResp.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("GameServer /players returned HTTP {Status}: {Body}", (int)httpResp.StatusCode, body);
+                    return new OnlinePlayersResponse { Error = $"HTTP {(int)httpResp.StatusCode}" };
+                }
+
+                using var doc = JsonDocument.Parse(body);
+                var result = new OnlinePlayersResponse();
+
+                if (doc.RootElement.TryGetProperty("players", out var playersEl) && playersEl.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var item in playersEl.EnumerateArray())
+                    {
+                        var entry = new OnlinePlayerEntry();
+                        if (item.TryGetProperty("name", out var nameEl) && nameEl.ValueKind != JsonValueKind.Null)
+                            entry.Name = nameEl.GetString();
+                        if (item.TryGetProperty("uuid", out var uuidEl) && uuidEl.ValueKind != JsonValueKind.Null)
+                            entry.Uuid = uuidEl.GetString();
+                        result.Players.Add(entry);
+                    }
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to call GameServer /players endpoint");
+                return new OnlinePlayersResponse { Error = ex.Message };
+            }
+        }
+
+        public async Task<int?> GetOnlinePlayerCountAsync()
+        {
+            var result = await GetOnlinePlayersAsync();
+            if (result == null || result.Error != null) return null;
+            return result.Players.Count;
+        }
+
         public async Task<BanlistResponse?> GetBanlistAsync()
         {
             var baseUrl = _configuration["GameServer:BaseUrl"] ?? _configuration["Delivery:ApiUrl"] ?? string.Empty;
