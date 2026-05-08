@@ -68,8 +68,8 @@ else
                         <span class="profile-stat-value">@(_purchasesCount)</span>
                     </div>
                     <div class="profile-stat-item">
-                        <span class="profile-stat-label"><i class="bi bi-clock"></i> Play time (s)</span>
-                        <span class="profile-stat-value">@((_statistics?.PlayTimeSeconds ?? 0L).ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")))</span>
+                        <span class="profile-stat-label"><i class="bi bi-clock"></i> Play time</span>
+                        <span class="profile-stat-value">@FormatPlayTime(_statistics?.PlayTimeSeconds ?? 0L)</span>
                     </div>
                     <div class="profile-stat-item">
                         <span class="profile-stat-label"><i class="bi bi-emoji-dizzy"></i> Deaths</span>
@@ -113,8 +113,8 @@ else
                     @if ((_statistics?.PlayTimeSeconds ?? 0L) > 0)
                     {
                         <div class="profile-stat-item">
-                            <span class="profile-stat-label"><i class="bi bi-clock"></i> Play time (s)</span>
-                            <span class="profile-stat-value">@((_statistics?.PlayTimeSeconds ?? 0L).ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")))</span>
+                            <span class="profile-stat-label"><i class="bi bi-clock"></i> Play time</span>
+                            <span class="profile-stat-value">@FormatPlayTime(_statistics?.PlayTimeSeconds ?? 0L)</span>
                         </div>
                     }
 
@@ -331,6 +331,21 @@ else
     }
 
     private void GoLogin() => NavigationManager.NavigateTo("/login");
+
+    private string FormatPlayTime(long seconds)
+    {
+        if (seconds <= 0) return "0m";
+        var ts = System.TimeSpan.FromSeconds(seconds);
+        var days = ts.Days;
+        var hours = ts.Hours;
+        var minutes = ts.Minutes;
+        var parts = new System.Collections.Generic.List<string>();
+        if (days > 0) parts.Add($"{days}d");
+        if (hours > 0) parts.Add($"{hours}h");
+        if (minutes > 0) parts.Add($"{minutes}m");
+        if (parts.Count == 0) parts.Add("0m");
+        return string.Join(" ", parts);
+    }
 
     private List<ProductQuantityDto> ParseItems(string? itemsJson)
     {

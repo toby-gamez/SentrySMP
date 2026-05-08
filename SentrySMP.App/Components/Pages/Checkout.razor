@@ -783,7 +783,7 @@
         try
         {
             var players = await StatusService.GetMcPlayersAsync();
-            _serverOnline = players.HasValue && players.Value > 2;
+            _serverOnline = players.HasValue && players.Value > 5;
         }
         catch
         {
