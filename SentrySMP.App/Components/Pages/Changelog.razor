@@ -17,6 +17,9 @@
     <button class="changelog-tab @(activeTab == "sentryapi" ? "active" : "")" @onclick='() => SwitchTab("sentryapi")'>
         <i class="bi bi-plugin"></i> SentryAPI
     </button>
+    <button class="changelog-tab @(activeTab == "sentrytiers" ? "active" : "")" @onclick='() => SwitchTab("sentrytiers")'>
+        <i class="bi bi-gem"></i> SentryTiers
+    </button>
 </div>
 
 @if (activeTab == "web")
@@ -468,6 +471,39 @@ else if (activeTab == "server")
     }
 }
 
+@if (activeTab == "sentrytiers")
+{
+    @if (sentryTiersLoading)
+    {
+        <p class="server-loading">Loading SentryTiers releases...</p>
+    }
+    else if (sentryTiersError != null)
+    {
+        <p class="error">@sentryTiersError</p>
+    }
+    else if (sentryTiersReleases?.Any() == true)
+    {
+        @foreach (var release in sentryTiersReleases)
+        {
+            <div class="server-entry">
+                <div class="server-entry-meta">
+                    <i class="bi bi-tag"></i>
+                    <strong>@release.TagName</strong>
+                    <span class="server-entry-time">
+                        <i class="bi bi-calendar3"></i>
+                        @release.PublishedAt.ToLocalTime().ToString("d. MMMM yyyy", new System.Globalization.CultureInfo("cs-CZ"))
+                    </span>
+                </div>
+                <div class="server-entry-content">@((MarkupString)release.HtmlContent)</div>
+            </div>
+        }
+    }
+    else
+    {
+        <p style="color:#888">No SentryTiers releases found.</p>
+    }
+}
+
 @code {
     private string activeTab = "web";
 
@@ -480,6 +516,11 @@ else if (activeTab == "server")
     private bool sentryApiLoaded = false;
     private string? sentryApiError;
     private List<SentryApiRelease>? sentryApiReleases;
+    
+    private bool sentryTiersLoading = false;
+    private bool sentryTiersLoaded = false;
+    private string? sentryTiersError;
+    private List<SentryApiRelease>? sentryTiersReleases;
 
     private async Task SwitchTab(string tab)
     {
@@ -489,6 +530,8 @@ else if (activeTab == "server")
             await LoadServerChangelog();
         else if (tab == "sentryapi" && !sentryApiLoaded)
             await LoadSentryApiReleases();
+        else if (tab == "sentrytiers" && !sentryTiersLoaded)
+            await LoadSentryTiersReleases();
     }
 
     private async Task LoadServerChangelog()
@@ -561,6 +604,52 @@ else if (activeTab == "server")
         {
             sentryApiLoading = false;
             sentryApiLoaded = true;
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadSentryTiersReleases()
+    {
+        sentryTiersLoading = true;
+        sentryTiersError = null;
+        StateHasChanged();
+        try
+        {
+            var client = HttpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("SentrySMP-Website/1.0");
+            var resp = await client.GetAsync("https://api.github.com/repos/toby-gamez/SentryTiers/releases");
+            if (!resp.IsSuccessStatusCode)
+            {
+                sentryTiersError = "Failed to load SentryTiers releases from GitHub.";
+                return;
+            }
+            var json = await resp.Content.ReadAsStringAsync();
+            using var doc = JsonDocument.Parse(json);
+            var pipeline = new Markdig.MarkdownPipelineBuilder().Build();
+            var releases = new List<SentryApiRelease>();
+            foreach (var item in doc.RootElement.EnumerateArray())
+            {
+                var tagName = item.TryGetProperty("tag_name", out var t) ? t.GetString() ?? "" : "";
+                var publishedAt = item.TryGetProperty("published_at", out var p) && DateTime.TryParse(p.GetString(), out var dt) ? dt : DateTime.UtcNow;
+                var body = item.TryGetProperty("body", out var b) ? b.GetString() ?? "" : "";
+                body = Regex.Replace(body, @"^##[^\n]*\n?", "", RegexOptions.None, TimeSpan.FromSeconds(1));
+                releases.Add(new SentryApiRelease
+                {
+                    TagName = tagName,
+                    PublishedAt = publishedAt,
+                    HtmlContent = Markdig.Markdown.ToHtml(body, pipeline)
+                });
+            }
+            sentryTiersReleases = releases;
+        }
+        catch
+        {
+            sentryTiersError = "Failed to load SentryTiers releases from GitHub.";
+        }
+        finally
+        {
+            sentryTiersLoading = false;
+            sentryTiersLoaded = true;
             StateHasChanged();
         }
     }

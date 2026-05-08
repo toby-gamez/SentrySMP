@@ -575,6 +575,8 @@ body.light .vote-card-name {
     display: flex;
     gap: 8px;
     margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    align-items: flex-start;
 }
 
 .changelog-tab {
@@ -587,6 +589,9 @@ body.light .vote-card-name {
     font-size: 1rem;
     font-weight: 600;
     transition: all 0.2s ease;
+
+    /* Prevent tabs from shrinking too much when wrapped */
+    flex: 0 0 auto;
 }
 
 .changelog-tab:hover {
