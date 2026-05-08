@@ -15,7 +15,7 @@
         try
         {
             var players = await StatusService.GetMcPlayersAsync();
-            showBanner = !players.HasValue || players.Value < 3;
+            showBanner = !players.HasValue || players.Value <= 5;
             StateHasChanged();
         }
         catch { }

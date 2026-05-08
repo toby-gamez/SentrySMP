@@ -455,6 +455,24 @@ a:has(li) {
     max-width: 960px;
 }
 
+/* Pokud je položka sama v řádku, roztáhni ji přes všechny sloupce */
+/* 2-sloupcový grid (např. .thing-grid, .profile-stats) */
+.thing-grid-item:only-child,
+.profile-stats > *:only-child {
+    grid-column: 1 / -1;
+}
+
+/* Když je poslední prvek v 2-sloupcovém gridu umístěn na liché pozici (sám v řádku), roztáhne ho */
+.thing-grid-item:nth-child(2n+1):last-child,
+.profile-stat-item:nth-child(2n+1):last-child {
+    grid-column: 1 / -1;
+}
+
+/* 3-sloupcový grid (např. .product-grid) — pokud je poslední prvek sám v řádku (počet mod 3 == 1) */
+.product-grid > *:nth-child(3n+1):last-child {
+    grid-column: 1 / -1;
+}
+
 .thing-grid-item {
     border-radius: 12px;
     transition: 0.3s ease all;
@@ -782,6 +800,31 @@ footer {
 .footer-p {
     color: white;
 }
+
+/* Profile stats (two-column, responsive) */
+.profile-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+.profile-stat-item {
+    background: #242424;
+    padding: 12px 14px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.profile-stat-label {
+    color: #cfcfcf;
+    font-weight: 600;
+}
+.profile-stat-value {
+    font-weight: 700;
+    color: #fff;
+}
+
+
 
 /* nav */
 * {
@@ -1784,7 +1827,6 @@ input.item-quantity::-webkit-inner-spin-button {
     border-radius: 15px;
     padding: 30px 20px;
     text-align: center;
-    border: 1px solid lightgray;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
     width: 100%;
@@ -3151,7 +3193,6 @@ body.light .vip-package .view-cart-link {
 
 body.light .team-item {
     background: #dcdcdc;
-    border-color: lightslategray;
 }
 
 body.light .add-to-cart-btn.update {
@@ -4276,11 +4317,12 @@ body.light .purchase-history-group {
     margin: 0 auto;
 }
 
-.profile-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-width: 480px;
+@media (max-width: 600px) {
+    .login-card-inner {
+        flex-direction: column;
+        gap: 24px;
+        width: 100%;
+    }
 }
 
 .profile-stat-item {

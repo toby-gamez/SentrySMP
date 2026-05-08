@@ -228,6 +228,26 @@ namespace SentrySMP.Api.Services
                     if (TryFindProperty(root, "error", out var errEl) && errEl.ValueKind != JsonValueKind.Null)
                         resp.Error = errEl.GetString();
 
+                    // statistics (new in API): permissive parsing, keep values nullable
+                    if (TryFindProperty(root, "statistics", out var statsEl) && statsEl.ValueKind == JsonValueKind.Object)
+                    {
+                        var stats = new PlayerStatistics();
+                        if (TryFindProperty(statsEl, "playTimeSeconds", out var ptsEl) && ptsEl.ValueKind != JsonValueKind.Null)
+                            stats.PlayTimeSeconds = ReadNullableLongFromElement(ptsEl);
+                        if (TryFindProperty(statsEl, "playTimeTicks", out var pttEl) && pttEl.ValueKind != JsonValueKind.Null)
+                            stats.PlayTimeTicks = ReadNullableLongFromElement(pttEl);
+                        if (TryFindProperty(statsEl, "deaths", out var dEl) && dEl.ValueKind != JsonValueKind.Null)
+                            stats.Deaths = ReadNullableIntFromElement(dEl);
+                        if (TryFindProperty(statsEl, "playerKills", out var pkEl) && pkEl.ValueKind != JsonValueKind.Null)
+                            stats.PlayerKills = ReadNullableIntFromElement(pkEl);
+                        if (TryFindProperty(statsEl, "mobsKilled", out var mkEl) && mkEl.ValueKind != JsonValueKind.Null)
+                            stats.MobsKilled = ReadNullableIntFromElement(mkEl);
+                        if (TryFindProperty(statsEl, "blocksTravelled", out var btEl) && btEl.ValueKind != JsonValueKind.Null)
+                            stats.BlocksTravelled = ReadNullableLongFromElement(btEl);
+
+                        resp.Statistics = stats;
+                    }
+
                     // Additional logging for diagnostics when values are missing
                     if (resp.Coins == null || resp.Money == null)
                     {
@@ -248,6 +268,41 @@ namespace SentrySMP.Api.Services
                 _logger.LogWarning(ex, "Failed to call GameServer API for user {User}", username);
                 return new PlayerInfoResponse { Player = username, Error = ex.Message };
             }
+        }
+
+        // Read a nullable long directly from a JsonElement that may be Number or String.
+        private static long? ReadNullableLongFromElement(JsonElement el)
+        {
+            try
+            {
+                if (el.ValueKind == JsonValueKind.Null) return null;
+
+                if (el.ValueKind == JsonValueKind.Number)
+                {
+                    if (el.TryGetInt64(out var i64)) return i64;
+                    if (el.TryGetDecimal(out var dec))
+                    {
+                        return (long)Math.Round(dec, 0);
+                    }
+                }
+
+                if (el.ValueKind == JsonValueKind.String)
+                {
+                    var s = el.GetString();
+                    if (string.IsNullOrWhiteSpace(s)) return null;
+                    s = s.Trim();
+                    var dotCount = s.Count(c => c == '.');
+                    if (dotCount > 1) s = s.Replace(".", string.Empty);
+                    s = s.Replace(",", string.Empty).Replace(" ", string.Empty);
+                    if (long.TryParse(s, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var pl)) return pl;
+                    if (decimal.TryParse(s, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var pd))
+                    {
+                        return (long)Math.Round(pd, 0);
+                    }
+                }
+            }
+            catch { }
+            return null;
         }
 
         public async Task<OnlinePlayersResponse?> GetOnlinePlayersAsync()

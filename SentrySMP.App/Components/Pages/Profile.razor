@@ -53,22 +53,95 @@ else
         <!-- Right: stats panel -->
         <div class="login-form-panel">
             <div class="profile-stats">
-                <div class="profile-stat-item">
-                    <span class="profile-stat-label"><i class="bi bi-coin"></i> Coins</span>
-                    <span class="profile-stat-value">@(_coins.HasValue ? _coins.Value.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")) : "—")</span>
-                </div>
-                <div class="profile-stat-item">
-                    <span class="profile-stat-label"><i class="bi bi-currency-dollar"></i> Money</span>
-                    <span class="profile-stat-value">@(_money.HasValue ? _money.Value.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")) : "—")</span>
-                </div>
-                <div class="profile-stat-item">
-                    <span class="profile-stat-label"><i class="bi bi-receipt"></i> Purchases</span>
-                    <span class="profile-stat-value">@(_transactions?.Count(t =>
-                                                         !string.IsNullOrWhiteSpace(t.Status)
-                                                         && (t.Status.IndexOf("RCON_OK", StringComparison.OrdinalIgnoreCase) >= 0
-                                                             || string.Equals(t.Status, "succeeded", StringComparison.OrdinalIgnoreCase))
-                                                         && t.Amount > 0) ?? 0)</span>
-                </div>
+                @if (_isOnline)
+                {
+                    <div class="profile-stat-item">
+                        <span class="profile-stat-label"><i class="bi bi-coin"></i> Coins</span>
+                        <span class="profile-stat-value">@(_coins.HasValue ? _coins.Value.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")) : "—")</span>
+                    </div>
+                    <div class="profile-stat-item">
+                        <span class="profile-stat-label"><i class="bi bi-currency-dollar"></i> Money</span>
+                        <span class="profile-stat-value">@(_money.HasValue ? _money.Value.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")) : "—")</span>
+                    </div>
+                    <div class="profile-stat-item">
+                        <span class="profile-stat-label"><i class="bi bi-receipt"></i> Purchases</span>
+                        <span class="profile-stat-value">@(_purchasesCount)</span>
+                    </div>
+                    <div class="profile-stat-item">
+                        <span class="profile-stat-label"><i class="bi bi-clock"></i> Play time (s)</span>
+                        <span class="profile-stat-value">@((_statistics?.PlayTimeSeconds ?? 0L).ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")))</span>
+                    </div>
+                    <div class="profile-stat-item">
+                        <span class="profile-stat-label"><i class="bi bi-emoji-dizzy"></i> Deaths</span>
+                        <span class="profile-stat-value">@((_statistics?.Deaths ?? 0).ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")))</span>
+                    </div>
+                    <div class="profile-stat-item">
+                        <span class="profile-stat-label"><i class="bi bi-flag"></i> Player kills</span>
+                        <span class="profile-stat-value">@((_statistics?.PlayerKills ?? 0).ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")))</span>
+                    </div>
+                    <div class="profile-stat-item">
+                        <span class="profile-stat-label"><i class="bi bi-geo-alt"></i> Blocks travelled</span>
+                        <span class="profile-stat-value">@((_statistics?.BlocksTravelled ?? 0L).ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")))</span>
+                    </div>
+                }
+                else
+                {
+                    @if (_coins.HasValue && _coins.Value != 0)
+                    {
+                        <div class="profile-stat-item">
+                            <span class="profile-stat-label"><i class="bi bi-coin"></i> Coins</span>
+                            <span class="profile-stat-value">@(_coins.Value.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")))</span>
+                        </div>
+                    }
+
+                    @if (_money.HasValue && _money.Value != 0)
+                    {
+                        <div class="profile-stat-item">
+                            <span class="profile-stat-label"><i class="bi bi-currency-dollar"></i> Money</span>
+                            <span class="profile-stat-value">@(_money.Value.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")))</span>
+                        </div>
+                    }
+
+                    @if (_purchasesCount > 0)
+                    {
+                        <div class="profile-stat-item">
+                            <span class="profile-stat-label"><i class="bi bi-receipt"></i> Purchases</span>
+                            <span class="profile-stat-value">@(_purchasesCount)</span>
+                        </div>
+                    }
+
+                    @if ((_statistics?.PlayTimeSeconds ?? 0L) > 0)
+                    {
+                        <div class="profile-stat-item">
+                            <span class="profile-stat-label"><i class="bi bi-clock"></i> Play time (s)</span>
+                            <span class="profile-stat-value">@((_statistics?.PlayTimeSeconds ?? 0L).ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")))</span>
+                        </div>
+                    }
+
+                    @if ((_statistics?.Deaths ?? 0) > 0)
+                    {
+                        <div class="profile-stat-item">
+                            <span class="profile-stat-label"><i class="bi bi-emoji-dizzy"></i> Deaths</span>
+                            <span class="profile-stat-value">@((_statistics?.Deaths ?? 0).ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")))</span>
+                        </div>
+                    }
+
+                    @if ((_statistics?.PlayerKills ?? 0) > 0)
+                    {
+                        <div class="profile-stat-item">
+                            <span class="profile-stat-label"><i class="bi bi-flag"></i> Player kills</span>
+                            <span class="profile-stat-value">@((_statistics?.PlayerKills ?? 0).ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")))</span>
+                        </div>
+                    }
+
+                    @if ((_statistics?.BlocksTravelled ?? 0L) > 0)
+                    {
+                        <div class="profile-stat-item">
+                            <span class="profile-stat-label"><i class="bi bi-geo-alt"></i> Blocks travelled</span>
+                            <span class="profile-stat-value">@((_statistics?.BlocksTravelled ?? 0L).ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")))</span>
+                        </div>
+                    }
+                }
             </div>
         </div>
         </div>
@@ -145,6 +218,10 @@ else
     private int? _coins = null;
     private int? _money = null;
     private List<TransactionResponse>? _transactions;
+    private PlayerStatistics? _statistics;
+
+    private bool _isOnline = false;
+    private int _purchasesCount = 0;
 
     // Track which profile is currently loaded to avoid redundant reloads
     private string? _loadedFor;
@@ -199,6 +276,7 @@ else
                 _coins = player.Coins;
                 _money = player.Money;
                 _rankName = player.Rank;
+                _statistics = player.Statistics;
                 if (!string.IsNullOrWhiteSpace(_rankName))
                 {
                     var tr = await TeamRankService.GetByNameAsync(_rankName);
@@ -209,6 +287,24 @@ else
             // Transactions and scoreboard access the same DbContext; run them sequentially to avoid EF Core concurrency errors
             var txs = (await TransactionsService.GetByUsernameAsync(_username!))?.ToList() ?? new List<TransactionResponse>();
             _transactions = txs;
+
+            // compute purchases count (successful purchases only)
+            _purchasesCount = _transactions?.Count(t =>
+                    !string.IsNullOrWhiteSpace(t.Status)
+                    && (t.Status.IndexOf("RCON_OK", StringComparison.OrdinalIgnoreCase) >= 0
+                        || string.Equals(t.Status, "succeeded", StringComparison.OrdinalIgnoreCase))
+                    && t.Amount > 0) ?? 0;
+
+            // Determine online status by querying active players; tolerate failures
+            try
+            {
+                var online = await GameServerService.GetOnlinePlayersAsync();
+                _isOnline = online?.Players?.Any(p => string.Equals(p.Name, _username, StringComparison.OrdinalIgnoreCase)) == true;
+            }
+            catch
+            {
+                _isOnline = false;
+            }
 
             try
             {
