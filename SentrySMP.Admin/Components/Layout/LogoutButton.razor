@@ -1,0 +1,25 @@
+@rendermode InteractiveServer
+@using SentrySMP.Admin.Authentication
+@inject CredentialStore CredentialStore
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<button class="btn btn-outline-danger btn-sm ms-auto" @onclick="HandleLogout" style="margin-left: auto;">
+    <i class="bi bi-box-arrow-right"></i> Log out
+</button>
+
+@code {
+    private async Task HandleLogout()
+    {
+        try
+        {
+            await CredentialStore.ClearAsync(JSRuntime);
+            Navigation.NavigateTo("/login", forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error during logout: {ex.Message}");
+            Navigation.NavigateTo("/login", forceLoad: true);
+        }
+    }
+}
