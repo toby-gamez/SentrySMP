@@ -56,8 +56,8 @@ else
                 @if (_isOnline)
                 {
                     <div class="profile-stat-item">
-                        <span class="profile-stat-label"><i class="bi bi-coin"></i> Coins</span>
-                        <span class="profile-stat-value">@(_coins.HasValue ? _coins.Value.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")) : "—")</span>
+                        <span class="profile-stat-label"><i class="bi bi-gem"></i> Gems</span>
+                        <span class="profile-stat-value">@(_gems.HasValue ? _gems.Value.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")) : "—")</span>
                     </div>
                     <div class="profile-stat-item">
                         <span class="profile-stat-label"><i class="bi bi-currency-dollar"></i> Money</span>
@@ -86,11 +86,11 @@ else
                 }
                 else
                 {
-                    @if (_coins.HasValue && _coins.Value != 0)
+                    @if (_gems.HasValue && _gems.Value != 0)
                     {
                         <div class="profile-stat-item">
-                            <span class="profile-stat-label"><i class="bi bi-coin"></i> Coins</span>
-                            <span class="profile-stat-value">@(_coins.Value.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")))</span>
+                            <span class="profile-stat-label"><i class="bi bi-gem"></i> Gems</span>
+                            <span class="profile-stat-value">@(_gems.Value.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("cs-CZ")))</span>
                         </div>
                     }
 
@@ -215,7 +215,7 @@ else
     private string? _skinUrl;
     private string? _rankName;
     private string? _rankHex;
-    private int? _coins = null;
+    private int? _gems = null;
     private int? _money = null;
     private List<TransactionResponse>? _transactions;
     private PlayerStatistics? _statistics;
@@ -261,7 +261,7 @@ else
         _skinUrl = requiresLogin
             ? (await UserService.GetUserInfoAsync()).Skin
             : $"https://minotar.net/helm/{Uri.EscapeDataString(effectiveUsername!)}/100";
-        _coins = null;
+        _gems = null;
         _money = null;
         _rankName = null;
         _rankHex = null;
@@ -273,9 +273,9 @@ else
             var player = await GameServerService.GetPlayerInfoAsync(_username!);
             if (player != null)
             {
-                _coins = player.Coins;
+                _gems = player.Gems;
                 _money = player.Money;
-                _rankName = player.Rank;
+                _rankName = ParseRankName(player.Rank);
                 _statistics = player.Statistics;
                 if (!string.IsNullOrWhiteSpace(_rankName))
                 {
@@ -328,6 +328,14 @@ else
             _loaded = true;
             StateHasChanged();
         }
+    }
+
+    private static string? ParseRankName(string? rank)
+    {
+        if (string.IsNullOrWhiteSpace(rank)) return null;
+        if (rank.StartsWith("%img_") && rank.EndsWith("%"))
+            return rank[5..^1];
+        return rank;
     }
 
     private void GoLogin() => NavigationManager.NavigateTo("/login");

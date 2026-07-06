@@ -17,7 +17,7 @@ public class UserPurchaseRecord
     
     [Required]
     [MaxLength(50)]
-    public string ProductType { get; set; } = string.Empty; // "Key", "Coin", "Bundle", "Rank", "BattlePass"
+    public string ProductType { get; set; } = string.Empty; // "Key", "Gem", "Bundle", "Rank", "BattlePass"
     
     [Required]
     public int ProductId { get; set; }

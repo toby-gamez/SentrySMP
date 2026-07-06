@@ -10,7 +10,7 @@ namespace SentrySMP.Shared.DTOs
         public string? Image { get; set; }
         public int? GlobalMaxOrder { get; set; }
         public ServerResponse? Server { get; set; }
-        // Distinguish between product kinds stored in the cart (e.g. "Key", "Coin")
+        // Distinguish between product kinds stored in the cart (e.g. "Key", "Gem")
         public string Type { get; set; } = "Product";
     }
 }

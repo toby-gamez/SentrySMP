@@ -112,7 +112,7 @@
                             <option>Key</option>
                             <option>Rank</option>
                             <option>Bundle</option>
-                            <option>Coin</option>
+                            <option>Gem</option>
                             <option>Other</option>
                             <option>BattlePass</option>
                         </select>
@@ -316,8 +316,8 @@
                     var bundles = await Api.GetBundlesAsync();
                     scopeItems = bundles.Select(b => (ProductResponse)b).ToList();
                     break;
-                case "Coin":
-                    var coins = await Api.GetCoinsAsync();
+                case "Gem":
+                    var coins = await Api.GetGemsAsync();
                     scopeItems = coins.Select(c => (ProductResponse)c).ToList();
                     break;
                 case "Other":

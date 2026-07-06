@@ -1219,6 +1219,33 @@ button.minecraft-button:active {
     transition: all 0.3s ease;
 }
 
+#map-button-wrapper {
+    max-width: 1200px;
+    margin: 10px auto 0;
+    display: flex;
+    justify-content: center;
+}
+
+#map-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 28px;
+    background-color: #c0392b;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+#map-button:hover {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
 #login-box {
     z-index: 99;
     padding: 40px 20px;

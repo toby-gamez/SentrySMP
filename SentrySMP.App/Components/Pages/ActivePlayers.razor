@@ -31,13 +31,14 @@ else
                          alt="@player.Name"
                          class="ban-avatar skin-img" />
                     <div>
-                        @if (!string.IsNullOrWhiteSpace(player.Rank) && _rankColors.TryGetValue(player.Rank, out var hex))
+                        @{ var rankName = ParseRankName(player.Rank); }
+                        @if (!string.IsNullOrWhiteSpace(rankName) && _rankColors.TryGetValue(rankName, out var hex))
                         {
-                            <span class="rank-badge" style="background:@(hex ?? "#444"); color:#fff; padding:2px 8px; border-radius:4px; margin-right:6px; font-size:0.75em;"><strong>@player.Rank</strong></span>
+                            <span class="rank-badge" style="background:@(hex ?? "#444"); color:#fff; padding:2px 8px; border-radius:4px; margin-right:6px; font-size:0.75em;"><strong>@rankName</strong></span>
                         }
-                        else if (!string.IsNullOrWhiteSpace(player.Rank))
+                        else if (!string.IsNullOrWhiteSpace(rankName))
                         {
-                            <span class="rank-badge" style="background:#444; color:#fff; padding:2px 8px; border-radius:4px; margin-right:6px; font-size:0.75em;"><strong>@player.Rank</strong></span>
+                            <span class="rank-badge" style="background:#444; color:#fff; padding:2px 8px; border-radius:4px; margin-right:6px; font-size:0.75em;"><strong>@rankName</strong></span>
                         }
                         <span class="ban-name">@(player.Name ?? "Unknown")</span>
                     </div>
@@ -55,6 +56,14 @@ else
     private bool _loading = true;
     private string? _error;
     private Dictionary<string, string?> _rankColors = new(StringComparer.OrdinalIgnoreCase);
+
+    private static string? ParseRankName(string? rank)
+    {
+        if (string.IsNullOrWhiteSpace(rank)) return null;
+        if (rank.StartsWith("%img_") && rank.EndsWith("%"))
+            return rank[5..^1];
+        return rank;
+    }
 
     private void OpenProfile(string? playerName)
     {
@@ -81,7 +90,6 @@ else
             {
                 _players = result.Players;
 
-                // Load all rank colors in a single query
                 var allRanks = await TeamRankService.GetAllAsync();
                 _rankColors = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
                 foreach (var r in allRanks.Where(r => !string.IsNullOrWhiteSpace(r.Name)))

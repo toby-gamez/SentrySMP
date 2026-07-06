@@ -205,11 +205,11 @@ namespace SentrySMP.Api.Services
                     // coins (nullable int) - be permissive and try several fallbacks
                     if (TryFindProperty(root, "coins", out var coinsEl) && coinsEl.ValueKind != JsonValueKind.Null)
                     {
-                        resp.Coins = ReadNullableIntFromElement(coinsEl);
+                        resp.Gems = ReadNullableIntFromElement(coinsEl);
                     }
                     else
                     {
-                        resp.Coins = null;
+                        resp.Gems = null;
                     }
 
                     // money (nullable int)
@@ -249,9 +249,9 @@ namespace SentrySMP.Api.Services
                     }
 
                     // Additional logging for diagnostics when values are missing
-                    if (resp.Coins == null || resp.Money == null)
+                    if (resp.Gems == null || resp.Money == null)
                     {
-                        _logger.LogInformation("GameServer parsed response for {User}: Player={Player} Rank={Rank} Coins={CoinsRaw} Money={MoneyRaw} Error={Error}. RawBody={Body}", username, resp.Player, resp.Rank, resp.Coins?.ToString() ?? "null", resp.Money?.ToString() ?? "null", resp.Error, body);
+                        _logger.LogInformation("GameServer parsed response for {User}: Player={Player} Rank={Rank} Gemss={GemssRaw} Money={MoneyRaw} Error={Error}. RawBody={Body}", username, resp.Player, resp.Rank, resp.Gems?.ToString() ?? "null", resp.Money?.ToString() ?? "null", resp.Error, body);
                     }
 
                     return resp;

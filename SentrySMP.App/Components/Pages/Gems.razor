@@ -1,8 +1,8 @@
-@page "/coins"
+@page "/gems"
 @using SentrySMP.Shared.DTOs
 @using SentrySMP.Shared.Interfaces
 @inject ISentryApi Api
-@inject ILogger<Coins> Logger
+@inject ILogger<Gems> Logger
 @inject SentrySMP.App.Components.State.CartState CartState
 @inject SentrySMP.App.Components.State.CartSidebarState SidebarState
 @inject IJSRuntime JS
@@ -10,10 +10,10 @@
 @inject SentrySMP.App.Authentication.UserService UserService
 @rendermode InteractiveServer
 @implements IDisposable
-<PageTitle>Coins - SentrySMP</PageTitle>
+<PageTitle>Gems - SentrySMP</PageTitle>
 <!--
 Server filter dropdown
-            @if (coins?.Any() == true)
+            @if (gems?.Any() == true)
             {
                 <div class="mb-3 d-flex align-items-center gap-2">
                     <label for="serverFilter" class="form-label mb-0">Filter by server:</label>
@@ -42,16 +42,16 @@ Server filter dropdown
                     @errorMessage
                 </div>
             }
-            else if (filteredCoins?.Any() == true)
+            else if (filteredGems?.Any() == true)
             {
                 <div class="product-grid">
-                    @foreach (var coin in filteredCoins)
+                    @foreach (var gem in filteredGems)
                     {
                         <div class="product">
                             <div class="card h-100">
-                                @if (!string.IsNullOrEmpty(coin.Image))
+                                @if (!string.IsNullOrEmpty(gem.Image))
                                 {
-                                    <img src="@coin.Image" class="product-image" @onclick="() => ShowCoinDetails(coin)" alt="@coin.Name">
+                                    <img src="@gem.Image" class="product-image" @onclick="() => ShowGemDetails(gem)" alt="@gem.Name">
                                 }
                                 else
                                 {
@@ -60,62 +60,62 @@ Server filter dropdown
                                     </div>
                                 }
                                 <div class="">
-                                    <h3 class="">@coin.Name</h3>
-                                    <small class="text-muted">@coin.Server?.Name</small>
+                                    <h3 class="">@gem.Name</h3>
+                                    <small class="text-muted">@gem.Server?.Name</small>
                                     <div class="mt-auto">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <div class="price-container">
-                                                @if (coin.Sale > 0)
+                                                @if (gem.Sale > 0)
                                                 {
                                                     <p class="original-price" title="Original price">
-                                                        €@coin.Price.ToString("F2")
+                                                        €@gem.Price.ToString("F2")
                                                     </p>
                                                     <p class="discounted-price" title="Sale price">
-                                                        €@(CalculateSalePrice(coin.Price, coin.Sale).ToString("F2"))
+                                                        €@(CalculateSalePrice(gem.Price, gem.Sale).ToString("F2"))
                                                     </p>
-                                                    <span class="discount-badge">@coin.Sale% OFF</span>
+                                                    <span class="discount-badge">@gem.Sale% OFF</span>
                                                 }
                                                 else
                                                 {
-                                                    <strong class="text-primary fs-5">€@coin.Price.ToString("F2")</strong>
+                                                    <strong class="text-primary fs-5">€@gem.Price.ToString("F2")</strong>
                                                 }
                                             </div>
                                         </div>
-                                        @if (coin.GlobalMaxOrder.HasValue)
+                                        @if (gem.GlobalMaxOrder.HasValue)
                                         {
                                             <div class="mb-2">
                                                 <small class="text-info">
                                                     <i class="bi bi-info-circle"></i> Limited availability
-                                                    @if (_purchasedCounts.TryGetValue($"Coin_{coin.Id}", out var purchased))
+                                                    @if (_purchasedCounts.TryGetValue($"Gem_{gem.Id}", out var purchased))
                                                     {
-                                                        <br /><span class="text-warning">Sold: @purchased/@coin.GlobalMaxOrder</span>
+                                                        <br /><span class="text-warning">Sold: @purchased/@gem.GlobalMaxOrder</span>
                                                     }
                                                 </small>
                                             </div>
                                         }
                                         @{
-                                            var remainingQty = GetRemainingQuantity("Coin", coin.Id, coin.GlobalMaxOrder);
+                                            var remainingQty = GetRemainingQuantity("Gem", gem.Id, gem.GlobalMaxOrder);
                                             var isSoldOut = remainingQty == 0;
-                                            var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == coin.Id && i.Key.Type == "Coin");
-                                            var selectedQty = GetSelectedQty(coin.Id);
+                                            var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == gem.Id && i.Key.Type == "Gem");
+                                            var selectedQty = GetSelectedQty(gem.Id);
                                         }
                                         <div class="qty-presets">
                                             @foreach (var qty in QtyPresets)
                                             {
                                                 <button class="qty-preset-btn @(selectedQty == qty ? "selected" : "")"
-                                                        @onclick="() => SelectQty(coin.Id, qty)"
+                                                        @onclick="() => SelectQty(gem.Id, qty)"
                                                         disabled="@(qty > remainingQty || isSoldOut)"
                                                         title="@qty×">@qty×</button>
                                             }
                                         </div>
-                                        <button class="great-button" @onclick="async () => await AddToCartPreset(coin)" disabled="@isSoldOut">
+                                        <button class="great-button" @onclick="async () => await AddToCartPreset(gem)" disabled="@isSoldOut">
                                             <i class="bi bi-@(isSoldOut ? "x-circle" : "cart-plus")"></i>
                                             @(isSoldOut ? "Sold Out" : cartItem != null ? "Update Cart" : "Add to Cart")
                                         </button>
                                         @if (cartItem != null)
                                         {
                                             <div class="product-cart-remove">
-                                                <button @onclick="async () => await RemoveFromCart(coin)" title="Remove from cart">
+                                                <button @onclick="async () => await RemoveFromCart(gem)" title="Remove from cart">
                                                     <i class="bi bi-trash"></i> Remove
                                                 </button>
                                             </div>
@@ -131,12 +131,12 @@ Server filter dropdown
             {
                 <div class="alert alert-info" role="alert">
                     <i class="bi bi-info-circle-fill"></i>
-                    No coins available at the moment.
+                    No gems available at the moment.
                 </div>
             }
 
-<!-- Coin Details Modal (mirrors Keys modal layout) -->
-@if (selectedCoin != null)
+<!-- Gem Details Modal (mirrors Keys modal layout) -->
+@if (selectedGem != null)
 {
     <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
         <div class="modal-dialog modal-lg">
@@ -144,40 +144,40 @@ Server filter dropdown
                 <div class="modal-header">
                     <h2 class="modal-title">
                         <i class="bi bi-box-fill"></i>
-                        @selectedCoin.Name
+                        @selectedGem.Name
                     </h2>
-                    <button type="button" class="btn-close" @onclick="CloseCoinDetails"></button>
+                    <button type="button" class="btn-close" @onclick="CloseGemDetails"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        @if (!string.IsNullOrEmpty(selectedCoin.Image))
+                        @if (!string.IsNullOrEmpty(selectedGem.Image))
                         {
                             <div class="col-md-6">
-                                <img src="@selectedCoin.Image" class="img-fluid rounded" alt="@selectedCoin.Name">
+                                <img src="@selectedGem.Image" class="img-fluid rounded" alt="@selectedGem.Name">
                             </div>
                         }
-                        <div class="col-md-@(string.IsNullOrEmpty(selectedCoin.Image) ? "12" : "6")">
+                        <div class="col-md-@(string.IsNullOrEmpty(selectedGem.Image) ? "12" : "6")">
                             <div class="row" style="padding: 20px">
-                                <h2 class="col-sm-8">@selectedCoin.Name</h2>
-                                @if (!string.IsNullOrEmpty(selectedCoin.Description))
+                                <h2 class="col-sm-8">@selectedGem.Name</h2>
+                                @if (!string.IsNullOrEmpty(selectedGem.Description))
                                 {
-                                    <p class="col-sm-8">@selectedCoin.Description</p>
+                                    <p class="col-sm-8">@selectedGem.Description</p>
                                 }
-                                <small class="text-muted">Server: @selectedCoin.Server?.Name</small>
+                                <small class="text-muted">Server: @selectedGem.Server?.Name</small>
                                     <div class="price-container">
-                                        @if (selectedCoin.Sale > 0)
+                                        @if (selectedGem.Sale > 0)
                                         {
                                             <p class="original-price" title="Original price">
-                                                €@selectedCoin.Price.ToString("F2")
+                                                €@selectedGem.Price.ToString("F2")
                                             </p>
                                             <p class="discounted-price" title="Sale price">
-                                                €@(CalculateSalePrice(selectedCoin.Price, selectedCoin.Sale).ToString("F2"))
+                                                €@(CalculateSalePrice(selectedGem.Price, selectedGem.Sale).ToString("F2"))
                                             </p>
-                                            <span class="discount-badge">@selectedCoin.Sale% OFF</span>
+                                            <span class="discount-badge">@selectedGem.Sale% OFF</span>
                                         }
                                         else
                                         {
-                                            <strong class="text-primary fs-5">€@selectedCoin.Price.ToString("F2")</strong>
+                                            <strong class="text-primary fs-5">€@selectedGem.Price.ToString("F2")</strong>
                                         }
                                     </div>
                             </div>
@@ -186,13 +186,13 @@ Server filter dropdown
                 </div>
                 <div class="modal-footer">
                     @{
-                        var cartItemModal = CartState.CartItems.FirstOrDefault(i => i.Key.Id == selectedCoin!.Id && i.Key.Type == "Coin");
-                        var remainingQtyModal = GetRemainingQuantity("Coin", selectedCoin!.Id, selectedCoin.GlobalMaxOrder);
+                        var cartItemModal = CartState.CartItems.FirstOrDefault(i => i.Key.Id == selectedGem!.Id && i.Key.Type == "Gem");
+                        var remainingQtyModal = GetRemainingQuantity("Gem", selectedGem!.Id, selectedGem.GlobalMaxOrder);
                         var isSoldOutModal = remainingQtyModal == 0;
                     }
                     @if (cartItemModal == null)
                     {
-                        <button type="button" class="btn btn-outline-success" @onclick="async () => await AddToCart(selectedCoin!)" disabled="@isSoldOutModal">
+                        <button type="button" class="btn btn-outline-success" @onclick="async () => await AddToCart(selectedGem!)" disabled="@isSoldOutModal">
                             <i class="bi bi-cart-plus"></i> @(isSoldOutModal ? "Sold Out" : "Add to Cart")
                         </button>
                     }
@@ -200,11 +200,11 @@ Server filter dropdown
                     {
                         <div style="display: block ruby;">
                             <div class="quantity-controls">
-                                <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedCoin!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
+                                <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedGem!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
                                 <span>@cartItemModal.Quantity</span>
-                                <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedCoin!, 1)" disabled="@(cartItemModal.Quantity >= Math.Min(10, remainingQtyModal))">+</button>
+                                <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedGem!, 1)" disabled="@(cartItemModal.Quantity >= Math.Min(10, remainingQtyModal))">+</button>
                             </div>
-                            <button class="danger" @onclick="async () => await RemoveFromCart(selectedCoin!)" title="Remove from cart">
+                            <button class="danger" @onclick="async () => await RemoveFromCart(selectedGem!)" title="Remove from cart">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </div>
@@ -216,30 +216,30 @@ Server filter dropdown
 }
 
 @code {
-    private List<CoinResponse>? coins;
-    private List<CoinResponse>? filteredCoins;
+    private List<GemResponse>? gems;
+    private List<GemResponse>? filteredGems;
     private List<ServerResponse> servers = new();
     private int? selectedServerId;
     private bool loading = true;
     private string? errorMessage;
-    private CoinResponse? selectedCoin;
+    private GemResponse? selectedGem;
 
     private bool _cartLoaded = false;
-    private int? addedCoinId;
+    private int? addedGemId;
 
     private static readonly int[] QtyPresets = [1, 5, 10, 20];
     private Dictionary<int, int> _selectedQtyMap = new();
 
-    private int GetSelectedQty(int coinId)
+    private int GetSelectedQty(int gemId)
     {
-        var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == coinId && i.Key.Type == "Coin");
+        var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == gemId && i.Key.Type == "Gem");
         if (cartItem != null) return cartItem.Quantity;
-        return _selectedQtyMap.GetValueOrDefault(coinId, 1);
+        return _selectedQtyMap.GetValueOrDefault(gemId, 1);
     }
 
-    private void SelectQty(int coinId, int qty)
+    private void SelectQty(int gemId, int qty)
     {
-        _selectedQtyMap[coinId] = qty;
+        _selectedQtyMap[gemId] = qty;
     }
 
     private Dictionary<string, int> _purchasedCounts = new();
@@ -248,7 +248,7 @@ Server filter dropdown
     protected override async Task OnInitializedAsync()
     {
         CartState.OnChange += OnCartChanged;
-        await LoadCoins();
+        await LoadGems();
         await LoadPurchasedCounts();
     }
 
@@ -269,15 +269,15 @@ Server filter dropdown
         }
     }
 
-    private async Task LoadCoins()
+    private async Task LoadGems()
     {
         try
         {
             loading = true;
             errorMessage = null;
-            coins = (await Api.GetCoinsAsync()).ToList();
-            // build server list from coins and apply filter
-            servers = coins
+            gems = (await Api.GetGemsAsync()).ToList();
+            // build server list from gems and apply filter
+            servers = gems
                 .Where(s => s.Server != null)
                 .Select(s => s.Server!)
                 .GroupBy(s => s.Id)
@@ -288,8 +288,8 @@ Server filter dropdown
         }
         catch (Exception ex)
         {
-            errorMessage = $"Error loading coins: {ex.Message}";
-            Logger.LogError(ex, "Error loading coins");
+            errorMessage = $"Error loading gems: {ex.Message}";
+            Logger.LogError(ex, "Error loading gems");
         }
         finally
         {
@@ -301,11 +301,11 @@ Server filter dropdown
     {
         if (selectedServerId.HasValue)
         {
-            filteredCoins = coins?.Where(s => s.Server?.Id == selectedServerId.Value).ToList();
+            filteredGems = gems?.Where(s => s.Server?.Id == selectedServerId.Value).ToList();
         }
         else
         {
-            filteredCoins = coins;
+            filteredGems = gems;
         }
     }
 
@@ -324,14 +324,14 @@ Server filter dropdown
         StateHasChanged();
     }
 
-    private void ShowCoinDetails(CoinResponse coin)
+    private void ShowGemDetails(GemResponse gem)
     {
-        selectedCoin = coin;
+        selectedGem = gem;
     }
 
-    private void CloseCoinDetails()
+    private void CloseGemDetails()
     {
-        selectedCoin = null;
+        selectedGem = null;
     }
 
     private double CalculateSalePrice(double originalPrice, int salePercentage)
@@ -339,51 +339,51 @@ Server filter dropdown
         return originalPrice * (1 - salePercentage / 100.0);
     }
 
-    private async Task AddToCart(CoinResponse coin)
+    private async Task AddToCart(GemResponse gem)
     {
-        await JS.InvokeVoidAsync("console.log", $"AddToCart: {coin.Name} (ID: {coin.Id})");
-        await CartState.AddToCartAsync(coin);
-        addedCoinId = coin.Id;
+        await JS.InvokeVoidAsync("console.log", $"AddToCart: {gem.Name} (ID: {gem.Id})");
+        await CartState.AddToCartAsync(gem);
+        addedGemId = gem.Id;
         StateHasChanged();
         await Task.Delay(1200);
-        if (addedCoinId == coin.Id) { addedCoinId = null; StateHasChanged(); }
+        if (addedGemId == gem.Id) { addedGemId = null; StateHasChanged(); }
     }
 
-    private async Task AddToCartPreset(CoinResponse coin)
+    private async Task AddToCartPreset(GemResponse gem)
     {
-        var qty = GetSelectedQty(coin.Id);
-        await CartState.SetQuantityAsync(coin, qty);
+        var qty = GetSelectedQty(gem.Id);
+        await CartState.SetQuantityAsync(gem, qty);
         SidebarState.Open();
         StateHasChanged();
     }
 
-    private async Task ChangeQuantity(CoinResponse coin, int delta)
+    private async Task ChangeQuantity(GemResponse gem, int delta)
     {
-        await CartState.ChangeQuantityAsync(coin, delta);
+        await CartState.ChangeQuantityAsync(gem, delta);
     }
 
-    private async Task RemoveFromCart(CoinResponse coin)
+    private async Task RemoveFromCart(GemResponse gem)
     {
-        await CartState.RemoveFromCartAsync(coin);
+        await CartState.RemoveFromCartAsync(gem);
         StateHasChanged();
     }
 
     private async Task AddSelectedToCart()
     {
-        if (selectedCoin != null)
+        if (selectedGem != null)
         {
-            await AddToCart(selectedCoin);
+            await AddToCart(selectedGem);
         }
     }
 
     private async Task LoadPurchasedCounts()
     {
-        if (coins == null) return;
+        if (gems == null) return;
         
-        foreach (var coin in coins.Where(c => c.GlobalMaxOrder.HasValue))
+        foreach (var gem in gems.Where(c => c.GlobalMaxOrder.HasValue))
         {
-            var count = await PurchaseTrackingService.GetGlobalPurchasedAsync("Coin", coin.Id);
-            _purchasedCounts[$"Coin_{coin.Id}"] = count;
+            var count = await PurchaseTrackingService.GetGlobalPurchasedAsync("Gem", gem.Id);
+            _purchasedCounts[$"Gem_{gem.Id}"] = count;
         }
     }
 

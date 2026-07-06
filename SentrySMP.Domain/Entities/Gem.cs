@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SentrySMP.Domain.Entities
 {
-    public class Coin
+    public class Gem
     {
         [Key]
         public int Id { get; set; }

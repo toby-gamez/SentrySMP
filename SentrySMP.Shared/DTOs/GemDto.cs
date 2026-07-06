@@ -1,19 +1,19 @@
 using SentrySMP.Shared.DTOs;
 namespace SentrySMP.Shared.DTOs
 {
-    public class CoinResponse : ProductResponse
+    public class GemResponse : ProductResponse
     {
-        // Coin-specific fields
-        // Commands attached to this coin
+        // Gem-specific fields
+        // Commands attached to this gem
         public List<CommandDto>? Commands { get; set; }
 
-        public CoinResponse()
+        public GemResponse()
         {
-            Type = "Coin";
+            Type = "Gem";
         }
     }
 
-    public class CreateCoinDto
+    public class CreateGemDto
     {
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
@@ -22,11 +22,11 @@ namespace SentrySMP.Shared.DTOs
         public string? Image { get; set; }
         public int? GlobalMaxOrder { get; set; }
         public int ServerId { get; set; }
-        // Optional commands to attach to this coin
+        // Optional commands to attach to this gem
         public List<CreateCommandDto>? Commands { get; set; }
     }
 
-    public class UpdateCoinDto
+    public class UpdateGemDto
     {
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
@@ -35,7 +35,7 @@ namespace SentrySMP.Shared.DTOs
         public string? Image { get; set; }
         public int? GlobalMaxOrder { get; set; }
         public int ServerId { get; set; }
-        // Optional commands to attach to this coin (replaces existing when provided)
+        // Optional commands to attach to this gem (replaces existing when provided)
         public List<CreateCommandDto>? Commands { get; set; }
     }
 }

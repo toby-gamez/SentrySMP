@@ -106,24 +106,24 @@ public interface ISentryApi
     [Get("/api/announcements")]
     Task<IEnumerable<SentrySMP.Shared.DTOs.AnnouncementDto>> GetAnnouncementsAsync();
 
-    // Coin endpoints
-    [Get("/api/coins")]
-    Task<IEnumerable<CoinResponse>> GetCoinsAsync();
+    // Gem endpoints
+    [Get("/api/gems")]
+    Task<IEnumerable<GemResponse>> GetGemsAsync();
 
-    [Get("/api/coins/by-server/{serverId}")]
-    Task<IEnumerable<CoinResponse>> GetCoinsByServerAsync(int serverId);
+    [Get("/api/gems/by-server/{serverId}")]
+    Task<IEnumerable<GemResponse>> GetGemsByServerAsync(int serverId);
 
-    [Get("/api/coins/{id}")]
-    Task<CoinResponse> GetCoinAsync(int id);
+    [Get("/api/gems/{id}")]
+    Task<GemResponse> GetGemAsync(int id);
 
-    [Post("/api/coins")]
-    Task<CoinResponse> CreateCoinAsync([Body] CreateCoinDto coin);
+    [Post("/api/gems")]
+    Task<GemResponse> CreateGemAsync([Body] CreateGemDto gem);
 
-    [Put("/api/coins/{id}")]
-    Task<CoinResponse> UpdateCoinAsync(int id, [Body] UpdateCoinDto coin);
+    [Put("/api/gems/{id}")]
+    Task<GemResponse> UpdateGemAsync(int id, [Body] UpdateGemDto gem);
 
-    [Delete("/api/coins/{id}")]
-    Task DeleteCoinAsync(int id);
+    [Delete("/api/gems/{id}")]
+    Task DeleteGemAsync(int id);
 
     // Other endpoints
     [Get("/api/others")]

@@ -108,7 +108,7 @@ namespace SentrySMP.Api.Migrations
                     b.ToTable("Bundles");
                 });
 
-            modelBuilder.Entity("SentrySMP.Domain.Entities.Coin", b =>
+            modelBuilder.Entity("SentrySMP.Domain.Entities.Gem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -627,7 +627,7 @@ namespace SentrySMP.Api.Migrations
                     b.Navigation("Server");
                 });
 
-            modelBuilder.Entity("SentrySMP.Domain.Entities.Coin", b =>
+            modelBuilder.Entity("SentrySMP.Domain.Entities.Gem", b =>
                 {
                     b.HasOne("SentrySMP.Domain.Entities.Server", "Server")
                         .WithMany("Coins")

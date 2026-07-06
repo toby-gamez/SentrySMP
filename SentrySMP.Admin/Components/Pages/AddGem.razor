@@ -1,13 +1,13 @@
 @using Microsoft.AspNetCore.Components.Forms
-@page "/add-coins"
+@page "/add-gems"
 @rendermode InteractiveServer
 @using System.ComponentModel.DataAnnotations
 @using SentrySMP.Shared.DTOs
 @inject ISentryApi Api
-@inject ILogger<AddCoin> Logger
+@inject ILogger<AddGem> Logger
 @inject NavigationManager Navigation
 
-<PageTitle>Add Coin - SentrySMP Admin</PageTitle>
+<PageTitle>Add Gem - SentrySMP Admin</PageTitle>
 
 <div class="container-fluid">
     <div class="row">
@@ -16,12 +16,12 @@
                 <div>
                     <h1>
                         <i class="bi bi-plus-circle me-2"></i>
-                        Add Coins
+                        Add Gems
                     </h1>
-                    <p class="text-muted">Create coins configuration</p>
+                    <p class="text-muted">Create gems configuration</p>
                 </div>
                 <button class="btn btn-outline-secondary" @onclick="GoBack">
-                    <i class="bi bi-arrow-left"></i> Back to Coins
+                    <i class="bi bi-arrow-left"></i> Back to Gems
                 </button>
             </div>
         </div>
@@ -42,75 +42,75 @@
         </div>
     }
 
-    <EditForm Model="coinModel" OnValidSubmit="HandleValidSubmit">
+    <EditForm Model="gemModel" OnValidSubmit="HandleValidSubmit">
         <DataAnnotationsValidator />
         <div class="row">
             <div class="col-md-6">
                 <div class="mb-3">
                     <label class="form-label">Name</label>
-                    <InputText class="form-control" @bind-Value="coinModel.Name" />
-                    <ValidationMessage For="() => coinModel.Name" />
+                    <InputText class="form-control" @bind-Value="gemModel.Name" />
+                    <ValidationMessage For="() => gemModel.Name" />
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Description</label>
-                    <InputTextArea class="form-control" @bind-Value="coinModel.Description" />
-                    <ValidationMessage For="() => coinModel.Description" />
+                    <InputTextArea class="form-control" @bind-Value="gemModel.Description" />
+                    <ValidationMessage For="() => gemModel.Description" />
                 </div>
                 <div class="mb-3">
-                    <ImageUploader Label="Coin Image"
-                                       SubDirectory="coins"
-                                       ImageUrl="@coinModel.Image"
-                                       ImageUrlChanged="@((string? url) => coinModel.Image = url)" />
+                    <ImageUploader Label="Gem Image"
+                                       SubDirectory="gems"
+                                       ImageUrl="@gemModel.Image"
+                                       ImageUrlChanged="@((string? url) => gemModel.Image = url)" />
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
                     <label class="form-label">Price</label>
-                    <InputNumber class="form-control" @bind-Value="coinModel.Price" />
-                    <ValidationMessage For="() => coinModel.Price" />
+                    <InputNumber class="form-control" @bind-Value="gemModel.Price" />
+                    <ValidationMessage For="() => gemModel.Price" />
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Sale (%)</label>
-                    <InputNumber class="form-control" @bind-Value="coinModel.Sale" />
-                    <ValidationMessage For="() => coinModel.Sale" />
+                    <InputNumber class="form-control" @bind-Value="gemModel.Sale" />
+                    <ValidationMessage For="() => gemModel.Sale" />
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Global Max Order (Optional)</label>
-                    <InputNumber class="form-control" @bind-Value="coinModel.GlobalMaxOrder" placeholder="Leave empty for unlimited" />
+                    <InputNumber class="form-control" @bind-Value="gemModel.GlobalMaxOrder" placeholder="Leave empty for unlimited" />
                     <div class="form-text">Maximum total quantity per user across all orders (leave empty for unlimited)</div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Server</label>
-                    <InputSelect class="form-select" @bind-Value="coinModel.ServerId">
+                    <InputSelect class="form-select" @bind-Value="gemModel.ServerId">
                         <option value="">Select server</option>
                         @foreach (var server in servers)
                         {
                             <option value="@server.Id">@server.Name</option>
                         }
                     </InputSelect>
-                    <ValidationMessage For="() => coinModel.ServerId" />
+                    <ValidationMessage For="() => gemModel.ServerId" />
                 </div>
             </div>
         </div>
         <div class="mb-3 mt-3">
             <label class="form-label">Commands</label>
             <div class="form-text text-muted mb-2">For replacing string with name use %player%.</div>
-            @if (coinCommands == null || !coinCommands.Any())
+            @if (gemCommands == null || !gemCommands.Any())
             {
                 <div class="text-muted">No commands attached.</div>
             }
-            @for (int i = 0; i < (coinCommands?.Count ?? 0); i++)
+            @for (int i = 0; i < (gemCommands?.Count ?? 0); i++)
             {
                 var idx = i;
-                var cmd = coinCommands![idx];
+                var cmd = gemCommands![idx];
                 <div class="input-group mb-2">
                     <InputText @bind-Value="cmd.CommandText" class="form-control" />
-                    <button type="button" class="btn btn-outline-danger" @onclick="() => RemoveCoinCommand(idx)">
+                    <button type="button" class="btn btn-outline-danger" @onclick="() => RemoveGemCommand(idx)">
                         <i class="bi bi-trash"></i>
                     </button>
                 </div>
             }
-            <button type="button" class="btn btn-sm btn-outline-primary" @onclick="AddCoinCommand">
+            <button type="button" class="btn btn-sm btn-outline-primary" @onclick="AddGemCommand">
                 <i class="bi bi-plus"></i> Add Command
             </button>
         </div>
@@ -121,7 +121,7 @@
                         <i class="bi bi-x-circle me-1"></i> Cancel
                     </button>
                     <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
-                        <i class="bi bi-plus-circle"></i> Create Coin
+                        <i class="bi bi-plus-circle"></i> Create Gem
                     </button>
                 </div>
             </div>
@@ -130,11 +130,11 @@
 </div>
 
 @code {
-    private CreateCoinDto coinModel = new();
+    private CreateGemDto gemModel = new();
     private List<ServerResponse> servers = new();
     private string? errorMessage;
     private string? successMessage;
-    private List<CommandInputModel>? coinCommands = new();
+    private List<CommandInputModel>? gemCommands = new();
     private bool isSaving = false;
 
     protected override async Task OnInitializedAsync()
@@ -149,18 +149,18 @@
             isSaving = true;
             errorMessage = null;
             successMessage = null;
-            if (coinCommands != null && coinCommands.Any())
+            if (gemCommands != null && gemCommands.Any())
             {
-                coinModel.Commands = coinCommands.Select(c => new CreateCommandDto { CommandText = c.CommandText }).ToList();
+                gemModel.Commands = gemCommands.Select(c => new CreateCommandDto { CommandText = c.CommandText }).ToList();
             }
-            await Api.CreateCoinAsync(coinModel);
-            successMessage = "Coin created successfully!";
-            Navigation.NavigateTo("/coins");
+            await Api.CreateGemAsync(gemModel);
+            successMessage = "Gem created successfully!";
+            Navigation.NavigateTo("/gems");
         }
         catch (Exception ex)
         {
-            errorMessage = $"Error creating coin: {ex.Message}";
-            Logger.LogError(ex, "Error creating coin");
+            errorMessage = $"Error creating gem: {ex.Message}";
+            Logger.LogError(ex, "Error creating gem");
         }
         finally
         {
@@ -173,21 +173,21 @@
         public string CommandText { get; set; } = string.Empty;
     }
 
-    private void AddCoinCommand()
+    private void AddGemCommand()
     {
-        if (coinCommands == null) coinCommands = new List<CommandInputModel>();
-        coinCommands.Add(new CommandInputModel());
+        if (gemCommands == null) gemCommands = new List<CommandInputModel>();
+        gemCommands.Add(new CommandInputModel());
     }
 
-    private void RemoveCoinCommand(int index)
+    private void RemoveGemCommand(int index)
     {
-        if (coinCommands == null) return;
-        if (index < 0 || index >= coinCommands.Count) return;
-        coinCommands.RemoveAt(index);
+        if (gemCommands == null) return;
+        if (index < 0 || index >= gemCommands.Count) return;
+        gemCommands.RemoveAt(index);
     }
 
     private void GoBack()
     {
-        Navigation.NavigateTo("/coins");
+        Navigation.NavigateTo("/gems");
     }
 }

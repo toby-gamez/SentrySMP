@@ -1,12 +1,12 @@
-@page "/coins"
+@page "/gems"
 @using SentrySMP.Shared.DTOs
 @using SentrySMP.Shared.Interfaces
 @inject ISentryApi Api
-@inject ILogger<Coins> Logger
+@inject ILogger<Gems> Logger
 @inject IJSRuntime JSRuntime
 @rendermode InteractiveServer
 
-<PageTitle>Coins - SentrySMP Admin</PageTitle>
+<PageTitle>Gems - SentrySMP Admin</PageTitle>
 
 <div class="container-fluid">
     <div class="row">
@@ -14,11 +14,11 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1>
                     <i class="bi bi-box-fill text-primary me-2"></i>
-                    Coin Management
+                    Gem Management
                 </h1>
-                <a href="/add-coins" class="btn btn-success">
+                <a href="/add-gems" class="btn btn-success">
                     <i class="bi bi-plus-circle-fill me-2"></i>
-                    Create New Coin
+                    Create New Gem
                 </a>
             </div>
             @if (loading)
@@ -36,7 +36,7 @@
                     @errorMessage
                 </div>
             }
-            else if (coins?.Any() == true)
+            else if (gems?.Any() == true)
             {
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
@@ -53,13 +53,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var coin in coins)
+                            @foreach (var gem in gems)
                             {
                                 <tr>
                                     <td>
-                                        @if (!string.IsNullOrEmpty(coin.Image))
+                                        @if (!string.IsNullOrEmpty(gem.Image))
                                         {
-                                            <img src="@coin.Image" alt="@coin.Name" style="width: 50px; height: 50px; object-fit: cover;" class="rounded">
+                                            <img src="@gem.Image" alt="@gem.Name" style="width: 50px; height: 50px; object-fit: cover;" class="rounded">
                                         }
                                         else
                                         {
@@ -68,25 +68,25 @@
                                             </div>
                                         }
                                     </td>
-                                    <td><strong>@coin.Name</strong></td>
+                                    <td><strong>@gem.Name</strong></td>
                                     <td>
-                                        @if (!string.IsNullOrEmpty(coin.Description))
+                                        @if (!string.IsNullOrEmpty(gem.Description))
                                         {
-                                            @(coin.Description.Length > 50 ? coin.Description.Substring(0, 50) + "..." : coin.Description)
+                                            @(gem.Description.Length > 50 ? gem.Description.Substring(0, 50) + "..." : gem.Description)
                                         }
                                     </td>
                                     <td>
                                         <strong class="text-success">
                                             <i class="bi bi-currency-euro me-1"></i>
-                                            @coin.Price.ToString("F2")
+                                            @gem.Price.ToString("F2")
                                         </strong>
                                     </td>
                                     <td>
-                                        @if (coin.Server != null)
+                                        @if (gem.Server != null)
                                         {
                                             <span class="badge bg-info">
                                                 <i class="bi bi-server me-1"></i>
-                                                @coin.Server.Name
+                                                @gem.Server.Name
                                             </span>
                                         }
                                         else
@@ -98,11 +98,11 @@
                                         }
                                     </td>
                                     <td>
-                                        @if (coin.Sale > 0)
+                                        @if (gem.Sale > 0)
                                         {
                                             <span class="badge bg-danger">
                                                 <i class="bi bi-percent me-1"></i>
-                                                @coin.Sale% OFF
+                                                @gem.Sale% OFF
                                             </span>
                                         }
                                         else
@@ -114,12 +114,12 @@
                                         }
                                     </td>
                                     <td>
-                                        @if (coin.Commands != null && coin.Commands.Any())
+                                        @if (gem.Commands != null && gem.Commands.Any())
                                         {
-                                            var cmdText = string.Join(", ", coin.Commands.Select(c => c.CommandText));
+                                            var cmdText = string.Join(", ", gem.Commands.Select(c => c.CommandText));
                                             <span class="badge bg-info" title="@cmdText">
                                                 <i class="bi bi-terminal me-1"></i>
-                                                @coin.Commands.Count
+                                                @gem.Commands.Count
                                             </span>
                                         }
                                         else
@@ -129,11 +129,11 @@
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            <a href="/edit-coin/@coin.Id" class="btn btn-sm btn-outline-primary" title="Edit Coin" data-bs-toggle="tooltip">
+                                            <a href="/edit-gem/@gem.Id" class="btn btn-sm btn-outline-primary" title="Edit Gem" data-bs-toggle="tooltip">
                                                 <i class="bi bi-pencil-square me-1"></i>
                                                 Edit
                                             </a>
-                                            <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteShard(coin.Id)" title="Delete Coin" data-bs-toggle="tooltip">
+                                            <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteShard(gem.Id)" title="Delete Gem" data-bs-toggle="tooltip">
                                                 <i class="bi bi-trash3-fill me-1"></i>
                                                 Delete
                                             </button>
@@ -149,7 +149,7 @@
             {
                 <div class="alert alert-info" role="alert">
                     <i class="bi bi-info-circle-fill"></i>
-                    No coins found.
+                    No gems found.
                 </div>
             }
         </div>
@@ -157,7 +157,7 @@
 </div>
 
 @code {
-    private List<CoinResponse>? coins;
+    private List<GemResponse>? gems;
     private bool loading = true;
     private string? errorMessage;
 
@@ -172,12 +172,12 @@
         {
             loading = true;
             errorMessage = null;
-            coins = (await Api.GetCoinsAsync()).ToList();
+            gems = (await Api.GetGemsAsync()).ToList();
         }
         catch (Exception ex)
         {
-            errorMessage = $"Error loading coins: {ex.Message}";
-            Logger.LogError(ex, "Error loading coins");
+            errorMessage = $"Error loading gems: {ex.Message}";
+            Logger.LogError(ex, "Error loading gems");
         }
         finally
         {
@@ -187,17 +187,17 @@
 
     private async Task DeleteShard(int id)
     {
-        if (!await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete this coin?"))
+        if (!await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete this gem?"))
             return;
         try
         {
-            await Api.DeleteCoinAsync(id);
+            await Api.DeleteGemAsync(id);
             await LoadShards();
         }
         catch (Exception ex)
         {
-            errorMessage = $"Error deleting coin: {ex.Message}";
-            Logger.LogError(ex, "Error deleting coin");
+            errorMessage = $"Error deleting gem: {ex.Message}";
+            Logger.LogError(ex, "Error deleting gem");
         }
     }
 }
