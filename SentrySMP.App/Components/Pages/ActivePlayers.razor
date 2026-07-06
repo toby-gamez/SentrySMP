@@ -61,8 +61,8 @@ else
     {
         if (string.IsNullOrWhiteSpace(rank)) return null;
         if (rank.StartsWith("%img_") && rank.EndsWith("%"))
-            return rank[5..^1];
-        return rank;
+            return rank[5..^1].ToUpperInvariant();
+        return rank.ToUpperInvariant();
     }
 
     private void OpenProfile(string? playerName)

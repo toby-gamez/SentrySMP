@@ -1224,26 +1224,67 @@ button.minecraft-button:active {
     margin: 10px auto 0;
     display: flex;
     justify-content: center;
+    position: relative;
+    z-index: 100;
 }
 
 #map-button {
+    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 28px;
-    background-color: #c0392b;
-    color: #fff;
+    padding: 10px 60px;
+    background-color: #1a1a1a;
+    color: #f0f0f0;
     font-weight: 700;
     font-size: 0.95rem;
     letter-spacing: 0.08em;
-    border-radius: 8px;
+    border-radius: 10px 10px 0 0;
     text-decoration: none;
-    transition: background-color 0.2s ease;
+    transition: all 0.3s ease;
+}
+
+#map-button::before,
+#map-button::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    width: 28px;
+    height: 28px;
+    background: transparent;
+}
+
+#map-button::before {
+    left: -28px;
+    border-radius: 0 0 20px 0;
+    box-shadow: 14px 14px 0 0 #1a1a1a;
+}
+
+#map-button::after {
+    right: -28px;
+    border-radius: 0 0 0 20px;
+    box-shadow: -14px 14px 0 0 #1a1a1a;
 }
 
 #map-button:hover {
-    background-color: #e74c3c;
-    color: #fff;
+    color: #dc3545;
+}
+
+body.light #map-button {
+    background-color: #f0f0f0;
+    color: #111;
+}
+
+body.light #map-button::before {
+    box-shadow: 14px 14px 0 0 #f0f0f0;
+}
+
+body.light #map-button::after {
+    box-shadow: -14px 14px 0 0 #f0f0f0;
+}
+
+body.light #map-button:hover {
+    color: #dc3545;
 }
 
 #login-box {
