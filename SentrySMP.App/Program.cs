@@ -60,7 +60,7 @@ services.AddRazorComponents().AddInteractiveServerComponents();
 
 // Register our services
 services.AddScoped<IServerService, ServerService>();
-services.AddScoped<IGemService, GemService>();
+services.AddScoped<ICoinService, CoinService>();
 services.AddScoped<IOtherService, OtherService>();
 services.AddScoped<IKeyService, KeyService>();
 services.AddScoped<IBundleService, BundleService>();

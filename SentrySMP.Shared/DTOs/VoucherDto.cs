@@ -14,7 +14,7 @@ public class VoucherResponse
     public decimal DiscountPercent { get; set; }
     /// <summary>"All" | "Category" | "Item"</summary>
     public string Scope { get; set; } = "All";
-    /// <summary>"Key" | "Rank" | "Bundle" | "Gem" | "Other" | "BattlePass"</summary>
+    /// <summary>"Key" | "Rank" | "Bundle" | "Coin" | "Other" | "BattlePass"</summary>
     public string? ScopeCategory { get; set; }
     public int? ScopeItemId { get; set; }
     public bool IsActive { get; set; }
@@ -79,7 +79,7 @@ public class UpdateVoucherDto
 /// <summary>One line item from the cart, used when validating a voucher code.</summary>
 public class VoucherCartItem
 {
-    /// <summary>Product type: "Key", "Rank", "Bundle", "Gem", "Other", "BattlePass"</summary>
+    /// <summary>Product type: "Key", "Rank", "Bundle", "Coin", "Other", "BattlePass"</summary>
     public string Type { get; set; } = string.Empty;
     public int Id { get; set; }
     public int Quantity { get; set; }

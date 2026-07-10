@@ -1647,9 +1647,9 @@
                             var bundle = await SentryApi.GetBundleAsync(id);
                             _voucherAppliesTo = bundle?.Name ?? ($"{cat} #{id}");
                             break;
-                        case "Gem":
-                            var gem = await SentryApi.GetGemAsync(id);
-                            _voucherAppliesTo = gem?.Name ?? ($"{cat} #{id}");
+                        case "Coin":
+                            var coin = await SentryApi.GetCoinAsync(id);
+                            _voucherAppliesTo = coin?.Name ?? ($"{cat} #{id}");
                             break;
                         case "Other":
                             var other = await SentryApi.GetOtherAsync(id);
@@ -1740,7 +1740,7 @@
             case "Key": return "Keys";
             case "Rank": return "Ranks";
             case "Bundle": return "Bundles";
-            case "Gem": return "Gems";
+            case "Coin": return "Coins";
             case "Other": return "Others";
             case "BattlePass": return "BattlePasses";
             default:

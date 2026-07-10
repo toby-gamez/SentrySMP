@@ -108,31 +108,7 @@ namespace SentrySMP.Api.Migrations
                     b.ToTable("Bundles");
                 });
 
-            modelBuilder.Entity("SentrySMP.Domain.Entities.Command", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CommandText")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("TypeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Commands");
-                });
-
-            modelBuilder.Entity("SentrySMP.Domain.Entities.Gem", b =>
+            modelBuilder.Entity("SentrySMP.Domain.Entities.Coin", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -168,7 +144,31 @@ namespace SentrySMP.Api.Migrations
 
                     b.HasIndex("ServerId");
 
-                    b.ToTable("Gems");
+                    b.ToTable("Coins");
+                });
+
+            modelBuilder.Entity("SentrySMP.Domain.Entities.Command", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CommandText")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("TypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Commands");
                 });
 
             modelBuilder.Entity("SentrySMP.Domain.Entities.Key", b =>
@@ -627,10 +627,10 @@ namespace SentrySMP.Api.Migrations
                     b.Navigation("Server");
                 });
 
-            modelBuilder.Entity("SentrySMP.Domain.Entities.Gem", b =>
+            modelBuilder.Entity("SentrySMP.Domain.Entities.Coin", b =>
                 {
                     b.HasOne("SentrySMP.Domain.Entities.Server", "Server")
-                        .WithMany("Gems")
+                        .WithMany("Coins")
                         .HasForeignKey("ServerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -695,7 +695,7 @@ namespace SentrySMP.Api.Migrations
 
                     b.Navigation("Bundles");
 
-                    b.Navigation("Gems");
+                    b.Navigation("Coins");
 
                     b.Navigation("Keys");
                 });

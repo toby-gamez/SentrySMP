@@ -82,11 +82,11 @@ else
                         }
                         else
                         {
-                            Logger?.LogInformation("ShowUsername: GameServerService response for {Username}: Rank={Rank} Gems={Gems} Money={Money} Error={Error}", CurrentDisplay, p.Rank, p.Gems, p.Money, p.Error);
-                            System.Console.WriteLine($"ShowUsername: GameServerService response for {CurrentDisplay}: Rank={p.Rank} Gems={(p.Gems?.ToString() ?? "null")} Money={(p.Money?.ToString() ?? "null")} Error={p.Error}");
+                            Logger?.LogInformation("ShowUsername: GameServerService response for {Username}: Rank={Rank} Coins={Coins} Money={Money} Error={Error}", CurrentDisplay, p.Rank, p.Coins, p.Money, p.Error);
+                            System.Console.WriteLine($"ShowUsername: GameServerService response for {CurrentDisplay}: Rank={p.Rank} Coins={(p.Coins?.ToString() ?? "null")} Money={(p.Money?.ToString() ?? "null")} Error={p.Error}");
                             if (!string.IsNullOrWhiteSpace(p.Rank))
                             {
-                                _playerRankName = ParseRankName(p.Rank);
+                                _playerRankName = p.Rank;
                                 var tr = await TeamRankService.GetByNameAsync(_playerRankName);
                                 if (tr == null)
                                 {
@@ -147,10 +147,10 @@ else
                     else
                     {
                         Logger?.LogInformation("ShowUsername: OnUserChanged GameServerService response for {Username}: Rank={Rank} Error={Error}", CurrentDisplay, p.Rank, p.Error);
-                        System.Console.WriteLine($"ShowUsername: OnUserChanged GameServerService response for {CurrentDisplay}: Rank={p.Rank} Gems={(p.Gems?.ToString() ?? "null")} Money={(p.Money?.ToString() ?? "null")} Error={p.Error}");
+                        System.Console.WriteLine($"ShowUsername: OnUserChanged GameServerService response for {CurrentDisplay}: Rank={p.Rank} Coins={(p.Coins?.ToString() ?? "null")} Money={(p.Money?.ToString() ?? "null")} Error={p.Error}");
                         if (!string.IsNullOrWhiteSpace(p.Rank))
                         {
-                            _playerRankName = ParseRankName(p.Rank);
+                            _playerRankName = p.Rank;
                             var tr = await TeamRankService.GetByNameAsync(_playerRankName);
                             if (tr != null) _playerRankHex = tr.HexColor;
                         }
@@ -175,13 +175,6 @@ else
     private void OpenCart() => CartSidebarState.Open();
 
     private void OpenProfile() => Navigation.NavigateTo("/profile");
-
-    private static string ParseRankName(string rank)
-    {
-        if (rank.StartsWith("%img_") && rank.EndsWith("%"))
-            return rank[5..^1].ToUpperInvariant();
-        return rank.ToUpperInvariant();
-    }
 
     public void Dispose()
     {

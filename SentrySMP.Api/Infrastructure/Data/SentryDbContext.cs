@@ -13,7 +13,7 @@ public class SentryDbContext : DbContext
     public DbSet<Key> Keys { get; set; }
     public DbSet<Rank> Ranks { get; set; }
     public DbSet<Bundle> Bundles { get; set; }
-    public DbSet<Gem> Gems { get; set; }
+    public DbSet<Coin> Coins { get; set; }
     public DbSet<Other> Others { get; set; }
     public DbSet<Domain.Entities.TeamCategory> TeamCategories { get; set; }
     public DbSet<Domain.Entities.TeamMember> TeamMembers { get; set; }
@@ -39,19 +39,19 @@ public class SentryDbContext : DbContext
             entity.Property(e => e.TypeId).IsRequired();
         });
 
-        // Gem entity config (if needed)
-        modelBuilder.Entity<Gem>(entity =>
+        // Coin entity config (if needed)
+        modelBuilder.Entity<Coin>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Description).HasMaxLength(500);
             entity.HasOne(e => e.Server)
-                  .WithMany(s => s.Gems)
+                  .WithMany(s => s.Coins)
                   .HasForeignKey(e => e.ServerId)
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // Other entity config (mirrors Gem)
+        // Other entity config (mirrors Coin)
         modelBuilder.Entity<Other>(entity =>
         {
             entity.HasKey(e => e.Id);

@@ -30,7 +30,7 @@ public class Voucher
     [MaxLength(20)]
     public string Scope { get; set; } = "All";
 
-    /// <summary>"Key" | "Rank" | "Bundle" | "Gem" | "Other" | "BattlePass" — used when Scope is Category or Item</summary>
+    /// <summary>"Key" | "Rank" | "Bundle" | "Coin" | "Other" | "BattlePass" — used when Scope is Category or Item</summary>
     [MaxLength(30)]
     public string? ScopeCategory { get; set; }
 

@@ -1,0 +1,401 @@
+@page "/coins"
+@using SentrySMP.Shared.DTOs
+@using SentrySMP.Shared.Interfaces
+@inject ISentryApi Api
+@inject ILogger<Coins> Logger
+@inject SentrySMP.App.Components.State.CartState CartState
+@inject SentrySMP.App.Components.State.CartSidebarState SidebarState
+@inject IJSRuntime JS
+@inject IPurchaseTrackingService PurchaseTrackingService
+@inject SentrySMP.App.Authentication.UserService UserService
+@rendermode InteractiveServer
+@implements IDisposable
+<PageTitle>Coins - SentrySMP</PageTitle>
+<!--
+Server filter dropdown
+            @if (coins?.Any() == true)
+            {
+                <div class="mb-3 d-flex align-items-center gap-2">
+                    <label for="serverFilter" class="form-label mb-0">Filter by server:</label>
+                    <select id="serverFilter" class="form-select w-auto" @onchange="OnServerFilterChanged">
+                        <option value="">All servers</option>
+                        @foreach (var server in servers)
+                        {
+                            <option value="@server.Id" selected="@(server.Id == selectedServerId)">@server.Name</option>
+                        }
+                    </select>
+                </div>
+            }
+-->
+            @if (loading)
+            {
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            }
+            else if (errorMessage != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    @errorMessage
+                </div>
+            }
+            else if (filteredCoins?.Any() == true)
+            {
+                <div class="product-grid">
+                    @foreach (var coin in filteredCoins)
+                    {
+                        <div class="product">
+                            <div class="card h-100">
+                                @if (!string.IsNullOrEmpty(coin.Image))
+                                {
+                                    <img src="@coin.Image" class="product-image" @onclick="() => ShowCoinDetails(coin)" alt="@coin.Name">
+                                }
+                                else
+                                {
+                                    <div class="" style="height: 200px;">
+                                        <i class="bi bi-box-fill text-white" style="font-size: 3rem;"></i>
+                                    </div>
+                                }
+                                <div class="">
+                                    <h3 class="">@coin.Name</h3>
+                                    <small class="text-muted">@coin.Server?.Name</small>
+                                    <div class="mt-auto">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <div class="price-container">
+                                                @if (coin.Sale > 0)
+                                                {
+                                                    <p class="original-price" title="Original price">
+                                                        €@coin.Price.ToString("F2")
+                                                    </p>
+                                                    <p class="discounted-price" title="Sale price">
+                                                        €@(CalculateSalePrice(coin.Price, coin.Sale).ToString("F2"))
+                                                    </p>
+                                                    <span class="discount-badge">@coin.Sale% OFF</span>
+                                                }
+                                                else
+                                                {
+                                                    <strong class="text-primary fs-5">€@coin.Price.ToString("F2")</strong>
+                                                }
+                                            </div>
+                                        </div>
+                                        @if (coin.GlobalMaxOrder.HasValue)
+                                        {
+                                            <div class="mb-2">
+                                                <small class="text-info">
+                                                    <i class="bi bi-info-circle"></i> Limited availability
+                                                    @if (_purchasedCounts.TryGetValue($"Coin_{coin.Id}", out var purchased))
+                                                    {
+                                                        <br /><span class="text-warning">Sold: @purchased/@coin.GlobalMaxOrder</span>
+                                                    }
+                                                </small>
+                                            </div>
+                                        }
+                                        @{
+                                            var remainingQty = GetRemainingQuantity("Coin", coin.Id, coin.GlobalMaxOrder);
+                                            var isSoldOut = remainingQty == 0;
+                                            var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == coin.Id && i.Key.Type == "Coin");
+                                            var selectedQty = GetSelectedQty(coin.Id);
+                                        }
+                                        <div class="qty-presets">
+                                            @foreach (var qty in QtyPresets)
+                                            {
+                                                <button class="qty-preset-btn @(selectedQty == qty ? "selected" : "")"
+                                                        @onclick="() => SelectQty(coin.Id, qty)"
+                                                        disabled="@(qty > remainingQty || isSoldOut)"
+                                                        title="@qty×">@qty×</button>
+                                            }
+                                        </div>
+                                        <button class="great-button" @onclick="async () => await AddToCartPreset(coin)" disabled="@isSoldOut">
+                                            <i class="bi bi-@(isSoldOut ? "x-circle" : "cart-plus")"></i>
+                                            @(isSoldOut ? "Sold Out" : cartItem != null ? "Update Cart" : "Add to Cart")
+                                        </button>
+                                        @if (cartItem != null)
+                                        {
+                                            <div class="product-cart-remove">
+                                                <button @onclick="async () => await RemoveFromCart(coin)" title="Remove from cart">
+                                                    <i class="bi bi-trash"></i> Remove
+                                                </button>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle-fill"></i>
+                    No coins available at the moment.
+                </div>
+            }
+
+<!-- Coin Details Modal (mirrors Keys modal layout) -->
+@if (selectedCoin != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i class="bi bi-box-fill"></i>
+                        @selectedCoin.Name
+                    </h2>
+                    <button type="button" class="btn-close" @onclick="CloseCoinDetails"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        @if (!string.IsNullOrEmpty(selectedCoin.Image))
+                        {
+                            <div class="col-md-6">
+                                <img src="@selectedCoin.Image" class="img-fluid rounded" alt="@selectedCoin.Name">
+                            </div>
+                        }
+                        <div class="col-md-@(string.IsNullOrEmpty(selectedCoin.Image) ? "12" : "6")">
+                            <div class="row" style="padding: 20px">
+                                <h2 class="col-sm-8">@selectedCoin.Name</h2>
+                                @if (!string.IsNullOrEmpty(selectedCoin.Description))
+                                {
+                                    <p class="col-sm-8">@selectedCoin.Description</p>
+                                }
+                                <small class="text-muted">Server: @selectedCoin.Server?.Name</small>
+                                    <div class="price-container">
+                                        @if (selectedCoin.Sale > 0)
+                                        {
+                                            <p class="original-price" title="Original price">
+                                                €@selectedCoin.Price.ToString("F2")
+                                            </p>
+                                            <p class="discounted-price" title="Sale price">
+                                                €@(CalculateSalePrice(selectedCoin.Price, selectedCoin.Sale).ToString("F2"))
+                                            </p>
+                                            <span class="discount-badge">@selectedCoin.Sale% OFF</span>
+                                        }
+                                        else
+                                        {
+                                            <strong class="text-primary fs-5">€@selectedCoin.Price.ToString("F2")</strong>
+                                        }
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    @{
+                        var cartItemModal = CartState.CartItems.FirstOrDefault(i => i.Key.Id == selectedCoin!.Id && i.Key.Type == "Coin");
+                        var remainingQtyModal = GetRemainingQuantity("Coin", selectedCoin!.Id, selectedCoin.GlobalMaxOrder);
+                        var isSoldOutModal = remainingQtyModal == 0;
+                    }
+                    @if (cartItemModal == null)
+                    {
+                        <button type="button" class="btn btn-outline-success" @onclick="async () => await AddToCart(selectedCoin!)" disabled="@isSoldOutModal">
+                            <i class="bi bi-cart-plus"></i> @(isSoldOutModal ? "Sold Out" : "Add to Cart")
+                        </button>
+                    }
+                    else
+                    {
+                        <div style="display: block ruby;">
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedCoin!, -1)" disabled="@(cartItemModal.Quantity <= 1)">-</button>
+                                <span>@cartItemModal.Quantity</span>
+                                <button class="quantity-btn" @onclick="() => ChangeQuantity(selectedCoin!, 1)" disabled="@(cartItemModal.Quantity >= Math.Min(10, remainingQtyModal))">+</button>
+                            </div>
+                            <button class="danger" @onclick="async () => await RemoveFromCart(selectedCoin!)" title="Remove from cart">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<CoinResponse>? coins;
+    private List<CoinResponse>? filteredCoins;
+    private List<ServerResponse> servers = new();
+    private int? selectedServerId;
+    private bool loading = true;
+    private string? errorMessage;
+    private CoinResponse? selectedCoin;
+
+    private bool _cartLoaded = false;
+    private int? addedCoinId;
+
+    private static readonly int[] QtyPresets = [1, 5, 10, 20];
+    private Dictionary<int, int> _selectedQtyMap = new();
+
+    private int GetSelectedQty(int coinId)
+    {
+        var cartItem = CartState.CartItems.FirstOrDefault(i => i.Key.Id == coinId && i.Key.Type == "Coin");
+        if (cartItem != null) return cartItem.Quantity;
+        return _selectedQtyMap.GetValueOrDefault(coinId, 1);
+    }
+
+    private void SelectQty(int coinId, int qty)
+    {
+        _selectedQtyMap[coinId] = qty;
+    }
+
+    private Dictionary<string, int> _purchasedCounts = new();
+    private string? _username;
+
+    protected override async Task OnInitializedAsync()
+    {
+        CartState.OnChange += OnCartChanged;
+        await LoadCoins();
+        await LoadPurchasedCounts();
+    }
+
+    public void Dispose()
+    {
+        CartState.OnChange -= OnCartChanged;
+    }
+
+    private void OnCartChanged() => InvokeAsync(StateHasChanged);
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_cartLoaded)
+        {
+            await CartState.LoadFromStorageAsync(JS);
+            _cartLoaded = true;
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadCoins()
+    {
+        try
+        {
+            loading = true;
+            errorMessage = null;
+            coins = (await Api.GetCoinsAsync()).ToList();
+            // build server list from coins and apply filter
+            servers = coins
+                .Where(s => s.Server != null)
+                .Select(s => s.Server!)
+                .GroupBy(s => s.Id)
+                .Select(g => g.First())
+                .OrderBy(s => s.Name)
+                .ToList();
+            ApplyServerFilter();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading coins: {ex.Message}";
+            Logger.LogError(ex, "Error loading coins");
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private void ApplyServerFilter()
+    {
+        if (selectedServerId.HasValue)
+        {
+            filteredCoins = coins?.Where(s => s.Server?.Id == selectedServerId.Value).ToList();
+        }
+        else
+        {
+            filteredCoins = coins;
+        }
+    }
+
+    private void OnServerFilterChanged(ChangeEventArgs e)
+    {
+        var value = e.Value?.ToString();
+        if (int.TryParse(value, out var id))
+        {
+            selectedServerId = id;
+        }
+        else
+        {
+            selectedServerId = null;
+        }
+        ApplyServerFilter();
+        StateHasChanged();
+    }
+
+    private void ShowCoinDetails(CoinResponse coin)
+    {
+        selectedCoin = coin;
+    }
+
+    private void CloseCoinDetails()
+    {
+        selectedCoin = null;
+    }
+
+    private double CalculateSalePrice(double originalPrice, int salePercentage)
+    {
+        return originalPrice * (1 - salePercentage / 100.0);
+    }
+
+    private async Task AddToCart(CoinResponse coin)
+    {
+        await JS.InvokeVoidAsync("console.log", $"AddToCart: {coin.Name} (ID: {coin.Id})");
+        await CartState.AddToCartAsync(coin);
+        addedCoinId = coin.Id;
+        StateHasChanged();
+        await Task.Delay(1200);
+        if (addedCoinId == coin.Id) { addedCoinId = null; StateHasChanged(); }
+    }
+
+    private async Task AddToCartPreset(CoinResponse coin)
+    {
+        var qty = GetSelectedQty(coin.Id);
+        await CartState.SetQuantityAsync(coin, qty);
+        SidebarState.Open();
+        StateHasChanged();
+    }
+
+    private async Task ChangeQuantity(CoinResponse coin, int delta)
+    {
+        await CartState.ChangeQuantityAsync(coin, delta);
+    }
+
+    private async Task RemoveFromCart(CoinResponse coin)
+    {
+        await CartState.RemoveFromCartAsync(coin);
+        StateHasChanged();
+    }
+
+    private async Task AddSelectedToCart()
+    {
+        if (selectedCoin != null)
+        {
+            await AddToCart(selectedCoin);
+        }
+    }
+
+    private async Task LoadPurchasedCounts()
+    {
+        if (coins == null) return;
+        
+        foreach (var coin in coins.Where(c => c.GlobalMaxOrder.HasValue))
+        {
+            var count = await PurchaseTrackingService.GetGlobalPurchasedAsync("Coin", coin.Id);
+            _purchasedCounts[$"Coin_{coin.Id}"] = count;
+        }
+    }
+
+    private int GetRemainingQuantity(string type, int id, int? globalMaxOrder)
+    {
+        if (!globalMaxOrder.HasValue) return int.MaxValue;
+        
+        if (_purchasedCounts.TryGetValue($"{type}_{id}", out var purchased))
+        {
+            return Math.Max(0, globalMaxOrder.Value - purchased);
+        }
+        
+        return globalMaxOrder.Value;
+    }
+}

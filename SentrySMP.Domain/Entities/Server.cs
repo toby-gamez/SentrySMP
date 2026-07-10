@@ -22,7 +22,7 @@ public class Server
     
     // Navigation property
     public virtual ICollection<Key> Keys { get; set; } = new List<Key>();
-    public virtual ICollection<Gem> Gems { get; set; } = new List<Gem>();
+    public virtual ICollection<Coin> Coins { get; set; } = new List<Coin>();
     public virtual ICollection<Bundle> Bundles { get; set; } = new List<Bundle>();
     public virtual ICollection<BattlePass> BattlePasses { get; set; } = new List<BattlePass>();
     
