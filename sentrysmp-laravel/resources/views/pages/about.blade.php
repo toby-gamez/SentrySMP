@@ -1,0 +1,53 @@
+@extends('layouts.app')
+@section('title', 'About — SentrySMP')
+@section('content')
+<div class="about-container">
+
+    <div class="about-hero">
+        <img class="about-hero-logo" src="{{ asset('images/logo.png') }}" alt="SentrySMP logo">
+        <p class="about-lead">
+            SentrySMP is a survival multiplayer server with an economy and crossplay support.
+            Whether you enjoy building, exploring, or competing, there is something for everyone.
+        </p>
+        <a href="{{ route('join') }}" class="great-button">Join now</a>
+    </div>
+
+    <div class="about-features">
+        <div class="about-feature-card">
+            <i class="bi bi-coin about-feature-icon"></i>
+            <h3 class="about-feature-title">Survival with Economy</h3>
+            <p class="about-feature-desc">Earn and spend money through jobs, trades, and auctions. Play seamlessly on both Java and Bedrock editions.</p>
+        </div>
+        <div class="about-feature-card">
+            <i class="bi bi-briefcase about-feature-icon"></i>
+            <h3 class="about-feature-title">Jobs &amp; Skills</h3>
+            <p class="about-feature-desc">Choose professions, level up, and unlock rewards as you grow.</p>
+        </div>
+        <div class="about-feature-card">
+            <i class="bi bi-gift about-feature-icon"></i>
+            <h3 class="about-feature-title">Kits &amp; Crates</h3>
+            <p class="about-feature-desc">Access starter kits and free-to-play crates filled with amazing rewards.</p>
+        </div>
+        <div class="about-feature-card">
+            <i class="bi bi-shop about-feature-icon"></i>
+            <h3 class="about-feature-title">Auction House</h3>
+            <p class="about-feature-desc">Buy, sell, and bid on rare items in a fully player-driven market.</p>
+        </div>
+        <div class="about-feature-card">
+            <i class="bi bi-hourglass-split about-feature-icon"></i>
+            <h3 class="about-feature-title">AFK Zone</h3>
+            <p class="about-feature-desc">Stay active and earn rewards even while taking a break.</p>
+        </div>
+        <div class="about-feature-card">
+            <i class="bi bi-crosshair about-feature-icon"></i>
+            <h3 class="about-feature-title">Bounties</h3>
+            <p class="about-feature-desc">Set or claim bounties for extra challenges and fierce competition.</p>
+        </div>
+    </div>
+
+    <div class="join-notice">
+        <p>Join SentrySMP today and create your story in a growing and competitive community.</p>
+    </div>
+
+</div>
+@endsection

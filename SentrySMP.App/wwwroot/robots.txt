@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-
-# Point search engines to the sitemap (use www)
-Sitemap: https://store.sentrysmp.eu/sitemap.xml

@@ -17,3 +17,17 @@ build/tools/*
 build/build-ftp-images.cake
 build/build-ftp-images.json
 build/C_/*
+SentrySMP.Images/appsettings.json
+
+# Laravel
+sentrysmp-laravel/.env
+sentrysmp-laravel/.env.*
+sentrysmp-laravel/vendor/
+sentrysmp-laravel/node_modules/
+sentrysmp-laravel/storage/logs/
+sentrysmp-laravel/storage/framework/cache/
+sentrysmp-laravel/storage/framework/sessions/
+sentrysmp-laravel/storage/framework/testing/
+sentrysmp-laravel/storage/framework/views/
+sentrysmp-laravel/.phpunit.result.cache
+sentrysmp-laravel/bootstrap/cache/*.php
