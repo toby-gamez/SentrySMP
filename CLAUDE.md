@@ -4,90 +4,112 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-SentrySMP is a Minecraft SMP shopping website built with ASP.NET 8 and Blazor Server. It allows players to purchase in-game items (keys, ranks, bundles, coins, battle passes) and handles delivery via a game server HTTP API.
+SentrySMP is a Minecraft SMP shopping website built with Laravel 12. It allows players to purchase in-game items (keys, ranks, bundles, gems, battle passes, vouchers) and handles delivery via a game server HTTP API. An Admin panel is embedded in the same Laravel app. A separate ASP.NET microservice (`SentrySMP.Images`) handles image storage and serving.
 
 ## Commands
 
 ```bash
-# Build entire solution
-dotnet build
+# Run from sentrysmp-laravel/
+cd sentrysmp-laravel
 
-# Run the main App (port 7271 in dev)
-dotnet run --project SentrySMP.App
+# Install PHP dependencies
+composer install
 
-# Run the Admin panel
-dotnet run --project SentrySMP.Admin
+# Copy and configure environment
+cp .env.example .env
+php artisan key:generate
 
-# Run the Images microservice
+# Run migrations
+php artisan migrate
+
+# Start dev server
+php artisan serve
+
+# Run the Images microservice (from repo root)
 dotnet run --project SentrySMP.Images
-
-# Add a new EF Core migration
-dotnet ef migrations add <MigrationName> --context SentryDbContext --project SentrySMP.Api --startup-project SentrySMP.App
-
-# Apply migrations
-dotnet ef database update --context SentryDbContext --project SentrySMP.Api --startup-project SentrySMP.App
-
-# Deploy via Cake (FTP) — run from the build/ directory
-dotnet cake build-ftp.cake         # deploys App
-dotnet cake build-ftp-admin.cake   # deploys Admin
-dotnet cake build-ftp-images.cake  # deploys Images
 ```
 
 ## Architecture
 
-### Solution Projects
+### Repository Structure
 
-| Project | Type | Role |
+| Path | Type | Role |
 |---|---|---|
-| `SentrySMP.App` | Blazor Server Web App | Main public-facing shop frontend + embedded API controllers |
-| `SentrySMP.Admin` | Blazor Server Web App | Admin panel for content management |
-| `SentrySMP.Api` | Class Library | Shared API services, EF Core DbContext, and migrations — **not a standalone process** |
-| `SentrySMP.Domain` | Class Library | EF Core entity models only |
-| `SentrySMP.Shared` | Class Library | DTOs, service interfaces, and Refit API contracts |
-| `SentrySMP.Images` | ASP.NET Web API | Standalone microservice for image storage and serving |
+| `sentrysmp-laravel/` | Laravel 12 App | Main shop + Admin panel + REST API |
+| `SentrySMP.Images/` | ASP.NET Web API | Standalone microservice for image storage and serving |
+
+### Laravel App Layout (`sentrysmp-laravel/`)
+
+```
+app/
+  Http/Controllers/
+    Admin/          # Admin panel controllers (CRUD for all product types)
+    Api/            # REST API controllers (commands, status)
+    Shop/           # Shop-facing controllers
+    HomeController  # Public pages
+    PageController  # Static content pages
+    PaymentController
+    ShopController
+  Models/           # Eloquent models for all entities
+  Services/
+    CommandQueueService
+    PayPalService
+    StripeService
+    VoucherService
+database/migrations/  # All schema migrations
+resources/views/
+  admin/            # Admin panel Blade templates
+  layouts/
+  pages/            # Static/info pages
+  shop/             # Shop Blade templates
+routes/
+  web.php           # Web routes (shop + admin)
+  api.php           # API routes (game server callbacks)
+```
 
 ### Key Design Decisions
 
-**`SentrySMP.Api` is a class library embedded into both App and Admin.** It is not a standalone service. Both `SentrySMP.App` and `SentrySMP.Admin` reference it and register its services (e.g. `KeyService`, `RankService`) directly via DI. This means both projects share the same service implementations and talk directly to the MySQL database.
+**Single Laravel app for shop + admin.** The admin panel lives under an `/admin` route prefix with its own controllers in `app/Http/Controllers/Admin/`. No separate process.
 
-**Refit clients for cross-service HTTP calls.** `ISentryApi` (defined in `SentrySMP.Shared/Interfaces/ISentryApi.cs`) is the Refit contract for calling App API endpoints from Admin. `IImagesApi` talks to `SentrySMP.Images`. `ICheckoutApi` handles PayPal checkout flows.
+**Command delivery** to the Minecraft game server uses an HTTP API via `CommandQueueService`. Commands are queued in the `command_queue` table and delivered asynchronously.
 
-**Authentication is Basic Auth** via a custom `BasicAuthHandler` in each web project. Credentials are configured in `appsettings.json` under `Auth:Basic`.
+**Payment processing** via PayPal (`PayPalService`) and Stripe (`StripeService`). Webhooks are handled in `PaymentController`.
 
-**Command delivery** to the Minecraft game server uses `CommandDeliveryService` (HTTP API) rather than direct RCON. The game server URL is configured under `GameServer:BaseUrl`.
+**Vouchers** are managed through `VoucherService` and tracked in `vouchers` + `voucher_usages` tables.
 
-**Background task queue** (`BackgroundTaskQueue` + `BackgroundTaskQueueHostedService` in App) handles fire-and-forget work like RCON/delivery jobs after purchase.
-
-**Cart state** (`CartState` in `SentrySMP.App/Components/State/`) is scoped and persists to `localStorage` via JS interop.
+**Images** are served by the separate `SentrySMP.Images` ASP.NET microservice. Configure its base URL in `.env` as `IMAGES_BASE_URL`.
 
 ### Data Layer
 
-- Database: MySQL (Pomelo EF Core provider)
-- `SentryDbContext` is defined in `SentrySMP.Api/Infrastructure/Data/SentryDbContext.cs`
-- Migrations live in `SentrySMP.Api/Migrations/` (startup project must be App or Admin when running EF CLI commands)
-- A second `TobisoDbContext` exists in the same folder for a separate database
+- Database: MySQL
+- Migrations live in `sentrysmp-laravel/database/migrations/`
+- Run migrations: `php artisan migrate`
 
 ### Configuration
 
-Copy `appsettings.template.json` to `appsettings.Development.json` in `SentrySMP.App` and `SentrySMP.Admin` and fill in real values. The App also loads a `.env` file at startup via DotNetEnv. Key config sections:
+Copy `sentrysmp-laravel/.env.example` to `sentrysmp-laravel/.env` and fill in real values. Key variables:
 
-- `ConnectionStrings:DefaultConnection` — MySQL connection string
-- `Auth:Basic` — username/password for Basic Auth
-- `Api:BaseAddress` — base URL the Refit `ISentryApi` client points to
-- `Images:BaseAddress` — base URL for the Images microservice
-- `GameServer:BaseUrl` + `GameServer:ApiKey` — game server delivery API
+- `DB_*` — MySQL connection
+- `APP_KEY` — Laravel app key (generate with `php artisan key:generate`)
+- `PAYPAL_*` — PayPal credentials
+- `STRIPE_*` — Stripe credentials
+- `IMAGES_BASE_URL` — Base URL for the Images microservice
+- `GAME_SERVER_URL` + `GAME_SERVER_API_KEY` — Game server delivery API
 
 ### Adding a New Shop Product Type
 
-1. Add entity to `SentrySMP.Domain/Entities/`
-2. Add DTOs to `SentrySMP.Shared/DTOs/`
-3. Add service interface to `SentrySMP.Shared/Interfaces/`
-4. Add `DbSet` to `SentryDbContext` and run a migration
-5. Implement service in `SentrySMP.Api/Services/`
-6. Register service in both `SentrySMP.App/Program.cs` and `SentrySMP.Admin/Program.cs`
-7. Extend `ISentryApi` with new Refit endpoints
-8. Add Blazor pages in `SentrySMP.App/Components/Pages/` and `SentrySMP.Admin/Components/Pages/`
+1. Create a migration in `database/migrations/`
+2. Add an Eloquent model in `app/Models/`
+3. Add an Admin controller in `app/Http/Controllers/Admin/`
+4. Add a Shop controller in `app/Http/Controllers/Shop/` if needed
+5. Add routes in `routes/web.php`
+6. Add Blade views in `resources/views/admin/` and `resources/views/shop/`
 
-### Deployment
+### Images Microservice
 
-Deployment uses Cake (C# Make) scripts in `/build/`. Each script reads a corresponding `.json` config (based on `build-ftp.json.dist`), publishes the project, and uploads via FTP. The `app_offline.htm` technique is used to take the app offline during deployment.
+The `SentrySMP.Images` ASP.NET project is still used for image storage. Deploy it separately via the Cake script:
+
+```bash
+# From build/ directory
+dotnet cake build-ftp-images.cake
+```
