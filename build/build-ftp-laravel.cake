@@ -22,9 +22,11 @@ var config = JsonConvert.DeserializeObject<Config>(configJson);
 
 config.SourceDirectory = MakeAbsolute(Directory(config.SourceDirectory)).FullPath;
 
-var excludedTopDirs = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+// Whitelist: only these top-level paths from the Laravel app are staged and uploaded.
+var includedTopLevelPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 {
-    ".git", "node_modules", ".idea", ".vscode", "build", "tools"
+    "app", "artisan", "bootstrap", "composer.json", "composer.lock",
+    "config", "database", "public", "resources", "routes", "storage", "vendor"
 };
 
 var excludedRelativePaths = new[]
@@ -62,8 +64,8 @@ Task("PrepareFiles")
             var relativePath = file.Substring(config.SourceDirectory.Length).TrimStart(System.IO.Path.DirectorySeparatorChar, '/');
             var normalizedRelative = relativePath.Replace("\\", "/");
 
-            var topDir = normalizedRelative.Split('/')[0];
-            if (excludedTopDirs.Contains(topDir))
+            var topLevel = normalizedRelative.Split('/')[0];
+            if (!includedTopLevelPaths.Contains(topLevel))
                 continue;
 
             if (excludedRelativePaths.Any(p => normalizedRelative.StartsWith(p + "/") || normalizedRelative == p))
@@ -95,8 +97,40 @@ Task("PrepareFiles")
         LogInformation("composer install completed.");
     });
 
-Task("CleanRemote")
+Task("UploadMaintenanceFile")
     .IsDependentOn("PrepareFiles")
+    .Does(async () =>
+    {
+        if (string.IsNullOrEmpty(config.FtpPassword))
+            throw new ArgumentException("FTP password must be provided in the config file.");
+
+        var maintenanceContent = @"<?php return array (
+  'except' => [],
+  'redirect' => null,
+  'retry' => null,
+  'refresh' => null,
+  'secret' => null,
+  'status' => 503,
+  'template' => null,
+);";
+        var localMaintenancePath = System.IO.Path.Combine(config.StagingDirectory, "maintenance-mode.php");
+        System.IO.File.WriteAllText(localMaintenancePath, maintenanceContent);
+
+        using var client = new FtpClient(config.FtpHost, new NetworkCredential(config.FtpUsername, config.FtpPassword));
+        await client.ConnectAsync();
+
+        var remotePath = config.FtpRemoteDirectory + "/storage/framework/maintenance.php";
+        await client.CreateDirectoryAsync(config.FtpRemoteDirectory + "/storage/framework");
+        var result = await client.UploadFileAsync(localMaintenancePath, remotePath);
+        if (result != FtpStatus.Success)
+            throw new Exception("Failed to upload maintenance file.");
+
+        System.IO.File.Delete(localMaintenancePath);
+        LogInformation("Maintenance mode enabled on server.");
+    });
+
+Task("CleanRemote")
+    .IsDependentOn("UploadMaintenanceFile")
     .Does(async () =>
     {
         if (string.IsNullOrEmpty(config.FtpPassword))
@@ -189,8 +223,23 @@ Task("UploadToFTP")
         LogInformation($"Upload complete. {filesUploaded}/{totalFiles} files uploaded.");
     });
 
-Task("Cleanup")
+Task("RemoveMaintenanceFile")
     .IsDependentOn("UploadToFTP")
+    .Does(async () =>
+    {
+        using var client = new FtpClient(config.FtpHost, new NetworkCredential(config.FtpUsername, config.FtpPassword));
+        await client.ConnectAsync();
+
+        var remotePath = config.FtpRemoteDirectory + "/storage/framework/maintenance.php";
+        if (await client.FileExistsAsync(remotePath))
+        {
+            await client.DeleteFileAsync(remotePath);
+            LogInformation("Maintenance mode disabled. Site is back online.");
+        }
+    });
+
+Task("Cleanup")
+    .IsDependentOn("RemoveMaintenanceFile")
     .Does(() =>
     {
         if (System.IO.Directory.Exists(config.StagingDirectory))
