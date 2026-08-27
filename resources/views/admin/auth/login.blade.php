@@ -1,3 +1,8 @@
+{{--
+    Admin Login Page
+    Standalone (no layout) – displays username/password form for admin authentication.
+    On failure, the 'credentials' error key is set by AuthController.
+--}}
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -15,6 +20,11 @@
             <img src="{{ asset('images/logo.png') }}" alt="SentrySMP">
         </div>
         <h2 class="admin-login-title">Admin Login</h2>
+        <p style="text-align:center;font-size:12px;color:#555;margin:-4px 0 12px;">
+            Enter your admin credentials to access the control panel.<br>
+            If you need access, ask a server administrator to create an account<br>
+            or reset your password via the database.
+        </p>
 
         @if($errors->has('credentials'))
             <div class="alert alert-error">{{ $errors->first('credentials') }}</div>

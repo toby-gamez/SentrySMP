@@ -1,3 +1,13 @@
+{{--
+    Partial: Voucher Form Fields
+    Variables: $item (?Voucher — null when creating, model when editing),
+               $categories (Collection<Category> for scope picker),
+               $products (Collection<Product> with category relation for scope picker)
+    Renders code, description, date range, discount %, max uses, scope, and active toggle.
+    Scope can be 'All', 'Category', or 'Product'; extra fields appear/hide via JS.
+    Product options are populated client-side from the JSON-encoded $products data
+    embedded in the page, filtered by the selected category slug.
+--}}
 @php
 $currentScope  = old('scope', $item?->scope ?? 'All');
 $currentCat    = old('scope_category', $item?->scope_category ?? '');

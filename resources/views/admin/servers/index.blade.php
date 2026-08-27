@@ -1,6 +1,31 @@
+{{--
+    Server List
+    Variables: $items (Collection<Server>)
+    Lists configured game servers (RCON targets for command delivery).
+    RCON passwords are stored encrypted and are never displayed here.
+--}}
 @extends('layouts.admin')
 @section('title', 'Servers')
 @section('content')
+{{-- ── Page Guide ─────────────────────────────────────────────────────── --}}
+<div style="background:#0b1929;border:1px solid #1e3a5f;border-left:3px solid #3b82f6;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:13px;">
+    <div onclick="var n=this.nextElementSibling;n.hidden=!n.hidden;this.querySelector('.pg-ch').style.transform=n.hidden?'':'rotate(180deg)'"
+         style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;">
+        <i class="bi bi-book" style="color:#60a5fa;font-size:14px;"></i>
+        <strong style="color:#93c5fd;">Server Management Guide</strong>
+        <i class="bi bi-chevron-down pg-ch" style="color:#60a5fa;margin-left:auto;font-size:12px;transition:transform .2s;"></i>
+    </div>
+    <div hidden style="margin-top:12px;color:#94a3b8;line-height:1.75;">
+        <ul style="margin:0;padding-left:18px;">
+            <li>Servers are the <strong style="color:#c4d4e8;">RCON</strong> (Remote Console) targets used to deliver commands to your Minecraft server after a purchase.</li>
+            <li>Without at least one configured server, purchased commands cannot be delivered — buyers will pay but receive nothing in-game.</li>
+            <li>RCON must be enabled in your Minecraft server's <code style="color:#888;">server.properties</code>:<br>
+                <code style="color:#888;">enable-rcon=true</code> &nbsp;|&nbsp; <code style="color:#888;">rcon.port=25575</code> &nbsp;|&nbsp; <code style="color:#888;">rcon.password=yourpassword</code>
+            </li>
+            <li>RCON passwords are stored encrypted and are never displayed in the admin panel.</li>
+        </ul>
+    </div>
+</div>
 <div class="admin-card">
     <div class="admin-card-header">
         <h2 class="admin-card-title">Servers ({{ $items->count() }})</h2>

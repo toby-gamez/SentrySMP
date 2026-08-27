@@ -1,3 +1,11 @@
+{{--
+    Product List
+    Variables: $items (Collection<Product> with category, ordered by sort_order),
+               $categories (Collection<Category> for filter dropdown),
+               $categoryId (?int currently active filter)
+    Supports category filtering via GET ?category_id=.
+    Rows are reorderable within their filtered set via up/down buttons (admin.products.move).
+--}}
 @extends('layouts.admin')
 @section('title', 'Products')
 @section('content')
@@ -10,6 +18,25 @@
 .filter-bar a { color:#aaa;font-size:13px;text-decoration:none; }
 .filter-bar a:hover { color:#fff; }
 </style>
+{{-- ── Page Guide ─────────────────────────────────────────────────────── --}}
+<div style="background:#0b1929;border:1px solid #1e3a5f;border-left:3px solid #3b82f6;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:13px;">
+    <div onclick="var n=this.nextElementSibling;n.hidden=!n.hidden;this.querySelector('.pg-ch').style.transform=n.hidden?'':'rotate(180deg)'"
+         style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;">
+        <i class="bi bi-book" style="color:#60a5fa;font-size:14px;"></i>
+        <strong style="color:#93c5fd;">Product Management Guide</strong>
+        <i class="bi bi-chevron-down pg-ch" style="color:#60a5fa;margin-left:auto;font-size:12px;transition:transform .2s;"></i>
+    </div>
+    <div hidden style="margin-top:12px;color:#94a3b8;line-height:1.75;">
+        <ul style="margin:0;padding-left:18px;">
+            <li><strong style="color:#c4d4e8;">Filter by category</strong> — use the dropdown to narrow the list to one category. Reordering only affects products within the active filter.</li>
+            <li><strong style="color:#c4d4e8;">Reordering</strong> — use ▲/▼ to change a product's display position in the shop. Order updates immediately.</li>
+            <li><strong style="color:#c4d4e8;">Click any row</strong> to open the product's edit page, where you can also manage its delivery commands.</li>
+            <li><strong style="color:#c4d4e8;">Sale</strong> — a non-zero value shows a discounted price in the shop: <em>price × (1 − sale / 100)</em>.</li>
+            <li><strong style="color:#c4d4e8;">Max/User</strong> — the maximum number of times one player can purchase this product. ∞ means unlimited.</li>
+            <li><strong style="color:#c4d4e8;">Deleting</strong> a product is permanent. Existing transactions referencing it are unaffected (items are snapshotted at purchase time).</li>
+        </ul>
+    </div>
+</div>
 <div class="admin-card">
     <div class="admin-card-header">
         <h2 class="admin-card-title">Products ({{ $items->count() }})</h2>

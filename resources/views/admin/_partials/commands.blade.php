@@ -1,4 +1,11 @@
-{{-- Variables: $commands (Collection), $productId (int) --}}
+{{--
+    Partial: Product Commands
+    Variables: $commands (Collection<Command>), $productId (int)
+    Renders the inline command editor on the product edit page.
+    Each command can be updated in-place (PUT admin.commands.update) or deleted.
+    New commands are added via POST admin.commands.store with the hidden product_id.
+    Use %player% as a placeholder for the buyer's Minecraft username.
+--}}
 <div class="admin-card" style="margin-top:24px;">
     <div class="admin-card-header">
         <h2 class="admin-card-title"><i class="bi bi-terminal-fill"></i> Commands ({{ $commands->count() }})</h2>

@@ -1,3 +1,10 @@
+{{--
+    Partial: Transaction / Command Status Badge
+    Variables: $status (?string) — semicolon-separated list of status tokens
+    Renders a coloured badge for each token in the status string.
+    Known tokens: SUCCEEDED, FAILED, CANCELLED, RCON_FAILED, TRIED_AGAIN.
+    Unknown tokens render with a default blue style.
+--}}
 @php
 $parts = array_filter(array_map('trim', explode(';', $status ?? '')));
 $styles = [

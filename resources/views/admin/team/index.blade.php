@@ -1,6 +1,44 @@
+{{--
+    Team Management (single-page)
+    Variables: $ranks (Collection<TeamRank>), $categories (Collection<TeamCategory> with members)
+    All rank/member/category CRUD is handled inline via JSON fetch calls to:
+      POST/PUT/DELETE /admin/team/ranks/{id}
+      POST/PUT/DELETE /admin/team/categories/{id}  (move via POST .../move)
+      POST/PUT/DELETE /admin/team/members/{id}     (move via POST .../move)
+    Category reorder triggers a full page reload; member reorder is DOM-only.
+    Skin images are fetched from minotar.net using the Minecraft username.
+--}}
 @extends('layouts.admin')
 @section('title', 'Team Management')
 @section('content')
+{{-- ── Page Guide ─────────────────────────────────────────────────────── --}}
+<div style="background:#0b1929;border:1px solid #1e3a5f;border-left:3px solid #3b82f6;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:13px;">
+    <div onclick="var n=this.nextElementSibling;n.hidden=!n.hidden;this.querySelector('.pg-ch').style.transform=n.hidden?'':'rotate(180deg)'"
+         style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;">
+        <i class="bi bi-book" style="color:#60a5fa;font-size:14px;"></i>
+        <strong style="color:#93c5fd;">Team Management Guide</strong>
+        <i class="bi bi-chevron-down pg-ch" style="color:#60a5fa;margin-left:auto;font-size:12px;transition:transform .2s;"></i>
+    </div>
+    <div hidden style="margin-top:12px;color:#94a3b8;line-height:1.75;">
+        <p style="margin:0 0 6px;"><strong style="color:#c4d4e8;">Ranks</strong> — coloured badges shown next to member names on the public team page.</p>
+        <ul style="margin:0 0 10px;padding-left:18px;">
+            <li>Add a rank name and pick a hex colour, then click <em>Add Rank</em>. Existing ranks can be renamed or recoloured — click <em>Save</em> on the row.</li>
+            <li>Deleting a rank removes it from all members who had it assigned.</li>
+        </ul>
+        <p style="margin:0 0 6px;"><strong style="color:#c4d4e8;">Categories</strong> — groups that organise members (e.g. Management, Developers, Builders).</p>
+        <ul style="margin:0 0 10px;padding-left:18px;">
+            <li>Type a name in the <em>Add Category</em> row and click Create.</li>
+            <li>Use ▲/▼ next to the category name to reorder categories on the team page.</li>
+            <li>Rename a category inline and click <em>Rename</em>. Deleting a category also removes all its members.</li>
+        </ul>
+        <p style="margin:0 0 6px;"><strong style="color:#c4d4e8;">Members</strong> (inside each category card).</p>
+        <ul style="margin:0;padding-left:18px;">
+            <li>Type a Minecraft username in the <em>Add</em> row — the skin preview updates automatically via Minotar.</li>
+            <li>To edit a member, change their name or rank in the card and click <em>Save</em>. The skin refreshes after saving.</li>
+            <li>Use ▲/▼ on a member card to reorder within the category. Reorder updates are applied immediately.</li>
+        </ul>
+    </div>
+</div>
 
 {{-- ── Ranks ─────────────────────────────────────────────────────────── --}}
 <div class="admin-card" style="margin-bottom:20px;" id="ranks-card">

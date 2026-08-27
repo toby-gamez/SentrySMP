@@ -1,4 +1,11 @@
-{{-- Variables: $item (nullable Product), $categories (Collection), $imageSubDir (string, default 'products') --}}
+{{--
+    Partial: Product Form Fields
+    Variables: $item (?Product — null when creating, model when editing),
+               $categories (Collection<Category>), $imageSubDir (string, defaults to 'products')
+    Renders category select, name, description, price, sale %, max-orders, and image picker.
+    The image picker scopes its image list to the selected category's slug so images
+    are organised per-category in the Images microservice.
+--}}
 @php $imageSubDir ??= 'products'; @endphp
 <div class="form-group">
     <label>Category *</label>

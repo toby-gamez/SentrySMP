@@ -1,6 +1,38 @@
+{{--
+    Command Queue
+    Variables: $items (LengthAwarePaginator<CommandQueue>),
+               $status (?string active status filter), $player (?string active player filter)
+    Lets admins manually override command statuses (mark executed / failed / reset to pending).
+    Filter persists in GET params so the URL is shareable.
+--}}
 @extends('layouts.admin')
 @section('title', 'Command Queue')
 @section('content')
+{{-- ── Page Guide ─────────────────────────────────────────────────────── --}}
+<div style="background:#0b1929;border:1px solid #1e3a5f;border-left:3px solid #3b82f6;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:13px;">
+    <div onclick="var n=this.nextElementSibling;n.hidden=!n.hidden;this.querySelector('.pg-ch').style.transform=n.hidden?'':'rotate(180deg)'"
+         style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;">
+        <i class="bi bi-book" style="color:#60a5fa;font-size:14px;"></i>
+        <strong style="color:#93c5fd;">Command Queue Guide</strong>
+        <i class="bi bi-chevron-down pg-ch" style="color:#60a5fa;margin-left:auto;font-size:12px;transition:transform .2s;"></i>
+    </div>
+    <div hidden style="margin-top:12px;color:#94a3b8;line-height:1.75;">
+        <p style="margin:0 0 6px;">The command queue holds every in-game command waiting to be delivered after a purchase.</p>
+        <p style="margin:0 0 6px;"><strong style="color:#c4d4e8;">Status meanings:</strong></p>
+        <ul style="margin:0 0 8px;padding-left:18px;">
+            <li><strong style="color:#c4d4e8;">pending</strong> — scheduled, not yet sent to the game server.</li>
+            <li><strong style="color:#c4d4e8;">delivered</strong> — sent via the server API, awaiting execution confirmation.</li>
+            <li><strong style="color:#c4d4e8;">executed</strong> — confirmed as successfully run on the server.</li>
+            <li><strong style="color:#c4d4e8;">failed</strong> — delivery failed (e.g. server unreachable or RCON error).</li>
+        </ul>
+        <p style="margin:0 0 6px;"><strong style="color:#c4d4e8;">Manual overrides (action buttons):</strong></p>
+        <ul style="margin:0;padding-left:18px;">
+            <li><strong style="color:#4ade80;">✓ Mark executed</strong> — use when you've manually run the command in-game.</li>
+            <li><strong style="color:#f87171;">✗ Mark failed</strong> — use to permanently mark a command as failed.</li>
+            <li><strong style="color:#c4d4e8;">↺ Reset to pending</strong> — re-queues a failed or executed command for automatic re-delivery.</li>
+        </ul>
+    </div>
+</div>
 <div class="admin-card">
     <div class="admin-card-header">
         <h2 class="admin-card-title">Command Queue</h2>

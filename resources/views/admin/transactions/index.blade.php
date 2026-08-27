@@ -1,6 +1,36 @@
+{{--
+    Transaction List
+    Variables: $items (LengthAwarePaginator<Transaction>), $providers (Collection of unique provider strings),
+               $search (?string), $status (?string), $provider (?string),
+               $dateFrom (?string), $dateTo (?string)
+    Supports filtering by player/TX ID, status, provider, and date range via GET params.
+    Clicking a row navigates to the transaction detail page.
+--}}
 @extends('layouts.admin')
 @section('title', 'Transactions')
 @section('content')
+{{-- ── Page Guide ─────────────────────────────────────────────────────── --}}
+<div style="background:#0b1929;border:1px solid #1e3a5f;border-left:3px solid #3b82f6;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:13px;">
+    <div onclick="var n=this.nextElementSibling;n.hidden=!n.hidden;this.querySelector('.pg-ch').style.transform=n.hidden?'':'rotate(180deg)'"
+         style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;">
+        <i class="bi bi-book" style="color:#60a5fa;font-size:14px;"></i>
+        <strong style="color:#93c5fd;">Transactions Guide</strong>
+        <i class="bi bi-chevron-down pg-ch" style="color:#60a5fa;margin-left:auto;font-size:12px;transition:transform .2s;"></i>
+    </div>
+    <div hidden style="margin-top:12px;color:#94a3b8;line-height:1.75;">
+        <p style="margin:0 0 6px;"><strong style="color:#c4d4e8;">Status meanings:</strong></p>
+        <ul style="margin:0 0 8px;padding-left:18px;">
+            <li><strong style="color:#4ade80;">SUCCEEDED</strong> — payment confirmed and delivery commands queued or executed.</li>
+            <li><strong style="color:#fb923c;">RCON_FAILED</strong> — payment received but in-game delivery failed. Check the Command Queue for details and retry.</li>
+            <li><strong style="color:#f87171;">FAILED</strong> / <strong style="color:#9ca3af;">CANCELLED</strong> — payment was not completed; no commands were queued and no charge was made.</li>
+        </ul>
+        <ul style="margin:0;padding-left:18px;">
+            <li><strong style="color:#c4d4e8;">Search</strong> by player username or transaction ID using the filter bar.</li>
+            <li>Filter by status, payment provider, or date range. All filters combine and the URL updates so results are shareable.</li>
+            <li><strong style="color:#c4d4e8;">Click any row</strong> to view the full transaction detail, including purchased products and the command queue.</li>
+        </ul>
+    </div>
+</div>
 
 {{-- Filters --}}
 <div class="admin-card" style="margin-bottom:16px;">

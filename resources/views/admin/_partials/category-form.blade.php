@@ -1,4 +1,12 @@
-{{-- Variables: $item (nullable Category) --}}
+{{--
+    Partial: Category Form Fields
+    Variables: $item (?Category — null when creating, model when editing),
+               $imageSubDir (string, defaults to 'categories')
+    Renders name, auto-generated slug, colour picker, and image picker.
+    The slug input auto-fills from the name field unless the user edits it manually.
+    The image picker fetches images from the Images microservice via XHR
+    (admin.images.index?subDirectory=<imageSubDir>).
+--}}
 @php $imageSubDir ??= 'categories'; @endphp
 <div class="form-group">
     <label>Name *</label>
