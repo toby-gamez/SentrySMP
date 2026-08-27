@@ -9,7 +9,7 @@ class ShopController extends Controller
 {
     public function category(Category $category)
     {
-        $items = $category->products()->get();
+        $items = $category->products()->orderBy('sort_order')->get();
         return view('shop.category', compact('category', 'items'));
     }
 

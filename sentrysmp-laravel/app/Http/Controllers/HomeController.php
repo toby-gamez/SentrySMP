@@ -8,7 +8,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::orderBy('sort_order')->get();
         return view('shop.home', compact('categories'));
     }
 }

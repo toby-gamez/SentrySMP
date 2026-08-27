@@ -10,10 +10,42 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $items = Product::with('category')->get();
-        return view('admin.products.index', compact('items'));
+        $categories = Category::orderBy('sort_order')->get();
+        $categoryId = $request->query('category_id');
+
+        $query = Product::with('category')->orderBy('sort_order');
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+        $items = $query->get();
+
+        return view('admin.products.index', compact('items', 'categories', 'categoryId'));
+    }
+
+    public function move(Request $request, Product $product)
+    {
+        $direction = $request->input('direction');
+        $categoryId = $product->category_id;
+
+        if ($direction === 'up') {
+            $sibling = Product::where('category_id', $categoryId)
+                ->where('sort_order', '<', $product->sort_order)
+                ->orderByDesc('sort_order')->first();
+        } else {
+            $sibling = Product::where('category_id', $categoryId)
+                ->where('sort_order', '>', $product->sort_order)
+                ->orderBy('sort_order')->first();
+        }
+
+        if ($sibling) {
+            [$product->sort_order, $sibling->sort_order] = [$sibling->sort_order, $product->sort_order];
+            $product->save();
+            $sibling->save();
+        }
+
+        return response()->json(['ok' => true]);
     }
 
     public function create()

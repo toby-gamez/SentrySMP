@@ -11,8 +11,27 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $items = Category::withCount('products')->get();
+        $items = Category::withCount('products')->orderBy('sort_order')->get();
         return view('admin.categories.index', compact('items'));
+    }
+
+    public function move(Request $request, Category $category)
+    {
+        $direction = $request->input('direction');
+
+        if ($direction === 'up') {
+            $sibling = Category::where('sort_order', '<', $category->sort_order)->orderByDesc('sort_order')->first();
+        } else {
+            $sibling = Category::where('sort_order', '>', $category->sort_order)->orderBy('sort_order')->first();
+        }
+
+        if ($sibling) {
+            [$category->sort_order, $sibling->sort_order] = [$sibling->sort_order, $category->sort_order];
+            $category->save();
+            $sibling->save();
+        }
+
+        return response()->json(['ok' => true]);
     }
 
     public function create()

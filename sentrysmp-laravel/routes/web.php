@@ -56,7 +56,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Categories & Products
         Route::resource('categories', Admin\CategoryController::class)->names('categories')->except(['show']);
+        Route::post('categories/{category}/move', [Admin\CategoryController::class, 'move'])->name('categories.move');
         Route::resource('products', Admin\ProductController::class)->names('products')->except(['show']);
+        Route::post('products/{product}/move', [Admin\ProductController::class, 'move'])->name('products.move');
 
         // Commands
         Route::get('commands', [Admin\CommandController::class, 'index'])->name('commands.index');

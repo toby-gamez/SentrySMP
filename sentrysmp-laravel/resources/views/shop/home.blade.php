@@ -14,7 +14,7 @@
     <div class="thing-grid">
         @foreach($categories as $category)
         <a href="{{ route('shop.category', $category) }}">
-            <div class="thing-grid-item" style="background: linear-gradient(135deg, {{ $category->color }}, {{ $category->secondary_color }});">
+            <div class="thing-grid-item" style="background-color:{{ $category->color }};border-bottom:5px solid {{ $category->secondary_color }};">
                 <div class="thing-grid-text">
                     <p class="thing-grid-title">{{ $category->name }}</p>
                     <p class="thing-grid-subtitle">Click to view ›</p>
