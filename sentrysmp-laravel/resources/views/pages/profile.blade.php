@@ -47,11 +47,11 @@
         <tbody>
             @foreach($transactions as $tx)
             <tr>
-                <td style="color:#23d05e;font-weight:700;font-family:monospace;">€{{ number_format($tx->Amount, 2) }}</td>
-                <td>{{ ucfirst($tx->Provider ?? '') }}</td>
-                <td style="color:#888;">{{ $tx->Status }}</td>
+                <td style="color:#23d05e;font-weight:700;font-family:monospace;">€{{ number_format($tx->amount, 2) }}</td>
+                <td>{{ ucfirst($tx->provider ?? '') }}</td>
+                <td style="color:#888;">{{ $tx->status }}</td>
                 <td class="text-end" style="color:#555;font-size:12px;">
-                    {{ $tx->CreatedAt ? $tx->CreatedAt->format('d.m.Y H:i') : '—' }}
+                    {{ $tx->created_at ? $tx->created_at->format('d.m.Y H:i') : '—' }}
                 </td>
             </tr>
             @endforeach

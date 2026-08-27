@@ -10,34 +10,25 @@ class CommandController extends Controller
 {
     public function index()
     {
-        $items = Command::orderBy('Type')->orderBy('TypeId')->get();
+        $items = Command::with('product')->orderBy('product_id')->get();
         return view('admin.commands.index', compact('items'));
-    }
-
-    public function create()
-    {
-        $types = ['Key', 'Coin', 'Bundle', 'Rank', 'BattlePass', 'Other'];
-        return view('admin.commands.create', compact('types'));
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'CommandText' => 'required|string',
-            'Type'        => 'required|in:Key,Coin,Bundle,Rank,BattlePass,Other,Shard,SHARD',
-            'TypeId'      => 'required|integer|min:1',
+            'command_text' => 'required|string',
+            'product_id'   => 'required|exists:products,id',
         ]);
 
         Command::create($data);
-
-        // Redirect back to the product edit page if possible
         return redirect()->back()->with('success', 'Command added.');
     }
 
     public function update(Request $request, Command $command)
     {
         $data = $request->validate([
-            'CommandText' => 'required|string',
+            'command_text' => 'required|string',
         ]);
 
         $command->update($data);

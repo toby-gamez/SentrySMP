@@ -145,7 +145,7 @@ function renderCheckoutCart() {
         html += `<div class="checkout-item">
             <div>
                 <span style="color:white;font-weight:600;">${escapeHtml(item.name)}</span><br>
-                <span style="font-size:12px;color:#888;">${escapeHtml(item.type)}${item.server ? ' · ' + escapeHtml(item.server) : ''} × ${item.quantity}</span>
+                <span style="font-size:12px;color:#888;">${escapeHtml(item.category || '')} × ${item.quantity}</span>
             </div>
             <span style="color:white;font-weight:600;">€${(ep * item.quantity).toFixed(2)}</span>
         </div>`;
@@ -184,7 +184,7 @@ async function applyVoucher() {
 
     const cart  = getCart();
     const items = cart.map(i => ({
-        type: i.type, id: i.id,
+        id: i.id,
         unit_price: i.sale > 0 ? Math.round(i.price * (1 - i.sale / 100) * 100) / 100 : i.price,
         quantity: i.quantity
     }));

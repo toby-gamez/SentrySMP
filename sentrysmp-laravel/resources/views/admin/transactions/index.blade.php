@@ -69,13 +69,13 @@
         <tbody>
             @forelse($items as $tx)
             <tr>
-                <td style="color:#555;font-size:12px;">#{{ $tx->Id }}</td>
-                <td style="color:#888;">{{ $tx->Provider }}</td>
-                <td style="color:white;font-weight:600;">{{ $tx->MinecraftUsername ?: '—' }}</td>
-                <td>€{{ number_format($tx->Amount, 2) }}</td>
-                <td>@include('admin._partials.tx-status', ['status' => $tx->Status])</td>
+                <td style="color:#555;font-size:12px;">#{{ $tx->id }}</td>
+                <td style="color:#888;">{{ $tx->provider }}</td>
+                <td style="color:white;font-weight:600;">{{ $tx->minecraft_username ?: '—' }}</td>
+                <td>€{{ number_format($tx->amount, 2) }}</td>
+                <td>@include('admin._partials.tx-status', ['status' => $tx->status])</td>
                 <td style="color:#555;font-size:12px;">{{ $tx->commandQueue->count() }}</td>
-                <td style="color:#666;font-size:12px;white-space:nowrap;">{{ $tx->CreatedAt?->format('Y-m-d H:i') }}</td>
+                <td style="color:#666;font-size:12px;white-space:nowrap;">{{ $tx->created_at?->format('Y-m-d H:i') }}</td>
                 <td>
                     <a href="{{ route('admin.transactions.show', $tx) }}" class="btn-admin btn-admin-secondary" style="padding:4px 10px;"><i class="bi bi-eye"></i></a>
                 </td>

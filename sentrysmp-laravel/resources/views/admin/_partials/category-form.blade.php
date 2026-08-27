@@ -1,45 +1,61 @@
-{{-- Variables: $item (nullable Product), $categories (Collection), $imageSubDir (string, default 'products') --}}
-@php $imageSubDir ??= 'products'; @endphp
-<div class="form-group">
-    <label>Category *</label>
-    <select name="category_id" required>
-        <option value="">— Select category —</option>
-        @foreach($categories as $cat)
-            <option value="{{ $cat->id }}" {{ old('category_id', $item?->category_id) == $cat->id ? 'selected' : '' }}>
-                {{ $cat->name }}
-            </option>
-        @endforeach
-    </select>
-</div>
-
+{{-- Variables: $item (nullable Category) --}}
+@php $imageSubDir ??= 'categories'; @endphp
 <div class="form-group">
     <label>Name *</label>
-    <input type="text" name="name" value="{{ old('name', $item?->name) }}" required maxlength="100">
+    <input type="text" name="name" id="cat-name" value="{{ old('name', $item?->name) }}" required maxlength="100">
 </div>
 
 <div class="form-group">
-    <label>Description</label>
-    <textarea name="description" rows="3" maxlength="500">{{ old('description', $item?->description) }}</textarea>
+    <label>Slug <span style="color:#888;">(auto-generated from name)</span></label>
+    <input type="text" name="slug" id="cat-slug" value="{{ old('slug', $item?->slug) }}" maxlength="100" placeholder="e.g. battle-passes">
 </div>
 
-<div class="form-group">
-    <label>Price (€) *</label>
-    <input type="number" name="price" value="{{ old('price', $item?->price) }}" step="0.01" min="0" required>
-</div>
+<script>
+(function () {
+    var nameInput = document.getElementById('cat-name');
+    var slugInput = document.getElementById('cat-slug');
+    var slugManual = slugInput.value.length > 0;
+
+    function toSlug(str) {
+        return str.toLowerCase().trim()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/[\s_]+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '');
+    }
+
+    slugInput.addEventListener('input', function () {
+        slugManual = this.value.length > 0;
+    });
+
+    nameInput.addEventListener('input', function () {
+        if (!slugManual) {
+            slugInput.value = toSlug(this.value);
+        }
+    });
+})();
+</script>
 
 <div class="form-group">
-    <label>Sale % <span style="color:#888;">(0 = no sale)</span></label>
-    <input type="number" name="sale" value="{{ old('sale', $item?->sale ?? 0) }}" min="0" max="100">
-</div>
-
-<div class="form-group">
-    <label>Max orders per user <span style="color:#888;">(blank = unlimited)</span></label>
-    <input type="number" name="global_max_order" value="{{ old('global_max_order', $item?->global_max_order) }}" min="1">
+    <label>Colour *</label>
+    <div style="display:flex;gap:10px;align-items:center;">
+        <input type="color" name="color" value="{{ old('color', $item?->color ?? '#888888') }}" required
+               style="width:60px;height:40px;padding:2px;border:1px solid #333;border-radius:6px;background:transparent;cursor:pointer;">
+        <input type="text" id="color-hex" value="{{ old('color', $item?->color ?? '#888888') }}"
+               maxlength="7" pattern="#[0-9a-fA-F]{6}" placeholder="#888888"
+               style="width:100px;"
+               oninput="document.querySelector('input[type=color]').value=this.value">
+    </div>
+    <script>
+        document.querySelector('input[type=color]').addEventListener('input', function() {
+            document.getElementById('color-hex').value = this.value;
+        });
+    </script>
 </div>
 
 {{-- Image Picker --}}
 <div class="form-group">
-    <label>Product Image</label>
+    <label>Category Image</label>
     <input type="hidden" name="image" id="pf-image-url" value="{{ old('image', $item?->image) }}">
 
     <div id="pf-preview-wrap" style="margin-bottom:10px;display:{{ ($item?->image || old('image')) ? 'block' : 'none' }};">
@@ -104,20 +120,7 @@
         document.getElementById('pf-picker').style.display = 'none';
     };
 
-    var CATEGORY_SLUGS = @json($categories->pluck('slug', 'id'));
-    function getSubDir() {
-        var sel = document.querySelector('select[name="category_id"]');
-        var slug = sel ? CATEGORY_SLUGS[sel.value] : null;
-        return slug || '{{ $imageSubDir }}';
-    }
-    var SUB_DIR = getSubDir();
-    (function () {
-        var sel = document.querySelector('select[name="category_id"]');
-        if (sel) sel.addEventListener('change', function () {
-            SUB_DIR = getSubDir();
-            _imagesLoaded = false;
-        });
-    })();
+    var SUB_DIR = '{{ $imageSubDir }}';
 
     function pfLoadImages() {
         _imagesLoaded = true;

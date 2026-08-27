@@ -40,24 +40,24 @@ class PageController extends Controller
     {
         $period = $request->query('period', 'alltime');
         try {
-            $query = PaymentTransaction::selectRaw('MinecraftUsername, SUM(Amount) as total_paid, COUNT(*) as transaction_count, MAX(CreatedAt) as last_payment')
+            $query = PaymentTransaction::selectRaw('minecraft_username, SUM(amount) as total_paid, COUNT(*) as transaction_count, MAX(created_at) as last_payment')
                 ->where(function ($q) {
-                    $q->where('Status', 'like', '%captured%')
-                      ->orWhere('Status', 'like', '%succeeded%')
-                      ->orWhere('Status', 'like', '%paid%');
+                    $q->where('status', 'like', '%captured%')
+                      ->orWhere('status', 'like', '%succeeded%')
+                      ->orWhere('status', 'like', '%paid%');
                 })
-                ->whereNotIn('MinecraftUsername', ['Taneq', 'webdev', '', '<unknown>'])
-                ->where('MinecraftUsername', '!=', '')
-                ->where('MinecraftUsername', 'not like', '.%');
+                ->whereNotIn('minecraft_username', ['Taneq', 'webdev', '', '<unknown>'])
+                ->where('minecraft_username', '!=', '')
+                ->where('minecraft_username', 'not like', '.%');
 
             match ($period) {
-                'today' => $query->whereDate('CreatedAt', now()->toDateString()),
-                'week'  => $query->where('CreatedAt', '>=', now()->startOfWeek()),
-                'month' => $query->where('CreatedAt', '>=', now()->startOfMonth()),
+                'today' => $query->whereDate('created_at', now()->toDateString()),
+                'week'  => $query->where('created_at', '>=', now()->startOfWeek()),
+                'month' => $query->where('created_at', '>=', now()->startOfMonth()),
                 default => null,
             };
 
-            $entries = $query->groupBy('MinecraftUsername')
+            $entries = $query->groupBy('minecraft_username')
                 ->orderByDesc('total_paid')
                 ->limit(100)
                 ->get();
@@ -74,8 +74,8 @@ class PageController extends Controller
 
         if ($username) {
             try {
-                $transactions = PaymentTransaction::where('MinecraftUsername', $username)
-                    ->orderByDesc('CreatedAt')
+                $transactions = PaymentTransaction::where('minecraft_username', $username)
+                    ->orderByDesc('created_at')
                     ->limit(50)
                     ->get();
             } catch (\Throwable) {}

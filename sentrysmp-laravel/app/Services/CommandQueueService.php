@@ -10,12 +10,6 @@ use Illuminate\Support\Facades\Log;
 
 class CommandQueueService
 {
-    /**
-     * Parse cart items, match commands, substitute %player%, and insert into command_queue.
-     *
-     * @param  PaymentTransaction  $tx
-     * @param  array  $cartItems  e.g. [['type'=>'Key','id'=>1,'name'=>'Ruby Key','quantity'=>2,'price'=>5.99,'sale'=>0], ...]
-     */
     public function dispatchForTransaction(PaymentTransaction $tx, array $cartItems): void
     {
         if (empty($cartItems)) {
@@ -25,60 +19,44 @@ class CommandQueueService
 
         $playerName = trim(str_replace(["\r", "\n"], '', $tx->minecraft_username));
 
-        // Collect unique type+id combos so we load commands in one query
-        $typeIds = [];
-        foreach ($cartItems as $item) {
-            $type = $item['type'] ?? null;
-            $id   = (int) ($item['id'] ?? 0);
-            if ($type && $id > 0) {
-                $typeIds[$type][] = $id;
-            }
-        }
+        $productIds = collect($cartItems)
+            ->pluck('id')
+            ->filter()
+            ->map(fn($id) => (int) $id)
+            ->unique()
+            ->values()
+            ->all();
 
-        if (empty($typeIds)) {
-            Log::warning("CommandQueueService: cart items have no valid type/id for transaction {$tx->id}");
+        if (empty($productIds)) {
+            Log::warning("CommandQueueService: cart items have no valid product ids for transaction {$tx->id}");
             return;
         }
 
-        // Load all matching commands in one query
-        $commandsQuery = Command::query();
-        $first = true;
-        foreach ($typeIds as $type => $ids) {
-            if ($first) {
-                $commandsQuery->where(function ($q) use ($type, $ids) {
-                    $q->where('Type', $type)->whereIn('TypeId', $ids);
-                });
-                $first = false;
-            } else {
-                $commandsQuery->orWhere(function ($q) use ($type, $ids) {
-                    $q->where('Type', $type)->whereIn('TypeId', $ids);
-                });
-            }
-        }
-        $allCommands = $commandsQuery->get()->groupBy(fn($c) => "{$c->Type}:{$c->TypeId}");
+        $allCommands = Command::whereIn('product_id', $productIds)
+            ->get()
+            ->groupBy('product_id');
 
         $rows = [];
         $now  = now()->toDateTimeString();
 
         foreach ($cartItems as $item) {
-            $type     = $item['type'] ?? null;
             $id       = (int) ($item['id'] ?? 0);
             $quantity = max(1, (int) ($item['quantity'] ?? 1));
 
-            if (!$type || $id === 0) {
+            if ($id === 0) {
                 continue;
             }
 
-            $cmds = $allCommands["{$type}:{$id}"] ?? collect();
+            $cmds = $allCommands[$id] ?? collect();
 
             if ($cmds->isEmpty()) {
-                Log::warning("CommandQueueService: no commands defined for {$type} id={$id} (tx {$tx->id})");
+                Log::warning("CommandQueueService: no commands defined for product id={$id} (tx {$tx->id})");
                 continue;
             }
 
             for ($q = 0; $q < $quantity; $q++) {
                 foreach ($cmds as $cmd) {
-                    $resolved = str_ireplace('%player%', $playerName, $cmd->CommandText);
+                    $resolved = str_ireplace('%player%', $playerName, $cmd->command_text);
                     $rows[]   = [
                         'transaction_id' => $tx->id,
                         'player_name'    => $playerName,
@@ -90,25 +68,22 @@ class CommandQueueService
                 }
             }
 
-            // Update purchase records
             try {
-                $record = UserPurchaseRecord::where('MinecraftUsername', $playerName)
-                    ->where('ProductType', $type)
-                    ->where('ProductId', $id)
+                $record = UserPurchaseRecord::where('minecraft_username', $playerName)
+                    ->where('product_id', $id)
                     ->first();
 
                 if ($record) {
-                    $record->TotalQuantityPurchased += $quantity;
-                    $record->LastPurchaseDate        = now();
+                    $record->total_quantity_purchased += $quantity;
+                    $record->last_purchase_date        = now();
                     $record->save();
                 } else {
                     UserPurchaseRecord::create([
-                        'MinecraftUsername'       => $playerName,
-                        'ProductType'             => $type,
-                        'ProductId'               => $id,
-                        'TotalQuantityPurchased'  => $quantity,
-                        'LastPurchaseDate'        => now(),
-                        'CreatedAt'               => now(),
+                        'minecraft_username'       => $playerName,
+                        'product_id'               => $id,
+                        'total_quantity_purchased'  => $quantity,
+                        'last_purchase_date'        => now(),
+                        'created_at'               => now(),
                     ]);
                 }
             } catch (\Throwable $e) {

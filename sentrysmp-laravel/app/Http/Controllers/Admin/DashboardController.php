@@ -11,9 +11,9 @@ class DashboardController extends Controller
     public function index()
     {
         $totalTransactions  = PaymentTransaction::count();
-        $totalRevenue       = PaymentTransaction::sum('Amount');
+        $totalRevenue       = PaymentTransaction::sum('amount');
         $pendingCommands    = CommandQueue::where('status', 'pending')->count();
-        $recentTransactions = PaymentTransaction::orderByDesc('CreatedAt')->limit(10)->get();
+        $recentTransactions = PaymentTransaction::orderByDesc('created_at')->limit(10)->get();
 
         return view('admin.dashboard', compact(
             'totalTransactions',

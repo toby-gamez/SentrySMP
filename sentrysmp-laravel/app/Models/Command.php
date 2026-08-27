@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Command extends Model
 {
-    protected $table = 'commands';
-    protected $primaryKey = 'Id';
-    public $timestamps = false;
+    protected $fillable = ['command_text', 'product_id'];
 
-    protected $fillable = ['CommandText', 'Type', 'TypeId'];
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

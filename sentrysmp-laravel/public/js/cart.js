@@ -1,6 +1,5 @@
 const CART_KEY = 'sentry_cart';
 
-// Per-product selected quantity map  { "Type:id": qty }
 const _selectedQty = {};
 
 function getCart() {
@@ -14,11 +13,9 @@ function saveCart(cart) {
     if (typeof updateCheckoutBtn === 'function') updateCheckoutBtn();
 }
 
-// Add / update a specific item in the cart
 function addToCart(item) {
     const cart = getCart();
-    const key = item.type + ':' + item.id;
-    const existing = cart.find(c => c.type + ':' + c.id === key);
+    const existing = cart.find(c => c.id === item.id);
     if (existing) {
         existing.quantity = (existing.quantity || 1) + (item.quantity || 1);
     } else {
@@ -29,9 +26,7 @@ function addToCart(item) {
     openCartSidebar();
 }
 
-// Called by qty preset buttons
 function selectQtyPreset(btn, itemId, qty) {
-    // Update selected class on sibling buttons
     var presets = btn.closest('.qty-presets');
     if (presets) {
         presets.querySelectorAll('.qty-preset-btn').forEach(function(b) {
@@ -39,28 +34,26 @@ function selectQtyPreset(btn, itemId, qty) {
         });
     }
     btn.classList.add('selected');
-    // Store selection (key by type:id is not available here, so use just id)
     _selectedQty['item_' + itemId] = qty;
 }
 
-// Called by the Add to Cart / great-button on product cards
-function addToCartPreset(itemId, name, type, server, price, sale) {
+// category replaces the old type+server combo
+function addToCartPreset(itemId, name, category, price, sale) {
     var key = 'item_' + itemId;
     var qty = _selectedQty[key] || 1;
-    addToCart({ id: itemId, name: name, type: type, server: server, price: price, sale: sale, quantity: qty });
-    // Visually reflect in cart button
+    addToCart({ id: itemId, name: name, category: category, price: price, sale: sale, quantity: qty });
     refreshProductButtons();
 }
 
-function removeFromCart(id, type) {
-    const cart = getCart().filter(c => !(c.id == id && c.type === type));
+function removeFromCart(id) {
+    const cart = getCart().filter(c => c.id !== id);
     saveCart(cart);
     refreshProductButtons();
 }
 
-function updateQty(id, type, qty) {
+function updateQty(id, qty) {
     const cart = getCart();
-    const item = cart.find(c => c.id == id && c.type === type);
+    const item = cart.find(c => c.id === id);
     if (item) { item.quantity = Math.max(1, parseInt(qty) || 1); saveCart(cart); }
 }
 
@@ -122,18 +115,18 @@ function renderCartSidebar() {
             '</div>' +
             '<div class="cart-sidebar-item-info">' +
             '<div class="cart-sidebar-item-name">' + escapeHtml(item.name) + '</div>' +
-            (item.server ? '<div class="cart-sidebar-item-server">' + escapeHtml(item.server) + '</div>' : '') +
+            (item.category ? '<div class="cart-sidebar-item-server">' + escapeHtml(item.category) + '</div>' : '') +
             '<div class="cart-sidebar-item-price">' +
             (item.sale > 0 ? '<span class="text-muted" style="text-decoration:line-through;margin-right:4px;">€' + item.price.toFixed(2) + '</span>' : '') +
             '€' + line.toFixed(2) +
             '</div>' +
             '<div class="quantity-controls" style="margin-top:4px;">' +
-            '<button class="quantity-btn" onclick="updateQty(' + item.id + ', \'' + item.type + '\', ' + Math.max(1, item.quantity - 1) + ')" ' + (item.quantity <= 1 ? 'disabled' : '') + '>-</button>' +
+            '<button class="quantity-btn" onclick="updateQty(' + item.id + ', ' + Math.max(1, item.quantity - 1) + ')" ' + (item.quantity <= 1 ? 'disabled' : '') + '>-</button>' +
             '<span>' + item.quantity + '</span>' +
-            '<button class="quantity-btn" onclick="updateQty(' + item.id + ', \'' + item.type + '\', ' + (item.quantity + 1) + ')">+</button>' +
+            '<button class="quantity-btn" onclick="updateQty(' + item.id + ', ' + (item.quantity + 1) + ')">+</button>' +
             '</div>' +
             '</div>' +
-            '<button class="cart-sidebar-item-remove secondary" onclick="removeFromCart(' + item.id + ', \'' + item.type + '\')" title="Remove"><i class="bi bi-trash"></i></button>' +
+            '<button class="cart-sidebar-item-remove secondary" onclick="removeFromCart(' + item.id + ')" title="Remove"><i class="bi bi-trash"></i></button>' +
             '</div>';
     });
 
@@ -141,21 +134,16 @@ function renderCartSidebar() {
     if (totalEl) totalEl.textContent = '€' + getCartTotal().toFixed(2);
 }
 
-// Update great-button text if item already in cart
 function refreshProductButtons() {
     const cart = getCart();
     document.querySelectorAll('.product').forEach(function(card) {
         var btn = card.querySelector('.great-button');
         if (!btn) return;
-        // Extract itemId from onclick attr — look for a qty-preset-btn
         var preset = card.querySelector('.qty-preset-btn');
         if (!preset) return;
-        var itemId = preset.getAttribute('data-item-id');
+        var itemId = parseInt(preset.getAttribute('data-item-id'));
         if (!itemId) return;
-        var typeEl = btn.getAttribute('onclick') || '';
-        var typeMatch = typeEl.match(/"([A-Za-z]+)"/);
-        var type = typeMatch ? typeMatch[1] : '';
-        var inCart = cart.find(function(c) { return c.id == itemId && c.type === type; });
+        var inCart = cart.find(function(c) { return c.id === itemId; });
         if (inCart) {
             btn.innerHTML = '<i class="bi bi-cart-check"></i> Update Cart';
         } else {
@@ -178,14 +166,12 @@ function escapeHtml(text) {
     return String(text || '').replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
-// Init on page load
 document.addEventListener('DOMContentLoaded', function() {
     updateCartCount();
     renderCartSidebar();
     refreshProductButtons();
     if (typeof updateCheckoutBtn === 'function') updateCheckoutBtn();
 
-    // Select 1× by default on all product cards
     document.querySelectorAll('.qty-presets').forEach(function(presets) {
         var first = presets.querySelector('.qty-preset-btn');
         if (first) {

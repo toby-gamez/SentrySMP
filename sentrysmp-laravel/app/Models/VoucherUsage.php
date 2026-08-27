@@ -3,19 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class VoucherUsage extends Model
 {
-    protected $table = 'voucherusages';
-    protected $primaryKey = 'Id';
-    public $timestamps = false;
+    protected $fillable = ['voucher_id', 'minecraft_username', 'used_at'];
 
-    protected $fillable = ['VoucherId', 'MinecraftUsername', 'UsedAt'];
+    protected $casts = ['used_at' => 'datetime'];
 
-    protected $casts = ['UsedAt' => 'datetime'];
-
-    public function voucher()
+    public function voucher(): BelongsTo
     {
-        return $this->belongsTo(Voucher::class, 'VoucherId', 'Id');
+        return $this->belongsTo(Voucher::class);
     }
 }

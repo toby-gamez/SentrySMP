@@ -4,8 +4,8 @@
 
 @php
 $cartItems = [];
-if ($transaction->ItemsJson) {
-    try { $cartItems = json_decode($transaction->ItemsJson, true, 512, JSON_THROW_ON_ERROR); }
+if ($transaction->items_json) {
+    try { $cartItems = json_decode($transaction->items_json, true, 512, JSON_THROW_ON_ERROR); }
     catch (\Throwable) { $cartItems = []; }
 }
 $typeColors = [
@@ -28,11 +28,11 @@ $typeColors = [
 
         @php
         $rows = [
-            'ID'       => ['value' => '#' . $transaction->Id, 'style' => 'font-weight:700;font-size:18px;color:#fff;'],
-            'Provider' => ['value' => $transaction->Provider],
-            'TX ID'    => ['value' => $transaction->ProviderTransactionId, 'style' => 'font-size:11px;font-family:monospace;color:#888;word-break:break-all;'],
-            'Player'   => ['value' => $transaction->MinecraftUsername ?: '—', 'style' => 'font-weight:700;color:#fff;'],
-            'Amount'   => ['value' => '€' . number_format($transaction->Amount, 2) . ' ' . $transaction->Currency, 'style' => 'font-weight:700;font-size:16px;color:#fff;'],
+            'ID'       => ['value' => '#' . $transaction->id, 'style' => 'font-weight:700;font-size:18px;color:#fff;'],
+            'Provider' => ['value' => $transaction->provider],
+            'TX ID'    => ['value' => $transaction->provider_transaction_id, 'style' => 'font-size:11px;font-family:monospace;color:#888;word-break:break-all;'],
+            'Player'   => ['value' => $transaction->minecraft_username ?: '—', 'style' => 'font-weight:700;color:#fff;'],
+            'Amount'   => ['value' => '€' . number_format($transaction->amount, 2) . ' ' . $transaction->currency, 'style' => 'font-weight:700;font-size:16px;color:#fff;'],
         ];
         @endphp
 
@@ -45,12 +45,12 @@ $typeColors = [
 
         <div style="display:flex;flex-direction:column;gap:2px;padding:10px 0;border-bottom:1px solid #1e1e1e;">
             <span style="font-size:10px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.08em;">Status</span>
-            <div style="padding-top:4px;">@include('admin._partials.tx-status', ['status' => $transaction->Status])</div>
+            <div style="padding-top:4px;">@include('admin._partials.tx-status', ['status' => $transaction->status])</div>
         </div>
 
         <div style="display:flex;flex-direction:column;gap:2px;padding:10px 0;">
             <span style="font-size:10px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.08em;">Created</span>
-            <span style="color:#888;font-size:13px;">{{ $transaction->CreatedAt?->format('Y-m-d H:i:s') }}</span>
+            <span style="color:#888;font-size:13px;">{{ $transaction->created_at?->format('Y-m-d H:i:s') }}</span>
         </div>
     </div>
 

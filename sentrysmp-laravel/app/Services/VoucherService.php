@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Product;
 use App\Models\Voucher;
 use App\Models\VoucherUsage;
 
@@ -11,8 +12,7 @@ class VoucherService
      * Validate a voucher code against cart items.
      *
      * @param  string  $code
-     * @param  array  $items  [['type'=>'Key','id'=>1,'unit_price'=>5.99,'quantity'=>1], ...]
-     * @return array{valid: bool, message: string, discount_percent: float, discount_amount: float, scope: string, scope_category: string|null, scope_item_id: int|null, code: string}
+     * @param  array   $items  [['id' => 1, 'unit_price' => 5.99, 'quantity' => 1], ...]
      */
     public function validate(string $code, array $items): array
     {
@@ -40,13 +40,28 @@ class VoucherService
             return $this->invalid('This voucher has reached its maximum number of uses.');
         }
 
+        // For category-scoped vouchers, load product→category slugs in one query
+        $categoryByProductId = [];
+        if ($voucher->scope === 'Category') {
+            $productIds = collect($items)->pluck('id')->filter()->unique()->values()->all();
+            if (!empty($productIds)) {
+                Product::with('category')
+                    ->whereIn('id', $productIds)
+                    ->get()
+                    ->each(function ($p) use (&$categoryByProductId) {
+                        $categoryByProductId[$p->id] = $p->category?->slug;
+                    });
+            }
+        }
+
         $applicableTotal = 0.0;
         foreach ($items as $item) {
+            $id = (int) ($item['id'] ?? 0);
+
             $applies = match ($voucher->scope) {
                 'All'      => true,
-                'Category' => strcasecmp($item['type'] ?? '', $voucher->scope_category ?? '') === 0,
-                'Item'     => strcasecmp($item['type'] ?? '', $voucher->scope_category ?? '') === 0
-                              && (int) ($item['id'] ?? 0) === (int) $voucher->scope_item_id,
+                'Category' => ($categoryByProductId[$id] ?? null) === $voucher->scope_category,
+                'Product'  => $id === (int) $voucher->scope_item_id,
                 default    => false,
             };
 
@@ -59,14 +74,14 @@ class VoucherService
         $discountAmount  = round($applicableTotal * $discountPercent / 100, 2);
 
         return [
-            'valid'           => true,
-            'message'         => $discountPercent > 0 ? "{$voucher->discount_percent}% discount applied!" : 'No applicable items in cart',
+            'valid'            => true,
+            'message'          => $discountPercent > 0 ? "{$voucher->discount_percent}% discount applied!" : 'No applicable items in cart',
             'discount_percent' => $discountPercent,
             'discount_amount'  => $discountAmount,
-            'scope'           => $voucher->scope,
-            'scope_category'  => $voucher->scope_category,
-            'scope_item_id'   => $voucher->scope_item_id,
-            'code'            => $voucher->code,
+            'scope'            => $voucher->scope,
+            'scope_category'   => $voucher->scope_category,
+            'scope_item_id'    => $voucher->scope_item_id,
+            'code'             => $voucher->code,
         ];
     }
 

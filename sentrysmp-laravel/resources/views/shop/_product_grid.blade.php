@@ -1,31 +1,29 @@
-{{-- Shared product grid partial. Variables: $items (collection), $type (string), $fallbackImage --}}
+{{-- Variables: $items (Collection of Product), $category (Category), $fallbackImage (string|null) --}}
 @if($items->isEmpty())
     <div class="alert alert-info"><i class="bi bi-info-circle-fill"></i> No items available at the moment.</div>
 @else
     <div class="product-grid">
         @foreach($items as $item)
             @php
-                $salePercent = (int) ($item->Sale ?? 0);
-                $price       = (float) ($item->Price ?? 0);
+                $salePercent = (int) $item->sale;
+                $price       = (float) $item->price;
                 $ep          = $salePercent > 0 ? round($price * (1 - $salePercent / 100), 2) : $price;
-                $imgSrc      = !empty($item->Image) ? $item->Image : null;
-                $fallback    = asset($fallbackImage ?? 'images/gray-bundle.png');
-                $itemName    = $item->Name ?? '';
-                $itemDesc    = $item->Description ?? '';
-                $serverName  = $item->server?->Name ?? '';
-                $itemId      = $item->Id ?? 0;
+                $imgSrc      = $item->image ?: ($fallbackImage ? asset($fallbackImage) : null);
+                $itemId      = $item->id;
+                $itemName    = $item->name;
+                $itemDesc    = $item->description;
+                $categoryName = $category->name ?? '';
             @endphp
             <div class="product">
                 @if($imgSrc)
                     <img src="{{ $imgSrc }}" class="product-image" alt="{{ $itemName }}">
                 @else
-                    <img src="{{ $fallback }}" class="product-image" alt="{{ $itemName }}">
+                    <div class="product-image" style="background:#1a1a1a;display:flex;align-items:center;justify-content:center;">
+                        <i class="bi bi-box" style="font-size:2rem;color:#555;"></i>
+                    </div>
                 @endif
 
                 <h3>{{ $itemName }}</h3>
-                @if($serverName)
-                    <small class="text-muted">{{ $serverName }}</small>
-                @endif
                 @if($itemDesc)
                     <p style="font-size:13px;color:#888;margin:6px 0;">{{ $itemDesc }}</p>
                 @endif
@@ -47,7 +45,7 @@
                     @endforeach
                 </div>
 
-                <button class="great-button" onclick='addToCartPreset({{ $itemId }}, {{ json_encode($itemName) }}, {{ json_encode($type) }}, {{ json_encode($serverName) }}, {{ $price }}, {{ $salePercent }})'>
+                <button class="great-button" onclick='addToCartPreset({{ $itemId }}, {{ json_encode($itemName) }}, {{ json_encode($categoryName) }}, {{ $price }}, {{ $salePercent }})'>
                     <i class="bi bi-cart-plus"></i> Add to Cart
                 </button>
             </div>

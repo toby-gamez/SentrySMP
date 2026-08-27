@@ -10,12 +10,7 @@ use Illuminate\Support\Facades\Route;
 // ─── Shop ────────────────────────────────────────────────────────────────────
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/keys', [ShopController::class, 'keys'])->name('shop.keys');
-Route::get('/coins', [ShopController::class, 'coins'])->name('shop.coins');
-Route::get('/bundles', [ShopController::class, 'bundles'])->name('shop.bundles');
-Route::get('/ranks', [ShopController::class, 'ranks'])->name('shop.ranks');
-Route::get('/battlepasses', [ShopController::class, 'battlepasses'])->name('shop.battlepasses');
-Route::get('/other', [ShopController::class, 'other'])->name('shop.other');
+Route::get('/shop/{category:slug}', [ShopController::class, 'category'])->name('shop.category');
 Route::get('/checkout', [ShopController::class, 'checkout'])->name('checkout');
 
 // ─── Pages ───────────────────────────────────────────────────────────────────
@@ -59,18 +54,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('auth.admin')->group(function () {
         Route::get('/', [Admin\DashboardController::class, 'index'])->name('dashboard');
 
-        // Products
-        Route::resource('keys', Admin\KeyController::class)->names('keys')->except(['show']);
-        Route::resource('ranks', Admin\RankController::class)->names('ranks')->except(['show']);
-        Route::resource('bundles', Admin\BundleController::class)->names('bundles')->except(['show']);
-        Route::resource('coins', Admin\CoinController::class)->names('coins')->except(['show']);
-        Route::resource('battlepasses', Admin\BattlePassController::class)->names('battlepasses')->except(['show'])->parameters(['battlepasses' => 'battlepass']);
-        Route::resource('others', Admin\OtherController::class)->names('others')->except(['show']);
-        Route::resource('servers', Admin\ServerController::class)->names('servers')->except(['show']);
+        // Categories & Products
+        Route::resource('categories', Admin\CategoryController::class)->names('categories')->except(['show']);
+        Route::resource('products', Admin\ProductController::class)->names('products')->except(['show']);
 
         // Commands
         Route::get('commands', [Admin\CommandController::class, 'index'])->name('commands.index');
-        Route::get('commands/create', [Admin\CommandController::class, 'create'])->name('commands.create');
         Route::post('commands', [Admin\CommandController::class, 'store'])->name('commands.store');
         Route::put('commands/{command}', [Admin\CommandController::class, 'update'])->name('commands.update');
         Route::delete('commands/{command}', [Admin\CommandController::class, 'destroy'])->name('commands.destroy');

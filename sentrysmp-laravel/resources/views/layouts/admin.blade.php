@@ -27,23 +27,14 @@
 
         <div class="admin-nav-section">
             <div class="admin-nav-heading">Shop</div>
-            <a href="{{ route('admin.keys.index') }}" class="admin-nav-item {{ request()->routeIs('admin.keys.*') ? 'active' : '' }}">
-                <i class="bi bi-key-fill"></i> Keys
+            <a href="{{ route('admin.categories.index') }}" class="admin-nav-item {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
+                <i class="bi bi-tags-fill"></i> Categories
             </a>
-            <a href="{{ route('admin.coins.index') }}" class="admin-nav-item {{ request()->routeIs('admin.coins.*') ? 'active' : '' }}">
-                <i class="bi bi-coin"></i> Coins
+            <a href="{{ route('admin.products.index') }}" class="admin-nav-item {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
+                <i class="bi bi-box-seam-fill"></i> Products
             </a>
-            <a href="{{ route('admin.bundles.index') }}" class="admin-nav-item {{ request()->routeIs('admin.bundles.*') ? 'active' : '' }}">
-                <i class="bi bi-box-seam-fill"></i> Bundles
-            </a>
-            <a href="{{ route('admin.ranks.index') }}" class="admin-nav-item {{ request()->routeIs('admin.ranks.*') ? 'active' : '' }}">
-                <i class="bi bi-shield-fill-check"></i> Ranks
-            </a>
-            <a href="{{ route('admin.battlepasses.index') }}" class="admin-nav-item {{ request()->routeIs('admin.battlepasses.*') ? 'active' : '' }}">
-                <i class="bi bi-star-fill"></i> Battle Passes
-            </a>
-            <a href="{{ route('admin.others.index') }}" class="admin-nav-item {{ request()->routeIs('admin.others.*') ? 'active' : '' }}">
-                <i class="bi bi-bag-fill"></i> Other
+            <a href="{{ route('admin.commands.index') }}" class="admin-nav-item {{ request()->routeIs('admin.commands.*') ? 'active' : '' }}">
+                <i class="bi bi-terminal-fill"></i> Commands
             </a>
         </div>
 

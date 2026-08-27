@@ -6,22 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class PaymentTransaction extends Model
 {
-    protected $table = 'paymenttransactions';
-    protected $primaryKey = 'Id';
+    protected $table = 'payment_transactions';
     public $timestamps = false;
 
     protected $fillable = [
-        'Provider', 'ProviderTransactionId', 'Amount', 'Currency',
-        'MinecraftUsername', 'ItemsJson', 'Status', 'RawResponse', 'CreatedAt',
+        'provider', 'provider_transaction_id', 'amount', 'currency',
+        'minecraft_username', 'items_json', 'status', 'raw_response', 'created_at',
     ];
 
     protected $casts = [
-        'Amount'    => 'decimal:2',
-        'CreatedAt' => 'datetime',
+        'amount'     => 'decimal:2',
+        'created_at' => 'datetime',
     ];
 
     public function commandQueue()
     {
-        return $this->hasMany(CommandQueue::class, 'transaction_id', 'Id');
+        return $this->hasMany(CommandQueue::class, 'transaction_id');
     }
 }

@@ -19,32 +19,32 @@ class TransactionController extends Controller
         $dateFrom = $request->query('date_from', '');
         $dateTo   = $request->query('date_to', '');
 
-        $query = PaymentTransaction::orderByDesc('CreatedAt');
+        $query = PaymentTransaction::orderByDesc('created_at');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('MinecraftUsername', 'like', "%{$search}%")
-                  ->orWhere('ProviderTransactionId', 'like', "%{$search}%");
+                $q->where('minecraft_username', 'like', "%{$search}%")
+                  ->orWhere('provider_transaction_id', 'like', "%{$search}%");
             });
         }
 
         if ($status) {
-            $query->where('Status', 'like', "%{$status}%");
+            $query->where('status', 'like', "%{$status}%");
         }
 
         if ($provider) {
-            $query->where('Provider', $provider);
+            $query->where('provider', $provider);
         }
 
         if ($dateFrom) {
-            $query->whereDate('CreatedAt', '>=', $dateFrom);
+            $query->whereDate('created_at', '>=', $dateFrom);
         }
 
         if ($dateTo) {
-            $query->whereDate('CreatedAt', '<=', $dateTo);
+            $query->whereDate('created_at', '<=', $dateTo);
         }
 
-        $providers = PaymentTransaction::distinct()->orderBy('Provider')->pluck('Provider');
+        $providers = PaymentTransaction::distinct()->orderBy('provider')->pluck('provider');
         $items     = $query->paginate(30)->withQueryString();
 
         return view('admin.transactions.index', compact('items', 'search', 'status', 'provider', 'providers', 'dateFrom', 'dateTo'));
@@ -58,12 +58,12 @@ class TransactionController extends Controller
 
     public function retryDispatch(PaymentTransaction $transaction)
     {
-        if (!$transaction->ItemsJson) {
+        if (!$transaction->items_json) {
             return back()->withErrors(['error' => 'No items JSON available for this transaction.']);
         }
 
         try {
-            $cartItems = json_decode($transaction->ItemsJson, true, 512, JSON_THROW_ON_ERROR);
+            $cartItems = json_decode($transaction->items_json, true, 512, JSON_THROW_ON_ERROR);
             $this->commandQueue->dispatchForTransaction($transaction, $cartItems);
             return back()->with('success', 'Commands re-dispatched to queue.');
         } catch (\Throwable $e) {

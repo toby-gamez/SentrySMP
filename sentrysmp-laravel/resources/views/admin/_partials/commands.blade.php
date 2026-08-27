@@ -1,4 +1,4 @@
-{{-- Variables: $commands, $commandType (string), $commandTypeId (int) --}}
+{{-- Variables: $commands (Collection), $productId (int) --}}
 <div class="admin-card" style="margin-top:24px;">
     <div class="admin-card-header">
         <h2 class="admin-card-title"><i class="bi bi-terminal-fill"></i> Commands ({{ $commands->count() }})</h2>
@@ -10,17 +10,15 @@
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
         @foreach($commands as $cmd)
         <div style="display:flex;gap:8px;align-items:center;">
-            {{-- Edit form --}}
             <form method="POST" action="{{ route('admin.commands.update', $cmd) }}"
                   style="display:flex;gap:8px;align-items:center;flex:1;min-width:0;">
                 @csrf @method('PUT')
-                <input type="text" name="CommandText" value="{{ $cmd->CommandText }}"
+                <input type="text" name="command_text" value="{{ $cmd->command_text }}"
                        required style="flex:1;min-width:0;font-family:monospace;font-size:13px;">
                 <button type="submit" class="btn-admin btn-admin-secondary" style="padding:6px 12px;white-space:nowrap;flex-shrink:0;">
                     <i class="bi bi-floppy"></i> Save
                 </button>
             </form>
-            {{-- Delete form (sibling, not nested) --}}
             <form method="POST" action="{{ route('admin.commands.destroy', $cmd) }}"
                   onsubmit="return confirm('Delete this command?')">
                 @csrf @method('DELETE')
@@ -33,13 +31,11 @@
     </div>
     @endif
 
-    {{-- Add command --}}
     <form method="POST" action="{{ route('admin.commands.store') }}"
           style="display:flex;gap:8px;align-items:center;{{ $commands->isNotEmpty() ? 'padding-top:14px;border-top:1px solid #222;' : '' }}">
         @csrf
-        <input type="hidden" name="Type" value="{{ $commandType }}">
-        <input type="hidden" name="TypeId" value="{{ $commandTypeId }}">
-        <input type="text" name="CommandText" placeholder="e.g. give %player% diamond 1"
+        <input type="hidden" name="product_id" value="{{ $productId }}">
+        <input type="text" name="command_text" placeholder="e.g. give %player% diamond 1"
                required style="flex:1;min-width:0;font-family:monospace;font-size:13px;">
         <button type="submit" class="btn-admin btn-admin-primary" style="padding:6px 14px;white-space:nowrap;flex-shrink:0;">
             <i class="bi bi-plus-lg"></i> Add

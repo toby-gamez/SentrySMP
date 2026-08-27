@@ -8,36 +8,20 @@
 </div>
 
 <div class="nav-list">
-    <a href="{{ route('shop.keys') }}">
-        <div class="{{ request()->routeIs('shop.keys') ? 'nav-item nav-item--active' : 'nav-item' }}">
-            <div class="nav-icon"><img class="nav-icon" src="{{ asset('images/red-bundle.png') }}" alt="KEYS"></div>
-            <span>KEYS</span>
+    @foreach($navCategories as $navCategory)
+    <a href="{{ route('shop.category', $navCategory->slug) }}">
+        <div class="{{ request()->routeIs('shop.category') && request()->route('category')?->is($navCategory) ? 'nav-item nav-item--active' : 'nav-item' }}">
+            <div class="nav-icon">
+                @if($navCategory->image)
+                    <img class="nav-icon" src="{{ $navCategory->image }}" alt="{{ $navCategory->name }}">
+                @else
+                    <i class="bi bi-bag-fill"></i>
+                @endif
+            </div>
+            <span>{{ strtoupper($navCategory->name) }}</span>
         </div>
     </a>
-    <a href="{{ route('shop.coins') }}">
-        <div class="{{ request()->routeIs('shop.coins') ? 'nav-item nav-item--active' : 'nav-item' }}">
-            <div class="nav-icon"><img class="nav-icon" src="{{ asset('images/yellow-bundle.png') }}" alt="GEMS"></div>
-            <span>GEMS</span>
-        </div>
-    </a>
-    <a href="{{ route('shop.bundles') }}">
-        <div class="{{ request()->routeIs('shop.bundles') ? 'nav-item nav-item--active' : 'nav-item' }}">
-            <div class="nav-icon"><img class="nav-icon" src="{{ asset('images/pink-bundle.png') }}" alt="BUNDLES"></div>
-            <span>BUNDLES</span>
-        </div>
-    </a>
-    <a href="{{ route('shop.ranks') }}">
-        <div class="{{ request()->routeIs('shop.ranks') ? 'nav-item nav-item--active' : 'nav-item' }}">
-            <div class="nav-icon"><img class="nav-icon" src="{{ asset('images/green-bundle.png') }}" alt="RANKS"></div>
-            <span>RANKS</span>
-        </div>
-    </a>
-    <a href="{{ route('shop.other') }}">
-        <div class="{{ request()->routeIs('shop.other') ? 'nav-item nav-item--active' : 'nav-item' }}">
-            <div class="nav-icon"><img class="nav-icon" src="{{ asset('images/gray-bundle.png') }}" alt="OTHER"></div>
-            <span>OTHER</span>
-        </div>
-    </a>
+    @endforeach
 </div>
 
 <div class="nav-list">
@@ -101,8 +85,8 @@
     <div class="nav-heading">TOP DONORS</div>
     @foreach($navTopDonors as $donor)
         <div class="nav-item nav-item--donor">
-            <img class="nav-head" src="https://minotar.net/helm/{{ urlencode($donor->MinecraftUsername) }}/24" alt="{{ $donor->MinecraftUsername }}">
-            <span class="nav-donor-name">{{ $donor->MinecraftUsername }}</span>
+            <img class="nav-head" src="https://minotar.net/helm/{{ urlencode($donor->minecraft_username) }}/24" alt="{{ $donor->minecraft_username }}">
+            <span class="nav-donor-name">{{ $donor->minecraft_username }}</span>
             <span class="nav-donor-amount">€{{ number_format($donor->total_paid, 2) }}</span>
         </div>
     @endforeach

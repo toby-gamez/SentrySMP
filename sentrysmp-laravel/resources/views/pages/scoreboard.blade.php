@@ -31,10 +31,10 @@
                 </td>
                 <td>
                     <div style="display:flex;align-items:center;gap:10px;">
-                        <img src="https://minotar.net/avatar/{{ urlencode($entry->MinecraftUsername) }}/24"
+                        <img src="https://minotar.net/avatar/{{ urlencode($entry->minecraft_username) }}/24"
                              style="width:24px;height:24px;border-radius:4px;image-rendering:pixelated;"
-                             onerror="this.src='https://minotar.net/avatar/steve/24'" alt="{{ $entry->MinecraftUsername }}">
-                        <span>{{ $entry->MinecraftUsername }}</span>
+                             onerror="this.src='https://minotar.net/avatar/steve/24'" alt="{{ $entry->minecraft_username }}">
+                        <span>{{ $entry->minecraft_username }}</span>
                     </div>
                 </td>
                 <td class="text-end" style="color:#23d05e;font-weight:700;font-family:monospace;">
