@@ -36,7 +36,7 @@
         </form>
 
         <p style="text-align:center;margin-top:16px;font-size:12px;color:#555;">
-            <a href="{{ route('home') }}" style="color:#666;">← Back to shop</a>
+            <a href="{{ route('home') }}">← Back to shop</a>
         </p>
     </div>
 </div>

@@ -1,5 +1,6 @@
 @extends('layouts.admin')
-@section('title', 'Transaction #' . $transaction->Id)
+@section('title', 'Transaction #' . $transaction->id)
+@section('back_url', route('admin.transactions.index'))
 @section('content')
 
 @php

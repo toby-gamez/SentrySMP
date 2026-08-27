@@ -6,29 +6,28 @@ use Illuminate\Database\Eloquent\Model;
 
 class PaymentSettings extends Model
 {
-    protected $table = 'paymentsettings';
-    protected $primaryKey = 'Id';
+    protected $table = 'payment_settings';
     public $timestamps = false;
 
-    protected $fillable = ['EnablePayments', 'DisableStripe', 'DisablePayPal', 'UpdatedAt'];
+    protected $fillable = ['enable_payments', 'disable_stripe', 'disable_paypal', 'updated_at'];
 
     protected $casts = [
-        'EnablePayments' => 'boolean',
-        'DisableStripe'  => 'boolean',
-        'DisablePayPal'  => 'boolean',
-        'UpdatedAt'      => 'datetime',
+        'enable_payments' => 'boolean',
+        'disable_stripe'  => 'boolean',
+        'disable_paypal'  => 'boolean',
+        'updated_at'      => 'datetime',
     ];
 
     public static function current(): self
     {
         try {
             return static::first() ?? new static([
-                'EnablePayments' => true,
-                'DisableStripe'  => false,
-                'DisablePayPal'  => false,
+                'enable_payments' => true,
+                'disable_stripe'  => false,
+                'disable_paypal'  => false,
             ]);
         } catch (\Throwable) {
-            return new static(['EnablePayments' => true, 'DisableStripe' => false, 'DisablePayPal' => false]);
+            return new static(['enable_payments' => true, 'disable_stripe' => false, 'disable_paypal' => false]);
         }
     }
 }

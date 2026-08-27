@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->integer('total_quantity_purchased')->default(0);
             $table->timestamp('last_purchase_date')->nullable();
             $table->timestamp('created_at')->useCurrent();
-            $table->index(['minecraft_username', 'product_type', 'product_id']);
+            $table->index(['minecraft_username', 'product_type', 'product_id'], 'upr_username_type_id_idx');
         });
     }
 

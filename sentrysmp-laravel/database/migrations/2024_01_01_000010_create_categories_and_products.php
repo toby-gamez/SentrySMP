@@ -41,18 +41,18 @@ return new class extends Migration {
         });
 
         Schema::table('user_purchase_records', function (Blueprint $table) {
-            $table->dropIndex(['minecraft_username', 'product_type', 'product_id']);
+            $table->dropIndex('upr_username_type_id_idx');
             $table->dropColumn('product_type');
-            $table->index(['minecraft_username', 'product_id']);
+            $table->index(['minecraft_username', 'product_id'], 'upr_username_id_idx');
         });
     }
 
     public function down(): void
     {
         Schema::table('user_purchase_records', function (Blueprint $table) {
-            $table->dropIndex(['minecraft_username', 'product_id']);
+            $table->dropIndex('upr_username_id_idx');
             $table->string('product_type', 50)->after('minecraft_username');
-            $table->index(['minecraft_username', 'product_type', 'product_id']);
+            $table->index(['minecraft_username', 'product_type', 'product_id'], 'upr_username_type_id_idx');
         });
 
         Schema::table('commands', function (Blueprint $table) {

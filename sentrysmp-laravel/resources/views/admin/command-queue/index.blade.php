@@ -27,7 +27,7 @@
                 <td style="color:#666;">{{ $item->id }}</td>
                 <td>
                     @if($item->transaction_id)
-                        <a href="{{ route('admin.transactions.show', $item->transaction_id) }}" style="color:#dc3545;">#{{ $item->transaction_id }}</a>
+                        <a href="{{ route('admin.transactions.show', $item->transaction_id) }}">#{{ $item->transaction_id }}</a>
                     @else —
                     @endif
                 </td>
@@ -59,8 +59,28 @@
         </tbody>
     </table>
 
-    <div style="margin-top:16px;">
-        {{ $items->links() }}
+    @if($items->hasPages())
+    <div class="admin-pagination">
+        @if($items->onFirstPage())
+            <span class="disabled">‹</span>
+        @else
+            <a href="{{ $items->previousPageUrl() }}">‹</a>
+        @endif
+
+        @foreach($items->getUrlRange(max(1, $items->currentPage()-3), min($items->lastPage(), $items->currentPage()+3)) as $page => $url)
+            @if($page == $items->currentPage())
+                <span class="current">{{ $page }}</span>
+            @else
+                <a href="{{ $url }}">{{ $page }}</a>
+            @endif
+        @endforeach
+
+        @if($items->hasMorePages())
+            <a href="{{ $items->nextPageUrl() }}">›</a>
+        @else
+            <span class="disabled">›</span>
+        @endif
     </div>
+    @endif
 </div>
 @endsection

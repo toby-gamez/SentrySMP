@@ -27,6 +27,6 @@
     <p>You may request deletion of your personal data (excluding legally required records) by contacting us via Discord.</p>
 
     <h2>7. Contact</h2>
-    <p>If you have questions about this policy, contact us via <a href="{{ route('support') }}" style="color:#23d05e;">Support</a>.</p>
+    <p>If you have questions about this policy, contact us via <a href="{{ route('support') }}">Support</a>.</p>
 </div>
 @endsection

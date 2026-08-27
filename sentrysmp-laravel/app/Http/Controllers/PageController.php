@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivePlayer;
+use App\Models\Ban;
 use App\Models\PaymentTransaction;
 use App\Models\TeamCategory;
+use App\Services\DiscordService;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -11,10 +14,23 @@ class PageController extends Controller
     public function login() { return view('pages.login'); }
     public function about() { return view('pages.about'); }
     public function join(Request $r) { return view('pages.join', ['edition' => $r->query('edition', 'java')]); }
-    public function news() { return view('pages.news'); }
+    public function news(DiscordService $discord)
+    {
+        $announcements = $discord->getAnnouncements(100);
+        return view('pages.news', compact('announcements'));
+    }
     public function voteForUs() { return view('pages.vote-for-us'); }
-    public function activePlayers() { return view('pages.active-players'); }
-    public function banList() { return view('pages.banlist'); }
+    public function activePlayers()
+    {
+        $players = ActivePlayer::orderBy('username')->pluck('username');
+        return view('pages.active-players', compact('players'));
+    }
+
+    public function banList()
+    {
+        $bans = Ban::orderBy('player')->get();
+        return view('pages.banlist', compact('bans'));
+    }
     public function support() { return view('pages.support'); }
     public function privacy() { return view('pages.privacy'); }
     public function terms() { return view('pages.terms'); }

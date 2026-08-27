@@ -21,15 +21,15 @@
     <p>Purchases are tied to your Minecraft username. We are not responsible for purchases made by unauthorized use of your account.</p>
 
     <h2>5. Rules</h2>
-    <p>All players must follow our <a href="{{ route('minecraft-rules') }}" style="color:#23d05e;">Minecraft Rules</a>. Bans do not entitle you to a refund.</p>
+    <p>All players must follow our <a href="{{ route('minecraft-rules') }}">Minecraft Rules</a>. Bans do not entitle you to a refund.</p>
 
     <h2>6. Modifications</h2>
     <p>We reserve the right to modify or discontinue in-game items, prices, or game features at any time. Purchases are for items as described at time of purchase.</p>
 
     <h2>7. EULA</h2>
-    <p>All purchases comply with the <a href="https://www.minecraft.net/en-us/eula" target="_blank" rel="noopener" style="color:#23d05e;">Minecraft EULA</a>.</p>
+    <p>All purchases comply with the <a href="https://www.minecraft.net/en-us/eula" target="_blank" rel="noopener">Minecraft EULA</a>.</p>
 
     <h2>8. Contact</h2>
-    <p>For any concerns, contact us via <a href="{{ route('support') }}" style="color:#23d05e;">Support</a>.</p>
+    <p>For any concerns, contact us via <a href="{{ route('support') }}">Support</a>.</p>
 </div>
 @endsection

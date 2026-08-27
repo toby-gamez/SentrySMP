@@ -182,6 +182,8 @@ const BASE_RANKS    = '{{ url('/admin/team/ranks') }}';
 const BASE_CATS     = '{{ url('/admin/team/categories') }}';
 const BASE_MEMBERS  = '{{ url('/admin/team/members') }}';
 
+let ALL_RANKS = @json($ranks->map(fn($r) => ['id' => $r->Id, 'name' => $r->Name, 'color' => $r->HexColor]));
+
 function json(url, method, body) {
     return fetch(url, {
         method,
@@ -278,6 +280,8 @@ function addRank() {
         </div>`;
         document.getElementById('ranks-list').insertAdjacentHTML('beforeend', html);
 
+        ALL_RANKS.push({ id: rank.Id, name: rank.Name, color: rank.HexColor || '' });
+
         // Also append the new rank option to all category member dropdowns
         document.querySelectorAll('.member-rank-select, [id^="new-member-rank-"]').forEach(sel => {
             var opt = document.createElement('option');
@@ -367,8 +371,8 @@ function addMember(catId) {
         if (!d.ok) return;
         var m = d.member;
         var skinSrc = d.skinUrl || 'https://minotar.net/helm/' + encodeURIComponent(name) + '/48';
-        var rankOpts = Array.from(document.querySelectorAll('.member-rank-select')[0]?.options || [])
-            .map(o => `<option value="${escHtml(o.value)}"${m.TeamRankId == o.value ? ' selected' : ''}>${escHtml(o.text)}</option>`)
+        var rankOpts = ALL_RANKS
+            .map(r => `<option value="${escHtml(r.id)}"${m.TeamRankId == r.id ? ' selected' : ''}>${escHtml(r.name)}</option>`)
             .join('');
 
         var rankBadge = '';

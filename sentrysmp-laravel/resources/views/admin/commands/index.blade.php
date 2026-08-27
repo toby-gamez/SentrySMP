@@ -16,7 +16,7 @@
             <tr>
                 <td>
                     @if($item->product)
-                        <a href="{{ route('admin.products.edit', $item->product) }}" style="color:#23d05e;">
+                        <a href="{{ route('admin.products.edit', $item->product) }}">
                             {{ $item->product->name }}
                         </a>
                     @else

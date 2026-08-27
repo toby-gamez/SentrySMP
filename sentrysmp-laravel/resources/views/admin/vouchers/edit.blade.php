@@ -1,5 +1,6 @@
 @extends('layouts.admin')
 @section('title', 'Edit Voucher')
+@section('back_url', route('admin.vouchers.index'))
 @section('content')
 <div class="admin-form-card" style="max-width:700px;">
     <form method="POST" action="{{ route('admin.vouchers.update', $voucher) }}">

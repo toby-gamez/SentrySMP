@@ -13,16 +13,16 @@
         <thead><tr><th>Code</th><th>Discount</th><th>Scope</th><th>Uses</th><th>Expires</th><th>Active</th><th>Actions</th></tr></thead>
         <tbody>
             @foreach($items as $item)
-            <tr>
+            <tr class="admin-table-row-link" data-href="{{ route('admin.vouchers.edit', $item) }}">
                 <td style="font-family:monospace;font-weight:700;color:white;">{{ $item->Code }}</td>
                 <td>{{ $item->DiscountPercent }}%</td>
                 <td>{{ $item->Scope === 'Item' ? 'Product' : $item->Scope }}{{ $item->ScopeCategory ? ' · ' . $item->ScopeCategory : '' }}{{ $item->ScopeItemId ? ' #' . $item->ScopeItemId : '' }}</td>
                 <td>{{ $item->CurrentUses }}{{ $item->MaxUses ? ' / ' . $item->MaxUses : ' / ∞' }}</td>
-                <td style="color:#888;font-size:12px;">{{ $item->ExpirationDate?->format('Y-m-d') }}</td>
+                <td style="color:#888;font-size:12px;">{{ $item->ExpirationDate?->format('Y-m-d') ?? '—' }}</td>
                 <td>{!! $item->IsActive
                     ? '<span class="badge" style="background:#1e3a20;color:#6be895;">Active</span>'
                     : '<span class="badge" style="background:#2a1a1a;color:#ff6b7a;">Inactive</span>' !!}</td>
-                <td>
+                <td class="no-row-click">
                     <a href="{{ route('admin.vouchers.edit', $item) }}" class="btn-admin btn-admin-secondary"><i class="bi bi-pencil"></i></a>
                     <form method="POST" action="{{ route('admin.vouchers.destroy', $item) }}" style="display:inline;" onsubmit="return confirm('Delete voucher?')">
                         @csrf @method('DELETE')

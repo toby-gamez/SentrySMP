@@ -14,7 +14,7 @@
             <div style="font-size:28px;margin-bottom:10px;">💬</div>
             <h3 style="color:#fff;margin:0 0 8px;">Discord</h3>
             <p style="color:#888;font-size:13px;margin:0 0 14px;">Fastest response. Create a support ticket in our Discord server.</p>
-            <a href="#" style="display:inline-block;background:#5865f2;color:#fff;padding:8px 18px;border-radius:6px;font-weight:700;text-decoration:none;font-size:13px;">Open Discord</a>
+            <a href="#" style="display:inline-block;background:#5865f2;padding:8px 18px;border-radius:6px;font-weight:700;text-decoration:none;font-size:13px;">Open Discord</a>
         </div>
         <div style="background:#111;border:1px solid #222;border-radius:10px;padding:20px;">
             <div style="font-size:28px;margin-bottom:10px;">🛒</div>

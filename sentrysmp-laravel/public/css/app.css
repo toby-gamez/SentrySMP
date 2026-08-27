@@ -40,6 +40,10 @@ body {
     color: white;
 }
 
+a {
+    color: #dc3545;
+}
+
 .container p {
     padding-top: 10px;
     padding-bottom: 10px;
@@ -4700,13 +4704,15 @@ body.light .profile-stat-label {
     border: 1px solid #333;
     color: white;
     border-radius: 8px;
-    padding: 10px 12px;
+    padding: 8px 12px;
     width: 100%;
     font-size: 14px;
     font-family: inherit;
     margin: 0;
+}
+
+.form-group textarea {
     resize: vertical;
-    overflow: auto;
     min-height: 80px;
 }
 
@@ -4766,6 +4772,39 @@ body.light .profile-stat-label {
 .badge-executed  { background: rgba(25,135,84,0.15);  color: #6be895; }
 .badge-failed    { background: rgba(220,53,69,0.15);  color: #ff6b7a; }
 
+/* Clickable table rows */
+.admin-table-row-link { cursor: pointer; }
+.admin-table-row-link:hover td { background-color: rgba(255,255,255,0.05) !important; }
+
+/* Admin themed pagination */
+.admin-pagination {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #2a2a2a;
+}
+.admin-pagination a,
+.admin-pagination span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 34px;
+    padding: 0 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background .15s, color .15s;
+}
+.admin-pagination a { background: #2a2a2a; color: #ccc; }
+.admin-pagination a:hover { background: #383838; color: #fff; }
+.admin-pagination span.current { background: #dc3545; color: white; font-weight: 700; }
+.admin-pagination span.disabled { background: #1e1e1e; color: #444; pointer-events: none; }
+
 .admin-login-wrap {
     min-height: 100vh;
     display: flex;
@@ -4801,17 +4840,82 @@ body.light .profile-stat-label {
     margin-bottom: 24px;
 }
 
+/* Admin hamburger (mobile) */
+.admin-burger {
+    display: none;
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 200;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    color: #ccc;
+    font-size: 20px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background .2s, color .2s;
+    transform: none;
+}
+.admin-burger:hover { background: #2a2a2a; color: white; }
+
+/* Admin overlay (mobile) */
+.admin-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    z-index: 99;
+    cursor: pointer;
+}
+.admin-overlay.visible { display: block; }
+
+/* Alert close button */
+.admin-alert {
+    display: flex;
+    align-items: center;
+}
+.admin-alert-close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0 4px;
+    opacity: .7;
+    line-height: 1;
+    transform: none;
+    transition: opacity .15s;
+}
+.admin-alert-close:hover { opacity: 1; transform: none; background: none; }
+
+/* Stat card accent variants */
+.stat-card-green  { border-left: 3px solid #23d05e; }
+.stat-card-yellow { border-left: 3px solid #ffc107; }
+.stat-card-blue   { border-left: 3px solid #60a5fa; }
+.stat-card-green .stat-card-value  { color: #6be895; }
+.stat-card-blue  .stat-card-value  { color: #93c5fd; }
+
 @media (max-width: 768px) {
+    .admin-burger { display: flex; }
     .admin-sidebar {
         transform: translateX(-100%);
         transition: transform 0.3s ease;
+        z-index: 100;
     }
     .admin-sidebar.open {
         transform: translateX(0);
     }
     .admin-content {
         margin-left: 0;
+        padding-top: 64px;
     }
+    .admin-topbar { padding-top: 0; }
     .stat-cards-row {
         flex-direction: column;
     }

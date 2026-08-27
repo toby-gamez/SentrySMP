@@ -95,7 +95,7 @@
                      })()">
                     <span>
                         <small>PLAYING <span id="mc-players">—</span></small>
-                        <a href="{{ route('join') }}" title="How can I join?" style="color:inherit;text-decoration:none;">
+                        <a href="{{ route('join') }}" title="How can I join?" style="text-decoration:none;">
                             <i class="bi bi-info-circle"></i>
                         </a>
                     </span>
@@ -281,12 +281,10 @@
                 if (banner) banner.style.display = '';
                 return;
             }
-            if (data.players !== undefined && data.players !== null) {
-                document.getElementById('mc-players').textContent = data.players;
-                if (banner) banner.style.display = (data.players <= 5) ? '' : 'none';
-            } else {
-                if (banner) banner.style.display = '';
-            }
+            var fresh = data.player_fresh === true;
+            var count = fresh ? data.player_count : 0;
+            document.getElementById('mc-players').textContent = count;
+            if (banner) banner.style.display = fresh ? 'none' : '';
             if (data.discord_members !== undefined && data.discord_members !== null) {
                 document.getElementById('discord-count').textContent = data.discord_members;
             }

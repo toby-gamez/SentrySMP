@@ -17,10 +17,10 @@ class PaymentSettingsController extends Controller
     public function update(Request $request)
     {
         $data = [
-            'EnablePayments' => $request->boolean('EnablePayments'),
-            'DisableStripe'  => $request->boolean('DisableStripe'),
-            'DisablePayPal'  => $request->boolean('DisablePayPal'),
-            'UpdatedAt'      => now(),
+            'enable_payments' => $request->boolean('enable_payments'),
+            'disable_stripe'  => $request->boolean('disable_stripe'),
+            'disable_paypal'  => $request->boolean('disable_paypal'),
+            'updated_at'      => now(),
         ];
 
         $settings = PaymentSettings::first();

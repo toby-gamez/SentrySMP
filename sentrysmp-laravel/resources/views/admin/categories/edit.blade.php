@@ -1,5 +1,6 @@
 @extends('layouts.admin')
 @section('title', 'Edit Category')
+@section('back_url', route('admin.categories.index'))
 @section('content')
 <div class="admin-form-card">
     <form method="POST" action="{{ route('admin.categories.update', $category) }}">

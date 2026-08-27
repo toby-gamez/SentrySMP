@@ -226,6 +226,7 @@ function getItemsJson() {
 @if(!$settings->disable_paypal)
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof paypalSDK === 'undefined') return;
+    if (!document.getElementById('paypal-button-container')) return;
     paypalSDK.Buttons({
         createOrder: async function() {
             const username = getUsername();

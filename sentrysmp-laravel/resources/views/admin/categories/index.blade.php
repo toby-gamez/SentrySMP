@@ -20,8 +20,9 @@
         <thead><tr><th style="width:40px;"></th><th>Color</th><th>Image</th><th>Name</th><th>Slug</th><th>Products</th><th>Actions</th></tr></thead>
         <tbody>
             @foreach($items as $item)
-            <tr data-id="{{ $item->id }}" data-move-url="{{ route('admin.categories.move', $item) }}">
-                <td style="white-space:nowrap;padding-right:0;">
+            <tr data-id="{{ $item->id }}" data-move-url="{{ route('admin.categories.move', $item) }}"
+                class="admin-table-row-link" data-href="{{ route('admin.categories.edit', $item) }}">
+                <td style="white-space:nowrap;padding-right:0;" class="no-row-click">
                     <button class="sort-btn move-up" title="Move up" {{ $loop->first ? 'disabled' : '' }}><i class="bi bi-chevron-up"></i></button>
                     <button class="sort-btn move-down" style="margin-top:2px;" title="Move down" {{ $loop->last ? 'disabled' : '' }}><i class="bi bi-chevron-down"></i></button>
                 </td>
@@ -38,7 +39,7 @@
                 <td style="color:white;font-weight:600;">{{ $item->name }}</td>
                 <td style="color:#888;font-size:13px;">{{ $item->slug }}</td>
                 <td>{{ $item->products_count }}</td>
-                <td>
+                <td class="no-row-click">
                     <a href="{{ route('admin.categories.edit', $item) }}" class="btn-admin btn-admin-secondary"><i class="bi bi-pencil"></i></a>
                     <form method="POST" action="{{ route('admin.categories.destroy', $item) }}" style="display:inline;" onsubmit="return confirm('Delete this category and all its products?')">
                         @csrf @method('DELETE')

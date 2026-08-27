@@ -11,8 +11,8 @@
                 <p style="color:#888;font-size:12px;margin:4px 0 0;">Allow players to make purchases</p>
             </div>
             <label class="toggle-switch">
-                <input type="hidden" name="EnablePayments" value="0">
-                <input type="checkbox" name="EnablePayments" value="1" {{ $settings->EnablePayments ? 'checked' : '' }}>
+                <input type="hidden" name="enable_payments" value="0">
+                <input type="checkbox" name="enable_payments" value="1" {{ $settings->enable_payments ? 'checked' : '' }}>
                 <span class="toggle-slider"></span>
             </label>
         </div>
@@ -25,8 +25,8 @@
                 <p style="color:#888;font-size:12px;margin:4px 0 0;">Hide the PayPal checkout button</p>
             </div>
             <label class="toggle-switch">
-                <input type="hidden" name="DisablePayPal" value="0">
-                <input type="checkbox" name="DisablePayPal" value="1" {{ $settings->DisablePayPal ? 'checked' : '' }}>
+                <input type="hidden" name="disable_paypal" value="0">
+                <input type="checkbox" name="disable_paypal" value="1" {{ $settings->disable_paypal ? 'checked' : '' }}>
                 <span class="toggle-slider"></span>
             </label>
         </div>
@@ -37,8 +37,8 @@
                 <p style="color:#888;font-size:12px;margin:4px 0 0;">Hide the Stripe checkout button</p>
             </div>
             <label class="toggle-switch">
-                <input type="hidden" name="DisableStripe" value="0">
-                <input type="checkbox" name="DisableStripe" value="1" {{ $settings->DisableStripe ? 'checked' : '' }}>
+                <input type="hidden" name="disable_stripe" value="0">
+                <input type="checkbox" name="disable_stripe" value="1" {{ $settings->disable_stripe ? 'checked' : '' }}>
                 <span class="toggle-slider"></span>
             </label>
         </div>
@@ -47,7 +47,7 @@
             <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-save"></i> Save Settings</button>
         </div>
     </form>
-    <p style="color:#555;font-size:12px;margin-top:16px;">Last updated: {{ $settings->UpdatedAt?->format('Y-m-d H:i') ?? 'Never' }}</p>
+    <p style="color:#555;font-size:12px;margin-top:16px;">Last updated: {{ $settings->updated_at?->format('Y-m-d H:i') ?? 'Never' }}</p>
 </div>
 
 <style>

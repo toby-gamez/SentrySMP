@@ -36,8 +36,9 @@
         <thead><tr><th style="width:40px;"></th><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Sale</th><th>Max/User</th><th>Actions</th></tr></thead>
         <tbody>
             @foreach($items as $item)
-            <tr data-id="{{ $item->id }}" data-move-url="{{ route('admin.products.move', $item) }}">
-                <td style="white-space:nowrap;padding-right:0;">
+            <tr data-id="{{ $item->id }}" data-move-url="{{ route('admin.products.move', $item) }}"
+                class="admin-table-row-link" data-href="{{ route('admin.products.edit', $item) }}">
+                <td style="white-space:nowrap;padding-right:0;" class="no-row-click">
                     <button class="sort-btn move-up" title="Move up" {{ $loop->first ? 'disabled' : '' }}><i class="bi bi-chevron-up"></i></button>
                     <button class="sort-btn move-down" style="margin-top:2px;" title="Move down" {{ $loop->last ? 'disabled' : '' }}><i class="bi bi-chevron-down"></i></button>
                 </td>
@@ -64,7 +65,7 @@
                 <td>€{{ number_format($item->price, 2) }}</td>
                 <td>{{ $item->sale > 0 ? $item->sale . '%' : '—' }}</td>
                 <td>{{ $item->global_max_order ?? '∞' }}</td>
-                <td>
+                <td class="no-row-click">
                     <a href="{{ route('admin.products.edit', $item) }}" class="btn-admin btn-admin-secondary"><i class="bi bi-pencil"></i></a>
                     <form method="POST" action="{{ route('admin.products.destroy', $item) }}" style="display:inline;" onsubmit="return confirm('Delete this product?')">
                         @csrf @method('DELETE')

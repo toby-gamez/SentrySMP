@@ -17,4 +17,9 @@ return [
         'username' => env('ADMIN_USERNAME', 'admin'),
         'password' => env('ADMIN_PASSWORD', 'changeme'),
     ],
+    'discord' => [
+        'bot_token'  => env('DISCORD_BOT_TOKEN', ''),
+        'channel_id' => env('DISCORD_CHANNEL_ID', ''),
+        'guild_id'   => env('DISCORD_GUILD_ID', '1159130895190605854'),
+    ],
 ];
