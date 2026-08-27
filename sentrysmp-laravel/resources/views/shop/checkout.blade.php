@@ -71,17 +71,44 @@
             <div class="checkout-payment-section">
                 <div class="info">
                     <h3 style="margin:0 0 16px;color:white;">Your Details</h3>
-                    <label style="font-size:12px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:0.05em;">Minecraft Username</label>
-                    <input type="text" id="minecraft-username" placeholder="Enter your Minecraft username" style="margin:8px 0 16px;">
+
+                    {{-- Shown when logged in --}}
+                    <div id="user-logged-in" style="display:none;align-items:center;gap:12px;background:#1a1a1a;border-radius:10px;padding:12px 14px;margin-bottom:16px;">
+                        <img id="user-avatar" src="" alt="Avatar" style="width:40px;height:40px;border-radius:6px;image-rendering:pixelated;">
+                        <div>
+                            <div id="user-display-name" style="color:white;font-weight:700;font-size:15px;"></div>
+                            <a href="/login" style="font-size:11px;color:#666;">Not you? Switch account</a>
+                        </div>
+                    </div>
+
+                    {{-- Shown when not logged in --}}
+                    <div id="user-guest">
+                        <label style="font-size:12px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:0.05em;">Minecraft Edition</label>
+                        <div style="display:flex;gap:8px;margin:6px 0 12px;">
+                            <button type="button" id="edition-java" onclick="setEdition('java')" class="edition-btn edition-active">Java</button>
+                            <button type="button" id="edition-bedrock" onclick="setEdition('bedrock')" class="edition-btn">Bedrock</button>
+                        </div>
+                        <label style="font-size:12px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:0.05em;">Minecraft Username</label>
+                        <div style="position:relative;margin:8px 0 16px;">
+                            <span id="bedrock-prefix" style="display:none;position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#aaa;font-weight:700;pointer-events:none;font-size:15px;">.</span>
+                            <input type="text" id="minecraft-username" placeholder="Enter your Minecraft username" style="margin:0;width:100%;box-sizing:border-box;" oninput="onUsernameChange()">
+                        </div>
+                    </div>
+
+                    {{-- Hidden carrier so getUsername() always works --}}
+                    <input type="hidden" id="minecraft-username-hidden">
 
                     <h3 style="margin:0 0 16px;color:white;">Payment Method</h3>
 
                     @if(!$settings->disable_paypal)
-                        <div id="paypal-button-container" style="margin-bottom:16px;"></div>
+                        <div style="position:relative;margin-bottom:16px;">
+                            <div id="paypal-button-container"></div>
+                            <div id="paypal-blocker" style="position:absolute;inset:0;cursor:not-allowed;z-index:10;" title="Enter your Minecraft username first"></div>
+                        </div>
                     @endif
 
                     @if(!$settings->disable_stripe)
-                        <button onclick="stripeCheckout()" class="btn-checkout-pay stripe-btn" id="stripe-btn">
+                        <button onclick="stripeCheckout()" class="btn-checkout-pay stripe-btn" id="stripe-btn" disabled>
                             <i class="bi bi-stripe"></i> Pay with Stripe
                         </button>
                     @endif
@@ -111,7 +138,11 @@
 .btn-checkout-pay { width: 100%; background: #dc3545; color: white; border: none; border-radius: 10px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; transition: background 0.2s; }
 .btn-checkout-pay:hover { background: #c82333; transform: none; }
 .stripe-btn { background: #635bff; }
-.stripe-btn:hover { background: #4f44e0; }
+.stripe-btn:hover:not(:disabled) { background: #4f44e0; }
+.stripe-btn:disabled { background: #3a3a3a; cursor: not-allowed; opacity: 0.6; }
+.edition-btn { flex:1; padding: 8px 12px; border-radius: 8px; border: 1px solid #444; background: #1a1a1a; color: #aaa; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+.edition-btn:hover { border-color: #666; color: #ccc; }
+.edition-active { background: #dc3545; border-color: #dc3545; color: white; }
 </style>
 
 @push('head')
@@ -123,9 +154,39 @@
 @push('scripts')
 <script>
 let appliedVoucher = null;
+let selectedEdition = 'java';
+
+function setEdition(edition) {
+    selectedEdition = edition;
+    document.getElementById('edition-java').classList.toggle('edition-active', edition === 'java');
+    document.getElementById('edition-bedrock').classList.toggle('edition-active', edition === 'bedrock');
+    const prefix = document.getElementById('bedrock-prefix');
+    const input  = document.getElementById('minecraft-username');
+    if (edition === 'bedrock') {
+        prefix.style.display = 'block';
+        input.style.paddingLeft = '22px';
+    } else {
+        prefix.style.display = 'none';
+        input.style.paddingLeft = '';
+    }
+    onUsernameChange();
+}
 
 function getUsername() {
-    return document.getElementById('minecraft-username')?.value.trim() || '';
+    // When logged in the value lives in the hidden field (already includes . for Bedrock)
+    const hidden = document.getElementById('minecraft-username-hidden');
+    if (hidden && hidden.value) return hidden.value;
+    const raw = document.getElementById('minecraft-username')?.value.trim() || '';
+    if (!raw) return '';
+    return selectedEdition === 'bedrock' ? '.' + raw : raw;
+}
+
+function onUsernameChange() {
+    const hasUsername = getUsername().length > 0;
+    const stripeBtn = document.getElementById('stripe-btn');
+    const paypalBlocker = document.getElementById('paypal-blocker');
+    if (stripeBtn) stripeBtn.disabled = !hasUsername;
+    if (paypalBlocker) paypalBlocker.style.display = hasUsername ? 'none' : 'block';
 }
 
 function renderCheckoutCart() {
@@ -237,7 +298,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content },
                 body: JSON.stringify({
-                    amount: getPaymentAmount(),
                     username: username,
                     items_json: getItemsJson(),
                     voucher_code: document.getElementById('voucher-code').value.trim()
@@ -248,11 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return data.orderId;
         },
         onApprove: async function(data) {
-            const username = getUsername();
-            window.location.href = '/payment/paypal/return?token=' + encodeURIComponent(data.orderID)
-                + '&username=' + encodeURIComponent(username)
-                + '&items_json=' + encodeURIComponent(getItemsJson())
-                + '&voucher_code=' + encodeURIComponent(document.getElementById('voucher-code').value.trim());
+            window.location.href = '/payment/paypal/return?token=' + encodeURIComponent(data.orderID);
         },
         onError: function(err) { alert('PayPal error: ' + err); }
     }).render('#paypal-button-container');
@@ -272,7 +328,6 @@ async function stripeCheckout() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content },
             body: JSON.stringify({
-                amount: getPaymentAmount(),
                 username: username,
                 items_json: getItemsJson(),
                 voucher_code: document.getElementById('voucher-code').value.trim()
@@ -288,7 +343,28 @@ async function stripeCheckout() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', renderCheckoutCart);
+document.addEventListener('DOMContentLoaded', () => {
+    const stored  = localStorage.getItem('mc_username') || '';
+    const edition = localStorage.getItem('mc_edition') || 'java';
+
+    if (stored) {
+        const isBedrock   = stored.startsWith('.');
+        const displayName = isBedrock ? stored.substring(1) : stored;
+        const avatarSrc   = isBedrock
+            ? 'https://minotar.net/helm/MHF_Steve/40'
+            : 'https://minotar.net/helm/' + encodeURIComponent(displayName) + '/40';
+
+        document.getElementById('user-display-name').textContent = stored;
+        document.getElementById('user-avatar').src = avatarSrc;
+        document.getElementById('user-logged-in').style.display = 'flex';
+        document.getElementById('user-guest').style.display = 'none';
+        // Keep the . prefix for Bedrock so getUsername() sends the correct identifier
+        document.getElementById('minecraft-username-hidden').value = stored;
+    }
+
+    onUsernameChange();
+    renderCheckoutCart();
+});
 </script>
 @endpush
 @endsection

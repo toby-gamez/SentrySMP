@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Product;
 use App\Models\Voucher;
 use App\Models\VoucherUsage;
+use Illuminate\Support\Facades\DB;
 
 class VoucherService
 {
@@ -85,21 +86,36 @@ class VoucherService
         ];
     }
 
-    public function recordUsage(string $code, string $username): void
+    /**
+     * Record a voucher use, re-checking max_uses under a DB lock to prevent TOCTOU races (G8).
+     * Returns false if the voucher no longer has uses available.
+     */
+    public function recordUsage(string $code, string $username): bool
     {
-        $code    = strtoupper(trim($code));
-        $voucher = Voucher::where('code', $code)->first();
-        if (!$voucher) {
-            return;
-        }
+        $code = strtoupper(trim($code));
 
-        VoucherUsage::create([
-            'voucher_id'         => $voucher->id,
-            'minecraft_username' => $username,
-            'used_at'            => now(),
-        ]);
+        return DB::transaction(function () use ($code, $username) {
+            $voucher = Voucher::where('code', $code)->lockForUpdate()->first();
 
-        $voucher->increment('current_uses');
+            if (!$voucher) {
+                return false;
+            }
+
+            // Re-check under lock — another concurrent request may have consumed the last use
+            if ($voucher->max_uses !== null && $voucher->current_uses >= $voucher->max_uses) {
+                return false;
+            }
+
+            VoucherUsage::create([
+                'voucher_id'         => $voucher->id,
+                'minecraft_username' => $username,
+                'used_at'            => now(),
+            ]);
+
+            $voucher->increment('current_uses');
+
+            return true;
+        });
     }
 
     private function invalid(string $message): array

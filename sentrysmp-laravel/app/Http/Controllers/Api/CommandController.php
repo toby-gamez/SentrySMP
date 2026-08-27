@@ -6,25 +6,36 @@ use App\Http\Controllers\Controller;
 use App\Models\CommandQueue;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CommandController extends Controller
 {
     /**
-     * Return all pending commands and mark them as delivered.
+     * Return all pending commands and mark them as delivered atomically.
+     * lockForUpdate prevents two simultaneous polls from fetching the same batch (G12).
      */
     public function pending(): JsonResponse
     {
-        $commands = CommandQueue::where('status', 'pending')->orderBy('id')->get();
+        $commands = DB::transaction(function () {
+            $rows = CommandQueue::where('status', 'pending')
+                ->orderBy('id')
+                ->lockForUpdate()
+                ->get();
+
+            if ($rows->isNotEmpty()) {
+                CommandQueue::whereIn('id', $rows->pluck('id'))->update([
+                    'status'       => 'delivered',
+                    'delivered_at' => now(),
+                    'updated_at'   => now(),
+                ]);
+            }
+
+            return $rows;
+        });
 
         if ($commands->isEmpty()) {
             return response()->json(['commands' => [], 'count' => 0]);
         }
-
-        // Mark as delivered
-        CommandQueue::whereIn('id', $commands->pluck('id'))->update([
-            'status'     => 'delivered',
-            'updated_at' => now(),
-        ]);
 
         return response()->json([
             'commands' => $commands->map(fn($c) => [
@@ -37,7 +48,7 @@ class CommandController extends Controller
     }
 
     /**
-     * Acknowledge commands as executed.
+     * Acknowledge commands as executed by the game server.
      */
     public function acknowledge(Request $request): JsonResponse
     {

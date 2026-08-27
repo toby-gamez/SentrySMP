@@ -71,7 +71,7 @@
             nameEl.textContent = 'Minecraft Player';
         } else if (_edition === 'bedrock') {
             preview.src = 'https://minotar.net/helm/MHF_Steve/100';
-            nameEl.textContent = name;
+            nameEl.textContent = '.' + name;
         } else {
             preview.src = 'https://minotar.net/helm/' + encodeURIComponent(name) + '/100';
             nameEl.textContent = name;

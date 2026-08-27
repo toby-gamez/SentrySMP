@@ -9,7 +9,7 @@ class CommandQueue extends Model
 {
     protected $table = 'command_queue';
 
-    protected $fillable = ['transaction_id', 'player_name', 'command_text', 'status'];
+    protected $fillable = ['transaction_id', 'player_name', 'command_text', 'status', 'delivered_at'];
 
     public function transaction(): BelongsTo
     {

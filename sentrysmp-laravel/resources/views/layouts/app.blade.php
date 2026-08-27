@@ -234,8 +234,9 @@
     // Login bar — refresh based on localStorage state
     function refreshLoginBar() {
         var username = localStorage.getItem('mc_username') || '';
+        var isBedrock = username.startsWith('.');
         document.getElementById('login-name').textContent = username || 'Guest';
-        document.getElementById('login-skin').src = username
+        document.getElementById('login-skin').src = username && !isBedrock
             ? 'https://minotar.net/helm/' + encodeURIComponent(username) + '/100'
             : 'https://minotar.net/helm/MHF_Steve/100';
         document.getElementById('login-buttons-in').style.display  = username ? 'flex' : 'none';
