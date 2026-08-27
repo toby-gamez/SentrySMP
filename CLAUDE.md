@@ -9,9 +9,6 @@ SentrySMP is a Minecraft SMP shopping website built with Laravel 12. It allows p
 ## Commands
 
 ```bash
-# Run from sentrysmp-laravel/
-cd sentrysmp-laravel
-
 # Install PHP dependencies
 composer install
 
@@ -35,10 +32,10 @@ dotnet run --project SentrySMP.Images
 
 | Path | Type | Role |
 |---|---|---|
-| `sentrysmp-laravel/` | Laravel 12 App | Main shop + Admin panel + REST API |
+| `./` (repo root) | Laravel 12 App | Main shop + Admin panel + REST API |
 | `SentrySMP.Images/` | ASP.NET Web API | Standalone microservice for image storage and serving |
 
-### Laravel App Layout (`sentrysmp-laravel/`)
+### Laravel App Layout (repo root)
 
 ```
 app/

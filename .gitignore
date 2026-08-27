@@ -12,6 +12,7 @@ SentrySMP.Admin/appsettings.Development.json
 SentrySMP.App/appsettings.Development.json
 build/build-ftp-admin.json
 build/build-ftp.json
+build/build-ftp-laravel.json
 build/C:/*
 build/tools/*
 build/build-ftp-images.cake
@@ -20,14 +21,14 @@ build/C_/*
 SentrySMP.Images/appsettings.json
 
 # Laravel
-sentrysmp-laravel/.env
-sentrysmp-laravel/.env.*
-sentrysmp-laravel/vendor/
-sentrysmp-laravel/node_modules/
-sentrysmp-laravel/storage/logs/
-sentrysmp-laravel/storage/framework/cache/
-sentrysmp-laravel/storage/framework/sessions/
-sentrysmp-laravel/storage/framework/testing/
-sentrysmp-laravel/storage/framework/views/
-sentrysmp-laravel/.phpunit.result.cache
-sentrysmp-laravel/bootstrap/cache/*.php
+/.env
+/.env.*
+/vendor/
+/node_modules/
+storage/logs/
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/testing/
+storage/framework/views/
+.phpunit.result.cache
+bootstrap/cache/*.php
