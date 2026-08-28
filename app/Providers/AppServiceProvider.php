@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
                           ->orWhere('status', 'like', '%succeeded%')
                           ->orWhere('status', 'like', '%paid%');
                     })
-                    ->whereNotIn('minecraft_username', ['Taneq', 'webdev', '', '<unknown>'])
+                    ->whereNotIn('minecraft_username', ['Taneq', 'DebugPlayer', 'webdev', '', '<unknown>'])
                     ->where('minecraft_username', '!=', '')
                     ->where('minecraft_username', 'not like', '.%')
                     ->groupBy('minecraft_username')
