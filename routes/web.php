@@ -100,6 +100,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Payment settings
         Route::get('settings/payment', [Admin\PaymentSettingsController::class, 'index'])->name('settings.payment');
         Route::post('settings/payment', [Admin\PaymentSettingsController::class, 'update'])->name('settings.payment.update');
+        Route::post('settings/payment/reset-stats', [Admin\PaymentSettingsController::class, 'resetStats'])->name('settings.payment.reset-stats');
 
         // Images
         Route::get('images', [Admin\ImageController::class, 'index'])->name('images.index');

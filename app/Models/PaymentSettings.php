@@ -9,12 +9,13 @@ class PaymentSettings extends Model
     protected $table = 'payment_settings';
     public $timestamps = false;
 
-    protected $fillable = ['enable_payments', 'disable_stripe', 'disable_paypal', 'updated_at'];
+    protected $fillable = ['enable_payments', 'disable_stripe', 'disable_paypal', 'stats_reset_at', 'updated_at'];
 
     protected $casts = [
         'enable_payments' => 'boolean',
         'disable_stripe'  => 'boolean',
         'disable_paypal'  => 'boolean',
+        'stats_reset_at'  => 'datetime',
         'updated_at'      => 'datetime',
     ];
 

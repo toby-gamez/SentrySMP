@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ActivePlayer;
 use App\Models\Ban;
+use App\Models\PaymentSettings;
 use App\Models\PaymentTransaction;
 use App\Models\TeamCategory;
 use App\Models\TeamRank;
@@ -56,7 +57,8 @@ class PageController extends Controller
 
     public function scoreboard(Request $request)
     {
-        $period = $request->query('period', 'alltime');
+        $period  = $request->query('period', 'alltime');
+        $resetAt = PaymentSettings::current()->stats_reset_at;
         try {
             $query = PaymentTransaction::selectRaw('minecraft_username, SUM(amount) as total_paid, COUNT(*) as transaction_count, MAX(created_at) as last_payment')
                 ->where(function ($q) {
@@ -64,9 +66,13 @@ class PageController extends Controller
                       ->orWhere('status', 'like', '%succeeded%')
                       ->orWhere('status', 'like', '%paid%');
                 })
-                ->whereNotIn('minecraft_username', ['Taneq', 'webdev', '', '<unknown>'])
+                ->whereNotIn('minecraft_username', ['Taneq', 'DebugPlayer', 'webdev', '', '<unknown>'])
                 ->where('minecraft_username', '!=', '')
                 ->where('minecraft_username', 'not like', '.%');
+
+            if ($resetAt) {
+                $query->where('created_at', '>=', $resetAt);
+            }
 
             match ($period) {
                 'today' => $query->whereDate('created_at', now()->toDateString()),

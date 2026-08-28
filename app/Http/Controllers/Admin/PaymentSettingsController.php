@@ -32,4 +32,21 @@ class PaymentSettingsController extends Controller
 
         return back()->with('success', 'Payment settings saved.');
     }
+
+    public function resetStats()
+    {
+        $settings = PaymentSettings::first();
+        if ($settings) {
+            $settings->update(['stats_reset_at' => now()]);
+        } else {
+            PaymentSettings::create([
+                'enable_payments' => true,
+                'disable_stripe'  => false,
+                'disable_paypal'  => false,
+                'stats_reset_at'  => now(),
+            ]);
+        }
+
+        return back()->with('success', 'Revenue and scoreboard stats have been reset.');
+    }
 }

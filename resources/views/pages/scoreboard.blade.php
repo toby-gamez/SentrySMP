@@ -2,12 +2,41 @@
 @section('title', 'Scoreboard — SentrySMP')
 @section('content')
 
-<div class="btn-group mt-3" role="group">
+<div class="scoreboard-tabs mt-3">
     @foreach(['today' => 'Today', 'week' => 'This Week', 'month' => 'This Month', 'alltime' => 'All Time'] as $key => $label)
     <a href="{{ route('scoreboard', ['period' => $key]) }}"
-       class="btn btn-outline-primary {{ $period === $key ? 'active' : '' }}">{{ $label }}</a>
+       class="scoreboard-tab {{ $period === $key ? 'active' : '' }}">{{ $label }}</a>
     @endforeach
 </div>
+
+<style>
+.scoreboard-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.scoreboard-tab {
+    padding: 7px 18px;
+    border-radius: 6px;
+    border: 1px solid #2a2a2a;
+    background: #111;
+    color: #888;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background .15s, color .15s, border-color .15s;
+}
+.scoreboard-tab:hover {
+    background: #1a1a1a;
+    color: #ccc;
+    border-color: #444;
+}
+.scoreboard-tab.active {
+    background: #23d05e18;
+    color: #23d05e;
+    border-color: #23d05e55;
+}
+</style>
 
 @if($entries->isEmpty())
     <div class="alert alert-info mt-3">No payments yet.</div>

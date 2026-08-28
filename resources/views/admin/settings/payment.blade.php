@@ -74,6 +74,26 @@
     <p style="color:#555;font-size:12px;margin-top:16px;">Last updated: {{ $settings->updated_at?->format('Y-m-d H:i') ?? 'Never' }}</p>
 </div>
 
+<div class="admin-form-card" style="max-width:500px;margin-top:24px;border-color:#3b1f1f;">
+    <h3 style="color:#f87171;font-size:15px;margin:0 0 8px;">Reset Stats</h3>
+    <p style="color:#888;font-size:13px;margin:0 0 16px;">
+        Resets the displayed revenue total and clears the public scoreboard rankings.
+        Existing transactions are <strong style="color:#e2e8f0;">not deleted</strong> — only hidden from stats going forward.
+        @if($settings->stats_reset_at)
+            Last reset: <span style="color:#94a3b8;">{{ $settings->stats_reset_at->format('Y-m-d H:i') }}</span>
+        @else
+            Never reset.
+        @endif
+    </p>
+    <form method="POST" action="{{ route('admin.settings.payment.reset-stats') }}"
+          onsubmit="return confirm('Reset revenue and scoreboard stats? Transactions are kept, only the display resets.')">
+        @csrf
+        <button type="submit" class="btn-admin" style="background:#7f1d1d;color:#fca5a5;border:1px solid #991b1b;">
+            <i class="bi bi-arrow-counterclockwise"></i> Reset Revenue &amp; Scoreboard
+        </button>
+    </form>
+</div>
+
 <style>
 .toggle-switch {
     position: relative;
