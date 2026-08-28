@@ -35,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('navTopDonors', $navTopDonors);
 
             try {
-                $navCategories = Category::orderBy('name')->get();
+                $navCategories = Category::orderBy('sort_order')->get();
             } catch (\Throwable) {
                 $navCategories = collect();
             }
