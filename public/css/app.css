@@ -4368,56 +4368,124 @@ body.light .profile-stat-label {
     font-size: 20px;
 }
 
+.ban-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #666;
+}
+.ban-empty-icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #444;
+}
+.ban-count {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 1rem;
+}
 .ban-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-    .ban-item-header {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+.ban-item {
+    background-color: #1e1e1e;
+    border-radius: 10px;
+    border-left: 4px solid #c0392b;
+    padding: 0.85rem 1rem;
+    transition: background 0.15s;
+}
+.ban-item--inactive {
+    border-left-color: #444;
+    opacity: 0.7;
+}
+.ban-item-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+}
+.ban-avatar {
+    border-radius: 5px;
+    image-rendering: pixelated;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+}
+.ban-info {
+    flex: 1;
+    min-width: 0;
+}
+.ban-info-top {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.ban-name {
+    font-weight: 600;
+    font-size: 1rem;
+}
+.ban-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 20px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+.ban-badge--active {
+    background: rgba(192, 57, 43, 0.2);
+    color: #e05555;
+    border: 1px solid rgba(192, 57, 43, 0.4);
+}
+.ban-badge--inactive {
+    background: rgba(255,255,255,0.05);
+    color: #888;
+    border: 1px solid #333;
+}
+.ban-uuid {
+    font-size: 0.7rem;
+    font-family: monospace;
+    color: #555;
+    margin-top: 2px;
+}
+.ban-reason {
+    font-size: 0.875rem;
+    color: #e05555;
+    margin-top: 0.3rem;
+}
+.ban-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.45rem;
+}
+.ban-meta-item {
+    font-size: 0.78rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.ban-meta-item--expires {
+    color: #c8853a;
+}
+.ban-meta-item--permanent {
+    color: #555;
+}
 
-    .ban-item {
-        background-color: #242424;
-        border-radius: 10px;
-        padding: 0.75rem 1rem;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .ban-avatar {
-        border-radius: 4px;
-        image-rendering: pixelated;
-    }
-
-    .ban-name {
-        font-weight: 600;
-        font-size: 1rem;
-    }
-
-    .ban-reason {
-        font-size: 0.9rem;
-        color: #e05555;
-        margin-top: 0.15rem;
-    }
-
-    .ban-uuid {
-        font-size: 0.75rem;
-        margin-top: 0.15rem;
-        font-family: monospace;
-        opacity: 0.6;
-    }
-
-        body.light .ban-item {
-        background-color: #f0f0f0;
-        }
+body.light .ban-item        { background-color: #f4f4f4; }
+body.light .ban-item--inactive { opacity: 0.6; }
+body.light .ban-uuid        { color: #aaa; }
+body.light .ban-meta-item   { color: #999; }
+body.light .ban-count       { color: #999; }
+body.light .ban-empty       { color: #999; }
+body.light .ban-empty-icon  { color: #bbb; }
+body.light .ban-badge--inactive { background: rgba(0,0,0,0.05); color: #aaa; border-color: #ddd; }
 
 /* ═══════════════════════════════════════════════
    ADMIN STYLES

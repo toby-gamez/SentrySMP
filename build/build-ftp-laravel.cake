@@ -1,4 +1,4 @@
-#addin nuget:?package=FluentFTP&version=34.0.0
+#addin nuget:?package=FluentFTP&version=50.0.0
 #addin nuget:?package=Newtonsoft.Json&version=13.0.1
 
 using FluentFTP;
@@ -23,20 +23,25 @@ var config = JsonConvert.DeserializeObject<Config>(configJson);
 config.SourceDirectory = MakeAbsolute(Directory(config.SourceDirectory)).FullPath;
 
 // Whitelist: only these top-level paths from the Laravel app are staged and uploaded.
+// vendor/ is excluded here — composer install generates it fresh in staging.
 var includedTopLevelPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 {
     "app", "artisan", "bootstrap", "composer.json", "composer.lock",
-    "config", "database", "public", "resources", "routes", "storage", "vendor"
+    "config", "database", "public", "resources", "routes", "storage"
 };
 
 var excludedRelativePaths = new[]
 {
-    "storage/logs",
     "storage/framework/cache",
     "storage/framework/sessions",
     "storage/framework/testing",
     "storage/framework/views",
     "bootstrap/cache",
+};
+
+var excludedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+{
+    ".log", ".cache"
 };
 
 var excludedFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -75,6 +80,10 @@ Task("PrepareFiles")
             if (excludedFileNames.Contains(fileName))
                 continue;
 
+            var ext = System.IO.Path.GetExtension(file);
+            if (excludedFileExtensions.Contains(ext))
+                continue;
+
             var destFile = System.IO.Path.Combine(config.StagingDirectory, relativePath);
             var destDir = System.IO.Path.GetDirectoryName(destFile);
             System.IO.Directory.CreateDirectory(destDir);
@@ -83,6 +92,27 @@ Task("PrepareFiles")
         }
 
         LogInformation($"Copied {copied} files to staging.");
+
+        // Required by composer post-install scripts (package:discover)
+        System.IO.Directory.CreateDirectory(System.IO.Path.Combine(config.StagingDirectory, "bootstrap", "cache"));
+
+        // Laravel requires these directories to exist on the server (they are gitignored).
+        // A .gitkeep ensures FTP uploads them as non-empty entries.
+        var requiredDirs = new[]
+        {
+            "storage/app/public",
+            "storage/framework/cache/data",
+            "storage/framework/sessions",
+            "storage/framework/testing",
+            "storage/framework/views",
+            "storage/logs",
+        };
+        foreach (var dir in requiredDirs)
+        {
+            var path = System.IO.Path.Combine(config.StagingDirectory, dir.Replace("/", System.IO.Path.DirectorySeparatorChar.ToString()));
+            System.IO.Directory.CreateDirectory(path);
+            System.IO.File.WriteAllText(System.IO.Path.Combine(path, ".gitkeep"), "");
+        }
 
         LogInformation("Running composer install --no-dev --optimize-autoloader...");
         var exitCode = StartProcess("composer", new ProcessSettings
@@ -95,145 +125,122 @@ Task("PrepareFiles")
             throw new Exception($"composer install failed with exit code {exitCode}");
 
         LogInformation("composer install completed.");
+
+        // Place maintenance file in staging so it is synced first and activates maintenance mode.
+        var maintenanceDir = System.IO.Path.Combine(config.StagingDirectory, "storage", "framework");
+        System.IO.Directory.CreateDirectory(maintenanceDir);
+        System.IO.File.WriteAllText(
+            System.IO.Path.Combine(maintenanceDir, "maintenance.php"),
+            "<?php return ['except'=>[],'redirect'=>null,'retry'=>null,'refresh'=>null,'secret'=>null,'status'=>503,'template'=>null];"
+        );
     });
 
-Task("UploadMaintenanceFile")
+Task("Sync")
     .IsDependentOn("PrepareFiles")
     .Does(async () =>
     {
         if (string.IsNullOrEmpty(config.FtpPassword))
             throw new ArgumentException("FTP password must be provided in the config file.");
 
-        var maintenanceContent = @"<?php return array (
-  'except' => [],
-  'redirect' => null,
-  'retry' => null,
-  'refresh' => null,
-  'secret' => null,
-  'status' => 503,
-  'template' => null,
-);";
-        var localMaintenancePath = System.IO.Path.Combine(config.StagingDirectory, "maintenance-mode.php");
-        System.IO.File.WriteAllText(localMaintenancePath, maintenanceContent);
+        // Hash-based manifest persisted next to the config file so it survives between runs.
+        // Timestamp comparison is unreliable because staging is always recreated fresh (files
+        // get "now" as their LastWriteTime), so every file would look newer than the remote.
+        var manifestPath = "./build-ftp-laravel.manifest.json";
+        var manifest = System.IO.File.Exists(manifestPath)
+            ? JsonConvert.DeserializeObject<Dictionary<string, string>>(System.IO.File.ReadAllText(manifestPath)) ?? new()
+            : new Dictionary<string, string>();
 
-        using var client = new FtpClient(config.FtpHost, new NetworkCredential(config.FtpUsername, config.FtpPassword));
-        await client.ConnectAsync();
-
-        var remotePath = config.FtpRemoteDirectory + "/storage/framework/maintenance.php";
-        await client.CreateDirectoryAsync(config.FtpRemoteDirectory + "/storage/framework");
-        var result = await client.UploadFileAsync(localMaintenancePath, remotePath);
-        if (result != FtpStatus.Success)
-            throw new Exception("Failed to upload maintenance file.");
-
-        System.IO.File.Delete(localMaintenancePath);
-        LogInformation("Maintenance mode enabled on server.");
-    });
-
-Task("CleanRemote")
-    .IsDependentOn("UploadMaintenanceFile")
-    .Does(async () =>
-    {
-        if (string.IsNullOrEmpty(config.FtpPassword))
-            throw new ArgumentException("FTP password must be provided in the config file.");
-
-        var remoteLower = config.FtpRemoteDirectory.ToLowerInvariant();
-        if (!remoteLower.Contains("public_html") && !remoteLower.Contains("www") &&
-            !remoteLower.Contains("htdocs") && !remoteLower.Contains("site"))
-        {
-            throw new InvalidOperationException("Remote directory path seems unsafe to clean. Please double-check.");
-        }
-
-        using var client = new FluentFTP.FtpClient(config.FtpHost, new NetworkCredential(config.FtpUsername, config.FtpPassword));
-        await client.ConnectAsync();
+        using var client = new AsyncFtpClient(config.FtpHost, config.FtpUsername, config.FtpPassword);
+        await client.Connect();
         LogInformation($"Connected to FTP server {config.FtpHost}");
-        LogInformation($"Cleaning remote directory: {config.FtpRemoteDirectory}");
+        LogInformation($"Syncing {config.StagingDirectory} → {config.FtpRemoteDirectory}");
+        LogInformation("Skipping unchanged files (hash-based delta-sync). First deploy will upload everything.");
 
-        var remoteItems = await client.GetListingAsync(config.FtpRemoteDirectory, FluentFTP.FtpListOption.Recursive);
+        LogInformation("Fetching remote file listing...");
+        var remoteListing = await client.GetListing(config.FtpRemoteDirectory, FtpListOption.Recursive);
+        var remoteFilePaths = remoteListing
+            .Where(i => i.Type == FtpObjectType.File)
+            .Select(i => i.FullName)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        foreach (var item in remoteItems.OrderByDescending(i => i.FullName))
+        var localFiles = System.IO.Directory.GetFiles(config.StagingDirectory, "*", System.IO.SearchOption.AllDirectories);
+        var localRemotePaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        int uploaded = 0, skipped = 0, failed = 0;
+        int total = localFiles.Length;
+        int processed = 0;
+
+        foreach (var localFile in localFiles)
         {
-            try
+            var rel = localFile.Substring(config.StagingDirectory.Length).TrimStart(System.IO.Path.DirectorySeparatorChar, '/').Replace("\\", "/");
+            var remotePath = config.FtpRemoteDirectory.TrimEnd('/') + "/" + rel;
+            localRemotePaths.Add(remotePath);
+
+            var hash = ComputeFileMd5(localFile);
+            var existsOnRemote = remoteFilePaths.Contains(remotePath);
+
+            if (existsOnRemote && manifest.TryGetValue(rel, out var cachedHash) && cachedHash == hash)
             {
-                if (item.Type.ToString().ToLowerInvariant().Contains("file"))
+                skipped++;
+            }
+            else
+            {
+                try
                 {
-                    await client.DeleteFileAsync(item.FullName);
-                    LogInformation($"Deleted file: {item.FullName}");
+                    await client.UploadFile(localFile, remotePath, FtpRemoteExists.Overwrite, true);
+                    manifest[rel] = hash;
+                    LogInformation($"Uploaded: {rel}");
+                    uploaded++;
                 }
-                else if (item.Type.ToString().ToLowerInvariant().Contains("dir"))
+                catch (Exception ex)
                 {
-                    await client.DeleteDirectoryAsync(item.FullName);
-                    LogInformation($"Deleted directory: {item.FullName}");
+                    LogError($"Failed: {rel} — {ex.Message}");
+                    failed++;
                 }
             }
-            catch (Exception ex)
-            {
-                LogError($"Failed to delete {item.FullName}: {ex.Message}");
-            }
+
+            processed++;
+            UpdateProgressBar(total, processed);
         }
 
-        LogInformation("Remote directory cleaned.");
-    });
-
-Task("UploadToFTP")
-    .IsDependentOn("CleanRemote")
-    .Does(async () =>
-    {
-        if (string.IsNullOrEmpty(config.FtpPassword))
-            throw new ArgumentException("FTP password must be provided in the config file.");
-
-        using var client = new FtpClient(config.FtpHost, new NetworkCredential(config.FtpUsername, config.FtpPassword));
-        await client.ConnectAsync();
-        LogInformation($"Connected to FTP server {config.FtpHost}");
-
-        var files = System.IO.Directory.GetFiles(config.StagingDirectory, "*", System.IO.SearchOption.AllDirectories);
-        int totalFiles = files.Length;
-        int filesUploaded = 0;
-        LogInformation($"Total files to upload: {totalFiles}");
-
-        foreach (var file in files)
+        // Files that live only on the server and must never be deleted by the sync.
+        var neverDelete = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            var relativePath = file.Substring(config.StagingDirectory.Length).TrimStart(System.IO.Path.DirectorySeparatorChar, '/');
-            var remotePath = config.FtpRemoteDirectory + "/" + relativePath.Replace("\\", "/");
-            var remoteDirectory = System.IO.Path.GetDirectoryName(remotePath).Replace("\\", "/");
+            ".env", ".env.production", ".env.local", "web.config"
+        };
 
-            await client.CreateDirectoryAsync(remoteDirectory);
+        // Mirror: delete remote files not present in staging
+        int deleted = 0;
+        foreach (var remoteFile in remoteListing.Where(i => i.Type == FtpObjectType.File))
+        {
+            var fileName = System.IO.Path.GetFileName(remoteFile.FullName);
+            if (neverDelete.Contains(fileName))
+                continue;
 
-            if (await client.FileExistsAsync(remotePath))
-                await client.DeleteFileAsync(remotePath);
-
-            try
+            if (!localRemotePaths.Contains(remoteFile.FullName))
             {
-                var uploadResult = await client.UploadFileAsync(file, remotePath);
-                if (uploadResult != FtpStatus.Success)
-                    throw new Exception($"Upload returned non-success status for {file}");
-
-                LogInformation($"Uploaded: {relativePath.Replace("\\", "/")}");
+                await client.DeleteFile(remoteFile.FullName);
+                var relDeleted = remoteFile.FullName.Substring(config.FtpRemoteDirectory.Length).TrimStart('/');
+                manifest.Remove(relDeleted);
+                LogInformation($"Deleted: {remoteFile.FullName}");
+                deleted++;
             }
-            catch (Exception ex)
-            {
-                LogError($"Error uploading {file}: {ex.Message}");
-                if (ex.InnerException != null)
-                    LogError($"Inner Exception: {ex.InnerException.Message}");
-            }
-
-            filesUploaded++;
-            UpdateProgressBar(totalFiles, filesUploaded);
         }
 
-        LogInformation($"Upload complete. {filesUploaded}/{totalFiles} files uploaded.");
+        System.IO.File.WriteAllText(manifestPath, JsonConvert.SerializeObject(manifest, Formatting.Indented));
+        LogInformation($"Sync complete — uploaded: {uploaded}, skipped: {skipped}, deleted: {deleted}, failed: {failed}");
     });
 
 Task("RemoveMaintenanceFile")
-    .IsDependentOn("UploadToFTP")
+    .IsDependentOn("Sync")
     .Does(async () =>
     {
-        using var client = new FtpClient(config.FtpHost, new NetworkCredential(config.FtpUsername, config.FtpPassword));
-        await client.ConnectAsync();
+        using var client = new AsyncFtpClient(config.FtpHost, config.FtpUsername, config.FtpPassword);
+        await client.Connect();
 
         var remotePath = config.FtpRemoteDirectory + "/storage/framework/maintenance.php";
-        if (await client.FileExistsAsync(remotePath))
+        if (await client.FileExists(remotePath))
         {
-            await client.DeleteFileAsync(remotePath);
+            await client.DeleteFile(remotePath);
             LogInformation("Maintenance mode disabled. Site is back online.");
         }
     });
@@ -256,31 +263,34 @@ RunTarget("Default");
 
 void UpdateProgressBar(int total, int current)
 {
-    int progressBarWidth = 50;
-    int progress = (int)((double)current / total * progressBarWidth);
-    string progressBar = "[" + new string('#', progress) + new string(' ', progressBarWidth - progress) + $"] {current}/{total}";
-    ClearConsoleLine();
-    Console.Write(progressBar);
-    Console.SetCursorPosition(0, Console.CursorTop);
-}
-
-void ClearConsoleLine()
-{
+    int width = 50;
+    int progress = total == 0 ? 0 : (int)((double)current / total * width);
+    string bar = "[" + new string('#', progress) + new string(' ', width - progress) + $"] {current}/{total}";
     Console.SetCursorPosition(0, Console.CursorTop);
     Console.Write(new string(' ', Console.WindowWidth));
     Console.SetCursorPosition(0, Console.CursorTop);
+    Console.Write(bar);
 }
 
 void LogInformation(string message)
 {
-    ClearConsoleLine();
+    Console.SetCursorPosition(0, Console.CursorTop);
+    Console.Write(new string(' ', Console.WindowWidth));
+    Console.SetCursorPosition(0, Console.CursorTop);
     Console.WriteLine(message);
-    UpdateProgressBar(1, 0);
 }
 
 void LogError(string message)
 {
-    ClearConsoleLine();
-    Console.WriteLine(message);
-    UpdateProgressBar(1, 0);
+    Console.SetCursorPosition(0, Console.CursorTop);
+    Console.Write(new string(' ', Console.WindowWidth));
+    Console.SetCursorPosition(0, Console.CursorTop);
+    Console.WriteLine($"ERROR: {message}");
+}
+
+string ComputeFileMd5(string filePath)
+{
+    using var md5 = System.Security.Cryptography.MD5.Create();
+    using var stream = System.IO.File.OpenRead(filePath);
+    return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLowerInvariant();
 }

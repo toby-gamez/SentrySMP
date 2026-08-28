@@ -32,3 +32,4 @@ storage/framework/testing/
 storage/framework/views/
 .phpunit.result.cache
 bootstrap/cache/*.php
+build/build-ftp-laravel.manifest.json

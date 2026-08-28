@@ -4,6 +4,23 @@
 
 @if(isset($username) && $username)
 
+<button class="secondary" onclick="history.length > 1 ? history.back() : window.location='{{ route('active-players') }}'" style="margin-bottom:16px;">
+    <i class="bi bi-arrow-left"></i> Back
+</button>
+
+@php
+    $ap = $activePlayer ?? null;
+    $cleanRank = $ap?->rank ? trim(preg_replace('/&[0-9a-fk-or]/i', '', $ap->rank)) : null;
+    $purchaseCount = $transactions->filter(fn($t) =>
+        $t->amount > 0 && $t->status &&
+        (stripos($t->status, 'captured') !== false || stripos($t->status, 'succeeded') !== false || stripos($t->status, 'paid') !== false)
+    )->count();
+    $totalSpent = $transactions->filter(fn($t) =>
+        $t->amount > 0 && $t->status &&
+        (stripos($t->status, 'captured') !== false || stripos($t->status, 'succeeded') !== false || stripos($t->status, 'paid') !== false)
+    )->sum('amount');
+@endphp
+
 <div class="login-card profile-card">
     <div class="login-card-inner">
         <div class="login-skin-panel">
@@ -11,28 +28,68 @@
                  alt="{{ $username }}"
                  onerror="this.src='https://minotar.net/helm/MHF_Steve/100'">
             <div class="login-skin-name">{{ $username }}</div>
-            <div class="login-skin-badge">Player</div>
-        </div>
-        <div class="login-form-panel">
-            @if(isset($transactions) && $transactions->isNotEmpty())
-            <div class="profile-stats">
-                <div class="profile-stat-item">
-                    <span class="profile-stat-label"><i class="bi bi-receipt"></i> Purchases</span>
-                    <span class="profile-stat-value">{{ $transactions->count() }}</span>
-                </div>
-                <div class="profile-stat-item">
-                    <span class="profile-stat-label"><i class="bi bi-currency-euro"></i> Total Spent</span>
-                    <span class="profile-stat-value">€{{ number_format($transactions->sum('Amount'), 2) }}</span>
-                </div>
-            </div>
+            @if($cleanRank)
+                <span class="role-badge badge" style="background-color:{{ $rankHex ?? '#666' }};">{{ $cleanRank }}</span>
             @else
-            <p style="color:#9e9e9e;margin:0;">No purchases found for this player.</p>
+                <div class="login-skin-badge">Player</div>
             @endif
+        </div>
+
+        <div class="login-form-panel">
+            <div class="profile-stats">
+                @if($ap && !$ap->error)
+                    <div class="profile-stat-item">
+                        <span class="profile-stat-label"><i class="bi bi-coin"></i> Coins</span>
+                        <span class="profile-stat-value">{{ number_format($ap->coins) }}</span>
+                    </div>
+                    <div class="profile-stat-item">
+                        <span class="profile-stat-label"><i class="bi bi-currency-dollar"></i> Money</span>
+                        <span class="profile-stat-value">${{ number_format($ap->money, 2) }}</span>
+                    </div>
+                @endif
+
+                @if($purchaseCount > 0)
+                    <div class="profile-stat-item">
+                        <span class="profile-stat-label"><i class="bi bi-receipt"></i> Purchases</span>
+                        <span class="profile-stat-value">{{ $purchaseCount }}</span>
+                    </div>
+                    <div class="profile-stat-item">
+                        <span class="profile-stat-label"><i class="bi bi-currency-euro"></i> Total Spent</span>
+                        <span class="profile-stat-value">€{{ number_format($totalSpent, 2) }}</span>
+                    </div>
+                @endif
+
+                @if($ap && !$ap->error)
+                    @php
+                        $h = intdiv($ap->play_time_seconds, 3600);
+                        $m = intdiv($ap->play_time_seconds % 3600, 60);
+                        $playTimeStr = ($h > 0 ? "{$h}h " : '') . ($m > 0 ? "{$m}m" : ($h === 0 ? '0m' : ''));
+                    @endphp
+                    <div class="profile-stat-item">
+                        <span class="profile-stat-label"><i class="bi bi-clock"></i> Play time</span>
+                        <span class="profile-stat-value">{{ trim($playTimeStr) ?: '0m' }}</span>
+                    </div>
+                    <div class="profile-stat-item">
+                        <span class="profile-stat-label"><i class="bi bi-emoji-dizzy"></i> Deaths</span>
+                        <span class="profile-stat-value">{{ number_format($ap->deaths) }}</span>
+                    </div>
+                    <div class="profile-stat-item">
+                        <span class="profile-stat-label"><i class="bi bi-crosshair"></i> Player kills</span>
+                        <span class="profile-stat-value">{{ number_format($ap->player_kills) }}</span>
+                    </div>
+                    <div class="profile-stat-item">
+                        <span class="profile-stat-label"><i class="bi bi-geo-alt"></i> Blocks travelled</span>
+                        <span class="profile-stat-value">{{ number_format($ap->blocks_travelled) }}</span>
+                    </div>
+                @elseif(!$ap && $purchaseCount === 0)
+                    <p style="color:#9e9e9e;margin:0;">No data found for this player.</p>
+                @endif
+            </div>
         </div>
     </div>
 </div>
 
-@if(isset($transactions) && $transactions->isNotEmpty())
+@if($transactions->isNotEmpty())
 <h2 class="mt-4">Purchase history</h2>
 <div class="table-wrapper" style="margin-top:12px;">
     <table class="table table-sm table-striped">

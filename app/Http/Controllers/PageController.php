@@ -6,6 +6,7 @@ use App\Models\ActivePlayer;
 use App\Models\Ban;
 use App\Models\PaymentTransaction;
 use App\Models\TeamCategory;
+use App\Models\TeamRank;
 use App\Services\DiscordService;
 use Illuminate\Http\Request;
 
@@ -22,8 +23,9 @@ class PageController extends Controller
     public function voteForUs() { return view('pages.vote-for-us'); }
     public function activePlayers()
     {
-        $players = ActivePlayer::orderBy('username')->pluck('username');
-        return view('pages.active-players', compact('players'));
+        $players = ActivePlayer::orderBy('username')->get();
+        $rankColors = TeamRank::all()->keyBy(fn($r) => strtolower($r->Name))->map(fn($r) => $r->HexColor);
+        return view('pages.active-players', compact('players', 'rankColors'));
     }
 
     public function banList()
@@ -87,6 +89,8 @@ class PageController extends Controller
     {
         $username     = $request->query('username', '');
         $transactions = collect();
+        $activePlayer = null;
+        $rankHex      = null;
 
         if ($username) {
             try {
@@ -95,8 +99,17 @@ class PageController extends Controller
                     ->limit(50)
                     ->get();
             } catch (\Throwable) {}
+
+            try {
+                $activePlayer = ActivePlayer::whereRaw('LOWER(username) = ?', [strtolower($username)])->first();
+                if ($activePlayer?->rank) {
+                    $cleanRank = strtolower(trim(preg_replace('/&[0-9a-fk-or]/i', '', $activePlayer->rank)));
+                    $rank = TeamRank::whereRaw('LOWER(Name) = ?', [$cleanRank])->first();
+                    $rankHex = $rank?->HexColor;
+                }
+            } catch (\Throwable) {}
         }
 
-        return view('pages.profile', compact('username', 'transactions'));
+        return view('pages.profile', compact('username', 'transactions', 'activePlayer', 'rankHex'));
     }
 }

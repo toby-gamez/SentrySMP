@@ -16,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth.admin' => \App\Http\Middleware\AdminAuthentication::class,
             'auth.api'   => \App\Http\Middleware\ApiKeyAuthentication::class,
         ]);
+        $middleware->api(prepend: [
+            \App\Http\Middleware\ForceJsonResponse::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

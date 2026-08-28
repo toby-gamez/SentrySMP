@@ -9,7 +9,7 @@
             SentrySMP is a survival multiplayer server with an economy and crossplay support.
             Whether you enjoy building, exploring, or competing, there is something for everyone.
         </p>
-        <a href="{{ route('join') }}" class="great-button">Join now</a>
+        <button class="great-button" onclick="window.location='{{ route('join') }}'">Join now</button>
     </div>
 
     <div class="about-features">

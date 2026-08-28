@@ -15,7 +15,15 @@ class BanListController extends Controller
      * Expects:
      * {
      *   "bans": [
-     *     { "player": "Steve", "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "reason": "Griefing" },
+     *     {
+     *       "player":    "Steve",
+     *       "uuid":      "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+     *       "reason":    "Griefing",
+     *       "banner":    "Admin",
+     *       "active":    true,
+     *       "bannedAgo": "1 hour ago",
+     *       "expiresAt": "7 days"
+     *     },
      *     ...
      *   ]
      * }
@@ -23,10 +31,14 @@ class BanListController extends Controller
     public function update(Request $request): JsonResponse
     {
         $request->validate([
-            'bans'          => 'required|array|max:5000',
-            'bans.*.player' => 'required|string|max:64',
-            'bans.*.uuid'   => 'nullable|string|max:36',
-            'bans.*.reason' => 'nullable|string|max:512',
+            'bans'              => 'present|array|max:5000',
+            'bans.*.player'     => 'required|string|max:64',
+            'bans.*.uuid'       => 'nullable|string|max:36',
+            'bans.*.banner'     => 'nullable|string|max:64',
+            'bans.*.reason'     => 'nullable|string|max:2048',
+            'bans.*.active'     => 'nullable|boolean',
+            'bans.*.bannedAgo'  => 'nullable|string|max:64',
+            'bans.*.expiresAt'  => 'nullable|string|max:64',
         ]);
 
         $now = now();
@@ -37,7 +49,11 @@ class BanListController extends Controller
             $rows = array_map(fn(array $b) => [
                 'player'     => $b['player'],
                 'uuid'       => $b['uuid'] ?? null,
+                'banner'     => $b['banner'] ?? null,
                 'reason'     => $b['reason'] ?? null,
+                'active'     => $b['active'] ?? true,
+                'banned_ago' => $b['bannedAgo'] ?? null,
+                'expires_at' => $b['expiresAt'] ?? null,
                 'created_at' => $now,
                 'updated_at' => $now,
             ], $request->bans);
