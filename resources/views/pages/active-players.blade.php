@@ -1,5 +1,11 @@
 @extends('layouts.app')
 @section('title', 'Active Players — SentrySMP')
+@push('head')
+<style>
+.player-item:hover { background:#2a2a2a; }
+</style>
+@endpush
+
 @section('content')
 <div class="main-wrapper">
 <p class="main">Active Players</p>
@@ -18,21 +24,23 @@
         <ul class="ban-list">
             @foreach($players as $player)
             @php
-                $cleanRank = $player->rank ? trim(stripMcFormat($player->rank)) : null;
-                $rankHex   = $cleanRank ? ($rankColors->get(strtolower($cleanRank), null)) : null;
+                $cleanRank  = $player->rank ? trim(stripMcFormat($player->rank)) : null;
+                $rankHex    = $cleanRank ? ($rankColors->get(strtolower($cleanRank), null)) : null;
                 $profileUrl = route('profile', ['username' => $player->username]);
             @endphp
-            <li class="ban-item" style="cursor:pointer;" onclick="window.location='{{ $profileUrl }}'">
-                <div class="ban-item-header">
-                    <img src="https://minotar.net/helm/{{ urlencode($player->username) }}/32"
+            <li class="ban-item player-item" style="border-left:none;cursor:pointer;" onclick="window.location='{{ $profileUrl }}'">
+                <div class="ban-item-body" style="align-items:center;">
+                    <img src="https://minotar.net/helm/{{ urlencode($player->username) }}/48"
                          alt="{{ $player->username }}"
                          class="ban-avatar"
-                         onerror="this.src='https://minotar.net/helm/MHF_Steve/32'">
-                    <div>
-                        @if($cleanRank)
-                            <span class="role-badge badge" style="background-color:{{ $rankHex ?? '#666' }};">{{ $cleanRank }}</span>
-                        @endif
-                        <span class="ban-name">{{ $player->username }}</span>
+                         onerror="this.src='https://minotar.net/helm/MHF_Steve/48'">
+                    <div class="ban-info">
+                        <div class="ban-info-top">
+                            @if($cleanRank)
+                                <span style="background:{{ $rankHex ?? '#444' }};color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75em;"><strong>{{ $cleanRank }}</strong></span>
+                            @endif
+                            <span class="ban-name">{{ $player->username }}</span>
+                        </div>
                     </div>
                 </div>
             </li>

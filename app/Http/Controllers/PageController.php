@@ -30,7 +30,7 @@ class PageController extends Controller
 
     public function banList()
     {
-        $bans = Ban::orderBy('player')->get();
+        $bans = Ban::where('active', true)->orderBy('player')->get();
         return view('pages.banlist', compact('bans'));
     }
     public function support() { return view('pages.support'); }

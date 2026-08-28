@@ -16,9 +16,12 @@ return new class extends Migration {
                 AND pt.id > pt2.id
         ');
 
-        Schema::table('payment_transactions', function (Blueprint $table) {
-            $table->unique('provider_transaction_id');
-        });
+        $indexExists = collect(DB::select("SHOW INDEX FROM payment_transactions WHERE Key_name = 'payment_transactions_provider_transaction_id_unique'"))->isNotEmpty();
+        if (!$indexExists) {
+            Schema::table('payment_transactions', function (Blueprint $table) {
+                $table->unique('provider_transaction_id');
+            });
+        }
 
         // G7: track when commands were dispatched to the game server so stale
         //     "delivered" rows can be detected and re-queued
