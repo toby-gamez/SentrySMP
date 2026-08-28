@@ -16,13 +16,13 @@ class BanListController extends Controller
      * {
      *   "bans": [
      *     {
-     *       "player":    "Steve",
-     *       "uuid":      "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-     *       "reason":    "Griefing",
-     *       "banner":    "Admin",
-     *       "active":    true,
-     *       "bannedAgo": "1 hour ago",
-     *       "expiresAt": "7 days"
+     *       "player": "Steve",
+     *       "uuid":   "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+     *       "reason": "Griefing",
+     *       "banner": "Admin",
+     *       "active": true,
+     *       "time":   1234567890000,
+     *       "until":  -1
      *     },
      *     ...
      *   ]
@@ -31,14 +31,14 @@ class BanListController extends Controller
     public function update(Request $request): JsonResponse
     {
         $request->validate([
-            'bans'              => 'present|array|max:5000',
-            'bans.*.player'     => 'required|string|max:64',
-            'bans.*.uuid'       => 'nullable|string|max:36',
-            'bans.*.banner'     => 'nullable|string|max:64',
-            'bans.*.reason'     => 'nullable|string|max:2048',
-            'bans.*.active'     => 'nullable|boolean',
-            'bans.*.bannedAgo'  => 'nullable|string|max:64',
-            'bans.*.expiresAt'  => 'nullable|string|max:64',
+            'bans'          => 'present|array|max:5000',
+            'bans.*.player' => 'required|string|max:64',
+            'bans.*.uuid'   => 'nullable|string|max:36',
+            'bans.*.banner' => 'nullable|string|max:64',
+            'bans.*.reason' => 'nullable|string|max:2048',
+            'bans.*.active' => 'nullable|boolean',
+            'bans.*.time'   => 'nullable|integer',
+            'bans.*.until'  => 'nullable|integer',
         ]);
 
         $now = now();
@@ -52,8 +52,8 @@ class BanListController extends Controller
                 'banner'     => $b['banner'] ?? null,
                 'reason'     => $b['reason'] ?? null,
                 'active'     => $b['active'] ?? true,
-                'banned_ago' => $b['bannedAgo'] ?? null,
-                'expires_at' => $b['expiresAt'] ?? null,
+                'time'       => $b['time'] ?? 0,
+                'until'      => $b['until'] ?? -1,
                 'created_at' => $now,
                 'updated_at' => $now,
             ], $request->bans);

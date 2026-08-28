@@ -24,6 +24,15 @@
         <p class="ban-count">{{ $bans->count() }} banned player{{ $bans->count() === 1 ? '' : 's' }}</p>
         <ul class="ban-list">
             @foreach($bans as $ban)
+            @php
+                $bannedAt = $ban->time > 0
+                    ? \Carbon\Carbon::createFromTimestamp(intdiv($ban->time, 1000))->diffForHumans()
+                    : null;
+                $isPermanent = (int) $ban->until <= 0;
+                $expiresAt = !$isPermanent && $ban->until > 0
+                    ? str_replace(' from now', '', \Carbon\Carbon::createFromTimestamp(intdiv($ban->until, 1000))->diffForHumans())
+                    : null;
+            @endphp
             <li class="ban-item ban-item--clickable"
                 style="border-left:none;"
                 onclick="window.location='{{ route('profile', ['username' => $ban->player]) }}'">
@@ -43,13 +52,13 @@
                             @if($ban->banner)
                                 <span class="ban-meta-item" style="flex-shrink:0;"><i class="bi bi-person"></i> {{ $ban->banner }}</span>
                             @endif
-                            @if($ban->banned_ago)
-                                <span class="ban-meta-item" style="flex-shrink:0;"><i class="bi bi-clock-history"></i> {{ $ban->banned_ago }}</span>
+                            @if($bannedAt)
+                                <span class="ban-meta-item" style="flex-shrink:0;"><i class="bi bi-clock-history"></i> {{ $bannedAt }}</span>
                             @endif
-                            @if($ban->expires_at)
-                                <span class="ban-meta-item ban-meta-item--expires" style="flex-shrink:0;"><i class="bi bi-hourglass-split"></i> {{ $ban->expires_at }}</span>
-                            @else
+                            @if($isPermanent)
                                 <span class="ban-meta-item ban-meta-item--permanent" style="flex-shrink:0;"><i class="bi bi-infinity"></i> Permanent</span>
+                            @else
+                                <span class="ban-meta-item ban-meta-item--expires" style="flex-shrink:0;"><i class="bi bi-hourglass-split"></i> Back on server {{ $expiresAt }}</span>
                             @endif
                         </div>
                     </div>
