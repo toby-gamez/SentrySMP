@@ -34,5 +34,5 @@
         <p class="footer-p">© {{ date('Y') }} Sentry SMP. All rights reserved.</p>
         <p class="mojang-notice">We are not affiliated with or endorsed by Mojang, AB.</p>
     </div>
-    <p class="web-version">4.0</p>
+    <p class="web-version">4.0.1</p>
 </footer>

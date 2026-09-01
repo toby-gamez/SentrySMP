@@ -71,6 +71,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('command-queue/{commandQueue}/executed', [Admin\CommandQueueController::class, 'markExecuted'])->name('command-queue.executed');
         Route::post('command-queue/{commandQueue}/failed', [Admin\CommandQueueController::class, 'markFailed'])->name('command-queue.failed');
         Route::post('command-queue/{commandQueue}/pending', [Admin\CommandQueueController::class, 'markPending'])->name('command-queue.pending');
+        Route::post('command-queue/add', [Admin\CommandQueueController::class, 'addDebug'])->name('command-queue.add');
 
         // Vouchers
         Route::resource('vouchers', Admin\VoucherController::class)->names('vouchers')->except(['show']);

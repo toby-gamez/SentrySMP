@@ -24,6 +24,13 @@
         <a target="_blank" href="https://github.com/toby-gamez/sentrysmp">Github</a>
     </p>
 
+    <h2>4.0.1</h2>
+
+    <ul>
+        <li>added debug testing for command queue</li>
+    </ul>
+
+
     <h2>4.0</h2>
     <ul>
         <li>full backend rewrite from .NET (Blazor + ASP.NET) to Laravel 12 (PHP)</li>

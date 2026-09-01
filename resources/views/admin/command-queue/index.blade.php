@@ -33,6 +33,32 @@
         </ul>
     </div>
 </div>
+{{-- ── Debug: Add Command ────────────────────────────────────────────── --}}
+<div class="admin-card" style="margin-bottom:20px;">
+    <div class="admin-card-header">
+        <h2 class="admin-card-title"><i class="bi bi-bug" style="margin-right:6px;color:#f59e0b;"></i>Debug: Add Command</h2>
+    </div>
+    <form method="POST" action="{{ route('admin.command-queue.add') }}" style="padding:16px 20px;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+        @csrf
+        <div style="display:flex;flex-direction:column;gap:6px;flex:0 0 180px;">
+            <label style="font-size:12px;color:#94a3b8;">Player Name</label>
+            <input type="text" name="player_name" value="{{ old('player_name') }}" placeholder="e.g. Notch" required
+                   style="margin:0;padding:8px 12px;border-radius:8px;">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;flex:1 1 300px;">
+            <label style="font-size:12px;color:#94a3b8;">Command</label>
+            <input type="text" name="command_text" value="{{ old('command_text') }}" placeholder="e.g. give Notch diamond 1" required
+                   style="margin:0;padding:8px 12px;border-radius:8px;font-family:monospace;font-size:13px;">
+        </div>
+        <button type="submit" class="btn-admin btn-admin-primary" style="white-space:nowrap;">
+            <i class="bi bi-plus-lg"></i> Add to Queue
+        </button>
+    </form>
+    @if($errors->any())
+    <div style="padding:0 20px 12px;color:#f87171;font-size:13px;">{{ $errors->first() }}</div>
+    @endif
+</div>
+
 <div class="admin-card">
     <div class="admin-card-header">
         <h2 class="admin-card-title">Command Queue</h2>

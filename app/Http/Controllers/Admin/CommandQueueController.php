@@ -46,4 +46,21 @@ class CommandQueueController extends Controller
         $commandQueue->update(['status' => 'pending']);
         return back()->with('success', 'Reset to pending.');
     }
+
+    public function addDebug(Request $request)
+    {
+        $request->validate([
+            'player_name'  => 'required|string|max:255',
+            'command_text' => 'required|string|max:1000',
+        ]);
+
+        CommandQueue::create([
+            'transaction_id' => null,
+            'player_name'    => $request->player_name,
+            'command_text'   => $request->command_text,
+            'status'         => 'pending',
+        ]);
+
+        return back()->with('success', 'Debug command added to queue.');
+    }
 }
