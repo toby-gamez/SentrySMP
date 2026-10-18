@@ -105,7 +105,7 @@ class PaymentController extends Controller
                 return redirect('/checkout?status=success&orderId=' . urlencode($token));
             }
             Log::warning("PayPal return: no cached order data for token {$token}");
-            $this->markPayPalFailed($token, 'FAILED', 'Return without cached order data (expired or replayed); order was not captured.');
+            $this->markPendingTransaction($token, 'FAILED', 'Return without cached order data (expired or replayed); order was not captured.');
             return redirect('/checkout?status=error');
         }
 
@@ -121,7 +121,7 @@ class PaymentController extends Controller
 
             if (!$capture['success']) {
                 Log::warning("PayPal capture not COMPLETED for order {$token} (status: {$capture['status']})");
-                $this->markPayPalFailed($token, 'PAYPAL_' . (strtoupper($capture['status']) ?: 'UNKNOWN'), $capture['rawResponse']);
+                $this->markPendingTransaction($token, 'PAYPAL_' . (strtoupper($capture['status']) ?: 'UNKNOWN'), $capture['rawResponse']);
                 return redirect('/checkout?status=error');
             }
 
@@ -159,9 +159,9 @@ class PaymentController extends Controller
 
             if ($capture && $capture['success']) {
                 // Money was captured but storing / dispatching failed — keep it visible so it can be fixed manually
-                $this->markPayPalFailed($token, 'captured;FAILED', $e->getMessage() . "\n\n" . $capture['rawResponse'], $capture);
+                $this->markPendingTransaction($token, 'captured;FAILED', $e->getMessage() . "\n\n" . $capture['rawResponse'], $capture);
             } else {
-                $this->markPayPalFailed($token, 'FAILED', $e->getMessage());
+                $this->markPendingTransaction($token, 'FAILED', $e->getMessage());
             }
 
             return redirect('/checkout?status=error');
@@ -169,23 +169,23 @@ class PaymentController extends Controller
     }
 
     /**
-     * Move a PENDING PayPal transaction to a failure status so it is visible in the admin panel.
+     * Update a PENDING transaction (status + details) so the outcome is visible in the admin panel.
      * Only PENDING rows are touched, so a concurrent successful return is never overwritten.
      */
-    private function markPayPalFailed(string $orderId, string $status, string $details, ?array $capture = null): void
+    private function markPendingTransaction(string $providerTxId, string $status, string $details, ?array $payment = null): void
     {
         try {
             $data = ['status' => $status, 'raw_response' => $details];
-            if ($capture) {
-                $data['amount']   = $capture['amount'];
-                $data['currency'] = $capture['currency'];
+            if ($payment) {
+                $data['amount']   = $payment['amount'];
+                $data['currency'] = $payment['currency'];
             }
 
-            PaymentTransaction::where('provider_transaction_id', $orderId)
+            PaymentTransaction::where('provider_transaction_id', $providerTxId)
                 ->where('status', 'PENDING')
                 ->update($data);
         } catch (\Throwable $e) {
-            Log::error("PayPal: failed to mark order {$orderId} as {$status}: " . $e->getMessage());
+            Log::error("Failed to mark transaction {$providerTxId} as {$status}: " . $e->getMessage());
         }
     }
 
@@ -228,6 +228,23 @@ class PaymentController extends Controller
                 'amount'       => $amount,
             ], now()->addHour());
 
+            // Record the session as PENDING right away so it shows up in the admin panel
+            // even if the customer never makes it back to the return URL.
+            try {
+                PaymentTransaction::create([
+                    'provider'                => 'Stripe',
+                    'provider_transaction_id' => $sessionId,
+                    'amount'                  => $amount,
+                    'currency'                => 'EUR',
+                    'minecraft_username'      => $username,
+                    'items_json'              => $request->items_json,
+                    'status'                  => 'PENDING',
+                    'created_at'              => now(),
+                ]);
+            } catch (\Throwable $e) {
+                Log::error("Stripe createSession: failed to store pending transaction for session {$sessionId}: " . $e->getMessage());
+            }
+
             return response()->json($result);
         } catch (\Throwable $e) {
             Log::error('Stripe createSession error: ' . $e->getMessage());
@@ -248,10 +265,13 @@ class PaymentController extends Controller
         $sessionData = Cache::pull($cacheKey);
 
         if (!$sessionData) {
-            if (PaymentTransaction::where('provider_transaction_id', $sessionId)->exists()) {
+            if (PaymentTransaction::paid()->where('provider_transaction_id', $sessionId)->exists()) {
                 return redirect('/checkout?status=success&session_id=' . urlencode($sessionId));
             }
             Log::warning("Stripe return: no cached session data for {$sessionId}");
+            // Stripe charges on its side, so the payment may still have gone through — keep it PENDING
+            // and leave a note to check the Stripe dashboard.
+            $this->markPendingTransaction($sessionId, 'PENDING', 'Return without cached session data (expired or replayed); check payment status in the Stripe dashboard.');
             return redirect('/checkout?status=error');
         }
 
@@ -259,28 +279,34 @@ class PaymentController extends Controller
         $itemsJson   = $sessionData['items_json'];
         $voucherCode = $sessionData['voucher_code'];
 
+        $session = null;
+
         try {
             $session = $this->stripe->retrieveSession($sessionId);
 
             // G1: only proceed if Stripe confirms the payment was received
             if (($session['status'] ?? '') !== 'paid') {
                 Log::warning("Stripe session {$sessionId} not paid — status: " . ($session['status'] ?? 'unknown'));
+                // Not paid (yet) — e.g. an async payment method still processing. Keep PENDING, store the response.
+                $this->markPendingTransaction($sessionId, 'PENDING', $session['rawResponse']);
                 return redirect('/checkout?status=error');
             }
 
             // G6: wrap the full write sequence in a transaction
             DB::transaction(function () use ($sessionId, $session, $username, $itemsJson, $voucherCode) {
-                $tx = PaymentTransaction::create([
-                    'provider'                => 'Stripe',
-                    'provider_transaction_id' => $sessionId,
-                    'amount'                  => $session['amount'],
-                    'currency'                => $session['currency'],
-                    'minecraft_username'      => $username,
-                    'items_json'              => $itemsJson,
-                    'status'                  => 'succeeded',
-                    'raw_response'            => $session['rawResponse'],
-                    'created_at'              => now(),
-                ]);
+                // Promote the PENDING row created in stripeCreateSession (or create it for older sessions)
+                $tx = PaymentTransaction::updateOrCreate(
+                    ['provider_transaction_id' => $sessionId],
+                    [
+                        'provider'           => 'Stripe',
+                        'amount'             => $session['amount'],
+                        'currency'           => $session['currency'],
+                        'minecraft_username' => $username,
+                        'items_json'         => $itemsJson,
+                        'status'             => 'succeeded',
+                        'raw_response'       => $session['rawResponse'],
+                    ]
+                );
 
                 $cartItems = $this->parseCartItems($itemsJson);
                 if (!empty($cartItems)) {
@@ -297,6 +323,14 @@ class PaymentController extends Controller
             return redirect('/checkout?status=success&session_id=' . urlencode($sessionId));
         } catch (\Throwable $e) {
             Log::error('Stripe return error: ' . $e->getMessage());
+
+            if ($session && ($session['status'] ?? '') === 'paid') {
+                // Money was received but storing / dispatching failed — keep it visible so it can be fixed manually
+                $this->markPendingTransaction($sessionId, 'succeeded;FAILED', $e->getMessage() . "\n\n" . $session['rawResponse'], $session);
+            } else {
+                $this->markPendingTransaction($sessionId, 'FAILED', $e->getMessage() . "\n\nPayment status unknown — check the Stripe dashboard.");
+            }
+
             return redirect('/checkout?status=error');
         }
     }
