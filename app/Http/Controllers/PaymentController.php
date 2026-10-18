@@ -62,6 +62,23 @@ class PaymentController extends Controller
                 'amount'       => $amount,
             ], now()->addHour());
 
+            // Record the order as PENDING right away so it shows up in the admin panel
+            // even if the customer never makes it back to the return URL.
+            try {
+                PaymentTransaction::create([
+                    'provider'                => 'PayPal',
+                    'provider_transaction_id' => $orderId,
+                    'amount'                  => $amount,
+                    'currency'                => 'EUR',
+                    'minecraft_username'      => $request->username,
+                    'items_json'              => $request->items_json,
+                    'status'                  => 'PENDING',
+                    'created_at'              => now(),
+                ]);
+            } catch (\Throwable $e) {
+                Log::error("PayPal createOrder: failed to store pending transaction for order {$orderId}: " . $e->getMessage());
+            }
+
             return response()->json($result);
         } catch (\Throwable $e) {
             Log::error('PayPal createOrder error: ' . $e->getMessage());
@@ -83,11 +100,12 @@ class PaymentController extends Controller
         $orderData = Cache::pull($cacheKey);
 
         if (!$orderData) {
-            // Idempotent: if transaction already exists the payment succeeded on a prior hit
-            if (PaymentTransaction::where('provider_transaction_id', $token)->exists()) {
+            // Idempotent: if the transaction is already paid the payment succeeded on a prior hit
+            if (PaymentTransaction::paid()->where('provider_transaction_id', $token)->exists()) {
                 return redirect('/checkout?status=success&orderId=' . urlencode($token));
             }
             Log::warning("PayPal return: no cached order data for token {$token}");
+            $this->markPayPalFailed($token, 'FAILED', 'Return without cached order data (expired or replayed); order was not captured.');
             return redirect('/checkout?status=error');
         }
 
@@ -95,28 +113,33 @@ class PaymentController extends Controller
         $itemsJson   = $orderData['items_json'];
         $voucherCode = $orderData['voucher_code'];
 
+        $capture = null;
+
         try {
             // G2: verify the capture actually completed before doing anything
             $capture = $this->payPal->captureOrder($token);
 
             if (!$capture['success']) {
-                Log::warning("PayPal capture not COMPLETED for order {$token}");
+                Log::warning("PayPal capture not COMPLETED for order {$token} (status: {$capture['status']})");
+                $this->markPayPalFailed($token, 'PAYPAL_' . (strtoupper($capture['status']) ?: 'UNKNOWN'), $capture['rawResponse']);
                 return redirect('/checkout?status=error');
             }
 
             // G6: wrap the full write sequence in a transaction
             DB::transaction(function () use ($token, $capture, $username, $itemsJson, $voucherCode) {
-                $tx = PaymentTransaction::create([
-                    'provider'                => 'PayPal',
-                    'provider_transaction_id' => $token,
-                    'amount'                  => $capture['amount'],
-                    'currency'                => $capture['currency'],
-                    'minecraft_username'      => $username,
-                    'items_json'              => $itemsJson,
-                    'status'                  => 'captured',
-                    'raw_response'            => $capture['rawResponse'],
-                    'created_at'              => now(),
-                ]);
+                // Promote the PENDING row created in paypalCreateOrder (or create it for older orders)
+                $tx = PaymentTransaction::updateOrCreate(
+                    ['provider_transaction_id' => $token],
+                    [
+                        'provider'           => 'PayPal',
+                        'amount'             => $capture['amount'],
+                        'currency'           => $capture['currency'],
+                        'minecraft_username' => $username,
+                        'items_json'         => $itemsJson,
+                        'status'             => 'captured',
+                        'raw_response'       => $capture['rawResponse'],
+                    ]
+                );
 
                 $cartItems = $this->parseCartItems($itemsJson);
                 if (!empty($cartItems)) {
@@ -133,7 +156,36 @@ class PaymentController extends Controller
             return redirect('/checkout?status=success&orderId=' . urlencode($token));
         } catch (\Throwable $e) {
             Log::error('PayPal return error: ' . $e->getMessage());
+
+            if ($capture && $capture['success']) {
+                // Money was captured but storing / dispatching failed — keep it visible so it can be fixed manually
+                $this->markPayPalFailed($token, 'captured;FAILED', $e->getMessage() . "\n\n" . $capture['rawResponse'], $capture);
+            } else {
+                $this->markPayPalFailed($token, 'FAILED', $e->getMessage());
+            }
+
             return redirect('/checkout?status=error');
+        }
+    }
+
+    /**
+     * Move a PENDING PayPal transaction to a failure status so it is visible in the admin panel.
+     * Only PENDING rows are touched, so a concurrent successful return is never overwritten.
+     */
+    private function markPayPalFailed(string $orderId, string $status, string $details, ?array $capture = null): void
+    {
+        try {
+            $data = ['status' => $status, 'raw_response' => $details];
+            if ($capture) {
+                $data['amount']   = $capture['amount'];
+                $data['currency'] = $capture['currency'];
+            }
+
+            PaymentTransaction::where('provider_transaction_id', $orderId)
+                ->where('status', 'PENDING')
+                ->update($data);
+        } catch (\Throwable $e) {
+            Log::error("PayPal: failed to mark order {$orderId} as {$status}: " . $e->getMessage());
         }
     }
 

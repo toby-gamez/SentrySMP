@@ -66,7 +66,7 @@ class PayPalService
     }
 
     /**
-     * @return array{success: bool, amount: float, currency: string, rawResponse: string}
+     * @return array{success: bool, status: string, amount: float, currency: string, rawResponse: string}
      */
     public function captureOrder(string $orderId): array
     {
@@ -97,6 +97,7 @@ class PayPalService
 
         return [
             'success'     => ($data['status'] ?? '') === 'COMPLETED',
+            'status'      => (string) ($data['status'] ?? ''),
             'amount'      => $amount,
             'currency'    => $currency,
             'rawResponse' => $raw,

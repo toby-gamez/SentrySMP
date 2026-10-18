@@ -61,11 +61,7 @@ class PageController extends Controller
         $resetAt = PaymentSettings::current()->stats_reset_at;
         try {
             $query = PaymentTransaction::selectRaw('minecraft_username, SUM(amount) as total_paid, COUNT(*) as transaction_count, MAX(created_at) as last_payment')
-                ->where(function ($q) {
-                    $q->where('status', 'like', '%captured%')
-                      ->orWhere('status', 'like', '%succeeded%')
-                      ->orWhere('status', 'like', '%paid%');
-                })
+                ->paid()
                 ->whereNotIn('minecraft_username', ['Taneq', 'DebugPlayer', 'webdev', '', '<unknown>'])
                 ->where('minecraft_username', '!=', '')
                 ->where('minecraft_username', 'not like', '.%');
@@ -100,7 +96,8 @@ class PageController extends Controller
 
         if ($username) {
             try {
-                $transactions = PaymentTransaction::where('minecraft_username', $username)
+                $transactions = PaymentTransaction::paid()
+                    ->where('minecraft_username', $username)
                     ->orderByDesc('created_at')
                     ->limit(50)
                     ->get();

@@ -2,13 +2,14 @@
     Partial: Transaction / Command Status Badge
     Variables: $status (?string) — semicolon-separated list of status tokens
     Renders a coloured badge for each token in the status string.
-    Known tokens: SUCCEEDED, FAILED, CANCELLED, RCON_FAILED, TRIED_AGAIN.
+    Known tokens: SUCCEEDED, PENDING, FAILED, CANCELLED, RCON_FAILED, TRIED_AGAIN.
     Unknown tokens render with a default blue style.
 --}}
 @php
 $parts = array_filter(array_map('trim', explode(';', $status ?? '')));
 $styles = [
     'SUCCEEDED'   => 'background:#1a3320;color:#4ade80;border-color:#22c55e;',
+    'PENDING'     => 'background:#3a3410;color:#facc15;border-color:#eab308;',
     'FAILED'      => 'background:#3a1a1a;color:#f87171;border-color:#ef4444;',
     'CANCELLED'   => 'background:#2a2a2a;color:#9ca3af;border-color:#6b7280;',
     'RCON_FAILED' => 'background:#3a2a10;color:#fb923c;border-color:#f97316;',

@@ -44,7 +44,7 @@
             <label style="display:block;font-size:11px;color:#888;margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Status</label>
             <select name="status" style="width:100%;margin-bottom:0;background:#1a1a1a;border:1px solid #383838;border-radius:8px;padding:7px 10px;color:#ddd;">
                 <option value="">All statuses</option>
-                @foreach(['SUCCEEDED','FAILED','CANCELLED','RCON_FAILED','TRIED_AGAIN'] as $s)
+                @foreach(['SUCCEEDED','PENDING','FAILED','CANCELLED','RCON_FAILED','TRIED_AGAIN'] as $s)
                     <option value="{{ $s }}" {{ $status === $s ? 'selected' : '' }}>{{ $s }}</option>
                 @endforeach
             </select>
