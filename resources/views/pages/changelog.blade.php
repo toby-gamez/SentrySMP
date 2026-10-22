@@ -24,6 +24,12 @@
         <a target="_blank" href="https://github.com/toby-gamez/sentrysmp">Github</a>
     </p>
 
+    <h2>4.0.2</h2>
+
+    <ul>
+        <li>stronger security measures and better transaction handling</li>
+    </ul>
+
     <h2>4.0.1</h2>
 
     <ul>
