@@ -17,11 +17,7 @@ class AppServiceProvider extends ServiceProvider
         View::composer('layouts.partials.nav', function ($view) {
             try {
                 $navTopDonors = PaymentTransaction::selectRaw('minecraft_username, SUM(amount) as total_paid')
-                    ->where(function ($q) {
-                        $q->where('status', 'like', '%captured%')
-                          ->orWhere('status', 'like', '%succeeded%')
-                          ->orWhere('status', 'like', '%paid%');
-                    })
+                    ->paid()
                     ->whereNotIn('minecraft_username', ['Taneq', 'DebugPlayer', 'webdev', '', '<unknown>'])
                     ->where('minecraft_username', '!=', '')
                     ->where('minecraft_username', 'not like', '.%')

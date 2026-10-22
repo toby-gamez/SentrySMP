@@ -13,7 +13,7 @@ class DashboardController extends Controller
     {
         $resetAt = PaymentSettings::current()->stats_reset_at;
 
-        $revenueQuery = PaymentTransaction::query();
+        $revenueQuery = PaymentTransaction::paid();
         if ($resetAt) {
             $revenueQuery->where('created_at', '>=', $resetAt);
         }
