@@ -25,22 +25,6 @@
 </div>
 
 <div class="nav-list">
-    <div class="nav-heading">JOIN</div>
-    <a href="{{ route('join', ['edition' => 'java']) }}">
-        <div class="{{ request()->routeIs('join') && request('edition') === 'java' ? 'nav-item nav-item--active' : 'nav-item' }}">
-            <div class="nav-icon"><img class="nav-icon" src="{{ asset('images/java.png') }}" alt="java"></div>
-            <span>JAVA</span>
-        </div>
-    </a>
-    <a href="{{ route('join', ['edition' => 'bedrock']) }}">
-        <div class="{{ request()->routeIs('join') && request('edition') === 'bedrock' ? 'nav-item nav-item--active' : 'nav-item' }}">
-            <div class="nav-icon"><img class="nav-icon" src="{{ asset('images/bedrock.webp') }}" alt="bedrock"></div>
-            <span>BEDROCK</span>
-        </div>
-    </a>
-</div>
-
-<div class="nav-list">
     <div class="nav-heading">LINKS</div>
     <a href="{{ route('about') }}">
         <div class="{{ request()->routeIs('about') ? 'nav-item nav-item--active' : 'nav-item' }}">
@@ -58,12 +42,6 @@
         <div class="{{ request()->routeIs('scoreboard') ? 'nav-item nav-item--active' : 'nav-item' }}">
             <div class="nav-icon"><i class="bi bi-trophy-fill"></i></div>
             <span>SCOREBOARD</span>
-        </div>
-    </a>
-    <a href="{{ route('vote-for-us') }}">
-        <div class="{{ request()->routeIs('vote-for-us') ? 'nav-item nav-item--active' : 'nav-item' }}">
-            <div class="nav-icon"><i class="bi bi-heart-fill"></i></div>
-            <span>VOTE FOR US</span>
         </div>
     </a>
     <a href="{{ route('active-players') }}">

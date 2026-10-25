@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
@@ -23,5 +24,13 @@ class Product extends Model
     public function getEffectivePriceAttribute(): float
     {
         return $this->sale > 0 ? round($this->price * (1 - $this->sale / 100), 2) : (float) $this->price;
+    }
+
+    public function getDescriptionHtmlAttribute(): string
+    {
+        return Str::markdown($this->description ?? '', [
+            'html_input' => 'strip',
+            'allow_unsafe_links' => false,
+        ]);
     }
 }

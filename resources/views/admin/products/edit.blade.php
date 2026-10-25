@@ -19,7 +19,7 @@
         <i class="bi bi-chevron-down pg-ch" style="color:#60a5fa;margin-left:auto;font-size:12px;transition:transform .2s;"></i>
     </div>
     <div hidden style="margin-top:12px;color:#94a3b8;line-height:1.75;">
-        <p style="margin:0 0 8px;"><strong style="color:#c4d4e8;">Product Details</strong> (top form) — update name, price, sale, image, etc., then click <em>Update Product</em>.</p>
+        <p style="margin:0 0 8px;"><strong style="color:#c4d4e8;">Product Details</strong> (top form) — update name, price, sale, image, etc., then click <em>Update Product</em>. The description supports Markdown via the toolbar and appears in the product's <em>More</em> popup.</p>
         <p style="margin:0 0 6px;"><strong style="color:#c4d4e8;">Delivery Commands</strong> (bottom section) — commands run on the game server when this product is purchased:</p>
         <ul style="margin:0;padding-left:18px;">
             <li>Use <code style="color:#888;">%player%</code> as a placeholder for the buyer's Minecraft username (e.g. <code style="color:#888;">give %player% diamond 64</code>).</li>

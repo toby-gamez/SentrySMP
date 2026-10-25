@@ -13,11 +13,11 @@ function saveCart(cart) {
     if (typeof updateCheckoutBtn === 'function') updateCheckoutBtn();
 }
 
-function addToCart(item) {
+function addToCart(item, replaceQuantity) {
     const cart = getCart();
     const existing = cart.find(c => c.id === item.id);
     if (existing) {
-        existing.quantity = (existing.quantity || 1) + (item.quantity || 1);
+        existing.quantity = replaceQuantity ? (item.quantity || 1) : (existing.quantity || 1) + (item.quantity || 1);
     } else {
         cart.push({ ...item, quantity: item.quantity || 1 });
     }
@@ -38,10 +38,10 @@ function selectQtyPreset(btn, itemId, qty) {
 }
 
 // category replaces the old type+server combo
-function addToCartPreset(itemId, name, category, price, sale) {
+function addToCartPreset(itemId, name, category, price, sale, image, fixedQty) {
     var key = 'item_' + itemId;
-    var qty = _selectedQty[key] || 1;
-    addToCart({ id: itemId, name: name, category: category, price: price, sale: sale, quantity: qty });
+    var qty = fixedQty ? 1 : (_selectedQty[key] || 1);
+    addToCart({ id: itemId, name: name, category: category, price: price, sale: sale, quantity: qty, image: image || null, fixedQuantity: !!fixedQty }, fixedQty);
     refreshProductButtons();
 }
 
@@ -109,9 +109,14 @@ function renderCartSidebar() {
     cart.forEach(function(item) {
         const ep   = getEffectivePrice(item);
         const line = ep * item.quantity;
+        let imgSrc = item.image;
+        if (!imgSrc) {
+            const cardImg = document.querySelector('.product[data-item-id="' + item.id + '"] img.product-image');
+            if (cardImg) imgSrc = cardImg.getAttribute('src');
+        }
         html += '<div class="cart-sidebar-item">' +
             '<div class="cart-sidebar-item-img">' +
-            (item.image ? '<img src="' + escapeHtml(item.image) + '" alt="' + escapeHtml(item.name) + '">' : '<i class="bi bi-box-seam"></i>') +
+            (imgSrc ? '<img src="' + escapeHtml(imgSrc) + '" alt="' + escapeHtml(item.name) + '">' : '<i class="bi bi-box-seam"></i>') +
             '</div>' +
             '<div class="cart-sidebar-item-info">' +
             '<div class="cart-sidebar-item-name">' + escapeHtml(item.name) + '</div>' +
@@ -120,11 +125,11 @@ function renderCartSidebar() {
             (item.sale > 0 ? '<span class="text-muted" style="text-decoration:line-through;margin-right:4px;">€' + item.price.toFixed(2) + '</span>' : '') +
             '€' + line.toFixed(2) +
             '</div>' +
-            '<div class="quantity-controls" style="margin-top:4px;">' +
+            (item.fixedQuantity ? '' : '<div class="quantity-controls" style="margin-top:4px;">' +
             '<button class="quantity-btn" onclick="updateQty(' + item.id + ', ' + Math.max(1, item.quantity - 1) + ')" ' + (item.quantity <= 1 ? 'disabled' : '') + '>-</button>' +
             '<span>' + item.quantity + '</span>' +
             '<button class="quantity-btn" onclick="updateQty(' + item.id + ', ' + (item.quantity + 1) + ')">+</button>' +
-            '</div>' +
+            '</div>') +
             '</div>' +
             '<button class="cart-sidebar-item-remove secondary" onclick="removeFromCart(' + item.id + ')" title="Remove"><i class="bi bi-trash"></i></button>' +
             '</div>';
@@ -135,20 +140,8 @@ function renderCartSidebar() {
 }
 
 function refreshProductButtons() {
-    const cart = getCart();
-    document.querySelectorAll('.product').forEach(function(card) {
-        var btn = card.querySelector('.great-button');
-        if (!btn) return;
-        var preset = card.querySelector('.qty-preset-btn');
-        if (!preset) return;
-        var itemId = parseInt(preset.getAttribute('data-item-id'));
-        if (!itemId) return;
-        var inCart = cart.find(function(c) { return c.id === itemId; });
-        if (inCart) {
-            btn.innerHTML = '<i class="bi bi-cart-check"></i> Update Cart';
-        } else {
-            btn.innerHTML = '<i class="bi bi-cart-plus"></i> Add to Cart';
-        }
+    document.querySelectorAll('.product .great-button').forEach(function(btn) {
+        btn.innerHTML = 'BUY';
     });
 }
 
@@ -171,13 +164,4 @@ document.addEventListener('DOMContentLoaded', function() {
     renderCartSidebar();
     refreshProductButtons();
     if (typeof updateCheckoutBtn === 'function') updateCheckoutBtn();
-
-    document.querySelectorAll('.qty-presets').forEach(function(presets) {
-        var first = presets.querySelector('.qty-preset-btn');
-        if (first) {
-            first.classList.add('selected');
-            var itemId = first.getAttribute('data-item-id');
-            if (itemId) _selectedQty['item_' + itemId] = parseInt(first.getAttribute('data-qty') || '1');
-        }
-    });
 });

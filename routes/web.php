@@ -19,7 +19,6 @@ Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/our-team', [PageController::class, 'ourTeam'])->name('our-team');
 Route::get('/join', [PageController::class, 'join'])->name('join');
 Route::get('/news', [PageController::class, 'news'])->name('news');
-Route::get('/vote-for-us', [PageController::class, 'voteForUs'])->name('vote-for-us');
 Route::get('/active-players', [PageController::class, 'activePlayers'])->name('active-players');
 Route::get('/banlist', [PageController::class, 'banList'])->name('banlist');
 Route::get('/support', [PageController::class, 'support'])->name('support');

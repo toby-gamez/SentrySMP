@@ -26,7 +26,13 @@
 
 <div class="form-group">
     <label>Description</label>
-    <textarea name="description" rows="3" maxlength="500">{{ old('description', $item?->description) }}</textarea>
+    @include('admin._partials.markdown-editor', [
+        'name' => 'description',
+        'id' => 'product-description',
+        'value' => old('description', $item?->description),
+        'rows' => 8,
+        'maxlength' => 5000,
+    ])
 </div>
 
 <div class="form-group">

@@ -5,7 +5,6 @@
             <ul>
                 <li><a href="{{ route('support') }}">Support</a></li>
                 <li><a href="https://discord.gg/gXrXMwpuH4" target="_blank">Report Issue</a></li>
-                <li><a href="{{ route('vote-for-us') }}">Vote For Us</a></li>
                 <li><a href="{{ route('join') }}">How to Join</a></li>
             </ul>
         </div>

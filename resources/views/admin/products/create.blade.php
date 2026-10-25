@@ -22,6 +22,7 @@
             <li><strong style="color:#c4d4e8;">Price</strong> — base price in euros (e.g. <code style="color:#888;">9.99</code>).</li>
             <li><strong style="color:#c4d4e8;">Sale %</strong> — if non-zero, the shop shows the discounted price: <em>price × (1 − sale / 100)</em>. Example: €10.00 at 20% sale = €8.00.</li>
             <li><strong style="color:#c4d4e8;">Max orders per user</strong> — leave blank for unlimited purchases per player.</li>
+            <li><strong style="color:#c4d4e8;">Description</strong> — Markdown is supported; use the toolbar for bold, italic, headings, links, lists, quotes and code. It is shown in the product's <em>More</em> popup, not on the shop card.</li>
             <li><strong style="color:#c4d4e8;">Product Image</strong> — browse the image library (filtered to the selected category's subfolder) or upload a new file directly.</li>
             <li>After saving, open the product's <strong style="color:#c4d4e8;">edit page</strong> to add the delivery commands that run on the game server when someone buys it.</li>
         </ul>

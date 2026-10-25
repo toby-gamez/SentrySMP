@@ -15,13 +15,12 @@ class PageController extends Controller
 {
     public function login() { return view('pages.login'); }
     public function about() { return view('pages.about'); }
-    public function join(Request $r) { return view('pages.join', ['edition' => $r->query('edition', 'java')]); }
+    public function join() { return view('pages.join'); }
     public function news(DiscordService $discord)
     {
         $announcements = $discord->getAnnouncements(100);
         return view('pages.news', compact('announcements'));
     }
-    public function voteForUs() { return view('pages.vote-for-us'); }
     public function activePlayers()
     {
         $players = ActivePlayer::orderBy('username')->get();
