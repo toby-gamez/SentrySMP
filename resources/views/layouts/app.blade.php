@@ -60,6 +60,21 @@
         <div class="snowflake">❅</div>
     @endfor
 </div>
+<script>
+    // Keep the snowfall continuous across page loads
+    (function () {
+        var t0 = Date.now();
+        try {
+            t0 = +sessionStorage.getItem('seasonT0') || t0;
+            sessionStorage.setItem('seasonT0', t0);
+        } catch (e) {}
+        var elapsed = (Date.now() - t0) / 1000;
+        document.querySelectorAll('.snowflake').forEach(function (el) {
+            var delay = parseFloat(getComputedStyle(el).animationDelay) || 0;
+            el.style.animationDelay = (delay - elapsed) + 's';
+        });
+    })();
+</script>
 @endif
 
 <div id="maintenance-banner" class="maintenance-banner" style="display:none;">SERVER IN MAINTENANCE</div>
@@ -83,8 +98,48 @@
                 body:not(.light) .header-background {
                     background-image: url("/images/background-image-dark.png");
                 }
+                body.christmas.light .header-background {
+                    background-image: url("/images/background-image-snow.png");
+                }
+                body.christmas:not(.light) .header-background {
+                    background-image: url("/images/background-image-snow-dark.png");
+                }
             </style>
-            <div class="header-background"></div>
+            <div class="header-background">
+                @if ($season === 'halloween')
+                <div class="bat-line" aria-hidden="true">
+                    @php
+                        // [top px, width px, fly seconds, delay s, bob seconds, flap seconds]
+                        $bats = [[30, 30, 34, -6, 4.2, .34], [95, 22, 46, -31, 5.6, .30], [60, 36, 28, -17, 3.8, .38], [150, 20, 52, -9, 6.1, .28], [18, 24, 41, -38, 4.9, .32], [120, 28, 37, -22, 5.2, .36]];
+                    @endphp
+                    @foreach ($bats as [$top, $w, $fly, $delay, $bob, $flap])
+                    <div class="bat-fly" style="top: {{ $top }}px; --fly: {{ $fly }}s; --delay: {{ $delay }}s">
+                        <svg class="bat" viewBox="0 0 40 20" style="width: {{ $w }}px; --bob: {{ $bob }}s; --flap: {{ $flap }}s">
+                            <path class="wing" d="M20 10C24 2 32 2 39 6C36 7 35 9 33 11C31 9 28 10 26 13C24 11 22 12 20 14Z"/>
+                            <g transform="translate(40 0) scale(-1 1)"><path class="wing" d="M20 10C24 2 32 2 39 6C36 7 35 9 33 11C31 9 28 10 26 13C24 11 22 12 20 14Z"/></g>
+                            <ellipse cx="20" cy="11" rx="2.6" ry="4.2"/>
+                            <path d="M18 7.5L18.6 4.8L20 6.6L21.4 4.8L22 7.5Z"/>
+                        </svg>
+                    </div>
+                    @endforeach
+                </div>
+                <script>
+                    // Keep the bats' flight continuous across page loads
+                    (function () {
+                        var t0 = Date.now();
+                        try {
+                            t0 = +sessionStorage.getItem('seasonT0') || t0;
+                            sessionStorage.setItem('seasonT0', t0);
+                        } catch (e) {}
+                        var elapsed = (Date.now() - t0) / 1000;
+                        document.querySelectorAll('.bat-fly').forEach(function (el) {
+                            var base = parseFloat(el.style.getPropertyValue('--delay')) || 0;
+                            el.style.setProperty('--delay', (base - elapsed) + 's');
+                        });
+                    })();
+                </script>
+                @endif
+            </div>
             <div class="grid">
                 <i class="bi bi-controller mobile-none" style="font-size: 3rem"></i>
                 <div class="grid-item" id="copy-ip" title="Copy IP address"
