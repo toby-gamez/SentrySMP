@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Category;
 use App\Models\PaymentTransaction;
+use App\Models\SiteSetting;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -13,6 +14,18 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Seasonal theme (server-side): admin setting, then config, otherwise by month
+        View::composer('layouts.app', function ($view) {
+            $chosen = SiteSetting::get('season');
+            $season = ($chosen && $chosen !== 'auto' ? $chosen : config('shop.season')) ?: match ((int) now()->format('n')) {
+                10 => 'halloween',
+                12 => 'christmas',
+                default => 'none',
+            };
+            $season = in_array($season, ['halloween', 'christmas'], true) ? $season : '';
+            $view->with('season', $season);
+        });
+
         // Share top donors with the nav partial on every page load
         View::composer('layouts.partials.nav', function ($view) {
             try {

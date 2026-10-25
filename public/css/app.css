@@ -5591,3 +5591,128 @@ body.light .product-modal-qty-label {
     white-space: nowrap;
     color: #888;
 }
+
+/* ===== Seasonal themes (class set server-side on <body>) ===== */
+body.christmas .snowflakes {
+    display: block;
+}
+
+/* Halloween */
+body.halloween a,
+body.halloween .nav-item--active { color: #ff7518; }
+body.halloween ::selection { background: #ff7518; color: #16101f; }
+body.halloween .nav-item--active::after { background-color: #ff7518; }
+body.halloween .great-button {
+    background-color: #ff7518;
+    border-bottom-color: #b8500d;
+}
+body.halloween .great-button:hover { background-color: #ff8c3a; }
+/* Pumpkins sitting on top of elements */
+body.halloween #login-box,
+body.halloween footer,
+body.halloween .page-sidebar .nav-list {
+    position: relative;
+}
+body.halloween #login-box::before,
+body.halloween #login-box::after,
+body.halloween footer::before {
+    position: absolute;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 100;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .5));
+}
+body.halloween #login-box::before { content: '🎃'; font-size: 34px; top: -26px; right: 24px; }
+body.halloween #login-box::after  { content: '🎃'; font-size: 22px; top: -17px; right: 68px; transform: rotate(-8deg); }
+body.halloween footer::before     { content: '🎃'; font-size: 40px; top: -30px; left: 5%; }
+/* Cobwebs drawn as SVG, flush into corners so they look attached */
+body.halloween {
+    --web: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M0 0L100.0 0.0M0 0L95.1 30.9M0 0L80.9 58.8M0 0L58.8 80.9M0 0L30.9 95.1M0 0L0.0 100.0M22.0 0.0Q17.4 2.8 20.9 6.8M20.9 6.8Q15.7 8.0 17.8 12.9M17.8 12.9Q12.4 12.4 12.9 17.8M12.9 17.8Q8.0 15.7 6.8 20.9M6.8 20.9Q2.8 17.4 0.0 22.0M40.0 0.0Q31.6 5.0 38.0 12.4M38.0 12.4Q28.5 14.5 32.4 23.5M32.4 23.5Q22.6 22.6 23.5 32.4M23.5 32.4Q14.5 28.5 12.4 38.0M12.4 38.0Q5.0 31.6 0.0 40.0M58.0 0.0Q45.8 7.3 55.2 17.9M55.2 17.9Q41.3 21.1 46.9 34.1M46.9 34.1Q32.8 32.8 34.1 46.9M34.1 46.9Q21.1 41.3 17.9 55.2M17.9 55.2Q7.3 45.8 0.0 58.0M76.0 0.0Q60.1 9.5 72.3 23.5M72.3 23.5Q54.2 27.6 61.5 44.7M61.5 44.7Q43.0 43.0 44.7 61.5M44.7 61.5Q27.6 54.2 23.5 72.3M23.5 72.3Q9.5 60.1 0.0 76.0M94.0 0.0Q74.3 11.8 89.4 29.0M89.4 29.0Q67.0 34.1 76.0 55.3M76.0 55.3Q53.2 53.2 55.3 76.0M55.3 76.0Q34.1 67.0 29.0 89.4M29.0 89.4Q11.8 74.3 0.0 94.0' fill='none' stroke='rgba%28255%2C255%2C255%2C.55%29' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+body.halloween.light {
+    --web: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M0 0L100.0 0.0M0 0L95.1 30.9M0 0L80.9 58.8M0 0L58.8 80.9M0 0L30.9 95.1M0 0L0.0 100.0M22.0 0.0Q17.4 2.8 20.9 6.8M20.9 6.8Q15.7 8.0 17.8 12.9M17.8 12.9Q12.4 12.4 12.9 17.8M12.9 17.8Q8.0 15.7 6.8 20.9M6.8 20.9Q2.8 17.4 0.0 22.0M40.0 0.0Q31.6 5.0 38.0 12.4M38.0 12.4Q28.5 14.5 32.4 23.5M32.4 23.5Q22.6 22.6 23.5 32.4M23.5 32.4Q14.5 28.5 12.4 38.0M12.4 38.0Q5.0 31.6 0.0 40.0M58.0 0.0Q45.8 7.3 55.2 17.9M55.2 17.9Q41.3 21.1 46.9 34.1M46.9 34.1Q32.8 32.8 34.1 46.9M34.1 46.9Q21.1 41.3 17.9 55.2M17.9 55.2Q7.3 45.8 0.0 58.0M76.0 0.0Q60.1 9.5 72.3 23.5M72.3 23.5Q54.2 27.6 61.5 44.7M61.5 44.7Q43.0 43.0 44.7 61.5M44.7 61.5Q27.6 54.2 23.5 72.3M23.5 72.3Q9.5 60.1 0.0 76.0M94.0 0.0Q74.3 11.8 89.4 29.0M89.4 29.0Q67.0 34.1 76.0 55.3M76.0 55.3Q53.2 53.2 55.3 76.0M55.3 76.0Q34.1 67.0 29.0 89.4M29.0 89.4Q11.8 74.3 0.0 94.0' fill='none' stroke='rgba%2860%2C60%2C60%2C.55%29' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+body.halloween::before,
+body.halloween::after {
+    content: '';
+    position: fixed;
+    width: 180px;
+    height: 180px;
+    background: var(--web) no-repeat 0 0 / 100% 100%;
+    pointer-events: none;
+    z-index: 50;
+}
+body.halloween::before { top: 0; left: 0; }
+body.halloween::after  { top: 0; right: 0; transform: scaleX(-1); }
+
+/* webs stuck into the corners of elements */
+body.halloween footer,
+body.halloween .footer-bottom { position: relative; }
+body.halloween .footer-column:first-child::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 120px;
+    height: 120px;
+    background: var(--web) no-repeat 0 0 / 100% 100%;
+    transform: scaleY(-1);
+    pointer-events: none;
+    opacity: .8;
+}
+
+/* More decorations, all static */
+body.halloween .page-sidebar::before,
+body.halloween .page-sidebar::after,
+body.halloween .footer-bottom::before,
+body.halloween .footer-bottom::after {
+    position: absolute;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 100;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .5));
+}
+body.halloween .page-sidebar::before { content: '👻'; font-size: 34px; top: -28px; left: 20px; }
+body.halloween .page-sidebar::after  { content: '🦇'; font-size: 26px; top: -22px; right: 24px; }
+body.halloween .footer-bottom { position: relative; }
+body.halloween .footer-bottom::before { content: '💀'; font-size: 28px; top: -20px; right: 8%; }
+body.halloween .footer-bottom::after  { content: '🕷️'; font-size: 24px; top: -18px; left: 12%; }
+/* spider on the login bar */
+body.halloween #login-box > .login-info::before {
+    content: '🕷️';
+    position: absolute;
+    left: 40%;
+    top: -18px;
+    font-size: 22px;
+    line-height: 1;
+    pointer-events: none;
+}
+
+body.halloween.light a,
+body.halloween.light .nav-item--active { color: #8a3dc4; }
+
+/* Christmas */
+body.christmas a,
+body.christmas .nav-item--active { color: #e8403f; }
+body.christmas .nav-item--active::after { background-color: #2e9e4f; }
+body.christmas .great-button {
+    background-color: #2e9e4f;
+    border-bottom-color: #1d6b34;
+}
+body.christmas .great-button:hover { background-color: #3ab35e; }
+body.christmas .snowflake { color: #cfe9ff; }
+body.christmas.light .snowflake { color: #4da6ff; }
+
+/* Halloween: extra static icons */
+body.halloween .cart-sidebar-header h2::after { content: ' 🕯️'; }
+body.halloween .footer-column:nth-child(2) h3::after { content: ' 🌙'; }
+body.halloween .footer-column:nth-child(3) h3::after { content: ' 🪦'; }
+
+/* Smaller decorations on mobile */
+@media (max-width: 768px) {
+    body.halloween::before,
+    body.halloween::after { width: 80px; height: 80px; }
+    body.halloween .footer-column:first-child::before { width: 70px; height: 70px; }
+    body.halloween #login-box::before { font-size: 26px; top: -20px; right: 14px; }
+    body.halloween #login-box::after { font-size: 18px; top: -14px; right: 50px; }
+}

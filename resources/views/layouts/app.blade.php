@@ -51,14 +51,16 @@
 
     @stack('head')
 </head>
-<body>
+<body class="{{ $season }}">
 
-<!-- Snowflakes effect -->
+@if ($season === 'christmas')
+<!-- Seasonal particles -->
 <div class="snowflakes" aria-hidden="true">
     @for ($i = 0; $i < 50; $i++)
         <div class="snowflake">❅</div>
     @endfor
 </div>
+@endif
 
 <div id="maintenance-banner" class="maintenance-banner" style="display:none;">SERVER IN MAINTENANCE</div>
 

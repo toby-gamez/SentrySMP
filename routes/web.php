@@ -101,6 +101,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('settings/payment', [Admin\PaymentSettingsController::class, 'index'])->name('settings.payment');
         Route::post('settings/payment', [Admin\PaymentSettingsController::class, 'update'])->name('settings.payment.update');
         Route::post('settings/payment/reset-stats', [Admin\PaymentSettingsController::class, 'resetStats'])->name('settings.payment.reset-stats');
+        Route::get('settings/season', [Admin\SeasonController::class, 'index'])->name('settings.season');
+        Route::post('settings/season', [Admin\SeasonController::class, 'update'])->name('settings.season.update');
 
         // Images
         Route::get('images', [Admin\ImageController::class, 'index'])->name('images.index');

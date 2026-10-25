@@ -140,4 +140,17 @@
 
 @endif
 
+@if(empty($username))
+@push('scripts')
+<script>
+    (function () {
+        var stored = '';
+        try { stored = localStorage.getItem('mc_username') || ''; } catch (e) {}
+        if (stored) window.location.replace('{{ route('profile') }}?username=' + encodeURIComponent(stored));
+    })();
+</script>
+@endpush
+@endif
+
+
 @endsection

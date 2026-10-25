@@ -24,6 +24,13 @@
         <a target="_blank" href="https://github.com/toby-gamez/sentrysmp">Github</a>
     </p>
 
+    <h2>4.1</h2>
+
+    <ul>
+        <li>refined UI elements</li>
+        <li>added seasons</li>
+    </ul>
+
     <h2>4.0.2</h2>
 
     <ul>

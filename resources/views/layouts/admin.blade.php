@@ -81,8 +81,11 @@
             <a href="{{ route('admin.transactions.index') }}" class="admin-nav-item {{ request()->routeIs('admin.transactions.*') ? 'active' : '' }}">
                 <i class="bi bi-credit-card-fill"></i> Transactions
             </a>
-            <a href="{{ route('admin.settings.payment') }}" class="admin-nav-item {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.settings.payment') }}" class="admin-nav-item {{ request()->routeIs('admin.settings.payment*') ? 'active' : '' }}">
                 <i class="bi bi-gear-fill"></i> Payment Settings
+            </a>
+            <a href="{{ route('admin.settings.season') }}" class="admin-nav-item {{ request()->routeIs('admin.settings.season*') ? 'active' : '' }}">
+                <i class="bi bi-snow2"></i> Season
             </a>
         </div>
 

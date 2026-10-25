@@ -73,16 +73,20 @@ window.sentryTheme = (function () {
         }
     }
 
-    // Apply saved theme on script load so initial render is correct
-    try {
+    // Apply saved theme on script load. This script runs in <head>, so
+    // document.body does not exist yet: set the class on <html> immediately
+    // and mirror it onto <body> as soon as it is parsed.
+    function applySavedEarly() {
         var saved = getSavedTheme();
-        if (saved === 'true') {
-            // dark saved -> ensure .light is removed
-            document.body.classList.remove('light');
-        } else if (saved === 'false') {
-            // light saved -> ensure .light is present
-            document.body.classList.add('light');
-        }
+        if (saved !== 'true' && saved !== 'false') return;
+        var light = saved === 'false';
+        document.documentElement.classList.toggle('light', light);
+        document.documentElement.setAttribute('data-theme', light ? 'light' : 'dark');
+        if (document.body) document.body.classList.toggle('light', light);
+    }
+    try {
+        applySavedEarly();
+        document.addEventListener('DOMContentLoaded', applySavedEarly);
     } catch (_) { }
 
     // Re-apply theme on client-side navigation (single-page navigation)
